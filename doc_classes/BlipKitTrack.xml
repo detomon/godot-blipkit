@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitTrack" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Generates a single waveform.
+	</brief_description>
+	<description>
+		This class generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe.
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from [AudioStreamBlipKit] and all dividers are removed.
+		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKit]:
+		[codeblocks]
+		[gdscript]
+		# Create a track with the default waveform [BlipKitTrack.WAVEFORM_SQUARE].
+		# Ensure it is playing or has `autoplay` enabled.
+		var _track := BlipKitTrack.new()
+
+		# An audio stream player with an [AudioStreamBlipKit] resource and `autoplay` enabled.
+		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
+
+		func _ready() -&gt; void:
+		    # Get the audio stream.
+		    var stream: AudioStreamBlipKit = stream_player.stream
+
+		    # Attach the track to the audio stream.
+		    _track.attach(stream)
+		    # Play a note.
+		    _track.note = BlipKitTrack.NOTE_A_3
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<tutorials>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/blob/master/examples/power_on</link>
+	</tutorials>
+	<methods>
+		<method name="add_divider">
+			<return type="int" />
+			<param index="0" name="tick_interval" type="int" />
+			<param index="1" name="callable" type="Callable" />
+			<description>
+				Adds a divider which calls [param callable] every multiple number of [i]ticks[/i] given by [param tick_interval]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
+				[param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callable] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callable] is called next after the returned number of ticks. If [param callback] returns a value less than [code]0[/code], the divider is removed.
+				Returns an ID which can be used for [method remove_divider] or [method reset_divider].
+				[b]Note:[/b] Callbacks are called from the audio thread and should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or should run on the main thread.
+				[b]Note:[/b] [param callback] is called for the first time on the next tick.
+				[b]Example:[/b] Add a divider and play a higher note on each call:
+				[codeblocks]
+				[gdscript]
+				track.add_divider(60, func () -&gt; int:
+				    track.note += 1.0
+				    # Keep tick interval.
+				    return 0
+				)
+				[/gdscript]
+				[/codeblocks]
+				[b]Example:[/b] Add a divider and change the tick interval to [code]90[/code] after the first call:
+				[codeblocks]
+				[gdscript]
+				track.add_divider(180, func () -&gt; int:
+				    track.note += 1.0
+				    # Change tick interval to 90.
+				    return 90
+				)
+				[/gdscript]
+				[/codeblocks]
+			</description>
+		</method>
+		<method name="attach">
+			<return type="void" />
+			<param index="0" name="playback" type="AudioStreamBlipKit" />
+			<description>
+				Attaches the track to an [AudioStreamBlipKit] and resumes all dividers from their last state.
+			</description>
+		</method>
+		<method name="clear_dividers">
+			<return type="void" />
+			<description>
+				Removes all divider callbacks.
+			</description>
+		</method>
+		<method name="create_with_waveform" qualifiers="static">
+			<return type="BlipKitTrack" />
+			<param index="0" name="waveform" type="int" enum="BlipKitTrack.Waveform" />
+			<description>
+				Creates a [BlipKitTrack] with the given [param waveform] and sets [member master_volume] according to [enum Waveform].
+			</description>
+		</method>
+		<method name="detach">
+			<return type="void" />
+			<description>
+				Detaches the track from its [AudioStreamBlipKit] and pauses all dividers.
+			</description>
+		</method>
+		<method name="get_dividers" qualifiers="const">
+			<return type="PackedInt32Array" />
+			<description>
+				Returns a list of divider IDs.
+			</description>
+		</method>
+		<method name="get_tremolo" qualifiers="const">
+			<return type="Dictionary" />
+			<description>
+				Returns the tremolo values as [Dictionary]. Contains the keys [code]ticks[/code], [code]delta[/code], and [code]slide_ticks[/code].
+				[codeblock lang=gdscript]
+				{ ticks = 0, delta = 0.0, slide_ticks = 0 }
+				[/codeblock]
+			</description>
+		</method>
+		<method name="get_vibrato" qualifiers="const">
+			<return type="Dictionary" />
+			<description>
+				Returns the vibrato values as [Dictionary]. Contains the keys [code]ticks[/code], [code]delta[/code], and [code]slide_ticks[/code].
+				[codeblock lang=gdscript]
+				{ ticks = 0, delta = 0.0, slide_ticks = 0 }
+				[/codeblock]
+			</description>
+		</method>
+		<method name="has_divider">
+			<return type="bool" />
+			<param index="0" name="id" type="int" />
+			<description>
+				Checks if a divider with [param id] exists.
+			</description>
+		</method>
+		<method name="mute">
+			<return type="void" />
+			<description>
+				Mutes [member note] immediately without playing the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant NOTE_MUTE].
+				This sets [member note] to [constant NOTE_RELEASE].
+			</description>
+		</method>
+		<method name="release">
+			<return type="void" />
+			<description>
+				Releases [member note]. When [member instrument] is set, plays the release part of the [member instrument] envelopes. Has the same effect as setting [member note] to [constant NOTE_RELEASE].
+			</description>
+		</method>
+		<method name="remove_divider">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<description>
+				Removes the divider with [param id].
+			</description>
+		</method>
+		<method name="reset">
+			<return type="void" />
+			<description>
+				Resets the track properties to the initial values (except [member waveform] and [member master_volume]) and mutes [member note].
+			</description>
+		</method>
+		<method name="reset_divider">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<param index="1" name="tick_interval" type="int" default="0" />
+			<description>
+				Resets the counter of a divider with [param id]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
+				[b]Note:[/b] The divider callback is called the first time on the next tick.
+			</description>
+		</method>
+		<method name="set_tremolo">
+			<return type="void" />
+			<param index="0" name="ticks" type="int" />
+			<param index="1" name="delta" type="float" />
+			<param index="2" name="slide_ticks" type="int" default="0" />
+			<description>
+				Enables the tremolo effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks].
+				If [param slide_ticks] is greater than [code]0[/code], the current [code]ticks[/code] and [code]delta[/code] values are interpolated to the values within the given number of [i]ticks[/i] .
+				If [param ticks] is [code]0[/code], the effect is disabled.
+			</description>
+		</method>
+		<method name="set_vibrato">
+			<return type="void" />
+			<param index="0" name="ticks" type="int" />
+			<param index="1" name="delta" type="float" />
+			<param index="2" name="slide_ticks" type="int" default="0" />
+			<description>
+				Enables the vibrato effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks].
+				If [param slide_ticks] is greater than [code]0[/code], the current [code]ticks[/code] and [code]delta[/code] values are interpolated to the values within the given number of [i]ticks[/i] .
+				If [param ticks] is [code]0[/code], the effect is disabled.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="arpeggio" type="PackedFloat32Array" setter="set_arpeggio" getter="get_arpeggio" default="PackedFloat32Array()">
+			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently playing [member note]. The array can have a maximum size of [code]8[/code] and is truncated if it is larger.
+			The duration for which each arpeggio note is defined with [member arpeggio_divider].
+			[b]Example:[/b] Play a major chord:
+			[codeblocks]
+			[gdscript]
+			track.arpeggio = [0.0, 4.0, 7.0]
+			[/gdscript]
+			[/codeblocks]
+		</member>
+		<member name="arpeggio_divider" type="int" setter="set_arpeggio_divider" getter="get_arpeggio_divider" default="4">
+			Sets the number of [i]ticks[/i] each [member arpeggio] note is played.
+		</member>
+		<member name="custom_waveform" type="BlipKitWaveform" setter="set_custom_waveform" getter="get_custom_waveform">
+			Sets a custom waveform. If set, [member waveform] returns [constant WAVEFORM_CUSTOM]. If set to [code]null[/code] [member waveform] is reset to [constant WAVEFORM_SQUARE].
+			Setting a custom waveform mutes [member note].
+			[b]Note:[/b] Does not change [member master_volume].
+		</member>
+		<member name="duty_cycle" type="int" setter="set_duty_cycle" getter="get_duty_cycle" default="4">
+			Sets the duty cycle when [member waveform] is set to [constant WAVEFORM_SQUARE]. This defines the number of high amplitudes and is a value between [code]1[/code] and [code]15[/code]. Has no effect on other waveforms.
+		</member>
+		<member name="effect_divider" type="int" setter="set_effect_divider" getter="get_effect_divider" default="1">
+			Sets the number of [i]ticks[/i] in which effects change the value of the corresponding property.
+		</member>
+		<member name="instrument" type="BlipKitInstrument" setter="set_instrument" getter="get_instrument">
+			Sets the instrument when playing a note.
+		</member>
+		<member name="instrument_divider" type="int" setter="set_instrument_divider" getter="get_instrument_divider" default="4">
+			Sets the number of [i]ticks[/i] each instrument envelope value is played when no steps are defined.
+		</member>
+		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
+			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
+			[b]Note:[/b] This is also changed when setting the waveform (see [enum Waveform] for the default values).
+		</member>
+		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
+			Sets the note to play between [code]0.0[/code] (note C on octave [code]0[/code]) and [code]96.0[/code] (note C on octave [code]8[/code]) (see [enum Note]).
+			Setting [constant NOTE_RELEASE] releases the note (see also [method release]). Setting [constant NOTE_MUTE] mutes the note (see also [method mute]).
+			If [member instrument] is set, setting a note plays the attack and sustain part of the envelopes, whereas releasing the note plays the release part of the envelopes.
+		</member>
+		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">
+			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan to the left channel and positive values to the right channel.
+		</member>
+		<member name="panning_slide" type="int" setter="set_panning_slide" getter="get_panning_slide" default="0">
+			Sets the number of [i]ticks[/i] in which [member panning] changes to a new value.
+		</member>
+		<member name="phase_wrap" type="int" setter="set_phase_wrap" getter="get_phase_wrap" default="0">
+			Sets the number of wave phases after which the waveform is reset to the beginning. This has only an effect on [constant WAVEFORM_NOISE] or when [member custom_waveform] is set.
+			If [param phase_wrap] is [code]0[/code], this behaviour is disabled.
+			[b]Example:[/b] Limit noise to the first 32 phases:
+			[codeblocks]
+			[gdscript]
+			var track := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_NOISE)
+			track.phase_wrap = 32
+			[/gdscript]
+			[/codeblocks]
+			[b]Note:[/b] Non-power-of-two values change the pitch.
+		</member>
+		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
+			Sets the pitch values which is added to [member note].
+			[b]Example:[/b] Play all notes one octave lower:
+			[codeblocks]
+			[gdscript]
+			track.pitch = -12.0
+			[/gdscript]
+			[/codeblocks]
+		</member>
+		<member name="portamento" type="int" setter="set_portamento" getter="get_portamento" default="0">
+			Sets the number of [i]ticks[/i] in which [member note] changes to a new value.
+			If no note is set at the moment, the note is played immediately.
+			If set to [code]0[/code] when the effect is active sets [member note] to it's target value.
+			[b]Example:[/b] Set portamento effect:
+			[codeblocks]
+			[gdscript]
+			# Set portamento.
+			track.portamento = 24
+			# Change note to C4 within 24 ticks from the previously set note.
+			track.note = BlipKitTrack.NOTE_G_4
+			[/gdscript]
+			[/codeblocks]
+			[b]Example:[/b] Start portamento effect immediately:
+			[codeblocks]
+			[gdscript]
+			# Set portamento.
+			track.portamento = 24
+			# Assuming track.note is not (BlipKitTrack.NOTE_RELEASE)
+			# Change note from C4 to G4 within 24 ticks.
+			track.note = BlipKitTrack.NOTE_C_4
+			track.note = BlipKitTrack.NOTE_G_4
+			[/gdscript]
+			[/codeblocks]
+		</member>
+		<member name="sample" type="BlipKitSample" setter="set_sample" getter="get_sample">
+			Sets the sample to play. If set, [member waveform] returns [constant WAVEFORM_SAMPLE]. If set to [code]null[/code] [member waveform] is reset to [constant WAVEFORM_SQUARE].
+			Setting [member note] to [constant NOTE_C_4] plays the sample in it's original speed.
+			Setting a sample mutes [member note].
+			[b]Example:[/b] Play a sample:
+			[codeblocks]
+			[gdscript]
+			# Load sample from WAV resource.
+			var wav := preload("res://example.wav")
+			var sample := BlipKitSample.create_with_wav(wav)
+			# Play the sample with it's original speed.
+			track.sample = sample
+			track.note = BlipKitTrack.NOTE_C_4
+			[/gdscript]
+			[/codeblocks]
+			[b]Note:[/b] Does not change [member master_volume].
+		</member>
+		<member name="sample_pitch" type="float" setter="set_sample_pitch" getter="get_sample_pitch" default="0.0">
+			Sets the pitch of the sample additionally to [member pitch].
+		</member>
+		<member name="volume" type="float" setter="set_volume" getter="get_volume" default="1.0">
+			Sets the note volume. This is multiplied with [member master_volume] to be used as the output volume.
+		</member>
+		<member name="volume_slide" type="int" setter="set_volume_slide" getter="get_volume_slide" default="0">
+			Sets the number of [i]ticks[/i] in which [member volume] changes to a new value.
+		</member>
+		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
+			Sets the waveform. Also sets [member master_volume] accordingly (see [enum Waveform]) if [member master_volume] is not set yet.
+			Setting a waveform mutes [member note].
+			The default is [constant WAVEFORM_SQUARE].
+		</member>
+	</members>
+	<constants>
+		<constant name="WAVEFORM_SQUARE" value="0" enum="Waveform">
+			A square wave with 16 phases. The duty cycle (number of high amplitudes) can be set with [member duty_cycle]. Has a default [member master_volume] of [code]0.15[/code].
+		</constant>
+		<constant name="WAVEFORM_TRIANGLE" value="1" enum="Waveform">
+			A triangle wave with 32 phases. Has a default [member master_volume] of [code]0.3[/code].
+		</constant>
+		<constant name="WAVEFORM_NOISE" value="2" enum="Waveform">
+			Generates noise using a 16-bit random generator. Looks like a square wave but with random low or high amplitudes. Has a default [member master_volume] of [code]0.15[/code].
+		</constant>
+		<constant name="WAVEFORM_SAWTOOTH" value="3" enum="Waveform">
+			A sawtooth wave with 7 phases. Has a default [member master_volume] of [code]0.15[/code].
+		</constant>
+		<constant name="WAVEFORM_SINE" value="4" enum="Waveform">
+			A sine wave with 32 phases. Has a default [member master_volume] of [code]0.3[/code].
+		</constant>
+		<constant name="WAVEFORM_CUSTOM" value="5" enum="Waveform">
+			Set when a [member custom_waveform] is set. Cannot be set directly. Has a default [member master_volume] of [code]0.15[/code].
+		</constant>
+		<constant name="WAVEFORM_SAMPLE" value="6" enum="Waveform">
+			Set when [member sample] is set. Cannot be set directly. Has a default [member master_volume] of [code]0.3[/code].
+		</constant>
+		<constant name="NOTE_C_0" value="0" enum="Note">
+			Note C on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_C_SH_0" value="1" enum="Note">
+			Note C# on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_D_0" value="2" enum="Note">
+			Note D on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_D_SH_0" value="3" enum="Note">
+			Note D# on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_E_0" value="4" enum="Note">
+			Note E on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_F_0" value="5" enum="Note">
+			Note F on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_F_SH_0" value="6" enum="Note">
+			Note F# on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_G_0" value="7" enum="Note">
+			Note G# on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_G_SH_0" value="8" enum="Note">
+			Note G on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_A_0" value="9" enum="Note">
+			Note A on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_A_SH_0" value="10" enum="Note">
+			Note A# on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_B_0" value="11" enum="Note">
+			Note B on octave [code]0[/code].
+		</constant>
+		<constant name="NOTE_C_1" value="12" enum="Note">
+			Note C on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_C_SH_1" value="13" enum="Note">
+			Note C# on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_D_1" value="14" enum="Note">
+			Note D on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_D_SH_1" value="15" enum="Note">
+			Note D# on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_E_1" value="16" enum="Note">
+			Note E on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_F_1" value="17" enum="Note">
+			Note F on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_F_SH_1" value="18" enum="Note">
+			Note F# on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_G_1" value="19" enum="Note">
+			Note G on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_G_SH_1" value="20" enum="Note">
+			Note G# on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_A_1" value="21" enum="Note">
+			Note A on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_A_SH_1" value="22" enum="Note">
+			Note A# on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_B_1" value="23" enum="Note">
+			Note B on octave [code]1[/code].
+		</constant>
+		<constant name="NOTE_C_2" value="24" enum="Note">
+			Note C on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_C_SH_2" value="25" enum="Note">
+			Note C on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_D_2" value="26" enum="Note">
+			Note D on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_D_SH_2" value="27" enum="Note">
+			Note D# on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_E_2" value="28" enum="Note">
+			Note E on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_F_2" value="29" enum="Note">
+			Note F on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_F_SH_2" value="30" enum="Note">
+			Note F# on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_G_2" value="31" enum="Note">
+			Note G on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_G_SH_2" value="32" enum="Note">
+			Note G# on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_A_2" value="33" enum="Note">
+			Note A on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_A_SH_2" value="34" enum="Note">
+			Note A# on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_B_2" value="35" enum="Note">
+			Note B on octave [code]2[/code].
+		</constant>
+		<constant name="NOTE_C_3" value="36" enum="Note">
+			Note C on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_C_SH_3" value="37" enum="Note">
+			Note C on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_D_3" value="38" enum="Note">
+			Note C# on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_D_SH_3" value="39" enum="Note">
+			Note D# on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_E_3" value="40" enum="Note">
+			Note E on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_F_3" value="41" enum="Note">
+			Note F on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_F_SH_3" value="42" enum="Note">
+			Note F# on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_G_3" value="43" enum="Note">
+			Note G on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_G_SH_3" value="44" enum="Note">
+			Note G# on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_A_3" value="45" enum="Note">
+			Note A on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_A_SH_3" value="46" enum="Note">
+			Note A# on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_B_3" value="47" enum="Note">
+			Note B on octave [code]3[/code].
+		</constant>
+		<constant name="NOTE_C_4" value="48" enum="Note">
+			Note C on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_C_SH_4" value="49" enum="Note">
+			Note C# on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_D_4" value="50" enum="Note">
+			Note D on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_D_SH_4" value="51" enum="Note">
+			Note D# on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_E_4" value="52" enum="Note">
+			Note E on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_F_4" value="53" enum="Note">
+			Note F on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_F_SH_4" value="54" enum="Note">
+			Note F# on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_G_4" value="55" enum="Note">
+			Note G on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_G_SH_4" value="56" enum="Note">
+			Note G# on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_A_4" value="57" enum="Note">
+			Note A on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_A_SH_4" value="58" enum="Note">
+			Note A# on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_B_4" value="59" enum="Note">
+			Note B on octave [code]4[/code].
+		</constant>
+		<constant name="NOTE_C_5" value="60" enum="Note">
+			Note C on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_C_SH_5" value="61" enum="Note">
+			Note C# on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_D_5" value="62" enum="Note">
+			Note D on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_D_SH_5" value="63" enum="Note">
+			Note D# on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_E_5" value="64" enum="Note">
+			Note E on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_F_5" value="65" enum="Note">
+			Note F on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_F_SH_5" value="66" enum="Note">
+			Note F# on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_G_5" value="67" enum="Note">
+			Note G on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_G_SH_5" value="68" enum="Note">
+			Note G# on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_A_5" value="69" enum="Note">
+			Note A on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_A_SH_5" value="70" enum="Note">
+			Note A# on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_B_5" value="71" enum="Note">
+			Note B on octave [code]5[/code].
+		</constant>
+		<constant name="NOTE_C_6" value="72" enum="Note">
+			Note C on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_C_SH_6" value="73" enum="Note">
+			Note C# on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_D_6" value="74" enum="Note">
+			Note D on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_D_SH_6" value="75" enum="Note">
+			Note D# on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_E_6" value="76" enum="Note">
+			Note E on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_F_6" value="77" enum="Note">
+			Note F on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_F_SH_6" value="78" enum="Note">
+			Note F# on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_G_6" value="79" enum="Note">
+			Note G on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_G_SH_6" value="80" enum="Note">
+			Note G# on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_A_6" value="81" enum="Note">
+			Note A on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_A_SH_6" value="82" enum="Note">
+			Note A# on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_B_6" value="83" enum="Note">
+			Note B on octave [code]6[/code].
+		</constant>
+		<constant name="NOTE_C_7" value="84" enum="Note">
+			Note C on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_C_SH_7" value="85" enum="Note">
+			Note C# on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_D_7" value="86" enum="Note">
+			Note D on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_D_SH_7" value="87" enum="Note">
+			Note D# on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_E_7" value="88" enum="Note">
+			Note E on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_F_7" value="89" enum="Note">
+			Note F on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_F_SH_7" value="90" enum="Note">
+			Note F# on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_G_7" value="91" enum="Note">
+			Note G on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_G_SH_7" value="92" enum="Note">
+			Note G on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_A_7" value="93" enum="Note">
+			Note A on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_A_SH_7" value="94" enum="Note">
+			Note A# on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_B_7" value="95" enum="Note">
+			Note B on octave [code]7[/code].
+		</constant>
+		<constant name="NOTE_C_8" value="96" enum="Note">
+			Note C on octave [code]8[/code].
+		</constant>
+		<constant name="NOTE_RELEASE" value="-1" enum="Note">
+			Releases [member note]. Has the same effect as calling [method release].
+		</constant>
+		<constant name="NOTE_MUTE" value="-2" enum="Note">
+			Mutes [member note] immediately. Has the same effect as calling [method mute].
+			Sets [member note] to [constant NOTE_RELEASE].
+		</constant>
+		<constant name="ARPEGGIO_MAX" value="8">
+			Maximum number of arpeggio notes.
+		</constant>
+	</constants>
+</class>

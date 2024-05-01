@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitInterpreter" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Executes byte code generated with [BlipKitAssembler].
+	</brief_description>
+	<description>
+		Executes byte code generated with [BlipKitAssembler] to modify properties of a [BlipKitTrack].
+		[b]Example:[/b] Play instructions:
+		[codeblocks]
+		[gdscript]
+		# Create the interpreter.
+		var interp := BlipKitInterpreter.new()
+
+		# Get the byte code from a [BlipKitAssembler].
+		var byte_code := assem.get_byte_code()
+
+		# Load the byte code.
+		interp.load_byte_code(byte_code)
+
+		# Add a divider and run the interpreter on the track.
+		track.add_divider(1, func () -&gt; int:
+		    return interp.advance(track)
+		)
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="advance">
+			<return type="int" />
+			<param index="0" name="track" type="BlipKitTrack" />
+			<description>
+				Runs the interpreter and executes instructions on [param track] until a [constant BlipKitAssembler.OP_TICK] or [constant BlipKitAssembler.OP_STEP] instruction is encountered, or no more instructions are available.
+				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
+				Returns [code]0[/code] if no more instructions are available.
+				Returns [code]-1[/code] if an error occured. In this case, [method get_state] returns the state and [method get_error_message] returns the error message.
+			</description>
+		</method>
+		<method name="get_error_message" qualifiers="const">
+			<return type="String" />
+			<description>
+				Returns the last error message.
+				Returns an empty string if no error occurred.
+			</description>
+		</method>
+		<method name="get_instrument" qualifiers="const">
+			<return type="BlipKitInstrument" />
+			<param index="0" name="slot" type="int" />
+			<description>
+				Returns the instrument in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+				Returns [code]null[/code] if no instrument is set in [param slot].
+			</description>
+		</method>
+		<method name="get_sample" qualifiers="const">
+			<return type="BlipKitSample" />
+			<param index="0" name="slot" type="int" />
+			<description>
+				Returns the sample in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+				Returns [code]null[/code] if no sample is set in [param slot].
+			</description>
+		</method>
+		<method name="get_state" qualifiers="const">
+			<return type="int" enum="BlipKitInterpreter.State" />
+			<description>
+				Returns the current execution state.
+			</description>
+		</method>
+		<method name="get_waveform" qualifiers="const">
+			<return type="BlipKitWaveform" />
+			<param index="0" name="slot" type="int" />
+			<description>
+				Returns the waveform in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+				Returns [code]null[/code] if no waveform is set in [param slot].
+			</description>
+		</method>
+		<method name="load_byte_code">
+			<return type="bool" />
+			<param index="0" name="byte_code" type="BlipKitBytecode" />
+			<param index="1" name="start_label" type="String" default="&quot;&quot;" />
+			<description>
+				Sets the byte code to interpret and resets all registers and errors.
+				If [param start_label] is not empty, starts executing byte code from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
+				Returns [code]false[/code] if the byte code is not valid or the label does not exist. The error message can be get with [method get_error_message].
+			</description>
+		</method>
+		<method name="reset">
+			<return type="void" />
+			<param index="0" name="start_label" type="String" default="&quot;&quot;" />
+			<description>
+				Resets the instruction pointer to the beginning of the byte code, and resets all registers and errors. This does not clear instrument, waveform or sample slots.
+				If [param start_label] is not empty, starts executing byte code from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
+				[b]Note:[/b] This does not reset [BlipKitTrack]. Call [method BlipKitTrack.reset] to reset the corresponding track.
+			</description>
+		</method>
+		<method name="set_instrument">
+			<return type="void" />
+			<param index="0" name="slot" type="int" />
+			<param index="1" name="instrument" type="BlipKitInstrument" />
+			<description>
+				Sets the instrument in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+			</description>
+		</method>
+		<method name="set_sample">
+			<return type="void" />
+			<param index="0" name="slot" type="int" />
+			<param index="1" name="sample" type="BlipKitSample" />
+			<description>
+				Sets the sample in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+			</description>
+		</method>
+		<method name="set_waveform">
+			<return type="void" />
+			<param index="0" name="slot" type="int" />
+			<param index="1" name="waveform" type="BlipKitWaveform" />
+			<description>
+				Sets the waveform in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="step_ticks" type="int" setter="set_step_ticks" getter="get_step_ticks" default="24">
+			The number of [i]ticks[/i] per [constant BlipKitAssembler.OP_STEP] instruction. The value is clamped between [code]1[/code] and [code]65535[/code].
+		</member>
+	</members>
+	<constants>
+		<constant name="OK_RUNNING" value="0" enum="State">
+			More instructions are available to execute.
+		</constant>
+		<constant name="OK_FINISHED" value="1" enum="State">
+			There are no more instructions to execute.
+		</constant>
+		<constant name="ERR_INVALID_BINARY" value="2" enum="State">
+			The byte code is not valid.
+		</constant>
+		<constant name="ERR_INVALID_OPCODE" value="3" enum="State">
+			An invalid opcode was encountered.
+		</constant>
+		<constant name="ERR_INVALID_LABEL" value="4" enum="State">
+			A label with that name does not exist.
+		</constant>
+		<constant name="ERR_STACK_OVERFLOW" value="5" enum="State">
+			A stack overflow occurred.
+		</constant>
+		<constant name="ERR_STACK_UNDERFLOW" value="6" enum="State">
+			A stack underflow occurred.
+		</constant>
+		<constant name="STACK_SIZE_MAX" value="16">
+			The maximum function call depth.
+		</constant>
+		<constant name="SLOT_COUNT" value="256">
+			The number of slots for instruments and waveforms.
+		</constant>
+		<constant name="STEP_TICKS_DEFAULT" value="24">
+			Default value of number of ticks per step instruction.
+		</constant>
+	</constants>
+</class>

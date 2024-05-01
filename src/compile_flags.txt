@@ -1,0 +1,9 @@
+-std=c++20
+-I
+../vendor/godot-cpp/include
+-I
+../vendor/godot-cpp/gdextension
+-I
+../vendor/godot-cpp/gen/include
+-I
+../vendor/BlipKit/src

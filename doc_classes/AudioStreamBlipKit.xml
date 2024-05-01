@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AudioStreamBlipKit" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		An audio stream used to attach and play audio generated from [BlipKitTrack]s.
+	</brief_description>
+	<description>
+		When the stream is playing, its internal master clock is ticking at a rate of 240 [i]ticks[/i] per second. Every [i]tick[/i] updates effects and dividers of attached [BlipKitTrack]s, and envelope values of [BlipKitInstrument]s.
+		This resource reuses the same [AudioStreamBlipKitPlayback] instance between playbacks.
+		The stream audio is always resampled to 44100 Hz.
+		[b]Note:[/b] If an [AudioStreamBlipKit] resource is freed, all attached [BlipKitTrack]s are detached.
+	</description>
+	<tutorials>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/power_on.md</link>
+	</tutorials>
+	<methods>
+		<method name="call_synced">
+			<return type="void" />
+			<param index="0" name="callback" type="Callable" />
+			<description>
+				Calls the callback synced to the audio thread. This can be used to ensure that multiple modifications are executed on the same time. (For example, ensuring that multiple [BlipKitTrack]s are attached at the same time with [method BlipKitTrack.attach].)
+				For updating properties of individual [BlipKitTrack]s over time, consider using [method BlipKitTrack.add_divider].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="resource_local_to_scene" type="bool" setter="set_local_to_scene" getter="is_local_to_scene" overrides="Resource" default="true" />
+	</members>
+</class>

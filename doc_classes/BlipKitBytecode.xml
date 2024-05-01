@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitBytecode" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A [Resource] used to save byte code gererated with [BlipKitAssembler].
+	</brief_description>
+	<description>
+		Can be saved as `.blipc` files.
+		[b]Example:[/b] Save byte code:
+		[codeblocks]
+		[gdscript]
+		# Get byte code from a BlipKitAssembler.
+		var bytecode := assem.get_byte_code()
+
+		# Save byte code to a file.
+		ResourceSaver.save(bytecode, "res://bytecode.blipc")
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<tutorials>
+		<link title="Format description of .blipc files">https://github.com/detomon/godot-blipkit/blob/master/doc/blipc_file.md</link>
+	</tutorials>
+	<methods>
+		<method name="find_label" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="name" type="String" />
+			<description>
+				Returns the index of a label with [param name].
+				Returns [code]-1[/code] if no label with [name] exists.
+			</description>
+		</method>
+		<method name="get_byte_array" qualifiers="const">
+			<return type="PackedByteArray" />
+			<description>
+				Returns the byte code.
+			</description>
+		</method>
+		<method name="get_code_section_offset" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the byte offset of the code section.
+			</description>
+		</method>
+		<method name="get_code_section_size" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the size in bytes the code section.
+			</description>
+		</method>
+		<method name="get_error_message" qualifiers="const">
+			<return type="String" />
+			<description>
+				Returns the error message when loading the byte code fails.
+			</description>
+		</method>
+		<method name="get_label_count" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the number of labels.
+			</description>
+		</method>
+		<method name="get_label_name" qualifiers="const">
+			<return type="String" />
+			<param index="0" name="label_index" type="int" />
+			<description>
+				Returns the label name for the label with index [param label_index].
+			</description>
+		</method>
+		<method name="get_label_position" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="label_index" type="int" />
+			<description>
+				Returns the byte position for the label with index [param label_index] relative to the byte code section offset.
+			</description>
+		</method>
+		<method name="get_state" qualifiers="const">
+			<return type="int" enum="BlipKitBytecode.State" />
+			<description>
+				Returns [constant OK] on success.
+			</description>
+		</method>
+		<method name="has_label" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="name" type="String" />
+			<description>
+				Returns [code]true[/code] if the [param label] exists.
+			</description>
+		</method>
+		<method name="is_valid" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the byte code is valid.
+				Returns [code]false[/code] if the byte code is not valid. In this case, [method get_state] returns the state and [method get_error_message] returns the error message.
+			</description>
+		</method>
+	</methods>
+	<constants>
+		<constant name="OK" value="0" enum="State">
+			The byte code is loaded successfully.
+		</constant>
+		<constant name="ERR_INVALID_BINARY" value="1" enum="State">
+			The byte code is not valid.
+		</constant>
+		<constant name="ERR_UNSUPPORTED_VERSION" value="2" enum="State">
+			The byte code version is not supported.
+		</constant>
+		<constant name="VERSION" value="0">
+			The current supported byte code version.
+		</constant>
+	</constants>
+</class>

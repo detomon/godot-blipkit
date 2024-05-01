@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitSample" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Defines a sample consisting of frames values.
+	</brief_description>
+	<description>
+		[codeblocks]
+		[gdscript]
+		# Load WAV from resource.
+		var wav := preload("res://sample.wav")
+		var sample := BlipKitSample.create_from_wav(wav)
+		# Set sample to track.
+		track.sample = sample
+		# Play sample.
+		track.note = BlipKitTrack.NOTE_C_4
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="create_with_wav" qualifiers="static">
+			<return type="BlipKitSample" />
+			<param index="0" name="wav" type="AudioStreamWAV" />
+			<param index="1" name="normalize" type="bool" default="false" />
+			<param index="2" name="amplitude" type="float" default="1.0" />
+			<description>
+				Creates a [BlipKitSample] from a [AudioStreamWAV]. Stereo channels are merged into a single mono channel.
+				If [param normalize] is [code]true[/code], frames values are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				The sample rate of [AudioStreamWAV] is expected to be 44100 Hz, as the internal sample rate of [AudioStreamBlipKit] is fixed to this value. When playing the sample with [constant BlipKitTrack.NOTE_C_4], it is played with it's original speed.
+				Copies [member AudioStreamWAV.loop_mode], [member AudioStreamWAV.loop_begin], and [member AudioStreamWAV.loop_end] into [member repeat_mode], [member sustain_offset], and [member sustain_end], respectively.
+				[b]Note:[/b] Only supports the formats [constant AudioStreamWAV.FORMAT_8_BITS] and [constant AudioStreamWAV.FORMAT_16_BITS].
+			</description>
+		</method>
+		<method name="get_frames" qualifiers="const">
+			<return type="PackedFloat32Array" />
+			<description>
+				Returns the sample frames as values between [code]-1.0[/code] and [code]+1.0[/code].
+			</description>
+		</method>
+		<method name="is_valid" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the sample was initialized with frames.
+			</description>
+		</method>
+		<method name="set_frames">
+			<return type="void" />
+			<param index="0" name="frames" type="PackedFloat32Array" />
+			<param index="1" name="normalize" type="bool" default="false" />
+			<param index="2" name="amplitude" type="float" default="1.0" />
+			<description>
+				Set the sample frames. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				[b]Note:[/b] Only supports a mono channel.
+			</description>
+		</method>
+		<method name="size" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the number of frames in the sample.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="repeat_mode" type="int" setter="set_repeat_mode" getter="get_repeat_mode" enum="BlipKitSample.RepeatMode" default="0">
+			Sets the sample repeat mode.
+		</member>
+		<member name="sustain_end" type="int" setter="set_sustain_end" getter="get_sustain_end" default="0">
+			Sets the end of the sustain range in samples.
+		</member>
+		<member name="sustain_offset" type="int" setter="set_sustain_offset" getter="get_sustain_offset" default="0">
+			Sets the beginning of the sustain range in samples.
+		</member>
+	</members>
+	<constants>
+		<constant name="REPEAT_NONE" value="0" enum="RepeatMode">
+			Does not repeat the sample.
+		</constant>
+		<constant name="REPEAT_FORWARD" value="1" enum="RepeatMode">
+			Repeats the sample forward.
+		</constant>
+		<constant name="REPEAT_PING_PONG" value="2" enum="RepeatMode">
+			Repeats the sample forward. Changes the direction if it reaches the end or the beginning again.
+		</constant>
+		<constant name="REPEAT_BACKWARD" value="3" enum="RepeatMode">
+			Repeats the sample backward.
+		</constant>
+	</constants>
+</class>

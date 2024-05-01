@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitInstrument" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Changes parameters of a [BlipKitTrack] while a note is playing or after it is released.
+	</brief_description>
+	<description>
+		[codeblocks]
+		[gdscript]
+		var instrument := BlipKitInstrument.new()
+		instrument.set_adsr(4, 16, 0.75, 36)
+		instrument.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [12, 0], [], 1, 1)
+
+		var track := BlipKitTrack.new()
+		track.instrument = instrument
+		track.note = BlipKitTrack.NOTE_A_2
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="clear_envelope">
+			<return type="void" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Removes the envelope with [param type].
+			</description>
+		</method>
+		<method name="create_with_adsr" qualifiers="static">
+			<return type="BlipKitInstrument" />
+			<param index="0" name="attack" type="int" />
+			<param index="1" name="decay" type="int" />
+			<param index="2" name="sustain" type="float" />
+			<param index="3" name="release" type="int" />
+			<description>
+				Creates an instrument and initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope (see [method set_adsr]).
+			</description>
+		</method>
+		<method name="get_envelope_steps" qualifiers="const">
+			<return type="PackedInt32Array" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Returns the steps for the envelope with [param type].
+				Returns an empty array if the envelope is not set or has no steps.
+			</description>
+		</method>
+		<method name="get_envelope_sustain_length" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Returns the length of the sustain cycle.
+				Returns [code]0[/code] if the envelope is not set.
+			</description>
+		</method>
+		<method name="get_envelope_sustain_offset" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Returns the offset of the sustain cycle.
+				Returns [code]0[/code] if the envelope is not set.
+			</description>
+		</method>
+		<method name="get_envelope_values" qualifiers="const">
+			<return type="PackedFloat32Array" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Returns the values for the envelope with [param type].
+				Returns an empty array if the envelope is not set.
+			</description>
+		</method>
+		<method name="has_envelope" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Returns [code]true[/code] if the envelope with [param type] was set.
+			</description>
+		</method>
+		<method name="set_adsr">
+			<return type="void" />
+			<param index="0" name="attack" type="int" />
+			<param index="1" name="decay" type="int" />
+			<param index="2" name="sustain" type="float" />
+			<param index="3" name="release" type="int" />
+			<description>
+				Initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope. This first raises the volume to [code]1.0[/code] within [param attack] [i]ticks[/i], then lowers it to [param sustain] within [param decay] [i]ticks[/i]. This value is kept until the note is released, after which the volume is lowered to [code]0.0[/code] within [param release] [i]ticks[/i].
+				This corresponds to the following call:
+				[codeblocks]
+				[gdscript]
+				set_envelope(BlipKitInstrument.ENVELOPE_VOLUME,
+				    [1.0, sustain, sustain, 0.0],
+				    [attack, decay, 240, release],
+				    2, 1)
+				[/gdscript]
+				[/codeblocks]
+			</description>
+		</method>
+		<method name="set_envelope">
+			<return type="void" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<param index="1" name="values" type="PackedFloat32Array" />
+			<param index="2" name="steps" type="PackedInt32Array" default="PackedInt32Array()" />
+			<param index="3" name="sustain_offset" type="int" default="-1" />
+			<param index="4" name="sustain_length" type="int" default="0" />
+			<description>
+				Sets the envelope with [param type]. [param values] defines the individual values for each phase.
+				If [param steps] is not empty, it has to have the same size as [param values]. In this case, [param values] are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in [param steps] as number of [i]ticks[/i]. Values in [param steps] are allowed to be [code]0[/code] to instantly change a value.
+				If [param steps] is empty, [param values] is used as a sequence and values are changed stepwise. In this case, the duration of each phase is defined by [member BlipKitTrack.instrument_divider].
+				The parameters [param sustain_offset] and [param sustain_length] define the range of the sustain cycle which is repeated while the note is playing. If [param sustain_offset] is negative, the offset is relative to the `values.size() + 1`.
+			</description>
+		</method>
+	</methods>
+	<constants>
+		<constant name="ENVELOPE_VOLUME" value="0" enum="EnvelopeType">
+			Changes the output value of [member BlipKitTrack.volume] by multiplying it with values from the envelope.
+		</constant>
+		<constant name="ENVELOPE_PANNING" value="1" enum="EnvelopeType">
+			Changes the output value of [member BlipKitTrack.panning] by adding values from the envelope.
+		</constant>
+		<constant name="ENVELOPE_PITCH" value="2" enum="EnvelopeType">
+			Changes the output value of [member BlipKitTrack.note] by adding values from the envelope.
+		</constant>
+		<constant name="ENVELOPE_DUTY_CYCLE" value="3" enum="EnvelopeType">
+			Changes the output value of [member BlipKitTrack.duty_cycle] by overriding it with values from the envelope.
+			If an envelope value is [code]0[/code], [member BlipKitTrack.duty_cycle] is not changed.
+			[b]Note:[/b] Values are cast to integers and clamped between [code]0[/code] and [code]15[/code].
+		</constant>
+	</constants>
+</class>

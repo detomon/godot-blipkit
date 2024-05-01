@@ -1,0 +1,29 @@
+# Godot
+*.gen.*
+.godot/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Binaries
+*.o
+*.os
+*.so
+*.obj
+*.bc
+*.pyc
+*.dblite
+*.pdb
+*.lib
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
+*.idb
+*.exp
+
+# Editors
+.vscode/*
+.idea/
