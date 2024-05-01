@@ -3,7 +3,8 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "blipkit_context.hpp"
+#include "audio_stream_blipkit.hpp"
+#include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 
 using namespace detomon::BlipKit;
@@ -14,9 +15,10 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	GDREGISTER_CLASS(BlipKitContext);
+	GDREGISTER_CLASS(AudioStreamBlipKit);
+	GDREGISTER_CLASS(AudioStreamBlipKitPlayback);
+	GDREGISTER_CLASS(BlipKitInstrument);
 	GDREGISTER_CLASS(BlipKitTrack);
-
 }
 
 static void uninitialize_module(ModuleInitializationLevel p_level) {
