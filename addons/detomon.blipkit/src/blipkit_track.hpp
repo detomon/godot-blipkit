@@ -183,6 +183,8 @@ public:
 	// This is the same as setting set_note(BK_NOTE_MUTE)
 	void mute();
 
+	void reset();
+
 };
 
 }

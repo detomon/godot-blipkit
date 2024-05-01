@@ -14,8 +14,6 @@ Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
 	playback.instantiate();
 	playback->stream = Ref<AudioStreamBlipKit>(this);
 
-	WARN_PRINT("_instantiate_playback");
-
 	return playback;
 }
 
@@ -35,14 +33,10 @@ AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
 	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
 
-	WARN_PRINT("AudioStreamBlipKitPlayback");
-
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, "Failed to initialize BKContext.");
 }
 
 AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
-	WARN_PRINT("~AudioStreamBlipKitPlayback");
-
 	active = false;
 	AudioServer::get_singleton()->lock();
 	BKDispose(&context);
@@ -54,12 +48,10 @@ void AudioStreamBlipKitPlayback::_bind_methods() {
 }
 
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {
-	WARN_PRINT("_start");
 	active = true;
 }
 
 void AudioStreamBlipKitPlayback::_stop() {
-	WARN_PRINT("_stop");
 	active = false;
 
 	AudioServer::get_singleton()->lock();
@@ -69,12 +61,6 @@ void AudioStreamBlipKitPlayback::_stop() {
 
 bool AudioStreamBlipKitPlayback::_is_playing() const {
 	return active;
-}
-
-void AudioStreamBlipKitPlayback::_seek(double p_position) {
-	char buf[1024];
-	snprintf(buf, 1024, "_seek %lf", p_position);
-	WARN_PRINT(buf);
 }
 
 int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) {

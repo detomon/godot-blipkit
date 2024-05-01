@@ -43,6 +43,5 @@ public:
 	void _start(double p_from_pos) override;
 	void _stop() override;
 	bool _is_playing() const override;
-	void _seek(double p_position) override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 };
