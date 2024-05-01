@@ -3,7 +3,8 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "context.hpp"
+#include "blipkit_context.hpp"
+#include "blipkit_track.hpp"
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -13,7 +14,9 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	GDREGISTER_CLASS(Context);
+	GDREGISTER_CLASS(BlipKitContext);
+	GDREGISTER_CLASS(BlipKitTrack);
+
 }
 
 static void uninitialize_module(ModuleInitializationLevel p_level) {
