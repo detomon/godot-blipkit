@@ -249,23 +249,43 @@ void BlipKitTrack::set_portamento(int p_portamento) {
 	AudioServer::get_singleton()->unlock();
 }
 
-void BlipKitTrack::set_tremolo(int p_ticks, float p_delta) {
+void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 	p_delta = MAX(p_delta, 0);
+	p_slide_ticks = MAX(p_slide_ticks, 0);
 	BKInt delta = (BKInt)(p_delta * (real_t)BK_MAX_VOLUME);
-	BKInt values[2] = { p_ticks, delta };
+	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioServer::get_singleton()->lock();
 	BKInt result = BKSetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
 	AudioServer::get_singleton()->unlock();
 }
 
-void BlipKitTrack::set_vibrato(int p_ticks, float p_delta) {
+void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
 	p_delta = CLAMP(p_delta, -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE);
+	p_slide_ticks = MAX(p_slide_ticks, 0);
 	BKInt delta = (BKInt)(p_delta * (real_t)BK_FINT20_UNIT);
-	BKInt values[2] = { p_ticks, delta };
+	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioServer::get_singleton()->lock();
 	BKInt result = BKSetPtr(&track, BK_EFFECT_VIBRATO, values, sizeof(values));
+	AudioServer::get_singleton()->unlock();
+}
+
+int BlipKitTrack::get_effect_divider() const {
+	BKInt value = 0;
+
+	AudioServer::get_singleton()->lock();
+	BKGetAttr(&track, BK_EFFECT_DIVIDER, &value);
+	AudioServer::get_singleton()->unlock();
+
+	return value;
+}
+
+void BlipKitTrack::set_effect_divider(int p_effect_divider) {
+	p_effect_divider = MAX(0, p_effect_divider);
+
+	AudioServer::get_singleton()->lock();
+	BKSetAttr(&track, BK_EFFECT_DIVIDER, p_effect_divider);
 	AudioServer::get_singleton()->unlock();
 }
 
@@ -329,6 +349,24 @@ void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
 
 	AudioServer::get_singleton()->lock();
 	BKSetPtr(&track, BK_INSTRUMENT, bk_instrument, sizeof(instrument));
+	AudioServer::get_singleton()->unlock();
+}
+
+int BlipKitTrack::get_instrument_divider() const {
+	BKInt value = 0;
+
+	AudioServer::get_singleton()->lock();
+	BKGetAttr(&track, BK_INSTRUMENT_DIVIDER, &value);
+	AudioServer::get_singleton()->unlock();
+
+	return value;
+}
+
+void BlipKitTrack::set_instrument_divider(int p_instrument_divider) {
+	p_instrument_divider = MAX(0, p_instrument_divider);
+
+	AudioServer::get_singleton()->lock();
+	BKSetAttr(&track, BK_INSTRUMENT_DIVIDER, p_instrument_divider);
 	AudioServer::get_singleton()->unlock();
 }
 
@@ -406,8 +444,10 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_panning_slide"), &BlipKitTrack::get_panning_slide);
 	ClassDB::bind_method(D_METHOD("set_portamento"), &BlipKitTrack::set_portamento);
 	ClassDB::bind_method(D_METHOD("get_portamento"), &BlipKitTrack::get_portamento);
-	ClassDB::bind_method(D_METHOD("set_tremolo", "ticks", "delta"), &BlipKitTrack::set_tremolo);
-	ClassDB::bind_method(D_METHOD("set_vibrato", "ticks", "delta"), &BlipKitTrack::set_vibrato);
+	ClassDB::bind_method(D_METHOD("set_tremolo", "ticks", "delta", "slide_ticks"), &BlipKitTrack::set_tremolo, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("set_vibrato", "ticks", "delta", "slide_ticks"), &BlipKitTrack::set_vibrato, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("set_effect_divider"), &BlipKitTrack::set_effect_divider);
+	ClassDB::bind_method(D_METHOD("get_effect_divider"), &BlipKitTrack::get_effect_divider);
 
 	ClassDB::bind_method(D_METHOD("set_arpeggio"), &BlipKitTrack::set_arpeggio);
 	ClassDB::bind_method(D_METHOD("get_arpeggio"), &BlipKitTrack::get_arpeggio);
@@ -416,10 +456,13 @@ void BlipKitTrack::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_instrument"), &BlipKitTrack::set_instrument);
 	ClassDB::bind_method(D_METHOD("get_instrument"), &BlipKitTrack::get_instrument);
+	ClassDB::bind_method(D_METHOD("set_instrument_divider"), &BlipKitTrack::set_instrument_divider);
+	ClassDB::bind_method(D_METHOD("get_instrument_divider"), &BlipKitTrack::get_instrument_divider);
+
 	ClassDB::bind_method(D_METHOD("set_custom_waveform"), &BlipKitTrack::set_custom_waveform);
 	ClassDB::bind_method(D_METHOD("get_custom_waveform"), &BlipKitTrack::get_custom_waveform);
 
-	ClassDB::bind_method(D_METHOD("attach", "context"), &BlipKitTrack::attach);
+	ClassDB::bind_method(D_METHOD("attach", "playback"), &BlipKitTrack::attach);
 	ClassDB::bind_method(D_METHOD("detach"), &BlipKitTrack::detach);
 	ClassDB::bind_method(D_METHOD("release"), &BlipKitTrack::release);
 	ClassDB::bind_method(D_METHOD("mute"), &BlipKitTrack::mute);
@@ -436,9 +479,11 @@ void BlipKitTrack::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "volume_slide"), "set_volume_slide", "get_volume_slide");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "panning_slide"), "set_panning_slide", "get_panning_slide");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "portamento"), "set_portamento", "get_portamento");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "effect_divider"), "set_effect_divider", "get_effect_divider");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "arpeggio"), "set_arpeggio", "get_arpeggio");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "arpeggio_divider"), "set_arpeggio_divider", "get_arpeggio_divider");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "instrument"), "set_instrument", "get_instrument");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "instrument_divider"), "set_instrument_divider", "get_instrument_divider");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "custom_waveform"), "set_custom_waveform", "get_custom_waveform");
 
 	BIND_ENUM_CONSTANT(WAVEFORM_SQUARE);

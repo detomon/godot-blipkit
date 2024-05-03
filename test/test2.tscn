@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://test/test_2.gd" id="1_c5qdp"]
 [ext_resource type="PackedScene" uid="uid://ds37q704hu4oh" path="res://visualizer/ring/ring.tscn" id="2_r32xf"]
-[ext_resource type="PackedScene" uid="uid://b0rhrccnhgycy" path="res://midi_input/midi_input.tscn" id="3_rf1fm"]
+[ext_resource type="Script" path="res://addons/detomon.blipkit/classes/midi_input.gd" id="3_y6xj0"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
 always_generate = true
@@ -36,9 +36,13 @@ environment = SubResource("Environment_vjgep")
 
 [node name="Visualizer" parent="." instance=ExtResource("2_r32xf")]
 unique_name_in_owner = true
-rotation = -2.51328
 
-[node name="MidiInput" parent="." instance=ExtResource("3_rf1fm")]
+[node name="MidiInput" type="Node" parent="."]
+script = ExtResource("3_y6xj0")
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 2.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -46,6 +50,10 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 8.0
 grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -67,11 +75,7 @@ layout_mode = 2
 max_value = 1.0
 step = 0.0
 
-[node name="Timer" type="Timer" parent="MarginContainer"]
-unique_name_in_owner = true
-wait_time = 6.0
-
 [connection signal="notes_changes" from="MidiInput" to="." method="_on_midi_input_notes_changes"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/RecordButton" to="." method="_on_record_button_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="timeout" from="MarginContainer/Timer" to="." method="_on_timer_timeout"]

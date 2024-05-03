@@ -5,9 +5,12 @@
 using namespace godot;
 
 void AudioStreamBlipKit::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
+	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
 	ClassDB::bind_method(D_METHOD("set_generate_always"), &AudioStreamBlipKit::set_generate_always);
 	ClassDB::bind_method(D_METHOD("is_always_generating"), &AudioStreamBlipKit::is_always_generating);
 
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", PROPERTY_HINT_RANGE, vformat("%d,%d,1", MIN_CLOCK_RATE, MAX_CLOCK_RATE)), "set_clock_rate", "get_clock_rate");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "always_generate"), "set_generate_always", "is_always_generating");
 }
 
@@ -18,8 +21,9 @@ String AudioStreamBlipKit::_to_string() const {
 Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
 	Ref<AudioStreamBlipKitPlayback> playback;
 	playback.instantiate();
-	playback->stream = Ref<AudioStreamBlipKit>(this);
+	playback->set_stream(Ref<AudioStreamBlipKit>(this));
 	playback->always_generate = always_generate;
+
 
 	return playback;
 }
@@ -36,18 +40,26 @@ bool AudioStreamBlipKit::_is_monophonic() const {
 	return true;
 }
 
+int AudioStreamBlipKit::get_clock_rate() {
+	return clock_rate;
+}
+
+void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
+	clock_rate = CLAMP(p_clock_rate, MIN_CLOCK_RATE, MAX_CLOCK_RATE);
+}
+
 bool AudioStreamBlipKit::is_always_generating() {
 	return always_generate;
 }
 
-void AudioStreamBlipKit::set_generate_always(bool value) {
-	always_generate = value;
+void AudioStreamBlipKit::set_generate_always(bool p_always_generate) {
+	always_generate = p_always_generate;
 }
 
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
-	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
 
+	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKContext: %s.", BKStatusGetName(result)));
 }
 
@@ -64,6 +76,16 @@ void AudioStreamBlipKitPlayback::_bind_methods() {
 
 String AudioStreamBlipKitPlayback::_to_string() const {
 	return "AudioStreamBlipKitPlayback";
+}
+
+void AudioStreamBlipKitPlayback::set_stream(Ref<AudioStreamBlipKit> p_stream) {
+	stream = p_stream;
+
+	int clock_rate = stream->get_clock_rate();
+	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / (real_t)clock_rate);
+
+	BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
 }
 
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {

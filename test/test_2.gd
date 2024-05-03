@@ -47,8 +47,17 @@ func _process(_delta: float) -> void:
 			item = _roll[_play_index]
 
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_accept"):
+		for note in _active_tracks:
+			var track: BlipKitTrack = _active_tracks[note]
+			track.set_tremolo(5, 0.75, 0)
+			track.set_tremolo(40, 0.75, 240)
+			track.set_vibrato(30, 0.1)
+
+
 func _init_track() -> void:
-	_instrument.set_envelope_adsr(3, 5, 0.7, 16)
+	_instrument.set_envelope_adsr(4, 8, 0.75, 16)
 
 
 func _attach(track: BlipKitTrack) -> void:
@@ -63,12 +72,12 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			if not track:
 				track = BlipKitTrack.new()
 				_attach(track)
-			#track.duty_cycle = 2
+			track.duty_cycle = 4
 			#track.set_tremolo(16, 0.2)
 			#track.arpeggio = [0, 12]
 			#track.arpeggio_divider = 8
 			track.instrument = _instrument
-			track.custom_waveform = _waveform
+			#track.custom_waveform = _waveform
 
 			_active_tracks[note] = track
 
@@ -82,7 +91,16 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 
 	for note in _active_tracks:
 		var track: BlipKitTrack = _active_tracks[note]
-		track.note = note
+
+		if note >= 12 and note < 24:
+			track.master_volume = 0.2
+			track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+			track.note = note
+
+		else:
+			track.master_volume = 0.1
+			track.waveform = BlipKitTrack.WAVEFORM_SQUARE
+			track.note = note
 
 	if _active_tracks:
 		_visualizer.strength = 1.0
@@ -122,6 +140,7 @@ func _on_record_button_pressed() -> void:
 
 func _on_play_button_pressed() -> void:
 	_playing = true
+	_play_index = 0
 	_timer.start()
 
 	print(_roll)

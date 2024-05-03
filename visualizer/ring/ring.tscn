@@ -1,10 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://ds37q704hu4oh"]
+[gd_scene load_steps=9 format=3 uid="uid://ds37q704hu4oh"]
 
 [ext_resource type="Script" path="res://visualizer/ring/ring.gd" id="1_4mins"]
-[ext_resource type="Gradient" uid="uid://boltxrm3vstqn" path="res://visualizer/rainbow.tres" id="2_1kx0r"]
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_at6uj"]
-blend_mode = 1
 
 [sub_resource type="Curve" id="Curve_nrr2f"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.752941, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -13,8 +9,13 @@ point_count = 3
 [sub_resource type="CurveTexture" id="CurveTexture_oqtci"]
 curve = SubResource("Curve_nrr2f")
 
+[sub_resource type="Gradient" id="Gradient_m853g"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.198238, 0.528634, 1)
+colors = PackedColorArray(1, 0, 0, 1, 1, 0.631373, 0, 1, 0, 0.858824, 0.0627451, 1, 0, 0.827451, 0.988235, 1)
+
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_pohv7"]
-gradient = ExtResource("2_1kx0r")
+gradient = SubResource("Gradient_m853g")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7whhx"]
 lifetime_randomness = 0.2
@@ -30,6 +31,7 @@ radial_velocity_min = 261.18
 radial_velocity_max = 416.86
 gravity = Vector3(0, 0, 0)
 attractor_interaction_enabled = false
+scale_min = 0.25
 color = Color(1.5, 1.5, 1.5, 1)
 color_ramp = SubResource("GradientTexture1D_pohv7")
 alpha_curve = SubResource("CurveTexture_oqtci")
@@ -41,8 +43,8 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_it08a"]
 gradient = SubResource("Gradient_577p4")
-width = 8
-height = 8
+width = 16
+height = 16
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.5, 0)
@@ -50,15 +52,13 @@ metadata/_snap_enabled = true
 
 [node name="Visualizer" type="Node2D"]
 position = Vector2(600, 384)
-rotation = 3.76991
 script = ExtResource("1_4mins")
 
 [node name="Particles" type="GPUParticles2D" parent="."]
 unique_name_in_owner = true
-material = SubResource("CanvasItemMaterial_at6uj")
 emitting = false
 amount = 2000
 process_material = SubResource("ParticleProcessMaterial_7whhx")
 texture = SubResource("GradientTexture2D_it08a")
 lifetime = 0.75
-randomness = 0.5
+fixed_fps = 60

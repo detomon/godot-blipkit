@@ -10,6 +10,10 @@ class AudioStreamBlipKit : public AudioStream {
 	GDCLASS(AudioStreamBlipKit, AudioStream);
 
 private:
+	static const int MIN_CLOCK_RATE = 1;
+	static const int MAX_CLOCK_RATE = 1200;
+
+	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	bool always_generate = false;
 
 protected:
@@ -23,8 +27,11 @@ public:
 	double _get_length() const override;
 	bool _is_monophonic() const override;
 
+	int get_clock_rate();
+	void set_clock_rate(int p_clock_rate);
+
 	bool is_always_generating();
-	void set_generate_always(bool value);
+	void set_generate_always(bool p_always_generate);
 };
 
 class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
@@ -32,7 +39,7 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	friend class AudioStreamBlipKit;
 
 private:
-	const int NUM_CHANNELS = 2;
+	static const int NUM_CHANNELS = 2;
 
 	Ref<AudioStreamBlipKit> stream;
 	bool active = false;
@@ -42,6 +49,8 @@ private:
 protected:
 	static void _bind_methods();
 	String _to_string() const;
+
+	void set_stream(Ref<AudioStreamBlipKit> p_stream);
 
 public:
 	AudioStreamBlipKitPlayback();

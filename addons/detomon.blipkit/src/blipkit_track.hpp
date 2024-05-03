@@ -167,8 +167,10 @@ public:
 	void set_panning_slide(int p_panning_slide);
 	int get_portamento() const;
 	void set_portamento(int p_portamento);
-	void set_tremolo(int p_ticks, float p_delta);
-	void set_vibrato(int p_ticks, float p_delta);
+	void set_tremolo(int p_ticks, float p_delta, int p_slide_ticks = 0);
+	void set_vibrato(int p_ticks, float p_delta, int p_slide_ticks = 0);
+	int get_effect_divider() const;
+	void set_effect_divider(int p_effect_divider);
 
 	PackedFloat32Array get_arpeggio() const;
 	void set_arpeggio(const PackedFloat32Array &p_arpeggio);
@@ -177,6 +179,8 @@ public:
 
 	Ref<BlipKitInstrument> get_instrument();
 	void set_instrument(Ref<BlipKitInstrument> p_instrument);
+	int get_instrument_divider() const;
+	void set_instrument_divider(int p_instrument_divider);
 
 	Ref<BlipKitWaveform> get_custom_waveform();
 	void set_custom_waveform(Ref<BlipKitWaveform> p_waveform);

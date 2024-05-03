@@ -2,7 +2,7 @@
 import os
 import sys
 
-env = SConscript("godot-cpp/SConstruct")
+env = SConscript("vendor/godot-cpp/SConstruct")
 
 # For reference:
 # - CCFLAGS are compilation flags shared between C and C++
@@ -12,10 +12,11 @@ env = SConscript("godot-cpp/SConstruct")
 # - CPPDEFINES are for pre-processor defines
 # - LINKFLAGS are for linking flags
 
-# tweak this if you want to use different folders, or more folders, to store your source code in.
-env.Append(CPPPATH=["src/", "BlipKit/src/"])
+env.Append(CPPPATH=["src/", "vendor/BlipKit/src/"])
+env.Append(CFLAGS=["-Wno-shift-negative-value"])
+
 sources = Glob("src/*.cpp")
-sources = sources + Glob('BlipKit/src/*.c')
+sources = sources + Glob('vendor/BlipKit/src/*.c')
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
