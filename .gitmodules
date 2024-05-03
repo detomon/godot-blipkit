@@ -1,6 +1,6 @@
 [submodule "addons/detomon.blipkit/godot-cpp"]
-	path = addons/detomon.blipkit/vendor/godot-cpp
+	path = addons/detomon.blipkit/native/vendor/godot-cpp
 	url = git@github.com:godotengine/godot-cpp.git
 [submodule "addons/detomon.blipkit/BlipKit"]
-	path = addons/detomon.blipkit/vendor/BlipKit
+	path = addons/detomon.blipkit/native/vendor/BlipKit
 	url = git@github.com:detomon/BlipKit.git
