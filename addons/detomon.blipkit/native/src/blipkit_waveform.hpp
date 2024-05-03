@@ -30,4 +30,4 @@ public:
 	void set_frames(PackedFloat32Array p_frames);
 };
 
-}
+} // namespace detomon::BlipKit

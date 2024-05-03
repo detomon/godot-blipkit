@@ -17,9 +17,9 @@ private:
 
 protected:
 	enum Sequence {
-		SEQUENCE_PITCH      = BK_SEQUENCE_PITCH,
-		SEQUENCE_VOLUME     = BK_SEQUENCE_VOLUME,
-		SEQUENCE_PANNING    = BK_SEQUENCE_PANNING,
+		SEQUENCE_PITCH = BK_SEQUENCE_PITCH,
+		SEQUENCE_VOLUME = BK_SEQUENCE_VOLUME,
+		SEQUENCE_PANNING = BK_SEQUENCE_PANNING,
 		SEQUENCE_DUTY_CYCLE = BK_SEQUENCE_DUTY_CYCLE,
 	};
 
@@ -47,7 +47,6 @@ public:
 	void set_envelope_panning(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_envelope_duty_cycle(PackedInt32Array p_steps, PackedInt32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_envelope_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
-
 };
 
-}
+} // namespace detomon::BlipKit

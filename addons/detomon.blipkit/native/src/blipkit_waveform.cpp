@@ -46,7 +46,7 @@ void BlipKitWaveform::set_frames(PackedFloat32Array p_frames) {
 			max_value = MAX(max_value, ABS(frames[i]));
 		}
 
-		float* ptrw = frames.ptrw();
+		float *ptrw = frames.ptrw();
 		for (int i = 0; i < frames.size(); i++) {
 			frames[i] /= max_value;
 		}
@@ -54,7 +54,7 @@ void BlipKitWaveform::set_frames(PackedFloat32Array p_frames) {
 
 	Vector<BKFrame> wave_frames;
 	wave_frames.resize(p_frames.size());
-	BKFrame* ptrw = wave_frames.ptrw();
+	BKFrame *ptrw = wave_frames.ptrw();
 
 	for (int i = 0; i < p_frames.size(); i++) {
 		ptrw[i] = (BKFrame)(CLAMP(frames[i], -1.0, +1.0) * (real_t)BK_FRAME_MAX);

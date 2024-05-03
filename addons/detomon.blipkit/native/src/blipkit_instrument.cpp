@@ -42,7 +42,7 @@ void BlipKitInstrument::set_sequence_float(Sequence p_sequence, const PackedFloa
 		case SEQUENCE_PITCH:
 		case SEQUENCE_VOLUME:
 		case SEQUENCE_PANNING: {
-			// ok
+			// Ok.
 		} break;
 		default: {
 			return;
@@ -68,7 +68,7 @@ void BlipKitInstrument::set_sequence_int(Sequence p_sequence, const PackedInt32A
 
 	switch (p_sequence) {
 		case SEQUENCE_DUTY_CYCLE: {
-			// ok
+			// Ok.
 		} break;
 		default: {
 			return;
@@ -104,7 +104,6 @@ void BlipKitInstrument::set_sequence_duty_cycle(PackedInt32Array p_values, int p
 	set_sequence_int(SEQUENCE_PITCH, p_values, p_sustain_offset, p_sustain_length);
 }
 
-
 void BlipKitInstrument::set_envelope_float(Sequence p_sequence, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length, real_t p_multiplier) {
 	ERR_FAIL_COND(p_steps.size() != p_values.size());
 
@@ -115,7 +114,7 @@ void BlipKitInstrument::set_envelope_float(Sequence p_sequence, const PackedInt3
 		case SEQUENCE_PITCH:
 		case SEQUENCE_VOLUME:
 		case SEQUENCE_PANNING: {
-			// ok
+			// Ok.
 		} break;
 		default: {
 			return;
@@ -146,7 +145,7 @@ void BlipKitInstrument::set_envelope_int(Sequence p_sequence, const PackedInt32A
 
 	switch (p_sequence) {
 		case SEQUENCE_DUTY_CYCLE: {
-			// ok
+			// Ok.
 		} break;
 		default: {
 			return;

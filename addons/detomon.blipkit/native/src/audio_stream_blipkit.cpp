@@ -1,6 +1,6 @@
+#include "audio_stream_blipkit.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
-#include "audio_stream_blipkit.hpp"
 
 using namespace godot;
 
@@ -23,7 +23,6 @@ Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
 	playback.instantiate();
 	playback->set_stream(Ref<AudioStreamBlipKit>(this));
 	playback->always_generate = always_generate;
-
 
 	return playback;
 }
@@ -110,7 +109,7 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	int channel_size = 2048;
 	int buffer_size = channel_size * NUM_CHANNELS;
 	int out_count = 0;
-	AudioFrame* out_buffer = p_buffer;
+	AudioFrame *out_buffer = p_buffer;
 	BKFrame buffer[buffer_size];
 
 	while (out_count < p_frames) {
@@ -136,7 +135,7 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	// Fill rest of output buffer, even if nothing was produced.
 	if (out_count < p_frames && always_generate) {
 		while (out_count < p_frames) {
-			*out_buffer = {0, 0};
+			*out_buffer = { 0, 0 };
 			out_buffer++;
 			out_count++;
 		}

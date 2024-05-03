@@ -93,13 +93,13 @@ BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 	AudioServer::get_singleton()->unlock();
 
 	switch (value) {
-		case BK_SQUARE:   waveform = WAVEFORM_SQUARE;   break;
+		case BK_SQUARE: waveform = WAVEFORM_SQUARE; break;
 		case BK_TRIANGLE: waveform = WAVEFORM_TRIANGLE; break;
-		case BK_NOISE:    waveform = WAVEFORM_NOISE;    break;
+		case BK_NOISE: waveform = WAVEFORM_NOISE; break;
 		case BK_SAWTOOTH: waveform = WAVEFORM_SAWTOOTH; break;
-		case BK_SINE:     waveform = WAVEFORM_SINE;     break;
-		case BK_CUSTOM:   waveform = WAVEFORM_CUSTOM;   break;
-		case BK_SAMPLE:   waveform = WAVEFORM_SAMPLE;   break;
+		case BK_SINE: waveform = WAVEFORM_SINE; break;
+		case BK_CUSTOM: waveform = WAVEFORM_CUSTOM; break;
+		case BK_SAMPLE: waveform = WAVEFORM_SAMPLE; break;
 	}
 
 	return waveform;
@@ -109,13 +109,13 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 	BKInt waveform = 0;
 
 	switch (p_waveform) {
-		case WAVEFORM_SQUARE:   waveform = BK_SQUARE;   break;
+		case WAVEFORM_SQUARE: waveform = BK_SQUARE; break;
 		case WAVEFORM_TRIANGLE: waveform = BK_TRIANGLE; break;
-		case WAVEFORM_NOISE:    waveform = BK_NOISE;    break;
+		case WAVEFORM_NOISE: waveform = BK_NOISE; break;
 		case WAVEFORM_SAWTOOTH: waveform = BK_SAWTOOTH; break;
-		case WAVEFORM_SINE:     waveform = BK_SINE;     break;
-		case WAVEFORM_CUSTOM:   waveform = BK_CUSTOM;   break;
-		case WAVEFORM_SAMPLE:   waveform = BK_SAMPLE;   break;
+		case WAVEFORM_SINE: waveform = BK_SINE; break;
+		case WAVEFORM_CUSTOM: waveform = BK_CUSTOM; break;
+		case WAVEFORM_SAMPLE: waveform = BK_SAMPLE; break;
 		default: {
 			ERR_FAIL_MSG(vformat("Invalid waveform: %d", p_waveform));
 			return;
@@ -382,7 +382,7 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 
 	ERR_FAIL_COND(!p_waveform->is_valid());
 
-	BKData* bk_data = p_waveform->get_waveform();
+	BKData *bk_data = p_waveform->get_waveform();
 
 	AudioServer::get_singleton()->lock();
 	BKInt result = BKSetPtr(&track, BK_WAVEFORM, bk_data, sizeof(bk_data));
@@ -394,7 +394,7 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 	ERR_FAIL_COND(!p_playback);
 
-	BKContext* context = p_playback->get_context();
+	BKContext *context = p_playback->get_context();
 
 	AudioServer::get_singleton()->lock();
 	BKTrackAttach(&track, context);

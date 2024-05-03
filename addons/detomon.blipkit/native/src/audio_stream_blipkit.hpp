@@ -1,8 +1,8 @@
 #pragma once
 
+#include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
-#include <BlipKit.h>
 
 using namespace godot;
 
