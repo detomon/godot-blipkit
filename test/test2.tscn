@@ -1,0 +1,77 @@
+[gd_scene load_steps=6 format=3 uid="uid://cmkk4inee4owm"]
+
+[ext_resource type="Script" path="res://test/test_2.gd" id="1_c5qdp"]
+[ext_resource type="PackedScene" uid="uid://ds37q704hu4oh" path="res://visualizer/ring/ring.tscn" id="2_r32xf"]
+[ext_resource type="PackedScene" uid="uid://b0rhrccnhgycy" path="res://midi_input/midi_input.tscn" id="3_rf1fm"]
+
+[sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
+always_generate = true
+
+[sub_resource type="Environment" id="Environment_vjgep"]
+background_mode = 3
+background_color = Color(0.701961, 0, 0, 1)
+glow_enabled = true
+glow_levels/1 = 1.0
+glow_levels/2 = 1.0
+glow_levels/4 = 1.0
+glow_levels/5 = 0.5
+glow_blend_mode = 0
+
+[node name="Test2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c5qdp")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = SubResource("AudioStreamBlipKit_6ye76")
+bus = &"Music"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vjgep")
+
+[node name="Visualizer" parent="." instance=ExtResource("2_r32xf")]
+unique_name_in_owner = true
+rotation = -2.51328
+
+[node name="MidiInput" parent="." instance=ExtResource("3_rf1fm")]
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 8.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="RecordButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Record"
+
+[node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Play"
+
+[node name="Progress" type="HSlider" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.0
+
+[node name="Timer" type="Timer" parent="MarginContainer"]
+unique_name_in_owner = true
+wait_time = 6.0
+
+[connection signal="notes_changes" from="MidiInput" to="." method="_on_midi_input_notes_changes"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/RecordButton" to="." method="_on_record_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="timeout" from="MarginContainer/Timer" to="." method="_on_timer_timeout"]

@@ -1,0 +1,131 @@
+extends Control
+
+var _active_tracks := {}
+var _roll: Array[Dictionary] = []
+var _playing := false
+var _play_index := 0
+var _inactive_tracks: Array[BlipKitTrack] = []
+var _instrument := BlipKitInstrument.new()
+var _waveform := BlipKitWaveform.new()
+
+@onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
+@onready var _visualizer: Node2D = %Visualizer
+
+@onready var _timer: Timer = %Timer
+@onready var _progress: HSlider = %Progress
+
+
+func _ready() -> void:
+	_audio_stream_player.play()
+	_init_track()
+
+	_waveform.frames = [
+		-255, -163, -154, -100, 45, 127, 9, -163, -163,
+		-27, 63, 72, 63, 9, -100, -154, -127,
+		-91, -91, -91, -91, -127, -154, -100, 45,
+		127, 9, -163, -163, 9, 127, 45,
+	]
+
+
+func _process(_delta: float) -> void:
+	_progress.value = 1.0 - (_timer.time_left / _timer.wait_time)
+
+	if _playing:
+		if _play_index >= len(_roll):
+			return
+
+		var time := _timer.wait_time - _timer.time_left
+		var item := _roll[_play_index]
+
+		while time >= item.time:
+			_on_midi_input_notes_changes(item.notes)
+
+			_play_index += 1
+			if _play_index >= len(_roll):
+				break
+
+			item = _roll[_play_index]
+
+
+func _init_track() -> void:
+	_instrument.set_envelope_adsr(3, 5, 0.7, 16)
+
+
+func _attach(track: BlipKitTrack) -> void:
+	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+	track.attach(playback)
+
+
+func _on_midi_input_notes_changes(notes: Dictionary) -> void:
+	for note in notes:
+		if note not in _active_tracks:
+			var track: BlipKitTrack = _inactive_tracks.pop_back()
+			if not track:
+				track = BlipKitTrack.new()
+				_attach(track)
+			#track.duty_cycle = 2
+			#track.set_tremolo(16, 0.2)
+			#track.arpeggio = [0, 12]
+			#track.arpeggio_divider = 8
+			track.instrument = _instrument
+			track.custom_waveform = _waveform
+
+			_active_tracks[note] = track
+
+	for note in _active_tracks:
+		if note not in notes:
+			var track: BlipKitTrack = _active_tracks[note]
+			track.release()
+			#track.detach()
+			_inactive_tracks.append(track)
+			_active_tracks.erase(note)
+
+	for note in _active_tracks:
+		var track: BlipKitTrack = _active_tracks[note]
+		track.note = note
+
+	if _active_tracks:
+		_visualizer.strength = 1.0
+		#_visualizer.strength = remap(len(_active_tracks), 0, 4, 0.25, 1.0)
+	else:
+		_visualizer.strength = 0.0
+
+	var time := _timer.wait_time - _timer.time_left
+
+	if not _playing:
+		_roll.append({
+			time = time,
+			notes = notes.duplicate(),
+		})
+
+	#var last := {}
+	#if _roll:
+		#last = _roll.back()
+#
+	#if last and last.time == time:
+		#last.notes.merge(notes)
+#
+	#else:
+		#_roll.append({
+			#time = time,
+			#notes = notes.duplicate(),
+		#})
+
+
+func _on_record_button_pressed() -> void:
+	_roll.clear()
+	_playing = false
+	_timer.start()
+
+	_on_midi_input_notes_changes({})
+
+
+func _on_play_button_pressed() -> void:
+	_playing = true
+	_timer.start()
+
+	print(_roll)
+
+
+func _on_timer_timeout() -> void:
+	_play_index = 0
