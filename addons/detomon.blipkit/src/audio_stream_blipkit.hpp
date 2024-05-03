@@ -9,8 +9,12 @@ using namespace godot;
 class AudioStreamBlipKit : public AudioStream {
 	GDCLASS(AudioStreamBlipKit, AudioStream);
 
+private:
+	bool always_generate = false;
+
 protected:
 	static void _bind_methods();
+	String _to_string() const;
 
 public:
 	Ref<AudioStreamPlayback> _instantiate_playback() const override;
@@ -18,6 +22,9 @@ public:
 
 	double _get_length() const override;
 	bool _is_monophonic() const override;
+
+	bool is_always_generating();
+	void set_generate_always(bool value);
 };
 
 class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
@@ -29,10 +36,12 @@ private:
 
 	Ref<AudioStreamBlipKit> stream;
 	bool active = false;
+	bool always_generate = false;
 	BKContext context;
 
 protected:
 	static void _bind_methods();
+	String _to_string() const;
 
 public:
 	AudioStreamBlipKitPlayback();

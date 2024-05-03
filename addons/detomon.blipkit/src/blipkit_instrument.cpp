@@ -19,9 +19,13 @@ void BlipKitInstrument::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_envelope_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::set_envelope_adsr);
 }
 
+String BlipKitInstrument::_to_string() const {
+	return "BlipKitInstrument";
+}
+
 BlipKitInstrument::BlipKitInstrument() {
 	BKInt result = BKInstrumentInit(&instrument);
-	ERR_FAIL_COND_MSG(result != BK_SUCCESS, "Failed to initialize BKInstrument.");
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKInstrument: %s.", BKStatusGetName(result)));
 }
 
 BlipKitInstrument::~BlipKitInstrument() {
@@ -131,7 +135,7 @@ void BlipKitInstrument::set_envelope_float(Sequence p_sequence, const PackedInt3
 	BKInt result = BKInstrumentSetEnvelope(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
 	AudioServer::get_singleton()->unlock();
 
-	ERR_FAIL_COND(result != BK_SUCCESS);
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, "Sustain loop has zero steps.");
 }
 
 void BlipKitInstrument::set_envelope_int(Sequence p_sequence, const PackedInt32Array &p_steps, const PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length) {

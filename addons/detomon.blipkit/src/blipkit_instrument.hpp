@@ -24,6 +24,7 @@ protected:
 	};
 
 	static void _bind_methods();
+	String _to_string() const;
 
 	void set_sequence_float(Sequence p_sequence, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length, real_t p_multiplier);
 	void set_sequence_int(Sequence p_sequence, const PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length);

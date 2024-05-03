@@ -6,6 +6,7 @@
 
 #include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
+#include "blipkit_waveform.hpp"
 
 using namespace godot;
 
@@ -17,19 +18,21 @@ class BlipKitTrack : public RefCounted {
 private:
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
+	Ref<BlipKitWaveform> custom_waveform;
 
 protected:
 	static void _bind_methods();
+	String _to_string() const;
 
 public:
 	enum Waveform {
-		WAVEFORM_SQUARE   = BK_SQUARE,
-		WAVEFORM_TRIANGLE = BK_TRIANGLE,
-		WAVEFORM_NOISE    = BK_NOISE,
-		WAVEFORM_SAWTOOTH = BK_SAWTOOTH,
-		WAVEFORM_SINE     = BK_SINE,
-		WAVEFORM_CUSTOM   = BK_CUSTOM,
-		WAVEFORM_SAMPLE   = BK_SAMPLE,
+		WAVEFORM_SQUARE,
+		WAVEFORM_TRIANGLE,
+		WAVEFORM_NOISE,
+		WAVEFORM_SAWTOOTH,
+		WAVEFORM_SINE,
+		WAVEFORM_CUSTOM,
+		WAVEFORM_SAMPLE,
 	};
 
 	enum Note {
@@ -174,6 +177,9 @@ public:
 
 	Ref<BlipKitInstrument> get_instrument();
 	void set_instrument(Ref<BlipKitInstrument> p_instrument);
+
+	Ref<BlipKitWaveform> get_custom_waveform();
+	void set_custom_waveform(Ref<BlipKitWaveform> p_waveform);
 
 	void attach(AudioStreamBlipKitPlayback *p_playback);
 	void detach();

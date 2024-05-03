@@ -9,7 +9,7 @@ using namespace godot;
 
 BlipKitTrack::BlipKitTrack() {
 	BKInt result = BKTrackInit(&track, BK_SQUARE);
-	ERR_FAIL_COND_MSG(result != BK_SUCCESS, "Failed to initialize BKTrack.");
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKTrack: %s.", BKStatusGetName(result)));
 
 	// Set default master volume.
 	BKSetAttr(&track, BK_MASTER_VOLUME, (BKInt)(0.1 * (real_t)BK_MAX_VOLUME));
@@ -23,8 +23,13 @@ BlipKitTrack::~BlipKitTrack() {
 	AudioServer::get_singleton()->unlock();
 }
 
+String BlipKitTrack::_to_string() const {
+	return vformat("BlipKitTrack: waveform=%d, volume=%f (%f), note=%f", (int)get_waveform(), get_volume(), get_master_volume(), get_note());
+}
+
 real_t BlipKitTrack::get_master_volume() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_MASTER_VOLUME, &value);
 	AudioServer::get_singleton()->unlock();
@@ -35,6 +40,7 @@ real_t BlipKitTrack::get_master_volume() const {
 void BlipKitTrack::set_master_volume(real_t p_master_volume) {
 	p_master_volume = CLAMP(p_master_volume, 0.0, 1.0);
 	BKInt value = (BKInt)(p_master_volume * (real_t)BK_MAX_VOLUME);
+
 	AudioServer::get_singleton()->lock();
 	BKSetAttr(&track, BK_MASTER_VOLUME, value);
 	AudioServer::get_singleton()->unlock();
@@ -42,6 +48,7 @@ void BlipKitTrack::set_master_volume(real_t p_master_volume) {
 
 real_t BlipKitTrack::get_volume() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_VOLUME, &value);
 	AudioServer::get_singleton()->unlock();
@@ -52,6 +59,7 @@ real_t BlipKitTrack::get_volume() const {
 void BlipKitTrack::set_volume(real_t p_volume) {
 	p_volume = CLAMP(p_volume, 0.0, 1.0);
 	BKInt value = (BKInt)(p_volume * (real_t)BK_MAX_VOLUME);
+
 	AudioServer::get_singleton()->lock();
 	BKSetAttr(&track, BK_VOLUME, value);
 	AudioServer::get_singleton()->unlock();
@@ -59,6 +67,7 @@ void BlipKitTrack::set_volume(real_t p_volume) {
 
 real_t BlipKitTrack::get_panning() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_PANNING, &value);
 	AudioServer::get_singleton()->unlock();
@@ -69,6 +78,7 @@ real_t BlipKitTrack::get_panning() const {
 void BlipKitTrack::set_panning(real_t p_panning) {
 	p_panning = CLAMP(p_panning, -1.0, +1.0);
 	BKInt value = (BKInt)(p_panning * (real_t)BK_MAX_VOLUME);
+
 	AudioServer::get_singleton()->lock();
 	BKSetAttr(&track, BK_PANNING, value);
 	AudioServer::get_singleton()->unlock();
@@ -76,21 +86,52 @@ void BlipKitTrack::set_panning(real_t p_panning) {
 
 BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 	BKInt value = 0;
+	Waveform waveform = WAVEFORM_SQUARE;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_WAVEFORM, &value);
 	AudioServer::get_singleton()->unlock();
 
-	return static_cast<BlipKitTrack::Waveform>(value);
+	switch (value) {
+		case BK_SQUARE:   waveform = WAVEFORM_SQUARE;   break;
+		case BK_TRIANGLE: waveform = WAVEFORM_TRIANGLE; break;
+		case BK_NOISE:    waveform = WAVEFORM_NOISE;    break;
+		case BK_SAWTOOTH: waveform = WAVEFORM_SAWTOOTH; break;
+		case BK_SINE:     waveform = WAVEFORM_SINE;     break;
+		case BK_CUSTOM:   waveform = WAVEFORM_CUSTOM;   break;
+		case BK_SAMPLE:   waveform = WAVEFORM_SAMPLE;   break;
+	}
+
+	return waveform;
 }
 
 void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
+	BKInt waveform = 0;
+
+	switch (p_waveform) {
+		case WAVEFORM_SQUARE:   waveform = BK_SQUARE;   break;
+		case WAVEFORM_TRIANGLE: waveform = BK_TRIANGLE; break;
+		case WAVEFORM_NOISE:    waveform = BK_NOISE;    break;
+		case WAVEFORM_SAWTOOTH: waveform = BK_SAWTOOTH; break;
+		case WAVEFORM_SINE:     waveform = BK_SINE;     break;
+		case WAVEFORM_CUSTOM:   waveform = BK_CUSTOM;   break;
+		case WAVEFORM_SAMPLE:   waveform = BK_SAMPLE;   break;
+		default: {
+			ERR_FAIL_MSG(vformat("Invalid waveform: %d", p_waveform));
+			return;
+		} break;
+	}
+
+	custom_waveform.unref();
+
 	AudioServer::get_singleton()->lock();
-	BKSetAttr(&track, BK_WAVEFORM, p_waveform);
+	BKSetAttr(&track, BK_WAVEFORM, waveform);
 	AudioServer::get_singleton()->unlock();
 }
 
 int BlipKitTrack::get_duty_cycle() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_DUTY_CYCLE, &value);
 	AudioServer::get_singleton()->unlock();
@@ -106,6 +147,7 @@ void BlipKitTrack::set_duty_cycle(int p_duty_cycle) {
 
 real_t BlipKitTrack::get_note() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_NOTE, &value);
 	AudioServer::get_singleton()->unlock();
@@ -125,7 +167,7 @@ void BlipKitTrack::set_note(real_t p_note) {
 		p_note = CLAMP(p_note, (real_t)BK_MIN_NOTE, (real_t)BK_MAX_NOTE);
 		value = p_note * (real_t)BK_FINT20_UNIT;
 	} else {
-		// NOTE_RELEASE or NOTE_MUTE
+		// NOTE_RELEASE or NOTE_MUTE.
 		value = (BKInt)Math::round(p_note);
 	}
 
@@ -136,6 +178,7 @@ void BlipKitTrack::set_note(real_t p_note) {
 
 real_t BlipKitTrack::get_pitch() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_PITCH, &value);
 	AudioServer::get_singleton()->unlock();
@@ -146,6 +189,7 @@ real_t BlipKitTrack::get_pitch() const {
 void BlipKitTrack::set_pitch(real_t p_pitch) {
 	p_pitch = CLAMP(p_pitch, -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE);
 	BKInt value = (BKInt)(p_pitch * (real_t)BK_FINT20_UNIT);
+
 	AudioServer::get_singleton()->lock();
 	BKSetAttr(&track, BK_PITCH, value);
 	AudioServer::get_singleton()->unlock();
@@ -153,6 +197,7 @@ void BlipKitTrack::set_pitch(real_t p_pitch) {
 
 int BlipKitTrack::get_volume_slide() const {
 	BKInt value[1] = { 0 };
+
 	AudioServer::get_singleton()->lock();
 	BKGetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
 	AudioServer::get_singleton()->unlock();
@@ -162,6 +207,7 @@ int BlipKitTrack::get_volume_slide() const {
 
 void BlipKitTrack::set_volume_slide(int p_volume_slide) {
 	BKInt value[1] = { p_volume_slide };
+
 	AudioServer::get_singleton()->lock();
 	BKSetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
 	AudioServer::get_singleton()->unlock();
@@ -169,6 +215,7 @@ void BlipKitTrack::set_volume_slide(int p_volume_slide) {
 
 int BlipKitTrack::get_panning_slide() const {
 	BKInt value[1] = { 0 };
+
 	AudioServer::get_singleton()->lock();
 	BKGetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
 	AudioServer::get_singleton()->unlock();
@@ -178,6 +225,7 @@ int BlipKitTrack::get_panning_slide() const {
 
 void BlipKitTrack::set_panning_slide(int p_panning_slide) {
 	BKInt value[1] = { p_panning_slide };
+
 	AudioServer::get_singleton()->lock();
 	BKSetPtr(&track, BK_EFFECT_PANNING_SLIDE, value, sizeof(value));
 	AudioServer::get_singleton()->unlock();
@@ -185,6 +233,7 @@ void BlipKitTrack::set_panning_slide(int p_panning_slide) {
 
 int BlipKitTrack::get_portamento() const {
 	BKInt value[1] = { 0 };
+
 	AudioServer::get_singleton()->lock();
 	BKGetPtr(&track, BK_EFFECT_PORTAMENTO, value, sizeof(value));
 	AudioServer::get_singleton()->unlock();
@@ -194,6 +243,7 @@ int BlipKitTrack::get_portamento() const {
 
 void BlipKitTrack::set_portamento(int p_portamento) {
 	BKInt value[1] = { p_portamento };
+
 	AudioServer::get_singleton()->lock();
 	BKSetPtr(&track, BK_EFFECT_PORTAMENTO, value, sizeof(value));
 	AudioServer::get_singleton()->unlock();
@@ -239,6 +289,7 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 
 int BlipKitTrack::get_arpeggio_divider() const {
 	BKInt value = 0;
+
 	AudioServer::get_singleton()->lock();
 	BKGetAttr(&track, BK_ARPEGGIO_DIVIDER, &value);
 	AudioServer::get_singleton()->unlock();
@@ -248,6 +299,7 @@ int BlipKitTrack::get_arpeggio_divider() const {
 
 void BlipKitTrack::set_arpeggio_divider(int p_arpeggio_divider) {
 	p_arpeggio_divider = MAX(0, p_arpeggio_divider);
+
 	AudioServer::get_singleton()->lock();
 	BKSetAttr(&track, BK_ARPEGGIO_DIVIDER, p_arpeggio_divider);
 	AudioServer::get_singleton()->unlock();
@@ -280,10 +332,32 @@ void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
 	AudioServer::get_singleton()->unlock();
 }
 
+Ref<BlipKitWaveform> BlipKitTrack::get_custom_waveform() {
+	return custom_waveform;
+}
+
+void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
+	if (p_waveform.is_null()) {
+		set_waveform(WAVEFORM_SQUARE);
+		return;
+	}
+
+	ERR_FAIL_COND(!p_waveform->is_valid());
+
+	BKData* bk_data = p_waveform->get_waveform();
+
+	AudioServer::get_singleton()->lock();
+	BKInt result = BKSetPtr(&track, BK_WAVEFORM, bk_data, sizeof(bk_data));
+	AudioServer::get_singleton()->unlock();
+
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set custom waveform: %s.", BKStatusGetName(result)));
+}
+
 void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 	ERR_FAIL_COND(!p_playback);
 
 	BKContext* context = p_playback->get_context();
+
 	AudioServer::get_singleton()->lock();
 	BKTrackAttach(&track, context);
 	AudioServer::get_singleton()->unlock();
@@ -342,6 +416,8 @@ void BlipKitTrack::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_instrument"), &BlipKitTrack::set_instrument);
 	ClassDB::bind_method(D_METHOD("get_instrument"), &BlipKitTrack::get_instrument);
+	ClassDB::bind_method(D_METHOD("set_custom_waveform"), &BlipKitTrack::set_custom_waveform);
+	ClassDB::bind_method(D_METHOD("get_custom_waveform"), &BlipKitTrack::get_custom_waveform);
 
 	ClassDB::bind_method(D_METHOD("attach", "context"), &BlipKitTrack::attach);
 	ClassDB::bind_method(D_METHOD("detach"), &BlipKitTrack::detach);
@@ -363,6 +439,7 @@ void BlipKitTrack::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "arpeggio"), "set_arpeggio", "get_arpeggio");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "arpeggio_divider"), "set_arpeggio_divider", "get_arpeggio_divider");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "instrument"), "set_instrument", "get_instrument");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "custom_waveform"), "set_custom_waveform", "get_custom_waveform");
 
 	BIND_ENUM_CONSTANT(WAVEFORM_SQUARE);
 	BIND_ENUM_CONSTANT(WAVEFORM_TRIANGLE);
