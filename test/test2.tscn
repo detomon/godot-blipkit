@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cmkk4inee4owm"]
+[gd_scene load_steps=7 format=3 uid="uid://cmkk4inee4owm"]
 
 [ext_resource type="Script" path="res://test/test_2.gd" id="1_c5qdp"]
 [ext_resource type="PackedScene" uid="uid://ds37q704hu4oh" path="res://visualizer/ring/ring.tscn" id="2_r32xf"]
+[ext_resource type="PackedScene" uid="uid://c4xwfm0ygatv7" path="res://visualizer/rings/rings.tscn" id="3_vfjjs"]
 [ext_resource type="Script" path="res://addons/detomon.blipkit/classes/midi_input.gd" id="3_y6xj0"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
@@ -37,6 +38,10 @@ environment = SubResource("Environment_vjgep")
 [node name="Visualizer" parent="." instance=ExtResource("2_r32xf")]
 unique_name_in_owner = true
 
+[node name="Visualizer2" parent="." instance=ExtResource("3_vfjjs")]
+unique_name_in_owner = true
+visible = false
+
 [node name="MidiInput" type="Node" parent="."]
 script = ExtResource("3_y6xj0")
 
@@ -45,6 +50,7 @@ unique_name_in_owner = true
 wait_time = 2.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0

@@ -135,7 +135,11 @@ void BlipKitInstrument::set_envelope_float(Sequence p_sequence, const PackedInt3
 	BKInt result = BKInstrumentSetEnvelope(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
 	AudioStreamBlipKit::unlock();
 
-	ERR_FAIL_COND_MSG(result != BK_SUCCESS, "Sustain loop has zero steps.");
+	if (result == BK_INVALID_ATTRIBUTE) {
+		ERR_FAIL_MSG("Failed to set envelope: Sustain loop has zero steps.");
+	} else if (result != BK_SUCCESS) {
+		ERR_FAIL_MSG(vformat("Failed to set envelope: %s.", BKStatusGetName(result)));
+	}
 }
 
 void BlipKitInstrument::set_envelope_int(Sequence p_sequence, const PackedInt32Array &p_steps, const PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length) {

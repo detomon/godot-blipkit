@@ -10,6 +10,7 @@ var _waveform := BlipKitWaveform.new()
 
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 @onready var _visualizer: Node2D = %Visualizer
+@onready var _visualizer2: Node2D = %Visualizer2
 
 @onready var _timer: Timer = %Timer
 @onready var _progress: HSlider = %Progress
@@ -58,6 +59,7 @@ func _input(event: InputEvent) -> void:
 
 func _init_track() -> void:
 	_instrument.set_envelope_adsr(4, 8, 0.75, 16)
+	_instrument.set_sequence_pitch([12, 0], 1, 1)
 
 
 func _attach(track: BlipKitTrack) -> void:
@@ -77,7 +79,7 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			#track.arpeggio = [0, 12]
 			#track.arpeggio_divider = 8
 			track.instrument = _instrument
-			#track.custom_waveform = _waveform
+			track.custom_waveform = _waveform
 
 			_active_tracks[note] = track
 
@@ -92,15 +94,18 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 	for note in _active_tracks:
 		var track: BlipKitTrack = _active_tracks[note]
 
-		if note >= 12 and note < 24:
-			track.master_volume = 0.2
-			track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-			track.note = note
+		track.note = note
+		#if note >= 12 and note < 24:
+			#track.master_volume = 0.2
+			#track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+			#track.note = note
+#
+		#else:
+			#track.master_volume = 0.1
+			#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
+			#track.note = note
 
-		else:
-			track.master_volume = 0.1
-			track.waveform = BlipKitTrack.WAVEFORM_SQUARE
-			track.note = note
+	#_visualizer2.notes = PackedInt32Array(notes.keys())
 
 	if _active_tracks:
 		_visualizer.strength = 1.0
