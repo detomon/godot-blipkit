@@ -188,3 +188,21 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 
 	return out_count;
 }
+
+Ref<BlipKitTrack> AudioStreamBlipKitPlayback::create_track(BlipKitTrack::Waveform p_waveform) {
+	Ref<BlipKitTrack> track;
+
+	return track;
+}
+
+Ref<BlipKitInstrument> AudioStreamBlipKitPlayback::create_instrument() {
+	Ref<BlipKitInstrument> instrument;
+
+	return instrument;
+}
+
+Ref<BlipKitWaveform> AudioStreamBlipKitPlayback::create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize) {
+	Ref<BlipKitWaveform> waveform;
+
+	return waveform;
+}

@@ -1,12 +1,15 @@
 extends Control
 
+const AAH: BlipKitWaveform = preload("aah.tres")
+const INSTRUMENT: BlipKitInstrument = preload("instrument.tres")
+
 var _active_tracks := {}
 var _roll: Array[Dictionary] = []
 var _playing := false
 var _play_index := 0
 var _inactive_tracks: Array[BlipKitTrack] = []
-var _instrument := BlipKitInstrument.new()
-var _waveform := BlipKitWaveform.new()
+#var _instrument := BlipKitInstrument.new()
+#var _waveform := BlipKitWaveform.new()
 
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 @onready var _visualizer: Node2D = %Visualizer
@@ -17,15 +20,16 @@ var _waveform := BlipKitWaveform.new()
 
 
 func _ready() -> void:
-	_audio_stream_player.play()
 	_init_track()
 
-	_waveform.set_frames([
-		-255, -163, -154, -100, 45, 127, 9, -163, -163,
-		-27, 63, 72, 63, 9, -100, -154, -127,
-		-91, -91, -91, -91, -127, -154, -100, 45,
-		127, 9, -163, -163, 9, 127, 45,
-	], true)
+	#_waveform.set_frames_normalized([
+		#-255, -163, -154, -100, 45, 127, 9, -163, -163,
+		#-27, 63, 72, 63, 9, -100, -154, -127,
+		#-91, -91, -91, -91, -127, -154, -100, 45,
+		#127, 9, -163, -163, 9, 127, 45,
+	#])
+
+	#ResourceSaver.save(_waveform, "res://aah.tres")
 
 
 func _process(_delta: float) -> void:
@@ -48,18 +52,22 @@ func _process(_delta: float) -> void:
 			item = _roll[_play_index]
 
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"ui_accept"):
-		for note in _active_tracks:
-			var track: BlipKitTrack = _active_tracks[note]
-			track.set_tremolo(5, 0.75, 0)
-			track.set_tremolo(40, 0.75, 240)
-			track.set_vibrato(30, 0.1)
+#func _input(event: InputEvent) -> void:
+	#if event.is_action_pressed(&"ui_accept"):
+		#for note in _active_tracks:
+			#var track: BlipKitTrack = _active_tracks[note]
+			#track.set_tremolo(5, 0.75, 0)
+			#track.set_tremolo(40, 0.75, 240)
+			#track.set_vibrato(30, 0.1)
 
 
 func _init_track() -> void:
-	_instrument.set_envelope_adsr(4, 8, 0.75, 16)
-	_instrument.set_sequence_pitch([12, 0], 1, 1)
+	pass
+
+	#_instrument.set_envelope_adsr(4, 8, 0.75, 20)
+	#_instrument.set_sequence_pitch([12, 0], 1, 1)
+
+	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
 
 func _attach(track: BlipKitTrack) -> void:
@@ -74,12 +82,13 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			if not track:
 				track = BlipKitTrack.new()
 				_attach(track)
-			track.duty_cycle = 4
+			track.duty_cycle = 1
+			track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
 			#track.set_tremolo(16, 0.2)
 			#track.arpeggio = [0, 12]
 			#track.arpeggio_divider = 8
-			track.instrument = _instrument
-			track.custom_waveform = _waveform
+			track.instrument = INSTRUMENT
+			track.custom_waveform = AAH
 
 			_active_tracks[note] = track
 
@@ -107,19 +116,15 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 
 	#_visualizer2.notes = PackedInt32Array(notes.keys())
 
-	if _active_tracks:
-		_visualizer.strength = 1.0
-		#_visualizer.strength = remap(len(_active_tracks), 0, 4, 0.25, 1.0)
-	else:
-		_visualizer.strength = 0.0
+	_visualizer.notes = PackedInt32Array(notes.keys())
 
 	var time := _timer.wait_time - _timer.time_left
 
-	if not _playing:
-		_roll.append({
-			time = time,
-			notes = notes.duplicate(),
-		})
+	#if not _playing:
+		#_roll.append({
+			#time = time,
+			#notes = notes.duplicate(),
+		#})
 
 	#var last := {}
 	#if _roll:

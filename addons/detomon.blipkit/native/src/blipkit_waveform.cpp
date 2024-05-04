@@ -9,8 +9,11 @@ using namespace godot;
 
 void BlipKitWaveform::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
-	ClassDB::bind_method(D_METHOD("set_frames", "frames", "normalize"), &BlipKitWaveform::set_frames, DEFVAL(true));
+	ClassDB::bind_method(D_METHOD("set_frames", "frames"), &BlipKitWaveform::set_frames);
+	ClassDB::bind_method(D_METHOD("set_frames_normalized", "frames"), &BlipKitWaveform::set_frames_normalized);
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
+
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "frames", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE), "set_frames", "get_frames");
 }
 
 String BlipKitWaveform::_to_string() const {
@@ -32,7 +35,7 @@ PackedFloat32Array BlipKitWaveform::get_frames() {
 	return frames;
 }
 
-void BlipKitWaveform::set_frames(PackedFloat32Array p_frames, bool p_normalize) {
+void BlipKitWaveform::_set_frames(const PackedFloat32Array &p_frames, bool p_normalize) {
 	ERR_FAIL_COND(p_frames.size() < 2);
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 

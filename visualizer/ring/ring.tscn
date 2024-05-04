@@ -54,6 +54,7 @@ metadata/_snap_enabled = true
 [node name="Visualizer" type="Node2D"]
 position = Vector2(600, 384)
 script = ExtResource("1_4mins")
+notes = PackedInt32Array()
 
 [node name="Particles" type="GPUParticles2D" parent="."]
 unique_name_in_owner = true

@@ -69,4 +69,8 @@ public:
 	void _stop() override;
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
+
+	Ref<BlipKitTrack> create_track(BlipKitTrack::Waveform p_waveform);
+	Ref<BlipKitInstrument> create_instrument();
+	Ref<BlipKitWaveform> create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize = true);
 };

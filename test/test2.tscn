@@ -29,6 +29,7 @@ script = ExtResource("1_c5qdp")
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
 stream = SubResource("AudioStreamBlipKit_6ye76")
+autoplay = true
 bus = &"Music"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
