@@ -1,3 +1,4 @@
 # Build
 .sconsign.dblite
+*.o
 *.os

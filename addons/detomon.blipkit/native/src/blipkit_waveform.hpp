@@ -27,7 +27,7 @@ public:
 	_FORCE_INLINE_ bool is_valid() { return frames.size() > 0; };
 
 	PackedFloat32Array get_frames();
-	void set_frames(PackedFloat32Array p_frames);
+	void set_frames(PackedFloat32Array p_frames, bool p_normalize = true);
 };
 
 } // namespace detomon::BlipKit
