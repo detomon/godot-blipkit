@@ -4,11 +4,12 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
-#include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_waveform.hpp"
 
 using namespace godot;
+
+class AudioStreamBlipKitPlayback;
 
 namespace detomon::BlipKit {
 

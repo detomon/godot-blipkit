@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://addons/detomon.blipkit/classes/midi_input.gd" id="3_y6xj0"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
-always_generate = true
 
 [sub_resource type="Environment" id="Environment_vjgep"]
 background_mode = 3

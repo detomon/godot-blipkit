@@ -4,12 +4,15 @@
 
 #include <atomic>
 
-static std::atomic<int> lock_owner = 0;
-static int lock_count = 0;
-static std::atomic<int> thread_counter = 0;
-static thread_local int thread_id;
-
+using namespace detomon::BlipKit;
 using namespace godot;
+
+static thread_local int lock_thread_id;
+static struct {
+	std::atomic<int> owner = 0;
+	int count = 0;
+	std::atomic<int> next_thread_id = 0;
+} lock_data;
 
 void AudioStreamBlipKit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
@@ -28,8 +31,7 @@ String AudioStreamBlipKit::_to_string() const {
 Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
 	Ref<AudioStreamBlipKitPlayback> playback;
 	playback.instantiate();
-	playback->set_stream(Ref<AudioStreamBlipKit>(this));
-	playback->always_generate = always_generate;
+	playback->initialize(Ref<AudioStreamBlipKit>(this), always_generate);
 
 	return playback;
 }
@@ -63,32 +65,32 @@ void AudioStreamBlipKit::set_generate_always(bool p_always_generate) {
 }
 
 void AudioStreamBlipKit::lock() {
-	int id = thread_id;
+	int id = lock_thread_id;
 
 	if (unlikely(id == 0)) {
-		id = thread_counter.fetch_add(1, std::memory_order_relaxed) + 1;
-		thread_id = id;
+		id = lock_data.next_thread_id.fetch_add(1, std::memory_order_relaxed) + 1;
+		lock_thread_id = id;
 	}
 
-	if (lock_owner.load() != id) {
+	if (lock_data.owner.load() != id) {
 		int free_id = 0;
-		while (!lock_owner.compare_exchange_weak(free_id, id, std::memory_order_acquire, std::memory_order_relaxed)) {
+		while (!lock_data.owner.compare_exchange_weak(free_id, id, std::memory_order_acquire, std::memory_order_relaxed)) {
 			;
 		}
 	}
 
-	lock_count++;
+	lock_data.count++;
 }
 
 void AudioStreamBlipKit::unlock() {
-	if (unlikely(lock_owner.load() != thread_id)) {
+	if (unlikely(lock_data.owner.load() != lock_thread_id)) {
 		return;
 	}
 
-	if (lock_count > 0) {
-		lock_count--;
-		if (lock_count <= 0) {
-			lock_owner.store(0, std::memory_order_release);
+	if (lock_data.count > 0) {
+		lock_data.count--;
+		if (lock_data.count <= 0) {
+			lock_data.owner.store(0, std::memory_order_release);
 		}
 	}
 }
@@ -115,8 +117,9 @@ String AudioStreamBlipKitPlayback::_to_string() const {
 	return "AudioStreamBlipKitPlayback";
 }
 
-void AudioStreamBlipKitPlayback::set_stream(Ref<AudioStreamBlipKit> p_stream) {
+void AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream, bool p_always_generate) {
 	stream = p_stream;
+	always_generate = p_always_generate;
 
 	int clock_rate = stream->get_clock_rate();
 	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / (real_t)clock_rate);
@@ -174,7 +177,7 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 
 	AudioStreamBlipKit::unlock();
 
-	// Fill rest of output buffer, even if nothing was produced.
+	// Fill rest of output buffer, even if nothing was generated.
 	if (out_count < p_frames && always_generate) {
 		while (out_count < p_frames) {
 			*out_buffer = { 0, 0 };

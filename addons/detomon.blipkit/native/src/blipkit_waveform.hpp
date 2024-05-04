@@ -24,7 +24,7 @@ public:
 	~BlipKitWaveform();
 
 	_FORCE_INLINE_ BKData *get_waveform() { return &waveform; };
-	_FORCE_INLINE_ bool is_valid() { return frames.size() > 0; };
+	_FORCE_INLINE_ bool is_valid() { return !frames.is_empty(); };
 
 	PackedFloat32Array get_frames();
 	void set_frames(PackedFloat32Array p_frames, bool p_normalize = true);

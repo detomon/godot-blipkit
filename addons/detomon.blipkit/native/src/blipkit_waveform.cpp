@@ -36,28 +36,30 @@ void BlipKitWaveform::set_frames(PackedFloat32Array p_frames, bool p_normalize) 
 	ERR_FAIL_COND(p_frames.size() < 2);
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 
-	frames = p_frames.duplicate();
+	PackedFloat32Array new_frames = p_frames;
+	float *ptrw = new_frames.ptrw();
 
 	if (p_normalize) {
 		float max_value = 0.0;
-		for (int i = 0; i < frames.size(); i++) {
-			max_value = MAX(max_value, ABS(frames[i]));
+		for (int i = 0; i < new_frames.size(); i++) {
+			max_value = MAX(max_value, ABS(ptrw[i]));
 		}
 
 		if (!Math::is_zero_approx(max_value)) {
-			for (int i = 0; i < frames.size(); i++) {
-				frames[i] /= max_value;
+			for (int i = 0; i < new_frames.size(); i++) {
+				ptrw[i] /= max_value;
 			}
 		}
 	}
 
 	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
 
-	for (int i = 0; i < frames.size(); i++) {
-		wave_frames[i] = (BKFrame)(CLAMP(frames[i], -1.0, +1.0) * (real_t)BK_FRAME_MAX);
+	for (int i = 0; i < new_frames.size(); i++) {
+		wave_frames[i] = (BKFrame)(CLAMP(ptrw[i], -1.0, +1.0) * (real_t)BK_FRAME_MAX);
 	}
 
 	AudioStreamBlipKit::lock();
+	frames = new_frames;
 	BKDataSetFrames(&waveform, wave_frames, frames.size(), 1, true);
 	AudioStreamBlipKit::unlock();
 }

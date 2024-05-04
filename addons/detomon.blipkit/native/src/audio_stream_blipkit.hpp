@@ -1,9 +1,13 @@
 #pragma once
 
+#include "blipkit_instrument.hpp"
+#include "blipkit_track.hpp"
+#include "blipkit_waveform.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 
+using namespace detomon::BlipKit;
 using namespace godot;
 
 class AudioStreamBlipKit : public AudioStream {
@@ -14,7 +18,7 @@ private:
 	static const int MAX_CLOCK_RATE = 1200;
 
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
-	bool always_generate = false;
+	bool always_generate = true;
 
 protected:
 	static void _bind_methods();
@@ -53,7 +57,7 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	void set_stream(Ref<AudioStreamBlipKit> p_stream);
+	void initialize(Ref<AudioStreamBlipKit> p_stream, bool p_always_generate);
 
 public:
 	AudioStreamBlipKitPlayback();
