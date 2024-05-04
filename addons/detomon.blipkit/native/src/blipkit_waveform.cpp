@@ -1,6 +1,7 @@
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
 
+#include "audio_stream_blipkit.hpp"
 #include "blipkit_waveform.hpp"
 
 using namespace detomon::BlipKit;
@@ -23,9 +24,9 @@ BlipKitWaveform::BlipKitWaveform() {
 }
 
 BlipKitWaveform::~BlipKitWaveform() {
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKDispose(&waveform);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 PackedFloat32Array BlipKitWaveform::get_frames() {
@@ -60,7 +61,7 @@ void BlipKitWaveform::set_frames(PackedFloat32Array p_frames) {
 		ptrw[i] = (BKFrame)(CLAMP(frames[i], -1.0, +1.0) * (real_t)BK_FRAME_MAX);
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKDataSetFrames(&waveform, ptrw, wave_frames.size(), 1, true);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }

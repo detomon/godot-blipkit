@@ -2,6 +2,13 @@
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 
+#include <atomic>
+
+static std::atomic<int> lock_owner = 0;
+static int lock_count = 0;
+static std::atomic<int> thread_counter = 0;
+static thread_local int thread_id;
+
 using namespace godot;
 
 void AudioStreamBlipKit::_bind_methods() {
@@ -55,18 +62,49 @@ void AudioStreamBlipKit::set_generate_always(bool p_always_generate) {
 	always_generate = p_always_generate;
 }
 
+void AudioStreamBlipKit::lock() {
+	int id = thread_id;
+
+	if (unlikely(id == 0)) {
+		id = thread_counter.fetch_add(1, std::memory_order_relaxed) + 1;
+		thread_id = id;
+	}
+
+	if (lock_owner.load() != id) {
+		int free_id = 0;
+		while (!lock_owner.compare_exchange_weak(free_id, id, std::memory_order_acquire, std::memory_order_relaxed)) {
+			;
+		}
+	}
+
+	lock_count++;
+}
+
+void AudioStreamBlipKit::unlock() {
+	if (unlikely(lock_owner.load() != thread_id)) {
+		return;
+	}
+
+	if (lock_count > 0) {
+		lock_count--;
+		if (lock_count <= 0) {
+			lock_owner.store(0, std::memory_order_release);
+		}
+	}
+}
+
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
-
 	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
+
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKContext: %s.", BKStatusGetName(result)));
 }
 
 AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 	active = false;
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKDispose(&context);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
@@ -94,9 +132,9 @@ void AudioStreamBlipKitPlayback::_start(double p_from_pos) {
 void AudioStreamBlipKitPlayback::_stop() {
 	active = false;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKContextReset(&context);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 bool AudioStreamBlipKitPlayback::_is_playing() const {
@@ -111,6 +149,8 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	int out_count = 0;
 	AudioFrame *out_buffer = p_buffer;
 	BKFrame buffer[buffer_size];
+
+	AudioStreamBlipKit::lock();
 
 	while (out_count < p_frames) {
 		int32_t chunk_size = MIN(p_frames - out_count, channel_size);
@@ -131,6 +171,8 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 			out_buffer++;
 		}
 	}
+
+	AudioStreamBlipKit::unlock();
 
 	// Fill rest of output buffer, even if nothing was produced.
 	if (out_count < p_frames && always_generate) {

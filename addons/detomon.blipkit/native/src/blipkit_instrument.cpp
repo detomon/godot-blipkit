@@ -2,6 +2,7 @@
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
+#include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
 
 using namespace detomon::BlipKit;
@@ -29,9 +30,9 @@ BlipKitInstrument::BlipKitInstrument() {
 }
 
 BlipKitInstrument::~BlipKitInstrument() {
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKDispose(&instrument);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitInstrument::set_sequence_float(Sequence p_sequence, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length, real_t p_multiplier) {
@@ -57,9 +58,9 @@ void BlipKitInstrument::set_sequence_float(Sequence p_sequence, const PackedFloa
 		ptrw[i] = (BKInt)(p_values[i] * p_multiplier);
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInstrumentSetSequence(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitInstrument::set_sequence_int(Sequence p_sequence, const PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length) {
@@ -83,9 +84,9 @@ void BlipKitInstrument::set_sequence_int(Sequence p_sequence, const PackedInt32A
 		ptrw[i] = p_values[i];
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInstrumentSetSequence(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitInstrument::set_sequence_pitch(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
@@ -130,9 +131,9 @@ void BlipKitInstrument::set_envelope_float(Sequence p_sequence, const PackedInt3
 		ptrw[i].value = (BKInt)(p_values[i] * p_multiplier);
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInt result = BKInstrumentSetEnvelope(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, "Sustain loop has zero steps.");
 }
@@ -161,9 +162,9 @@ void BlipKitInstrument::set_envelope_int(Sequence p_sequence, const PackedInt32A
 		ptrw[i].value = p_values[i];
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInt result = BKInstrumentSetEnvelope(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	ERR_FAIL_COND(result != BK_SUCCESS);
 }
@@ -187,7 +188,7 @@ void BlipKitInstrument::set_envelope_duty_cycle(PackedInt32Array p_steps, Packed
 void BlipKitInstrument::set_envelope_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release) {
 	BKInt sustain = CLAMP(p_sustain, 0.0, 1.0) * BK_MAX_VOLUME;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInstrumentSetEnvelopeADSR(&instrument, p_attack, p_decay, sustain, p_release);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }

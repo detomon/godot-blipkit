@@ -2,6 +2,7 @@
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/math.hpp>
 
+#include "audio_stream_blipkit.hpp"
 #include "blipkit_track.hpp"
 
 using namespace detomon::BlipKit;
@@ -18,9 +19,9 @@ BlipKitTrack::BlipKitTrack() {
 }
 
 BlipKitTrack::~BlipKitTrack() {
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKDispose(&track);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 String BlipKitTrack::_to_string() const {
@@ -30,9 +31,9 @@ String BlipKitTrack::_to_string() const {
 real_t BlipKitTrack::get_master_volume() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_MASTER_VOLUME, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return (real_t)value / (real_t)BK_MAX_VOLUME;
 }
@@ -41,17 +42,17 @@ void BlipKitTrack::set_master_volume(real_t p_master_volume) {
 	p_master_volume = CLAMP(p_master_volume, 0.0, 1.0);
 	BKInt value = (BKInt)(p_master_volume * (real_t)BK_MAX_VOLUME);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_MASTER_VOLUME, value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 real_t BlipKitTrack::get_volume() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_VOLUME, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return (real_t)value / (real_t)BK_MAX_VOLUME;
 }
@@ -60,17 +61,17 @@ void BlipKitTrack::set_volume(real_t p_volume) {
 	p_volume = CLAMP(p_volume, 0.0, 1.0);
 	BKInt value = (BKInt)(p_volume * (real_t)BK_MAX_VOLUME);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_VOLUME, value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 real_t BlipKitTrack::get_panning() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_PANNING, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return (real_t)value / (real_t)BK_MAX_VOLUME;
 }
@@ -79,18 +80,18 @@ void BlipKitTrack::set_panning(real_t p_panning) {
 	p_panning = CLAMP(p_panning, -1.0, +1.0);
 	BKInt value = (BKInt)(p_panning * (real_t)BK_MAX_VOLUME);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PANNING, value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 	BKInt value = 0;
 	Waveform waveform = WAVEFORM_SQUARE;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_WAVEFORM, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	switch (value) {
 		case BK_SQUARE: waveform = WAVEFORM_SQUARE; break;
@@ -124,33 +125,33 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 
 	custom_waveform.unref();
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_WAVEFORM, waveform);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_duty_cycle() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_DUTY_CYCLE, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value;
 }
 
 void BlipKitTrack::set_duty_cycle(int p_duty_cycle) {
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_DUTY_CYCLE, p_duty_cycle);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 real_t BlipKitTrack::get_note() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_NOTE, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	// No note set.
 	if (value < 0) {
@@ -171,17 +172,17 @@ void BlipKitTrack::set_note(real_t p_note) {
 		value = (BKInt)Math::round(p_note);
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_NOTE, value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 real_t BlipKitTrack::get_pitch() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_PITCH, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return (real_t)value / (real_t)BK_FINT20_UNIT;
 }
@@ -190,17 +191,17 @@ void BlipKitTrack::set_pitch(real_t p_pitch) {
 	p_pitch = CLAMP(p_pitch, -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE);
 	BKInt value = (BKInt)(p_pitch * (real_t)BK_FINT20_UNIT);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PITCH, value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_volume_slide() const {
 	BKInt value[1] = { 0 };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value[0];
 }
@@ -208,17 +209,17 @@ int BlipKitTrack::get_volume_slide() const {
 void BlipKitTrack::set_volume_slide(int p_volume_slide) {
 	BKInt value[1] = { p_volume_slide };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_panning_slide() const {
 	BKInt value[1] = { 0 };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value[0];
 }
@@ -226,17 +227,17 @@ int BlipKitTrack::get_panning_slide() const {
 void BlipKitTrack::set_panning_slide(int p_panning_slide) {
 	BKInt value[1] = { p_panning_slide };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_EFFECT_PANNING_SLIDE, value, sizeof(value));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_portamento() const {
 	BKInt value[1] = { 0 };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetPtr(&track, BK_EFFECT_PORTAMENTO, value, sizeof(value));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value[0];
 }
@@ -244,9 +245,9 @@ int BlipKitTrack::get_portamento() const {
 void BlipKitTrack::set_portamento(int p_portamento) {
 	BKInt value[1] = { p_portamento };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_EFFECT_PORTAMENTO, value, sizeof(value));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
@@ -255,9 +256,9 @@ void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 	BKInt delta = (BKInt)(p_delta * (real_t)BK_MAX_VOLUME);
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInt result = BKSetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
@@ -266,17 +267,17 @@ void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
 	BKInt delta = (BKInt)(p_delta * (real_t)BK_FINT20_UNIT);
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInt result = BKSetPtr(&track, BK_EFFECT_VIBRATO, values, sizeof(values));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_effect_divider() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_EFFECT_DIVIDER, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value;
 }
@@ -284,17 +285,17 @@ int BlipKitTrack::get_effect_divider() const {
 void BlipKitTrack::set_effect_divider(int p_effect_divider) {
 	p_effect_divider = MAX(0, p_effect_divider);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_EFFECT_DIVIDER, p_effect_divider);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetPtr(&track, BK_ARPEGGIO, value, (BK_MAX_ARPEGGIO + 1) * sizeof(BKInt));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	BKInt count = value[0];
 	PackedFloat32Array arpeggio;
@@ -310,9 +311,9 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 int BlipKitTrack::get_arpeggio_divider() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_ARPEGGIO_DIVIDER, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value;
 }
@@ -320,9 +321,9 @@ int BlipKitTrack::get_arpeggio_divider() const {
 void BlipKitTrack::set_arpeggio_divider(int p_arpeggio_divider) {
 	p_arpeggio_divider = MAX(0, p_arpeggio_divider);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_ARPEGGIO_DIVIDER, p_arpeggio_divider);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
@@ -334,9 +335,9 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 		value[i + 1] = (BKInt)(CLAMP(p_arpeggio[i], -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE) * (real_t)BK_FINT20_UNIT);
 	}
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_ARPEGGIO, value, (count + 1) * sizeof(BKInt));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 Ref<BlipKitInstrument> BlipKitTrack::get_instrument() {
@@ -347,17 +348,17 @@ void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
 	BKInstrument *bk_instrument = p_instrument->get_instrument();
 	instrument = p_instrument;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_INSTRUMENT, bk_instrument, sizeof(instrument));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_instrument_divider() const {
 	BKInt value = 0;
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_INSTRUMENT_DIVIDER, &value);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	return value;
 }
@@ -365,9 +366,9 @@ int BlipKitTrack::get_instrument_divider() const {
 void BlipKitTrack::set_instrument_divider(int p_instrument_divider) {
 	p_instrument_divider = MAX(0, p_instrument_divider);
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_INSTRUMENT_DIVIDER, p_instrument_divider);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 Ref<BlipKitWaveform> BlipKitTrack::get_custom_waveform() {
@@ -384,9 +385,9 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 
 	BKData *bk_data = p_waveform->get_waveform();
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKInt result = BKSetPtr(&track, BK_WAVEFORM, bk_data, sizeof(bk_data));
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set custom waveform: %s.", BKStatusGetName(result)));
 }
@@ -396,15 +397,15 @@ void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 
 	BKContext *context = p_playback->get_context();
 
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKTrackAttach(&track, context);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::detach() {
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKTrackDetach(&track);
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::release() {
@@ -416,10 +417,10 @@ void BlipKitTrack::mute() {
 }
 
 void BlipKitTrack::reset() {
-	AudioServer::get_singleton()->lock();
+	AudioStreamBlipKit::lock();
 	BKTrackReset(&track);
 	instrument.unref();
-	AudioServer::get_singleton()->unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::_bind_methods() {

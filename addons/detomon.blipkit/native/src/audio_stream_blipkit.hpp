@@ -32,6 +32,9 @@ public:
 
 	bool is_always_generating();
 	void set_generate_always(bool p_always_generate);
+
+	static void lock();
+	static void unlock();
 };
 
 class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
