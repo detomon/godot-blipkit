@@ -13,7 +13,7 @@ var _inactive_tracks: Array[BlipKitTrack] = []
 
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 @onready var _visualizer: Node2D = %Visualizer
-@onready var _visualizer2: Node2D = %Visualizer2
+#@onready var _visualizer2: Node2D = %Visualizer2
 
 @onready var _timer: Timer = %Timer
 @onready var _progress: HSlider = %Progress
@@ -67,13 +67,19 @@ func _init_track() -> void:
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+
 	var track := BlipKitTrack.new()
 	track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
 	track.master_volume = 0.3
 	track.portamento = 8
 	track.attach(playback)
-
 	playback.add_tick_function(_on_tick.bind(track), 24)
+
+	var track2 := BlipKitTrack.new()
+	track2.waveform = BlipKitTrack.WAVEFORM_SQUARE
+	track2.instrument = INSTRUMENT
+	track2.attach(playback)
+	playback.add_tick_function(_on_tick2.bind(track2), 24)
 
 
 var _index := 0
@@ -84,11 +90,33 @@ var _notes := PackedFloat32Array([
 	14, 14, -1, -1, 18, -1, 21, -1,
 ])
 
-func _on_tick(ticks: int, track: BlipKitTrack) -> void:
+var _index2 := 0
+#var _notes2 := PackedFloat32Array([
+	#-1, -1, -1, -1, 24, -1, 24, -1, -1, -1, -1, -1, 24, -1, -1, -1,
+	#-1, -1, -1, -1, 27, -1, 27, -1, -1, -1, -1, -1, 26, -1, -1, -1,
+#])
+var _notes2 := [
+	-1, -1, -1, -1, [24, 27, 31], -1, [24, 27, 31], -1, -1, -1, -1, -1, [24, 27, 31], -1, -1, -1,
+	-1, -1, -1, -1, [27, 31, 34], -1, [27, 31, 34], -1, -1, -1, -1, -1, [26, 31, 33], -1, -1, -1,
+]
+
+func _on_tick(_ticks: int, track: BlipKitTrack) -> void:
 	track.note = _notes[_index]
 	_index = wrapi(_index + 1, 0, len(_notes))
 
-	#prints("ticks", ticks)
+
+func _on_tick2(_ticks: int, track: BlipKitTrack) -> void:
+	var note = _notes2[_index2]
+	_index2 = wrapi(_index2 + 1, 0, len(_notes2))
+
+	if note is Array:
+		var d := {}
+		for n in note:
+			d[n + 12] = 1.0
+		_on_midi_input_notes_changes(d)
+
+	else:
+		_on_midi_input_notes_changes({})
 
 
 func _attach(track: BlipKitTrack) -> void:
@@ -138,7 +166,7 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 
 	_visualizer.notes = PackedInt32Array(notes.keys())
 
-	var time := _timer.wait_time - _timer.time_left
+	#var time := _timer.wait_time - _timer.time_left
 
 	#if not _playing:
 		#_roll.append({
