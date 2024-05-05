@@ -6,6 +6,8 @@
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
+#include <godot_cpp/templates/hash_map.hpp>
+#include <godot_cpp/variant/callable.hpp>
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -34,8 +36,8 @@ public:
 	int get_clock_rate();
 	void set_clock_rate(int p_clock_rate);
 
-	bool is_always_generating();
-	void set_generate_always(bool p_always_generate);
+	// bool is_always_generating();
+	// void set_generate_always(bool p_always_generate);
 
 	static void lock();
 	static void unlock();
@@ -46,12 +48,29 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	friend class AudioStreamBlipKit;
 
 private:
+	struct TickFunction {
+	private:
+		Callable callable;
+		BKDivider divider;
+
+		static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
+
+	public:
+		TickFunction() = default;
+		~TickFunction();
+
+		void initialize(Callable &p_callable, int p_ticks, AudioStreamBlipKitPlayback *p_playback);
+		void detach();
+		void reset();
+	};
+
 	static const int NUM_CHANNELS = 2;
 
 	Ref<AudioStreamBlipKit> stream;
 	bool active = false;
 	bool always_generate = false;
 	BKContext context;
+	HashMap<uint32_t, TickFunction> tick_functions;
 
 protected:
 	static void _bind_methods();
@@ -70,7 +89,10 @@ public:
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 
-	Ref<BlipKitTrack> create_track(BlipKitTrack::Waveform p_waveform);
-	Ref<BlipKitInstrument> create_instrument();
-	Ref<BlipKitWaveform> create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize = true);
+	void add_tick_function(Callable p_callable, int p_ticks);
+	void remove_tick_function(Callable p_callable);
+
+	// Ref<BlipKitTrack> create_track(BlipKitTrack::Waveform p_waveform);
+	// Ref<BlipKitInstrument> create_instrument();
+	// Ref<BlipKitWaveform> create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize = true);
 };

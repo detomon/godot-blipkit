@@ -13,7 +13,7 @@ BlipKitTrack::BlipKitTrack() {
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKTrack: %s.", BKStatusGetName(result)));
 
 	// Set default master volume.
-	BKSetAttr(&track, BK_MASTER_VOLUME, (BKInt)(0.1 * (real_t)BK_MAX_VOLUME));
+	BKSetAttr(&track, BK_MASTER_VOLUME, (BKInt)(DEFAULT_MASTER_VOLUME * (real_t)BK_MAX_VOLUME));
 	// Allow setting volume of triangle wave.
 	BKSetAttr(&track, BK_TRIANGLE_IGNORES_VOLUME, 0);
 }

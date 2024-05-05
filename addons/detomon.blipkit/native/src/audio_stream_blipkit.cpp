@@ -8,20 +8,17 @@ using namespace detomon::BlipKit;
 using namespace godot;
 
 static thread_local int lock_thread_id;
-static struct {
-	std::atomic<int> owner = 0;
-	int count = 0;
-	std::atomic<int> next_thread_id = 0;
-} lock_data;
+static std::atomic<int> lock_thread_id_inc = 0;
+static std::atomic<int> lock_owner = 0;
+static int lock_count = 0;
 
 void AudioStreamBlipKit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
-	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
 	// ClassDB::bind_method(D_METHOD("set_generate_always"), &AudioStreamBlipKit::set_generate_always);
 	// ClassDB::bind_method(D_METHOD("is_always_generating"), &AudioStreamBlipKit::is_always_generating);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", PROPERTY_HINT_RANGE, vformat("%d,%d,1", MIN_CLOCK_RATE, MAX_CLOCK_RATE)), "set_clock_rate", "get_clock_rate");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "always_generate"), "set_generate_always", "is_always_generating");
+	// ADD_PROPERTY(PropertyInfo(Variant::BOOL, "always_generate"), "set_generate_always", "is_always_generating");
 }
 
 String AudioStreamBlipKit::_to_string() const {
@@ -56,42 +53,44 @@ void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 	clock_rate = CLAMP(p_clock_rate, MIN_CLOCK_RATE, MAX_CLOCK_RATE);
 }
 
-bool AudioStreamBlipKit::is_always_generating() {
-	return always_generate;
-}
+// bool AudioStreamBlipKit::is_always_generating() {
+// 	return always_generate;
+// }
 
-void AudioStreamBlipKit::set_generate_always(bool p_always_generate) {
-	always_generate = p_always_generate;
-}
+// void AudioStreamBlipKit::set_generate_always(bool p_always_generate) {
+// 	always_generate = p_always_generate;
+// }
 
 void AudioStreamBlipKit::lock() {
-	int id = lock_thread_id;
+	int unlocked_id = 0;
+	int thread_id = lock_thread_id;
 
-	if (unlikely(id == 0)) {
-		id = lock_data.next_thread_id.fetch_add(1, std::memory_order_relaxed) + 1;
-		lock_thread_id = id;
+	// Create new ID for the current thread.
+	if (unlikely(thread_id == unlocked_id)) {
+		lock_thread_id = ++lock_thread_id_inc;
 	}
 
-	if (lock_data.owner.load() != id) {
-		int free_id = 0;
-		while (!lock_data.owner.compare_exchange_weak(free_id, id, std::memory_order_acquire, std::memory_order_relaxed)) {
+	// Not locked or locked by other thread.
+	if (lock_owner.load() != thread_id) {
+		// Wait for lock to be released.
+		while (!lock_owner.compare_exchange_weak(unlocked_id, thread_id, std::memory_order_acquire, std::memory_order_relaxed)) {
 			;
 		}
 	}
 
-	lock_data.count++;
+	lock_count++;
 }
 
 void AudioStreamBlipKit::unlock() {
-	if (unlikely(lock_data.owner.load() != lock_thread_id)) {
+	// Current thread is not the lock owner.
+	if (unlikely(lock_owner.load() != lock_thread_id)) {
 		return;
 	}
 
-	if (lock_data.count > 0) {
-		lock_data.count--;
-		if (lock_data.count <= 0) {
-			lock_data.owner.store(0, std::memory_order_release);
-		}
+	// Unlock.
+	if (--lock_count <= 0) {
+		lock_count = 0;
+		lock_owner.store(0, std::memory_order_release);
 	}
 }
 
@@ -110,7 +109,8 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
-	// ...
+	ClassDB::bind_method(D_METHOD("add_tick_function", "callable", "ticks"), &AudioStreamBlipKitPlayback::add_tick_function);
+	ClassDB::bind_method(D_METHOD("remove_tick_function", "callable"), &AudioStreamBlipKitPlayback::remove_tick_function);
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -147,62 +147,133 @@ bool AudioStreamBlipKitPlayback::_is_playing() const {
 int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) {
 	ERR_FAIL_COND_V(!active, 0);
 
-	int channel_size = 2048;
+	int channel_size = 1024;
 	int buffer_size = channel_size * NUM_CHANNELS;
 	int out_count = 0;
-	AudioFrame *out_buffer = p_buffer;
+
 	BKFrame buffer[buffer_size];
+	AudioFrame *out_buffer = p_buffer;
 
 	AudioStreamBlipKit::lock();
 
 	while (out_count < p_frames) {
-		int32_t chunk_size = MIN(p_frames - out_count, channel_size);
+		BKInt chunk_size = MIN(p_frames - out_count, channel_size);
 
-		// Produces no error.
-		BKInt generated = BKContextGenerate(&context, buffer, chunk_size);
-		out_count += generated;
+		// Generate frames; produces no error.
+		chunk_size = BKContextGenerate(&context, buffer, chunk_size);
 
 		// Nothing was generated.
-		if (generated == 0) {
+		if (chunk_size == 0) {
 			break;
 		}
 
+		out_count += chunk_size;
+
 		// Fill output buffer.
-		for (int i = 0; i < generated; i++) {
-			out_buffer->left = (real_t)buffer[i * NUM_CHANNELS + 0] / (real_t)BK_FRAME_MAX;
-			out_buffer->right = (real_t)buffer[i * NUM_CHANNELS + 1] / (real_t)BK_FRAME_MAX;
-			out_buffer++;
+		for (int i = 0; i < chunk_size; i++) {
+			float left = (real_t)buffer[i * NUM_CHANNELS + 0] / (real_t)BK_FRAME_MAX;
+			float right = (real_t)buffer[i * NUM_CHANNELS + 1] / (real_t)BK_FRAME_MAX;
+			*out_buffer++ = { left, right };
 		}
 	}
 
 	AudioStreamBlipKit::unlock();
 
-	// Fill rest of output buffer, even if nothing was generated.
-	if (out_count < p_frames && always_generate) {
-		while (out_count < p_frames) {
-			*out_buffer = { 0, 0 };
-			out_buffer++;
-			out_count++;
+	// Fill rest of output buffer, even if too few frames are generated.
+	if (always_generate) {
+		for (; out_count < p_frames; out_count++) {
+			*out_buffer++ = { 0, 0 };
 		}
 	}
 
 	return out_count;
 }
 
-Ref<BlipKitTrack> AudioStreamBlipKitPlayback::create_track(BlipKitTrack::Waveform p_waveform) {
-	Ref<BlipKitTrack> track;
+void AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_ticks) {
+	ERR_FAIL_COND(p_ticks <= 0);
 
-	return track;
+	uint32_t hash = p_callable.hash();
+
+	AudioStreamBlipKit::lock();
+
+	if (!tick_functions.has(hash)) {
+		TickFunction &function = tick_functions[hash];
+		function.initialize(p_callable, p_ticks, this);
+	}
+
+	AudioStreamBlipKit::unlock();
 }
 
-Ref<BlipKitInstrument> AudioStreamBlipKitPlayback::create_instrument() {
-	Ref<BlipKitInstrument> instrument;
+void AudioStreamBlipKitPlayback::remove_tick_function(Callable p_callable) {
+	uint32_t hash = p_callable.hash();
 
-	return instrument;
+	AudioStreamBlipKit::lock();
+	tick_functions.erase(hash);
+	AudioStreamBlipKit::unlock();
 }
 
-Ref<BlipKitWaveform> AudioStreamBlipKitPlayback::create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize) {
-	Ref<BlipKitWaveform> waveform;
+BKEnum AudioStreamBlipKitPlayback::TickFunction::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
+	TickFunction *function = static_cast<TickFunction *>(p_user_info);
+	int ticks = function->callable.call(p_info->divider);
 
-	return waveform;
+	// Update ticks if callable returned value.
+	if (ticks > 0) {
+		p_info->divider = ticks;
+	}
+
+	return BK_SUCCESS;
 }
+
+void AudioStreamBlipKitPlayback::TickFunction::initialize(Callable &p_callable, int p_ticks, AudioStreamBlipKitPlayback *p_playback) {
+	ERR_FAIL_COND(!p_playback);
+
+	callable = p_callable;
+
+	BKCallback callback = {
+		.func = divider_callback,
+		.userInfo = (void *)this,
+	};
+	BKDividerInit(&divider, p_ticks, &callback);
+
+	BKContext *context = p_playback->get_context();
+
+	AudioStreamBlipKit::lock();
+	BKContextAttachDivider(context, &divider, BK_CLOCK_TYPE_BEAT);
+	AudioStreamBlipKit::unlock();
+}
+
+AudioStreamBlipKitPlayback::TickFunction::~TickFunction() {
+	AudioStreamBlipKit::lock();
+	BKDispose(&divider);
+	AudioStreamBlipKit::unlock();
+}
+
+void AudioStreamBlipKitPlayback::TickFunction::detach() {
+	AudioStreamBlipKit::lock();
+	BKDividerDetach(&divider);
+	AudioStreamBlipKit::unlock();
+}
+
+void AudioStreamBlipKitPlayback::TickFunction::reset() {
+	AudioStreamBlipKit::lock();
+	BKDividerReset(&divider);
+	AudioStreamBlipKit::unlock();
+}
+
+// Ref<BlipKitTrack> AudioStreamBlipKitPlayback::create_track(BlipKitTrack::Waveform p_waveform) {
+// 	Ref<BlipKitTrack> track;
+
+// 	return track;
+// }
+
+// Ref<BlipKitInstrument> AudioStreamBlipKitPlayback::create_instrument() {
+// 	Ref<BlipKitInstrument> instrument;
+
+// 	return instrument;
+// }
+
+// Ref<BlipKitWaveform> AudioStreamBlipKitPlayback::create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize) {
+// 	Ref<BlipKitWaveform> waveform;
+
+// 	return waveform;
+// }

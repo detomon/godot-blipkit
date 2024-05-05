@@ -17,6 +17,8 @@ class BlipKitTrack : public RefCounted {
 	GDCLASS(BlipKitTrack, RefCounted)
 
 private:
+	const real_t DEFAULT_MASTER_VOLUME = 0.125;
+
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;

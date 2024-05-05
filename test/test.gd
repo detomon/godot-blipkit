@@ -62,12 +62,33 @@ func _process(_delta: float) -> void:
 
 
 func _init_track() -> void:
-	pass
-
-	#_instrument.set_envelope_adsr(4, 8, 0.75, 20)
-	#_instrument.set_sequence_pitch([12, 0], 1, 1)
+	INSTRUMENT.set_sequence_duty_cycle([8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
+
+	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+	var track := BlipKitTrack.new()
+	track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+	track.master_volume = 0.3
+	track.portamento = 8
+	track.attach(playback)
+
+	playback.add_tick_function(_on_tick.bind(track), 24)
+
+
+var _index := 0
+var _notes := PackedFloat32Array([
+	12, 12, -1, -1, 15, -1, 19, -1,
+	12, 12, -1, -1, 15, -1, 19, -1,
+	15, 15, -1, -1, 19, -1, 22, -1,
+	14, 14, -1, -1, 18, -1, 21, -1,
+])
+
+func _on_tick(ticks: int, track: BlipKitTrack) -> void:
+	track.note = _notes[_index]
+	_index = wrapi(_index + 1, 0, len(_notes))
+
+	#prints("ticks", ticks)
 
 
 func _attach(track: BlipKitTrack) -> void:
@@ -82,13 +103,12 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			if not track:
 				track = BlipKitTrack.new()
 				_attach(track)
-			track.duty_cycle = 1
-			track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
+			track.duty_cycle = 4
 			#track.set_tremolo(16, 0.2)
 			#track.arpeggio = [0, 12]
 			#track.arpeggio_divider = 8
 			track.instrument = INSTRUMENT
-			track.custom_waveform = AAH
+			#track.custom_waveform = AAH
 
 			_active_tracks[note] = track
 
