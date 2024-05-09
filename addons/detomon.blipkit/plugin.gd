@@ -1,8 +1,9 @@
 @tool
 extends EditorPlugin
 
-const ResourceEditor := preload("editors/resource_editor.gd")
 const WAVEFORM_EDITOR := preload("editors/waveform/waveform_panel.tscn")
+
+const ResourceEditor := preload("editors/resource_editor.gd")
 
 var _resource_editors: Array[ResourceEditor] = [
 	WAVEFORM_EDITOR.instantiate(),
@@ -10,7 +11,7 @@ var _resource_editors: Array[ResourceEditor] = [
 
 
 func _enter_tree() -> void:
-	for editor: ResourceEditor in _resource_editors:
+	for editor in _resource_editors:
 		var title := editor.get_panel_title()
 		var button := add_control_to_bottom_panel(editor, title)
 		editor.panel_button = button
@@ -18,12 +19,12 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
-	for editor: ResourceEditor in _resource_editors:
+	for editor in _resource_editors:
 		remove_control_from_bottom_panel(editor)
 
 
 func _handles(object: Object) -> bool:
-	for editor: ResourceEditor in _resource_editors:
+	for editor in _resource_editors:
 		if editor._handles(object):
 			return true
 
@@ -33,12 +34,12 @@ func _handles(object: Object) -> bool:
 func _edit(object: Object) -> void:
 	var handler: ResourceEditor
 
-	for editor: ResourceEditor in _resource_editors:
+	for editor in _resource_editors:
 		if editor._handles(object):
 			handler = editor
 			break
 
-	for editor: ResourceEditor in _resource_editors:
+	for editor in _resource_editors:
 		editor.panel_button.visible = editor == handler
 
 	if handler:

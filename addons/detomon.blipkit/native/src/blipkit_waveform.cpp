@@ -43,6 +43,8 @@ void BlipKitWaveform::_update_waveform() {
 	AudioStreamBlipKit::lock();
 	BKDataSetFrames(&waveform, wave_frames, frames.size(), 1, true);
 	AudioStreamBlipKit::unlock();
+
+	emit_changed();
 }
 
 PackedFloat32Array BlipKitWaveform::get_frames() {
@@ -72,8 +74,9 @@ void BlipKitWaveform::normalize(float p_amplitude) {
 	AudioStreamBlipKit::lock();
 
 	if (!Math::is_zero_approx(max_value)) {
+		float factor = 1.0 / max_value;
 		for (int i = 0; i < frames.size(); i++) {
-			ptrw[i] /= max_value;
+			ptrw[i] *= factor;
 		}
 	}
 

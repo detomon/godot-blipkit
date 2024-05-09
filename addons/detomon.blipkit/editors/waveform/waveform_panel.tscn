@@ -28,7 +28,7 @@ text = "Frames"
 [node name="FrameCount" type="SpinBox" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-min_value = 2.0
+min_value = 4.0
 max_value = 64.0
 value = 16.0
 
@@ -44,8 +44,8 @@ toggle_mode = true
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-min_value = 2.0
-max_value = 256.0
+min_value = 4.0
+max_value = 64.0
 step = 0.0
 value = 32.0
 
@@ -56,8 +56,10 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Edit"
-item_count = 1
+item_count = 2
 popup/item_0/text = "Normalize"
+popup/item_1/text = "Rotate..."
+popup/item_1/id = 1
 
 [node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
@@ -94,6 +96,7 @@ size_flags_vertical = 3
 [node name="WaveformEditor" parent="Panel" instance=ExtResource("2_5g71l")]
 unique_name_in_owner = true
 layout_mode = 1
+frames = PackedFloat32Array(0.5, 0.3, -0.2, -0.8)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
@@ -104,3 +107,4 @@ stream = SubResource("AudioStreamBlipKit_i3ra2")
 [connection signal="value_changed" from="HBoxContainer/SnapSteps" to="." method="_on_snap_steps_value_changed"]
 [connection signal="button_down" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_down"]
 [connection signal="button_up" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_up"]
+[connection signal="frames_changed" from="Panel/WaveformEditor" to="." method="_on_waveform_editor_frames_changed"]

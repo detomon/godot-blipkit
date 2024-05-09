@@ -1,6 +1,14 @@
 @tool
 extends "../resource_editor.gd"
 
+var waveform: BlipKitWaveform: set = set_waveform
+
+var _track := BlipKitTrack.new()
+var _theme_cache := {
+	snap_icon = null,
+	play_icon = null,
+}
+
 @onready var _frame_count: SpinBox = %FrameCount
 @onready var _edit_button: MenuButton = %EditButton
 @onready var _presets_button: MenuButton = %PresetsButton
@@ -9,15 +17,6 @@ extends "../resource_editor.gd"
 @onready var _play_button: Button = %PlayButton
 @onready var _waveform_editor: Control = %WaveformEditor
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
-
-
-var waveform: BlipKitWaveform: set = set_waveform
-
-var _track := BlipKitTrack.new()
-var _theme_cache := {
-	snap_icon = null,
-	play_icon = null,
-}
 
 
 func _init() -> void:
@@ -38,10 +37,19 @@ func _ready() -> void:
 
 
 func set_waveform(value: BlipKitWaveform) -> void:
+	if waveform:
+		waveform.changed.disconnect(_on_waveform_changed)
 	waveform = value
+	if waveform:
+		waveform.changed.connect(_on_waveform_changed)
 
 	if waveform:
-		_frame_count.value = len(waveform.frames)
+		if waveform.get_length() < 4:
+			var frames := PackedFloat32Array([1.0, 1.0, 0.0, 0.0])
+			waveform.frames = frames
+
+		_waveform_editor.frames = waveform.frames
+		_frame_count.value = waveform.get_length()
 
 
 func _update_theme() -> void:
@@ -76,7 +84,10 @@ func _get_panel_title() -> String:
 
 
 func _on_frame_count_value_changed(value: float) -> void:
-	pass
+	var frames: PackedFloat32Array = _waveform_editor.frames
+	frames.resize(value)
+	waveform.frames = frames
+	_waveform_editor.frames = frames
 
 
 func _on_snap_button_toggled(toggled_on: bool) -> void:
@@ -108,20 +119,45 @@ func _on_play_button_button_up() -> void:
 
 func _on_edit_id_pressed(id: int) -> void:
 	match id:
-		0:
+		0: # Normalize.
+			var frames := waveform.frames
+
+			var max_value := 0.0
+			for frame in frames:
+				max_value = maxf(max_value, absf(frame))
+
+			if not is_zero_approx(max_value):
+				var factor := 1.0 / max_value
+				for i in len(frames):
+					frames[i] *= factor
+
+			waveform.frames = frames
+
+		1: # Rotate.
 			pass
 
 
 func _on_presets_id_pressed(id: int) -> void:
 	match id:
-		0:
+		0: # Square.
 			pass
 
-		1:
+		1: # Triangle.
 			pass
 
-		2:
+		2: # Sawtooth.
 			pass
 
-		3:
+		3: #Sine.
 			pass
+
+
+func _on_waveform_changed() -> void:
+	_waveform_editor.frames = waveform.frames \
+		if waveform \
+		else []
+
+
+func _on_waveform_editor_frames_changed(frames: PackedFloat32Array) -> void:
+	if waveform:
+		waveform.frames = frames

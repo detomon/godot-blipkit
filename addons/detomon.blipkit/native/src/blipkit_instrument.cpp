@@ -197,6 +197,8 @@ void BlipKitInstrument::set_sequence_float(SequenceType p_sequence, PackedFloat3
 	} else if (result != BK_SUCCESS) {
 		ERR_FAIL_MSG(vformat("Failed to set sequence: %s.", BKStatusGetName(result)));
 	}
+
+	emit_changed();
 }
 
 void BlipKitInstrument::set_sequence_int(SequenceType p_sequence, PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length) {
@@ -238,6 +240,8 @@ void BlipKitInstrument::set_sequence_int(SequenceType p_sequence, PackedInt32Arr
 	} else if (result != BK_SUCCESS) {
 		ERR_FAIL_MSG(vformat("Failed to set sequence: %s.", BKStatusGetName(result)));
 	}
+
+	emit_changed();
 }
 
 void BlipKitInstrument::set_sequence_volume(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
@@ -300,6 +304,8 @@ void BlipKitInstrument::set_envelope_float(SequenceType p_sequence, PackedInt32A
 	} else if (result != BK_SUCCESS) {
 		ERR_FAIL_MSG(vformat("Failed to set envelope: %s.", BKStatusGetName(result)));
 	}
+
+	emit_changed();
 }
 
 void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Array &p_steps, PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length) {
@@ -344,6 +350,8 @@ void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Arr
 	} else if (result != BK_SUCCESS) {
 		ERR_FAIL_MSG(vformat("Failed to set envelope: %s.", BKStatusGetName(result)));
 	}
+
+	emit_changed();
 }
 
 void BlipKitInstrument::set_envelope_volume(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {

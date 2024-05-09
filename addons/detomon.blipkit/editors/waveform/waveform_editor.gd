@@ -3,23 +3,67 @@ extends Control
 
 signal frames_changed(frames: PackedFloat32Array)
 
+enum State {
+	NONE,
+	DRAW_FRAMES,
+}
+
 @export var frames: PackedFloat32Array: set = set_frames
 @export var snap_steps := 0
 
+var _is_transform_dirty := false
+var _frames_to_local_transform := Transform2D()
+var _local_to_frames_transform := Transform2D()
+var _editor_scale := 1.0
+var _state := State.NONE
+var _index := -1
 var _theme_cache := {
+	font_size = 0,
+	margin = 0,
 	grid_color = Color.WHITE,
+	grid_color_light = Color.WHITE,
 	grid_width = 1.0,
 	line_color = Color.WHITE,
 	line_width = 2.0,
+	frame_color = Color.WHITE,
+	frame_margin = 2,
 }
 
 
+func _init() -> void:
+	_editor_scale = EditorInterface.get_editor_scale()
+	focus_mode = FOCUS_ALL
+
+	resized.connect(_make_transform_dirty)
+	theme_changed.connect(_update_theme_cache)
+
+
 func _gui_input(event: InputEvent) -> void:
-	pass
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				_update_frame_at_position(event.position)
+				frames_changed.emit(frames)
+				_state = State.DRAW_FRAMES
+
+			else:
+				_state = State.NONE
+				_index = -1
+
+			queue_redraw()
+
+	elif event is InputEventMouseMotion:
+		match _state:
+			State.DRAW_FRAMES:
+				_update_frame_at_position(event.position)
+				frames_changed.emit(frames)
 
 
 func _draw() -> void:
-	_draw_grid()
+	var rect_outer := Rect2i(Vector2.ZERO, size)
+	var rect_inner := rect_outer.grow(-_theme_cache.margin * _editor_scale)
+
+	_draw_grid(rect_inner)
 	_draw_frames()
 
 
@@ -28,12 +72,91 @@ func set_frames(value: PackedFloat32Array) -> void:
 	queue_redraw()
 
 
-func _draw_grid() -> void:
-	draw_rect(Rect2i(Vector2.ZERO, size), _theme_cache.grid_color, false, _theme_cache.grid_width)
+func _update_theme_cache() -> void:
+	var mono_color: Color = get_theme_color(&"mono_color", &"Editor")
+	var mono_color_transparent := mono_color
+	mono_color_transparent.a = 0.0
 
-	var center := Vector2i(size * 0.5)
-	draw_line(Vector2i(0.0, center.y), Vector2(size.x, center.y), _theme_cache.line_color, _theme_cache.line_width)
+	_theme_cache.font = get_theme_font(&"font", &"Label")
+	_theme_cache.font_size = get_theme_font_size(&"font_size", &"Label")
+	_theme_cache.margin = _theme_cache.font.get_height(_theme_cache.font_size)
+	_theme_cache.frame_color = mono_color
+	_theme_cache.grid_color = mono_color.lerp(mono_color_transparent, 0.7)
+	_theme_cache.grid_color_light = mono_color.lerp(mono_color_transparent, 0.9)
+
+
+func _update_frame_at_position(point: Vector2) -> void:
+	if not frames:
+		return
+
+	var transform := _get_local_to_frames_transform()
+	var frame_value := transform * point
+	var x := floori(frame_value.x * len(frames))
+
+	if snap_steps > 0:
+		frame_value.y = snappedf(frame_value.y, 1.0 / float(snap_steps))
+
+	frames[x] = clampf(frame_value.y, -1.0, +1.0)
+
+
+func _make_transform_dirty() -> void:
+	_is_transform_dirty = true
+
+
+func _update_transform() -> void:
+	var rect := Rect2(Vector2.ZERO, size).grow(-_theme_cache.margin * _editor_scale)
+	var transform := Transform2D()
+
+	transform = transform.scaled(rect.size * Vector2(1.0, -0.5))
+	transform = transform.translated_local(Vector2(0.0, -1.0))
+	transform = transform.translated(rect.position)
+
+	_frames_to_local_transform = transform
+	_local_to_frames_transform = transform.affine_inverse()
+
+
+func _get_frames_to_local_transform() -> Transform2D:
+	if _is_transform_dirty:
+		_update_transform()
+		_is_transform_dirty = false
+
+	return _frames_to_local_transform
+
+
+func _get_local_to_frames_transform() -> Transform2D:
+	if _is_transform_dirty:
+		_update_transform()
+		_is_transform_dirty = false
+
+	return _local_to_frames_transform
+
+
+func _draw_grid(rect: Rect2i) -> void:
+	draw_rect(rect, _theme_cache.grid_color, false, 1.0 * _editor_scale)
+
+	var center := rect.get_center()
+	var from := rect.position
+	var to := rect.end
+	from.y = center.y
+	to.y = center.y
+
+	draw_line(from, to, _theme_cache.grid_color, 1.0 * _editor_scale)
 
 
 func _draw_frames() -> void:
-	pass
+	if not frames:
+		return
+
+	var frame_width := 1.0 / float(len(frames))
+	var frame_color: Color = _theme_cache.frame_color
+	var frame_margin: int = _theme_cache.frame_margin
+	var transform := _get_frames_to_local_transform()
+
+	for i in len(frames):
+		var value := frames[i]
+		var x := frame_width * float(i)
+		var rect := transform * Rect2(Vector2(x, 0.0), Vector2(frame_width, value))
+		rect.position.x += frame_margin
+		rect.size.x -= frame_margin * 2.0
+
+		draw_rect(Rect2i(rect), frame_color)
