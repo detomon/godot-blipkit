@@ -1,0 +1,106 @@
+[gd_scene load_steps=8 format=3 uid="uid://dc1ntp5a3rtaq"]
+
+[ext_resource type="Script" path="res://addons/detomon.blipkit/editors/waveform/waveform_panel.gd" id="1_kt6rd"]
+[ext_resource type="PackedScene" uid="uid://bpicfdpqpewby" path="res://addons/detomon.blipkit/editors/waveform/waveform_editor.tscn" id="2_5g71l"]
+[ext_resource type="Texture2D" uid="uid://cogbnktlhr2ir" path="res://addons/detomon.blipkit/icons/waveform_square.svg" id="2_h6t56"]
+[ext_resource type="Texture2D" uid="uid://badc2ykhgngkm" path="res://addons/detomon.blipkit/icons/waveform_triangle.svg" id="3_lqes2"]
+[ext_resource type="Texture2D" uid="uid://bj6sf2ik17mq2" path="res://addons/detomon.blipkit/icons/waveform_sawtooth.svg" id="4_u6myl"]
+[ext_resource type="Texture2D" uid="uid://djobdou51h315" path="res://addons/detomon.blipkit/icons/waveform_sine.svg" id="5_qhavr"]
+
+[sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_i3ra2"]
+
+[node name="WaveformPanel" type="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kt6rd")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "Frames"
+
+[node name="FrameCount" type="SpinBox" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 2.0
+max_value = 64.0
+value = 16.0
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="SnapButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+
+[node name="SnapSteps" type="SpinBox" parent="HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+min_value = 2.0
+max_value = 256.0
+step = 0.0
+value = 32.0
+
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="EditButton" type="MenuButton" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Edit"
+item_count = 1
+popup/item_0/text = "Normalize"
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PresetsButton" type="MenuButton" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Presets"
+item_count = 4
+popup/item_0/text = "Square"
+popup/item_0/icon = ExtResource("2_h6t56")
+popup/item_1/text = "Triangle"
+popup/item_1/icon = ExtResource("3_lqes2")
+popup/item_1/id = 1
+popup/item_2/text = "Sawtooth"
+popup/item_2/icon = ExtResource("4_u6myl")
+popup/item_2/id = 2
+popup/item_3/text = "Sine"
+popup/item_3/icon = ExtResource("5_qhavr")
+popup/item_3/id = 3
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WaveformEditor" parent="Panel" instance=ExtResource("2_5g71l")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = SubResource("AudioStreamBlipKit_i3ra2")
+
+[connection signal="value_changed" from="HBoxContainer/FrameCount" to="." method="_on_frame_count_value_changed"]
+[connection signal="toggled" from="HBoxContainer/SnapButton" to="." method="_on_snap_button_toggled"]
+[connection signal="value_changed" from="HBoxContainer/SnapSteps" to="." method="_on_snap_steps_value_changed"]
+[connection signal="button_down" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_down"]
+[connection signal="button_up" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_up"]
