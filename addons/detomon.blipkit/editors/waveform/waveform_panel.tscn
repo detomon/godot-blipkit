@@ -47,7 +47,7 @@ layout_mode = 2
 min_value = 4.0
 max_value = 64.0
 step = 0.0
-value = 32.0
+value = 8.0
 
 [node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
@@ -56,19 +56,19 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Edit"
-item_count = 2
+item_count = 1
 popup/item_0/text = "Normalize"
-popup/item_1/text = "Rotate..."
-popup/item_1/id = 1
 
-[node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
+[node name="Spacer" type="Control" parent="HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="PlayButton" type="Button" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "Play"
 
-[node name="Spacer" type="Control" parent="HBoxContainer"]
+[node name="Spacer2" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -93,10 +93,29 @@ popup/item_3/id = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="WaveformEditor" parent="Panel" instance=ExtResource("2_5g71l")]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
 layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WaveformEditor" parent="Panel/HBoxContainer" instance=ExtResource("2_5g71l")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
 frames = PackedFloat32Array(0.5, 0.3, -0.2, -0.8)
+snap_steps = 8.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="FrameValues" type="LineEdit" parent="HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
@@ -107,4 +126,5 @@ stream = SubResource("AudioStreamBlipKit_i3ra2")
 [connection signal="value_changed" from="HBoxContainer/SnapSteps" to="." method="_on_snap_steps_value_changed"]
 [connection signal="button_down" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_down"]
 [connection signal="button_up" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_up"]
-[connection signal="frames_changed" from="Panel/WaveformEditor" to="." method="_on_waveform_editor_frames_changed"]
+[connection signal="frames_changed" from="Panel/HBoxContainer/WaveformEditor" to="." method="_on_waveform_editor_frames_changed"]
+[connection signal="text_submitted" from="HBoxContainer2/FrameValues" to="." method="_on_frame_values_text_submitted"]

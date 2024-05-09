@@ -67,6 +67,15 @@ func _draw() -> void:
 	_draw_frames()
 
 
+#func _get_minimum_size() -> Vector2:
+	#var width: float = _theme_cache.margin * 2.0
+#
+	#if frames:
+		#width += len(frames) * 16.0
+#
+	#return Vector2(width, 200.0)
+
+
 func set_frames(value: PackedFloat32Array) -> void:
 	frames = value
 	queue_redraw()
@@ -80,7 +89,7 @@ func _update_theme_cache() -> void:
 	_theme_cache.font = get_theme_font(&"font", &"Label")
 	_theme_cache.font_size = get_theme_font_size(&"font_size", &"Label")
 	_theme_cache.margin = _theme_cache.font.get_height(_theme_cache.font_size)
-	_theme_cache.frame_color = mono_color
+	_theme_cache.frame_color = mono_color.lerp(mono_color_transparent, 0.5)
 	_theme_cache.grid_color = mono_color.lerp(mono_color_transparent, 0.7)
 	_theme_cache.grid_color_light = mono_color.lerp(mono_color_transparent, 0.9)
 
@@ -91,7 +100,7 @@ func _update_frame_at_position(point: Vector2) -> void:
 
 	var transform := _get_local_to_frames_transform()
 	var frame_value := transform * point
-	var x := floori(frame_value.x * len(frames))
+	var x := clampi(floori(frame_value.x * len(frames)), 0, len(frames) - 1)
 
 	if snap_steps > 0:
 		frame_value.y = snappedf(frame_value.y, 1.0 / float(snap_steps))
@@ -132,15 +141,34 @@ func _get_local_to_frames_transform() -> Transform2D:
 
 
 func _draw_grid(rect: Rect2i) -> void:
-	draw_rect(rect, _theme_cache.grid_color, false, 1.0 * _editor_scale)
+	var line_width := 1.0 * _editor_scale
 
-	var center := rect.get_center()
-	var from := rect.position
-	var to := rect.end
-	from.y = center.y
-	to.y = center.y
+	draw_rect(rect, _theme_cache.grid_color, false, line_width)
 
-	draw_line(from, to, _theme_cache.grid_color, 1.0 * _editor_scale)
+	if frames:
+		var transform := _get_frames_to_local_transform()
+		var frame_width := 1.0 / len(frames)
+		const grid_steps := 8.0
+		var grid_height := 1.0 / grid_steps
+
+		for i in len(frames) - 1:
+			var from_line := transform * Vector2(frame_width * float(i + 1), +1.0)
+			var to_line := transform * Vector2(frame_width * float(i + 1), -1.0)
+			draw_line(from_line, to_line, _theme_cache.grid_color_light, line_width)
+
+		for i in grid_steps - 1:
+			var from_line := transform * Vector2(0.0, grid_height * float(i + 1))
+			var to_line := transform * Vector2(1.0, grid_height * float(i + 1))
+			draw_line(from_line, to_line, _theme_cache.grid_color_light, line_width)
+
+		var from_line2 := transform * Vector2(0.0, 0.0)
+		var to_line2 := transform * Vector2(1.0, 0.0)
+		draw_line(from_line2, to_line2, _theme_cache.grid_color, line_width)
+
+		for i in grid_steps - 1:
+			var from_line := transform * Vector2(0.0, -grid_height * float(i + 1))
+			var to_line := transform * Vector2(1.0, -grid_height * float(i + 1))
+			draw_line(from_line, to_line, _theme_cache.grid_color_light, line_width)
 
 
 func _draw_frames() -> void:
@@ -158,5 +186,9 @@ func _draw_frames() -> void:
 		var rect := transform * Rect2(Vector2(x, 0.0), Vector2(frame_width, value))
 		rect.position.x += frame_margin
 		rect.size.x -= frame_margin * 2.0
+
+		if is_zero_approx(rect.size.y):
+			rect.position.y += 3.0
+			rect.size.y -= 6.0
 
 		draw_rect(Rect2i(rect), frame_color)

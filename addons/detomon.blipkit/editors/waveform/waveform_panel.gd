@@ -15,6 +15,7 @@ var _theme_cache := {
 @onready var _snap_button: Button = %SnapButton
 @onready var _snap_steps: SpinBox = %SnapSteps
 @onready var _play_button: Button = %PlayButton
+@onready var _frame_values: LineEdit = %FrameValues
 @onready var _waveform_editor: Control = %WaveformEditor
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 
@@ -51,6 +52,8 @@ func set_waveform(value: BlipKitWaveform) -> void:
 		_waveform_editor.frames = waveform.frames
 		_frame_count.value = waveform.get_length()
 
+	_update_frame_values()
+
 
 func _update_theme() -> void:
 	_update_theme_cache()
@@ -81,6 +84,31 @@ func _edit(object: Object) -> void:
 
 func _get_panel_title() -> String:
 	return "BlipKitWaveform"
+
+
+func _set_frames(values: PackedFloat32Array) -> void:
+	if waveform:
+		waveform.frames = values
+		_frame_count.value = len(values)
+		_update_frame_values()
+
+
+func _update_frame_values() -> void:
+	if not _frame_values:
+		return
+
+	if not waveform:
+		_frame_values.text = ""
+		return
+
+	var frames := waveform.frames
+	var values := PackedStringArray()
+	values.resize(len(frames))
+
+	for i in len(frames):
+		values[i] = str(roundi(frames[i] * 255.0))
+
+	_frame_values.text = ", ".join(values)
 
 
 func _on_frame_count_value_changed(value: float) -> void:
@@ -133,9 +161,6 @@ func _on_edit_id_pressed(id: int) -> void:
 
 			waveform.frames = frames
 
-		1: # Rotate.
-			pass
-
 
 func _on_presets_id_pressed(id: int) -> void:
 	match id:
@@ -156,8 +181,19 @@ func _on_waveform_changed() -> void:
 	_waveform_editor.frames = waveform.frames \
 		if waveform \
 		else []
+	_update_frame_values()
 
 
 func _on_waveform_editor_frames_changed(frames: PackedFloat32Array) -> void:
-	if waveform:
-		waveform.frames = frames
+	_set_frames(frames)
+
+
+func _on_frame_values_text_submitted(new_text: String) -> void:
+	var floats := new_text.split_floats(",", false)
+	var values := PackedFloat32Array()
+	values.resize(len(floats))
+
+	for i in len(floats):
+		values[i] = clampf(floats[i] / 255.0, -1.0, +1.0)
+
+	_set_frames(values)
