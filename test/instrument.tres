@@ -1,5 +1,0 @@
-[gd_resource type="BlipKitInstrument" format=3]
-
-[resource]
-sequence/pitch = [PackedFloat32Array(12, 0), 1, 1]
-sequence/volume = [PackedInt32Array(4, 8, 240, 20), PackedFloat32Array(1, 0.75, 0.75, 0), 2, 1]

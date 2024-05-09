@@ -423,6 +423,24 @@ void BlipKitTrack::reset() {
 	AudioStreamBlipKit::unlock();
 }
 
+int BlipKitTrack::tick(int p_divider_index, int p_ticks) {
+	int ret;
+
+	if (GDVIRTUAL_CALL(_tick, p_divider_index, p_ticks, ret)) {
+		return ret;
+	}
+
+	return p_ticks;
+}
+
+int BlipKitTrack::add_divider(int p_ticks) {
+	return 0;
+}
+
+void BlipKitTrack::remove_divider(int p_divider_index) {
+	return;
+}
+
 void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_waveform"), &BlipKitTrack::set_waveform);
 	ClassDB::bind_method(D_METHOD("get_waveform"), &BlipKitTrack::get_waveform);
@@ -470,6 +488,11 @@ void BlipKitTrack::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitTrack::reset);
 
+	ClassDB::bind_method(D_METHOD("add_divider", "ticks"), &BlipKitTrack::add_divider);
+	ClassDB::bind_method(D_METHOD("remove_divider", "divider_index"), &BlipKitTrack::remove_divider);
+
+	GDVIRTUAL_BIND(_tick, "divider_index", "ticks");
+
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "waveform"), "set_waveform", "get_waveform");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "duty_cycle"), "set_duty_cycle", "get_duty_cycle");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "master_volume"), "set_master_volume", "get_master_volume");
@@ -491,6 +514,7 @@ void BlipKitTrack::_bind_methods() {
 	BIND_ENUM_CONSTANT(WAVEFORM_TRIANGLE);
 	BIND_ENUM_CONSTANT(WAVEFORM_NOISE);
 	BIND_ENUM_CONSTANT(WAVEFORM_SAWTOOTH);
+	BIND_ENUM_CONSTANT(WAVEFORM_SINE);
 	BIND_ENUM_CONSTANT(WAVEFORM_CUSTOM);
 	BIND_ENUM_CONSTANT(WAVEFORM_SAMPLE);
 

@@ -15,22 +15,24 @@ private:
 	BKData waveform;
 	PackedFloat32Array frames;
 
-	void _set_frames(const PackedFloat32Array &p_frames, bool p_normalize);
-
 protected:
 	static void _bind_methods();
 	String _to_string() const;
+
+	void _update_waveform();
 
 public:
 	BlipKitWaveform();
 	~BlipKitWaveform();
 
 	_FORCE_INLINE_ BKData *get_waveform() { return &waveform; };
+	_FORCE_INLINE_ int get_length() { return frames.size(); };
 	_FORCE_INLINE_ bool is_valid() { return !frames.is_empty(); };
 
 	PackedFloat32Array get_frames();
-	void set_frames(PackedFloat32Array p_frames) { _set_frames(p_frames, false); }
-	void set_frames_normalized(PackedFloat32Array p_frames) { _set_frames(p_frames, true); }
+	void set_frames(PackedFloat32Array p_frames);
+
+	void normalize(float p_amplitude = 1.0);
 };
 
 } // namespace detomon::BlipKit

@@ -2,6 +2,7 @@
 
 #include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/core/gdvirtual.gen.inc>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 #include "blipkit_instrument.hpp"
@@ -22,6 +23,8 @@ private:
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
+
+	int tick(int p_divider_index, int p_ticks);
 
 protected:
 	static void _bind_methods();
@@ -197,6 +200,11 @@ public:
 	void mute();
 
 	void reset();
+
+	int add_divider(int p_ticks);
+	void remove_divider(int p_divider_index);
+
+	GDVIRTUAL2R(int, _tick, int, int);
 };
 
 } // namespace detomon::BlipKit

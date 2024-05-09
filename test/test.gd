@@ -1,7 +1,7 @@
 extends Control
 
-const AAH: BlipKitWaveform = preload("aah.tres")
-const INSTRUMENT: BlipKitInstrument = preload("instrument.tres")
+const AAH: BlipKitWaveform = preload("waveforms/aah.tres")
+const INSTRUMENT: BlipKitInstrument = preload("instruments/simple.tres")
 
 var _active_tracks := {}
 var _roll: Array[Dictionary] = []
@@ -22,12 +22,13 @@ var _inactive_tracks: Array[BlipKitTrack] = []
 func _ready() -> void:
 	_init_track()
 
-	#_waveform.set_frames_normalized([
+	#_waveform.frames = [
 		#-255, -163, -154, -100, 45, 127, 9, -163, -163,
 		#-27, 63, 72, 63, 9, -100, -154, -127,
 		#-91, -91, -91, -91, -127, -154, -100, 45,
 		#127, 9, -163, -163, 9, 127, 45,
-	#])
+	#]
+	#_waveform.normalize()
 
 	#ResourceSaver.save(_waveform, "res://aah.tres")
 

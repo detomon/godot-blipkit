@@ -8,10 +8,11 @@ using namespace detomon::BlipKit;
 using namespace godot;
 
 void BlipKitWaveform::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_length"), &BlipKitWaveform::get_length);
+	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
 	ClassDB::bind_method(D_METHOD("set_frames", "frames"), &BlipKitWaveform::set_frames);
-	ClassDB::bind_method(D_METHOD("set_frames_normalized", "frames"), &BlipKitWaveform::set_frames_normalized);
-	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
+	ClassDB::bind_method(D_METHOD("normalize", "amplitude"), &BlipKitWaveform::normalize, DEFVAL(1.0));
 
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "frames", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE), "set_frames", "get_frames");
 }
@@ -31,38 +32,52 @@ BlipKitWaveform::~BlipKitWaveform() {
 	AudioStreamBlipKit::unlock();
 }
 
+void BlipKitWaveform::_update_waveform() {
+	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
+	const float *ptr = frames.ptr();
+
+	for (int i = 0; i < frames.size(); i++) {
+		wave_frames[i] = (BKFrame)(CLAMP(ptr[i], -1.0, +1.0) * (real_t)BK_FRAME_MAX);
+	}
+
+	AudioStreamBlipKit::lock();
+	BKDataSetFrames(&waveform, wave_frames, frames.size(), 1, true);
+	AudioStreamBlipKit::unlock();
+}
+
 PackedFloat32Array BlipKitWaveform::get_frames() {
 	return frames;
 }
 
-void BlipKitWaveform::_set_frames(const PackedFloat32Array &p_frames, bool p_normalize) {
+void BlipKitWaveform::set_frames(PackedFloat32Array p_frames) {
 	ERR_FAIL_COND(p_frames.size() < 2);
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 
-	PackedFloat32Array new_frames = p_frames;
-	float *ptrw = new_frames.ptrw();
+	// TODO: Needed?
+	AudioStreamBlipKit::lock();
+	frames = p_frames.duplicate();
+	AudioStreamBlipKit::unlock();
 
-	if (p_normalize) {
-		float max_value = 0.0;
-		for (int i = 0; i < new_frames.size(); i++) {
-			max_value = MAX(max_value, ABS(ptrw[i]));
-		}
+	_update_waveform();
+}
 
-		if (!Math::is_zero_approx(max_value)) {
-			for (int i = 0; i < new_frames.size(); i++) {
-				ptrw[i] /= max_value;
-			}
-		}
-	}
+void BlipKitWaveform::normalize(float p_amplitude) {
+	float *ptrw = frames.ptrw();
+	float max_value = 0.0;
 
-	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
-
-	for (int i = 0; i < new_frames.size(); i++) {
-		wave_frames[i] = (BKFrame)(CLAMP(ptrw[i], -1.0, +1.0) * (real_t)BK_FRAME_MAX);
+	for (int i = 0; i < frames.size(); i++) {
+		max_value = MAX(max_value, ABS(ptrw[i]));
 	}
 
 	AudioStreamBlipKit::lock();
-	frames = new_frames;
-	BKDataSetFrames(&waveform, wave_frames, frames.size(), 1, true);
+
+	if (!Math::is_zero_approx(max_value)) {
+		for (int i = 0; i < frames.size(); i++) {
+			ptrw[i] /= max_value;
+		}
+	}
+
 	AudioStreamBlipKit::unlock();
+
+	_update_waveform();
 }
