@@ -31,8 +31,7 @@ public:
 
 	PackedFloat32Array get_frames();
 	void set_frames(PackedFloat32Array p_frames);
-
-	void normalize(float p_amplitude = 1.0);
+	void set_frames_normalized(PackedFloat32Array p_frames, float p_amplitude = 1.0);
 };
 
 } // namespace detomon::BlipKit

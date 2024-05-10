@@ -28,7 +28,7 @@ text = "Frames"
 [node name="FrameCount" type="SpinBox" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-min_value = 4.0
+min_value = 2.0
 max_value = 64.0
 value = 16.0
 
@@ -106,8 +106,9 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+focus_mode = 2
 frames = PackedFloat32Array(0.5, 0.3, -0.2, -0.8)
-snap_steps = 8.0
+snap_steps = 8
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="."]
 layout_mode = 2
