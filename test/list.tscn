@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctwakyenitf68"]
+
+[ext_resource type="Texture2D" uid="uid://badc2ykhgngkm" path="res://addons/detomon.blipkit/icons/waveform_triangle.svg" id="1_yqplf"]
+[ext_resource type="Texture2D" uid="uid://cogbnktlhr2ir" path="res://addons/detomon.blipkit/icons/waveform_square.svg" id="2_leu0a"]
+[ext_resource type="Texture2D" uid="uid://djobdou51h315" path="res://addons/detomon.blipkit/icons/waveform_sine.svg" id="3_dlh7q"]
+[ext_resource type="Texture2D" uid="uid://bj6sf2ik17mq2" path="res://addons/detomon.blipkit/icons/waveform_sawtooth.svg" id="4_w8wmb"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 5
+
+[node name="Button" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj"
+
+[node name="Button2" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj lkj lkj l"
+
+[node name="Button3" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj"
+
+[node name="Button4" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj"
+
+[node name="Button5" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj"
+
+[node name="Button6" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj"
+
+[node name="Button7" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "lkljlkj"
+
+[node name="ItemList" type="ItemList" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+item_count = 4
+max_columns = 2
+same_column_width = true
+item_0/text = "lkjlkj"
+item_0/icon = ExtResource("1_yqplf")
+item_1/text = "poi  "
+item_1/icon = ExtResource("2_leu0a")
+item_2/text = "'09mkljlkj"
+item_2/icon = ExtResource("3_dlh7q")
+item_3/text = "545454"
+item_3/icon = ExtResource("4_w8wmb")

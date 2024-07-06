@@ -81,8 +81,6 @@ layout_mode = 2
 max_value = 1.0
 step = 0.0
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
-
 [connection signal="notes_changes" from="MidiInput" to="." method="_on_midi_input_notes_changes"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/RecordButton" to="." method="_on_record_button_pressed"]

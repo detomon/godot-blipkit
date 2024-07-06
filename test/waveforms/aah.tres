@@ -1,0 +1,4 @@
+[gd_resource type="BlipKitWaveform" format=3 uid="uid://rkyu70qtncbl"]
+
+[resource]
+frames = PackedFloat32Array(0.714286, 0.857143, 1, 1, 1, 1, 0.875, 0.714286, 0.571429, 0.428571, -0.142857, -0.285714, -0.571429, -0.857143, -1, -1)

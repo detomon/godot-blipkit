@@ -165,7 +165,8 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 
 	#_visualizer2.notes = PackedInt32Array(notes.keys())
 
-	_visualizer.notes = PackedInt32Array(notes.keys())
+	var values := PackedInt32Array(notes.keys())
+	_visualizer.set_deferred(&"notes", values)
 
 	#var time := _timer.wait_time - _timer.time_left
 
