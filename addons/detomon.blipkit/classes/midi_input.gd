@@ -1,5 +1,5 @@
 @icon("../icons/midi_input.svg")
-class_name MidiInput
+class_name BlipKitMidiInput
 extends Node
 
 signal notes_changes(notes: Dictionary)

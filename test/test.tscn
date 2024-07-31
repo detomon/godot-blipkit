@@ -32,8 +32,12 @@ stream = SubResource("AudioStreamBlipKit_6ye76")
 autoplay = true
 bus = &"Music"
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_vjgep")
+[node name="MidiInput" type="Node" parent="."]
+script = ExtResource("3_y6xj0")
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 2.0
 
 [node name="Visualizer" parent="." instance=ExtResource("2_r32xf")]
 unique_name_in_owner = true
@@ -41,13 +45,6 @@ unique_name_in_owner = true
 [node name="Visualizer2" parent="." instance=ExtResource("3_vfjjs")]
 unique_name_in_owner = true
 visible = false
-
-[node name="MidiInput" type="Node" parent="."]
-script = ExtResource("3_y6xj0")
-
-[node name="Timer" type="Timer" parent="."]
-unique_name_in_owner = true
-wait_time = 2.0
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 visible = false
@@ -80,6 +77,9 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vjgep")
 
 [connection signal="notes_changes" from="MidiInput" to="." method="_on_midi_input_notes_changes"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

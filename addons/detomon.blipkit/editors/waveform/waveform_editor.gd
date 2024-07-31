@@ -42,9 +42,9 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				_update_frame_at_position(event.position)
-				frames_changed.emit(frames)
-				_state = State.DRAW_FRAMES
+				if _update_frame_at_position(event.position, false):
+					frames_changed.emit(frames)
+					_state = State.DRAW_FRAMES
 
 			else:
 				_state = State.NONE
@@ -55,12 +55,13 @@ func _gui_input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion:
 		match _state:
 			State.DRAW_FRAMES:
-				_update_frame_at_position(event.position)
-				frames_changed.emit(frames)
+				if _update_frame_at_position(event.position, true):
+					frames_changed.emit(frames)
 
 
 func _draw() -> void:
-	var rect_outer := Rect2i(Vector2.ZERO, size)
+	var rect_size := _get_size()
+	var rect_outer := Rect2i(Vector2.ZERO, rect_size)
 	var rect_inner := rect_outer.grow(-_theme_cache.margin * _editor_scale)
 
 	_draw_grid(rect_inner)
@@ -78,6 +79,7 @@ func _draw() -> void:
 
 func set_frames(value: PackedFloat32Array) -> void:
 	frames = value
+	_make_transform_dirty()
 	queue_redraw()
 
 
@@ -94,18 +96,24 @@ func _update_theme_cache() -> void:
 	_theme_cache.grid_color_light = mono_color.lerp(mono_color_transparent, 0.9)
 
 
-func _update_frame_at_position(point: Vector2) -> void:
+func _update_frame_at_position(point: Vector2, allow_out_of_bounds := false) -> bool:
 	if not frames:
-		return
+		return false
 
 	var transform := _get_local_to_frames_transform()
 	var frame_value := transform * point
-	var x := clampi(floori(frame_value.x * len(frames)), 0, len(frames) - 1)
 
+	if not allow_out_of_bounds:
+		if frame_value.x < 0.0 or frame_value.x > 1.0 \
+			or frame_value.y < -1.0 or frame_value.y > +1.0:
+				return false
+
+	var x := clampi(floori(frame_value.x * len(frames)), 0, len(frames) - 1)
 	if snap_steps > 0:
 		frame_value.y = snappedf(frame_value.y, 1.0 / float(snap_steps))
-
 	frames[x] = clampf(frame_value.y, -1.0, +1.0)
+
+	return true
 
 
 func _make_transform_dirty() -> void:
@@ -113,7 +121,8 @@ func _make_transform_dirty() -> void:
 
 
 func _update_transform() -> void:
-	var rect := Rect2(Vector2.ZERO, size).grow(-_theme_cache.margin * _editor_scale)
+	var rect_size := _get_size()
+	var rect := Rect2(Vector2.ZERO, rect_size).grow(-_theme_cache.margin * _editor_scale)
 	var transform := Transform2D()
 
 	transform = transform.scaled(rect.size * Vector2(1.0, -0.5))
@@ -138,6 +147,13 @@ func _get_local_to_frames_transform() -> Transform2D:
 		_is_transform_dirty = false
 
 	return _local_to_frames_transform
+
+
+func _get_size() -> Vector2i:
+	var width_min := len(frames) * 24.0
+	var width := minf(width_min, size.x)
+
+	return Vector2i(width, size.y)
 
 
 func _draw_grid(rect: Rect2i) -> void:

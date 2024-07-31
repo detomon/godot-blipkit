@@ -106,7 +106,7 @@ func _on_tick(_ticks: int, track: BlipKitTrack) -> void:
 	_index = wrapi(_index + 1, 0, len(_notes))
 
 
-func _on_tick2(_ticks: int, track: BlipKitTrack) -> void:
+func _on_tick2(_ticks: int, _track: BlipKitTrack) -> void:
 	var note = _notes2[_index2]
 	_index2 = wrapi(_index2 + 1, 0, len(_notes2))
 

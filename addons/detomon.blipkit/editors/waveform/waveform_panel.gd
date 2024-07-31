@@ -17,7 +17,7 @@ var _theme_cache := {
 @onready var _play_button: Button = %PlayButton
 @onready var _frame_values: LineEdit = %FrameValues
 @onready var _waveform_editor: Control = %WaveformEditor
-@onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
+@onready var _test_audio: AudioStreamPlayer = %TestAudio
 
 
 func _init() -> void:
@@ -130,9 +130,9 @@ func _on_snap_steps_value_changed(value: float) -> void:
 
 
 func _on_play_button_button_down() -> void:
-	_audio_stream_player.play()
+	_test_audio.play()
 
-	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+	var playback: AudioStreamBlipKitPlayback = _test_audio.get_stream_playback()
 	_track.attach(playback)
 	 # Set custom waveform after attaching.
 	_track.custom_waveform = waveform
@@ -142,7 +142,7 @@ func _on_play_button_button_down() -> void:
 func _on_play_button_button_up() -> void:
 	_track.release()
 	_track.detach()
-	_audio_stream_player.stop()
+	_test_audio.stop()
 
 
 func _on_edit_id_pressed(id: int) -> void:
