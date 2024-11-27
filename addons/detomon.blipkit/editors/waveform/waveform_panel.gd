@@ -83,7 +83,7 @@ func _edit(object: Object) -> void:
 
 
 func _get_panel_title() -> String:
-	return "BlipKitWaveform"
+	return "BlipKit Waveform"
 
 
 func _set_frames(values: PackedFloat32Array) -> void:

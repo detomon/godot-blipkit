@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://dc1ntp5a3rtaq"]
 
-[ext_resource type="Script" path="res://addons/detomon.blipkit/editors/waveform/waveform_panel.gd" id="1_kt6rd"]
+[ext_resource type="Script" uid="uid://cn730vdtp3nc5" path="res://addons/detomon.blipkit/editors/waveform/waveform_panel.gd" id="1_kt6rd"]
 [ext_resource type="PackedScene" uid="uid://bpicfdpqpewby" path="res://addons/detomon.blipkit/editors/waveform/waveform_editor.tscn" id="2_5g71l"]
 [ext_resource type="Texture2D" uid="uid://cogbnktlhr2ir" path="res://addons/detomon.blipkit/icons/waveform_square.svg" id="2_h6t56"]
 [ext_resource type="Texture2D" uid="uid://badc2ykhgngkm" path="res://addons/detomon.blipkit/icons/waveform_triangle.svg" id="3_lqes2"]
@@ -60,6 +60,7 @@ flat = false
 switch_on_hover = true
 item_count = 1
 popup/item_0/text = "Normalize"
+popup/item_0/id = 0
 
 [node name="Spacer" type="Control" parent="HBoxContainer"]
 layout_mode = 2
@@ -81,6 +82,7 @@ text = "Presets"
 item_count = 4
 popup/item_0/text = "Square"
 popup/item_0/icon = ExtResource("2_h6t56")
+popup/item_0/id = 0
 popup/item_1/text = "Triangle"
 popup/item_1/icon = ExtResource("3_lqes2")
 popup/item_1/id = 1

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bpicfdpqpewby"]
 
-[ext_resource type="Script" path="res://addons/detomon.blipkit/editors/waveform/waveform_editor.gd" id="1_8m3rk"]
+[ext_resource type="Script" uid="uid://njtgxtbqw2no" path="res://addons/detomon.blipkit/editors/waveform/waveform_editor.gd" id="1_8m3rk"]
 
 [node name="WaveformEditor" type="Control"]
 layout_mode = 3
@@ -9,4 +9,5 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 2
 script = ExtResource("1_8m3rk")
