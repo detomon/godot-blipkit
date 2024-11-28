@@ -1,8 +1,7 @@
+#include "blipkit_waveform.hpp"
+#include "audio_stream_blipkit.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
-
-#include "audio_stream_blipkit.hpp"
-#include "blipkit_waveform.hpp"
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -40,7 +39,7 @@ void BlipKitWaveform::_update_waveform() {
 	const float *ptr = frames.ptr();
 
 	for (int i = 0; i < frames.size(); i++) {
-		wave_frames[i] = (BKFrame)(ptr[i] * (real_t)BK_FRAME_MAX);
+		wave_frames[i] = BKFrame(ptr[i] * real_t(BK_FRAME_MAX));
 	}
 
 	AudioStreamBlipKit::lock();
@@ -58,12 +57,22 @@ void BlipKitWaveform::set_frames(PackedFloat32Array p_frames) {
 	ERR_FAIL_COND(p_frames.size() < 2);
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 
-	frames = p_frames.duplicate();
+	LocalVector<real_t> frames_copy;
+	real_t *ptrw = p_frames.ptrw();
 
-	float *ptrw = p_frames.ptrw();
-	for (int i = 0; i < p_frames.size(); i++) {
-		ptrw[i] = CLAMP(ptrw[i], -1.0, +1.0);
+	frames_copy.resize(p_frames.size());
+	for (int i = 0; i < frames_copy.size(); i++) {
+		frames_copy[i] = CLAMP(ptrw[i], -1.0, +1.0);
 	}
+
+	AudioStreamBlipKit::lock();
+
+	frames.resize(frames_copy.size());
+	for (int i = 0; i < frames_copy.size(); i++) {
+		frames[i] = frames_copy[i];
+	}
+
+	AudioStreamBlipKit::unlock();
 
 	_update_waveform();
 }
@@ -73,21 +82,32 @@ void BlipKitWaveform::set_frames_normalized(PackedFloat32Array p_frames, float p
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
-	frames = p_frames.duplicate();
 
-	float *ptrw = p_frames.ptrw();
-	float max_value = 0.0;
+	real_t max_value = 0.0;
+	LocalVector<real_t> frames_copy;
+	real_t *ptrw = p_frames.ptrw();
 
-	for (int i = 0; i < frames.size(); i++) {
-		max_value = MAX(max_value, ABS(ptrw[i]));
+	frames_copy.resize(p_frames.size());
+	for (int i = 0; i < frames_copy.size(); i++) {
+		frames_copy[i] = CLAMP(ptrw[i], -1.0, +1.0);
+		max_value = MAX(max_value, ABS(frames_copy[i]));
 	}
 
 	if (!Math::is_zero_approx(max_value)) {
-		float factor = p_amplitude / max_value;
+		real_t factor = p_amplitude / max_value;
 		for (int i = 0; i < frames.size(); i++) {
-			ptrw[i] *= factor;
+			frames_copy[i] *= factor;
 		}
 	}
+
+	AudioStreamBlipKit::lock();
+
+	frames.resize(frames_copy.size());
+	for (int i = 0; i < frames_copy.size(); i++) {
+		frames[i] = frames_copy[i];
+	}
+
+	AudioStreamBlipKit::unlock();
 
 	_update_waveform();
 }

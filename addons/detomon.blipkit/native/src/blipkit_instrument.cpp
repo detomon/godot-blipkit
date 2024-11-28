@@ -1,10 +1,9 @@
+#include "blipkit_instrument.hpp"
+#include "audio_stream_blipkit.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
-#include <godot_cpp/templates/vector.hpp>
+#include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/array.hpp>
-
-#include "audio_stream_blipkit.hpp"
-#include "blipkit_instrument.hpp"
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -52,7 +51,7 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 		} else if (name == "sequence/duty_cycle") {
 			type = SEQUENCE_DUTY_CYCLE;
 		} else {
-			return false;
+			ERR_FAIL_V_MSG(false, vformat("Invalid instrument sequence: %s.", name));
 		}
 
 		if (data.size() == 3) { // Sequence.
@@ -67,7 +66,7 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 			sustain_length = data[3];
 			is_envelope = true;
 		} else {
-			return false;
+			ERR_FAIL_V_MSG(false, "Invalid number of array elements in instrument sequence.");
 		}
 
 		switch (type) {
@@ -99,12 +98,15 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 					set_sequence_duty_cycle(values, sustain_offset, sustain_length);
 				}
 			} break;
+			default: {
+				ERR_FAIL_V_MSG(false, vformat("Invalid instrument sequence type: %d.", type));
+			} break;
 		}
-	} else {
-		return false;
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
@@ -121,7 +123,7 @@ bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 		} else if (name == "sequence/duty_cycle") {
 			type = SEQUENCE_DUTY_CYCLE;
 		} else {
-			return false;
+			ERR_FAIL_V_MSG(false, vformat("Invalid instrument sequence: %s.", name));
 		}
 
 		Array data;
@@ -138,11 +140,11 @@ bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 		}
 
 		r_ret = data;
-	} else {
-		return false;
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 BlipKitInstrument::BlipKitInstrument() {
@@ -164,27 +166,27 @@ void BlipKitInstrument::set_sequence_float(SequenceType p_sequence, PackedFloat3
 		case SEQUENCE_VOLUME:
 		case SEQUENCE_PANNING:
 		case SEQUENCE_PITCH: {
-			// Ok.
+			// OK.
 		} break;
 		default: {
 			return;
 		} break;
 	}
 
-	Vector<BKInt> values;
+	LocalVector<BKInt> values;
 	values.resize(p_values.size());
-	BKInt *ptrw = values.ptrw();
 
 	for (int i = 0; i < p_values.size(); i++) {
-		ptrw[i] = (BKInt)(p_values[i] * p_multiplier);
+		values[i] = BKInt(p_values[i] * p_multiplier);
 	}
+
+	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
 	AudioStreamBlipKit::lock();
 
-	// TODO: Copy/clear data outside of lock.
 	Sequence &sequence = sequences[p_sequence];
 	sequence.steps.clear();
-	sequence.values = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
+	sequence.values = values_copy;
 	sequence.sustain_offset = p_sustain_offset;
 	sequence.sustain_length = p_sustain_length;
 
@@ -207,27 +209,27 @@ void BlipKitInstrument::set_sequence_int(SequenceType p_sequence, PackedInt32Arr
 
 	switch (p_sequence) {
 		case SEQUENCE_DUTY_CYCLE: {
-			// Ok.
+			// OK.
 		} break;
 		default: {
 			return;
 		} break;
 	}
 
-	Vector<BKInt> values;
+	LocalVector<BKInt> values;
 	values.resize(p_values.size());
-	BKInt *ptrw = values.ptrw();
 
 	for (int i = 0; i < p_values.size(); i++) {
-		ptrw[i] = p_values[i];
+		values[i] = p_values[i];
 	}
+
+	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
 	AudioStreamBlipKit::lock();
 
-	// TODO: Copy/clear data outside of lock.
 	Sequence &sequence = sequences[p_sequence];
 	sequence.steps.clear();
-	sequence.values = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
+	sequence.values = values_copy;
 	sequence.sustain_offset = p_sustain_offset;
 	sequence.sustain_length = p_sustain_length;
 
@@ -245,15 +247,15 @@ void BlipKitInstrument::set_sequence_int(SequenceType p_sequence, PackedInt32Arr
 }
 
 void BlipKitInstrument::set_sequence_volume(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
-	set_sequence_float(SEQUENCE_VOLUME, p_values, p_sustain_offset, p_sustain_length, (real_t)BK_MAX_VOLUME);
+	set_sequence_float(SEQUENCE_VOLUME, p_values, p_sustain_offset, p_sustain_length, real_t(BK_MAX_VOLUME));
 }
 
 void BlipKitInstrument::set_sequence_panning(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
-	set_sequence_float(SEQUENCE_PANNING, p_values, p_sustain_offset, p_sustain_length, (real_t)BK_MAX_VOLUME);
+	set_sequence_float(SEQUENCE_PANNING, p_values, p_sustain_offset, p_sustain_length, real_t(BK_MAX_VOLUME));
 }
 
 void BlipKitInstrument::set_sequence_pitch(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
-	set_sequence_float(SEQUENCE_PITCH, p_values, p_sustain_offset, p_sustain_length, (real_t)BK_FINT20_UNIT);
+	set_sequence_float(SEQUENCE_PITCH, p_values, p_sustain_offset, p_sustain_length, real_t(BK_FINT20_UNIT));
 }
 
 void BlipKitInstrument::set_sequence_duty_cycle(PackedInt32Array p_values, int p_sustain_offset, int p_sustain_length) {
@@ -270,28 +272,29 @@ void BlipKitInstrument::set_envelope_float(SequenceType p_sequence, PackedInt32A
 		case SEQUENCE_PITCH:
 		case SEQUENCE_VOLUME:
 		case SEQUENCE_PANNING: {
-			// Ok.
+			// OK.
 		} break;
 		default: {
 			return;
 		} break;
 	}
 
-	Vector<BKSequencePhase> values;
+	LocalVector<BKSequencePhase> values;
 	values.resize(p_values.size());
-	BKSequencePhase *ptrw = values.ptrw();
 
 	for (int i = 0; i < p_values.size(); i++) {
-		ptrw[i].steps = p_steps[i];
-		ptrw[i].value = (BKInt)(p_values[i] * p_multiplier);
+		values[i].steps = p_steps[i];
+		values[i].value = BKInt(p_values[i] * p_multiplier);
 	}
+
+	PackedInt32Array steps_copy = p_steps.duplicate();
+	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
 	AudioStreamBlipKit::lock();
 
-	// TODO: Copy/clear data outside of lock.
 	Sequence &sequence = sequences[p_sequence];
-	sequence.steps = p_steps.duplicate();
-	sequence.values = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
+	sequence.steps = steps_copy;
+	sequence.values = values_copy;
 	sequence.sustain_offset = p_sustain_offset;
 	sequence.sustain_length = p_sustain_length;
 
@@ -316,28 +319,29 @@ void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Arr
 
 	switch (p_sequence) {
 		case SEQUENCE_DUTY_CYCLE: {
-			// Ok.
+			// OK.
 		} break;
 		default: {
 			return;
 		} break;
 	}
 
-	Vector<BKSequencePhase> values;
+	LocalVector<BKSequencePhase> values;
 	values.resize(p_values.size());
-	BKSequencePhase *ptrw = values.ptrw();
 
 	for (int i = 0; i < p_values.size(); i++) {
-		ptrw[i].steps = p_steps[i];
-		ptrw[i].value = p_values[i];
+		values[i].steps = p_steps[i];
+		values[i].value = p_values[i];
 	}
+
+	PackedInt32Array steps_copy = p_steps.duplicate();
+	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
 	AudioStreamBlipKit::lock();
 
-	// TODO: Copy/clear data outside of lock.
 	Sequence &sequence = sequences[p_sequence];
-	sequence.steps = p_steps.duplicate();
-	sequence.values = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
+	sequence.steps = steps_copy;
+	sequence.values = values_copy;
 	sequence.sustain_offset = p_sustain_offset;
 	sequence.sustain_length = p_sustain_length;
 
@@ -355,11 +359,11 @@ void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Arr
 }
 
 void BlipKitInstrument::set_envelope_volume(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
-	set_envelope_float(SEQUENCE_VOLUME, p_steps, p_values, p_sustain_offset, p_sustain_length, (real_t)BK_MAX_VOLUME);
+	set_envelope_float(SEQUENCE_VOLUME, p_steps, p_values, p_sustain_offset, p_sustain_length, real_t(BK_MAX_VOLUME));
 }
 
 void BlipKitInstrument::set_envelope_panning(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
-	set_envelope_float(SEQUENCE_PANNING, p_steps, p_values, p_sustain_offset, p_sustain_length, (real_t)BK_MAX_VOLUME);
+	set_envelope_float(SEQUENCE_PANNING, p_steps, p_values, p_sustain_offset, p_sustain_length, real_t(BK_MAX_VOLUME));
 }
 
 void BlipKitInstrument::set_envelope_pitch(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
@@ -371,6 +375,6 @@ void BlipKitInstrument::set_envelope_duty_cycle(PackedInt32Array p_steps, Packed
 }
 
 void BlipKitInstrument::set_envelope_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release) {
-	BKInt sustain = CLAMP(p_sustain, 0.0, 1.0) * BK_MAX_VOLUME;
+	BKInt sustain = BKInt(CLAMP(p_sustain, 0.0, 1.0) * real_t(BK_MAX_VOLUME));
 	set_envelope_volume({ p_attack, p_decay, 240, p_release }, { 1.0, p_sustain, p_sustain, 0.0 }, 2, 1);
 }

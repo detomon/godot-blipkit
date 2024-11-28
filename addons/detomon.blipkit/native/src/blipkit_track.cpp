@@ -1,9 +1,8 @@
+#include "blipkit_track.hpp"
+#include "audio_stream_blipkit.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/math.hpp>
-
-#include "audio_stream_blipkit.hpp"
-#include "blipkit_track.hpp"
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -13,7 +12,7 @@ BlipKitTrack::BlipKitTrack() {
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKTrack: %s.", BKStatusGetName(result)));
 
 	// Set default master volume.
-	BKSetAttr(&track, BK_MASTER_VOLUME, (BKInt)(DEFAULT_MASTER_VOLUME * (real_t)BK_MAX_VOLUME));
+	BKSetAttr(&track, BK_MASTER_VOLUME, BKInt(DEFAULT_MASTER_VOLUME * real_t(BK_MAX_VOLUME)));
 	// Allow setting volume of triangle wave.
 	BKSetAttr(&track, BK_TRIANGLE_IGNORES_VOLUME, 0);
 }
@@ -40,7 +39,7 @@ real_t BlipKitTrack::get_master_volume() const {
 
 void BlipKitTrack::set_master_volume(real_t p_master_volume) {
 	p_master_volume = CLAMP(p_master_volume, 0.0, 1.0);
-	BKInt value = (BKInt)(p_master_volume * (real_t)BK_MAX_VOLUME);
+	BKInt value = BKInt(p_master_volume * real_t(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_MASTER_VOLUME, value);
@@ -54,12 +53,12 @@ real_t BlipKitTrack::get_volume() const {
 	BKGetAttr(&track, BK_VOLUME, &value);
 	AudioStreamBlipKit::unlock();
 
-	return (real_t)value / (real_t)BK_MAX_VOLUME;
+	return real_t(value) / real_t(BK_MAX_VOLUME);
 }
 
 void BlipKitTrack::set_volume(real_t p_volume) {
 	p_volume = CLAMP(p_volume, 0.0, 1.0);
-	BKInt value = (BKInt)(p_volume * (real_t)BK_MAX_VOLUME);
+	BKInt value = BKInt(p_volume * real_t(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_VOLUME, value);
@@ -73,12 +72,12 @@ real_t BlipKitTrack::get_panning() const {
 	BKGetAttr(&track, BK_PANNING, &value);
 	AudioStreamBlipKit::unlock();
 
-	return (real_t)value / (real_t)BK_MAX_VOLUME;
+	return real_t(value) / real_t(BK_MAX_VOLUME);
 }
 
 void BlipKitTrack::set_panning(real_t p_panning) {
 	p_panning = CLAMP(p_panning, -1.0, +1.0);
-	BKInt value = (BKInt)(p_panning * (real_t)BK_MAX_VOLUME);
+	BKInt value = BKInt(p_panning * real_t(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PANNING, value);
@@ -94,13 +93,27 @@ BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 	AudioStreamBlipKit::unlock();
 
 	switch (value) {
-		case BK_SQUARE: waveform = WAVEFORM_SQUARE; break;
-		case BK_TRIANGLE: waveform = WAVEFORM_TRIANGLE; break;
-		case BK_NOISE: waveform = WAVEFORM_NOISE; break;
-		case BK_SAWTOOTH: waveform = WAVEFORM_SAWTOOTH; break;
-		case BK_SINE: waveform = WAVEFORM_SINE; break;
-		case BK_CUSTOM: waveform = WAVEFORM_CUSTOM; break;
-		case BK_SAMPLE: waveform = WAVEFORM_SAMPLE; break;
+		case BK_SQUARE: {
+			waveform = WAVEFORM_SQUARE;
+		} break;
+		case BK_TRIANGLE: {
+			waveform = WAVEFORM_TRIANGLE;
+		} break;
+		case BK_NOISE: {
+			waveform = WAVEFORM_NOISE;
+		} break;
+		case BK_SAWTOOTH: {
+			waveform = WAVEFORM_SAWTOOTH;
+		} break;
+		case BK_SINE: {
+			waveform = WAVEFORM_SINE;
+		} break;
+		case BK_CUSTOM: {
+			waveform = WAVEFORM_CUSTOM;
+		} break;
+		case BK_SAMPLE: {
+			waveform = WAVEFORM_SAMPLE;
+		} break;
 	}
 
 	return waveform;
@@ -110,13 +123,27 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 	BKInt waveform = 0;
 
 	switch (p_waveform) {
-		case WAVEFORM_SQUARE: waveform = BK_SQUARE; break;
-		case WAVEFORM_TRIANGLE: waveform = BK_TRIANGLE; break;
-		case WAVEFORM_NOISE: waveform = BK_NOISE; break;
-		case WAVEFORM_SAWTOOTH: waveform = BK_SAWTOOTH; break;
-		case WAVEFORM_SINE: waveform = BK_SINE; break;
-		case WAVEFORM_CUSTOM: waveform = BK_CUSTOM; break;
-		case WAVEFORM_SAMPLE: waveform = BK_SAMPLE; break;
+		case WAVEFORM_SQUARE: {
+			waveform = BK_SQUARE;
+		} break;
+		case WAVEFORM_TRIANGLE: {
+			waveform = BK_TRIANGLE;
+		} break;
+		case WAVEFORM_NOISE: {
+			waveform = BK_NOISE;
+		} break;
+		case WAVEFORM_SAWTOOTH: {
+			waveform = BK_SAWTOOTH;
+		} break;
+		case WAVEFORM_SINE: {
+			waveform = BK_SINE;
+		} break;
+		case WAVEFORM_CUSTOM: {
+			waveform = BK_CUSTOM;
+		} break;
+		case WAVEFORM_SAMPLE: {
+			waveform = BK_SAMPLE;
+		} break;
 		default: {
 			ERR_FAIL_MSG(vformat("Invalid waveform: %d", p_waveform));
 			return;
@@ -165,11 +192,11 @@ void BlipKitTrack::set_note(real_t p_note) {
 	BKInt value = 0;
 
 	if (p_note >= 0.0) {
-		p_note = CLAMP(p_note, (real_t)BK_MIN_NOTE, (real_t)BK_MAX_NOTE);
-		value = p_note * (real_t)BK_FINT20_UNIT;
+		p_note = CLAMP(p_note, real_t(BK_MIN_NOTE), real_t(BK_MAX_NOTE));
+		value = p_note * real_t(BK_FINT20_UNIT);
 	} else {
 		// NOTE_RELEASE or NOTE_MUTE.
-		value = (BKInt)Math::round(p_note);
+		value = BKInt(Math::round(p_note));
 	}
 
 	AudioStreamBlipKit::lock();
@@ -188,8 +215,8 @@ real_t BlipKitTrack::get_pitch() const {
 }
 
 void BlipKitTrack::set_pitch(real_t p_pitch) {
-	p_pitch = CLAMP(p_pitch, -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE);
-	BKInt value = (BKInt)(p_pitch * (real_t)BK_FINT20_UNIT);
+	p_pitch = CLAMP(p_pitch, -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE));
+	BKInt value = BKInt(p_pitch * real_t(BK_FINT20_UNIT));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PITCH, value);
@@ -253,7 +280,7 @@ void BlipKitTrack::set_portamento(int p_portamento) {
 void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 	p_delta = MAX(p_delta, 0);
 	p_slide_ticks = MAX(p_slide_ticks, 0);
-	BKInt delta = (BKInt)(p_delta * (real_t)BK_MAX_VOLUME);
+	BKInt delta = BKInt(p_delta * real_t(BK_MAX_VOLUME));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
@@ -262,9 +289,9 @@ void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 }
 
 void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
-	p_delta = CLAMP(p_delta, -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE);
+	p_delta = CLAMP(p_delta, -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE));
 	p_slide_ticks = MAX(p_slide_ticks, 0);
-	BKInt delta = (BKInt)(p_delta * (real_t)BK_FINT20_UNIT);
+	BKInt delta = BKInt(p_delta * real_t(BK_FINT20_UNIT));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
@@ -302,7 +329,7 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 	arpeggio.resize(count);
 
 	for (int i = 0; i < count; i++) {
-		arpeggio[i] = (real_t)value[i + 1] / (real_t)BK_FINT20_UNIT;
+		arpeggio[i] = real_t(value[i + 1]) / real_t(BK_FINT20_UNIT);
 	}
 
 	return arpeggio;
@@ -332,7 +359,7 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
-		value[i + 1] = (BKInt)(CLAMP(p_arpeggio[i], -(real_t)BK_MAX_NOTE, +(real_t)BK_MAX_NOTE) * (real_t)BK_FINT20_UNIT);
+		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE) * real_t(BK_FINT20_UNIT)));
 	}
 
 	AudioStreamBlipKit::lock();
@@ -393,7 +420,7 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 }
 
 void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
-	ERR_FAIL_COND(!p_playback);
+	ERR_FAIL_NULL(p_playback);
 
 	BKContext *context = p_playback->get_context();
 

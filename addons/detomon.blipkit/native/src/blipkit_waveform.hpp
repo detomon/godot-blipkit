@@ -2,6 +2,7 @@
 
 #include <BlipKit.h>
 #include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace godot;

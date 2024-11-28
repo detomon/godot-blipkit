@@ -1,8 +1,7 @@
 #include "audio_stream_blipkit.hpp"
+#include <atomic>
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
-
-#include <atomic>
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -123,7 +122,7 @@ void AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream, bo
 	always_generate = p_always_generate;
 
 	int clock_rate = stream->get_clock_rate();
-	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / (real_t)clock_rate);
+	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / real_t(clock_rate));
 
 	BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
@@ -172,8 +171,8 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 
 		// Fill output buffer.
 		for (int i = 0; i < chunk_size; i++) {
-			float left = (real_t)buffer[i * NUM_CHANNELS + 0] / (real_t)BK_FRAME_MAX;
-			float right = (real_t)buffer[i * NUM_CHANNELS + 1] / (real_t)BK_FRAME_MAX;
+			float left = real_t(buffer[i * NUM_CHANNELS + 0]) / real_t(BK_FRAME_MAX);
+			float right = real_t(buffer[i * NUM_CHANNELS + 1]) / real_t(BK_FRAME_MAX);
 			*out_buffer++ = { left, right };
 		}
 	}

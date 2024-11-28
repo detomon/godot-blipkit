@@ -1,12 +1,11 @@
 #pragma once
 
+#include "blipkit_instrument.hpp"
+#include "blipkit_waveform.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/gdvirtual.gen.inc>
 #include <godot_cpp/variant/packed_float32_array.hpp>
-
-#include "blipkit_instrument.hpp"
-#include "blipkit_waveform.hpp"
 
 using namespace godot;
 

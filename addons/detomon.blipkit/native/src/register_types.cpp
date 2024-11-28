@@ -1,12 +1,11 @@
-#include <gdextension_interface.h>
-#include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
-
 #include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include <gdextension_interface.h>
+#include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/defs.hpp>
+#include <godot_cpp/godot.hpp>
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -40,5 +39,4 @@ GDExtensionBool GDE_EXPORT detomon_blipkit_init(GDExtensionInterfaceGetProcAddre
 
 	return init_obj.init();
 }
-
 }
