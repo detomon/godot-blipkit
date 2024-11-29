@@ -21,7 +21,6 @@ private:
 	static const int MAX_CLOCK_RATE = 1200;
 
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
-	bool always_generate = true;
 	static RecursiveSpinLock spin_lock;
 
 protected:
@@ -37,9 +36,6 @@ public:
 
 	int get_clock_rate();
 	void set_clock_rate(int p_clock_rate);
-
-	// bool is_always_generating();
-	// void set_generate_always(bool p_always_generate);
 
 	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
 	_FORCE_INLINE_ static void unlock() { spin_lock.unlock(); }
@@ -71,7 +67,6 @@ private:
 
 	Ref<AudioStreamBlipKit> stream;
 	bool active = false;
-	bool always_generate = false;
 	BKContext context;
 	HashMap<uint32_t, TickFunction> tick_functions;
 
@@ -79,7 +74,7 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	void initialize(Ref<AudioStreamBlipKit> p_stream, bool p_always_generate);
+	bool initialize(Ref<AudioStreamBlipKit> p_stream);
 
 public:
 	AudioStreamBlipKitPlayback();

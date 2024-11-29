@@ -10,6 +10,7 @@ enum State {
 
 @export var frames: PackedFloat32Array: set = set_frames
 @export var snap_steps := 0
+@export var editor_lock := false
 
 var _is_transform_dirty := false
 var _frames_to_local_transform := Transform2D()
@@ -39,6 +40,9 @@ func _init() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if editor_lock:
+		return
+
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:

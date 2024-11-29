@@ -23,8 +23,6 @@ private:
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
 
-	int tick(int p_divider_index, int p_ticks);
-
 protected:
 	static void _bind_methods();
 	String _to_string() const;
@@ -193,17 +191,12 @@ public:
 	void attach(AudioStreamBlipKitPlayback *p_playback);
 	void detach();
 
-	// This is the same as setting set_note(BK_NOTE_RELEASE)
+	// This is the same as setting set_note(BK_NOTE_RELEASE).
 	void release();
-	// This is the same as setting set_note(BK_NOTE_MUTE)
+	// This is the same as setting set_note(BK_NOTE_MUTE).
 	void mute();
 
 	void reset();
-
-	int add_divider(int p_ticks);
-	void remove_divider(int p_divider_index);
-
-	GDVIRTUAL2R(int, _tick, int, int);
 };
 
 } // namespace detomon::BlipKit

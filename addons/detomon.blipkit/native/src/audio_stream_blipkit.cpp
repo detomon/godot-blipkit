@@ -11,11 +11,8 @@ RecursiveSpinLock AudioStreamBlipKit::spin_lock;
 void AudioStreamBlipKit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
 	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
-	// ClassDB::bind_method(D_METHOD("set_generate_always"), &AudioStreamBlipKit::set_generate_always);
-	// ClassDB::bind_method(D_METHOD("is_always_generating"), &AudioStreamBlipKit::is_always_generating);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", PROPERTY_HINT_RANGE, vformat("%d,%d,1", MIN_CLOCK_RATE, MAX_CLOCK_RATE)), "set_clock_rate", "get_clock_rate");
-	// ADD_PROPERTY(PropertyInfo(Variant::BOOL, "always_generate"), "set_generate_always", "is_always_generating");
 }
 
 String AudioStreamBlipKit::_to_string() const {
@@ -25,7 +22,10 @@ String AudioStreamBlipKit::_to_string() const {
 Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
 	Ref<AudioStreamBlipKitPlayback> playback;
 	playback.instantiate();
-	playback->initialize(Ref<AudioStreamBlipKit>(this), always_generate);
+
+	if (!playback->initialize(Ref<AudioStreamBlipKit>(this))) {
+		return nullptr;
+	}
 
 	return playback;
 }
@@ -50,14 +50,6 @@ void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 	clock_rate = CLAMP(p_clock_rate, MIN_CLOCK_RATE, MAX_CLOCK_RATE);
 }
 
-// bool AudioStreamBlipKit::is_always_generating() {
-// 	return always_generate;
-// }
-
-// void AudioStreamBlipKit::set_generate_always(bool p_always_generate) {
-// 	always_generate = p_always_generate;
-// }
-
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
 	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
@@ -81,15 +73,16 @@ String AudioStreamBlipKitPlayback::_to_string() const {
 	return "AudioStreamBlipKitPlayback";
 }
 
-void AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream, bool p_always_generate) {
+bool AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream) {
 	stream = p_stream;
-	always_generate = p_always_generate;
 
 	int clock_rate = stream->get_clock_rate();
-	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / real_t(clock_rate));
+	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / double(clock_rate));
 
 	BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
-	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
+	ERR_FAIL_COND_V_MSG(result != BK_SUCCESS, false, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
+
+	return true;
 }
 
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {
@@ -131,11 +124,11 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	while (out_count < p_frames) {
 		BKInt chunk_size = MIN(p_frames - out_count, channel_size);
 
-		// Generate frames; produces no error.
+		// Generate frames; produces no errors.
 		chunk_size = BKContextGenerate(&context, buffer, chunk_size);
 
 		// Nothing was generated.
-		if (chunk_size == 0) {
+		if (chunk_size <= 0) {
 			break;
 		}
 
@@ -151,11 +144,9 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 
 	AudioStreamBlipKit::unlock();
 
-	// Fill rest of output buffer, even if too few frames are generated.
-	if (always_generate) {
-		for (; out_count < p_frames; out_count++) {
-			*out_buffer++ = { 0, 0 };
-		}
+	// Fill rest of output buffer if too few frames are generated.
+	for (; out_count < p_frames; out_count++) {
+		*out_buffer++ = { 0, 0 };
 	}
 
 	return out_count;
@@ -231,21 +222,3 @@ void AudioStreamBlipKitPlayback::TickFunction::reset() {
 	BKDividerReset(&divider);
 	AudioStreamBlipKit::unlock();
 }
-
-// Ref<BlipKitTrack> AudioStreamBlipKitPlayback::create_track(BlipKitTrack::Waveform p_waveform) {
-// 	Ref<BlipKitTrack> track;
-
-// 	return track;
-// }
-
-// Ref<BlipKitInstrument> AudioStreamBlipKitPlayback::create_instrument() {
-// 	Ref<BlipKitInstrument> instrument;
-
-// 	return instrument;
-// }
-
-// Ref<BlipKitWaveform> AudioStreamBlipKitPlayback::create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize) {
-// 	Ref<BlipKitWaveform> waveform;
-
-// 	return waveform;
-// }
