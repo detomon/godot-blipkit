@@ -10,8 +10,9 @@
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/variant/callable.hpp>
 
-using namespace detomon::BlipKit;
 using namespace godot;
+
+namespace detomon::BlipKit {
 
 class AudioStreamBlipKit : public AudioStream {
 	GDCLASS(AudioStreamBlipKit, AudioStream);
@@ -94,3 +95,5 @@ public:
 	// Ref<BlipKitInstrument> create_instrument();
 	// Ref<BlipKitWaveform> create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize = true);
 };
+
+} // namespace detomon::BlipKit

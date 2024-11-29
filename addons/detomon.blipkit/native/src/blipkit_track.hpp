@@ -9,9 +9,9 @@
 
 using namespace godot;
 
-class AudioStreamBlipKitPlayback;
-
 namespace detomon::BlipKit {
+
+class AudioStreamBlipKitPlayback;
 
 class BlipKitTrack : public RefCounted {
 	GDCLASS(BlipKitTrack, RefCounted)
