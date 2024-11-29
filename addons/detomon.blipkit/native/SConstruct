@@ -16,7 +16,10 @@ env.Append(CPPPATH=["src/", "vendor/BlipKit/src/"])
 env.Append(CFLAGS=["-Wno-shift-negative-value"])
 
 sources = Glob("src/*.cpp")
-sources = sources + Glob('vendor/BlipKit/src/*.c')
+sources += Glob('vendor/BlipKit/src/*.c')
+
+if env["target"] in ["editor", "template_debug"]:
+    sources += env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc/classes/*.xml"))
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(

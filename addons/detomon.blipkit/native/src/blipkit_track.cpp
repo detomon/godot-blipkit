@@ -552,7 +552,7 @@ void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
 	if (p_instrument.is_null()) {
 		BKSetPtr(&track, BK_INSTRUMENT, nullptr, 0);
 	} else {
-		BKSetPtr(&track, BK_INSTRUMENT, p_instrument->get_instrument(), sizeof(BKInstrument*));
+		BKSetPtr(&track, BK_INSTRUMENT, p_instrument->get_instrument(), sizeof(BKInstrument *));
 	}
 
 	AudioStreamBlipKit::unlock();
