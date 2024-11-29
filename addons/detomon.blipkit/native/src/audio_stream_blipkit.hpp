@@ -3,6 +3,7 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include "recursive_spin_lock.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
@@ -21,6 +22,7 @@ private:
 
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	bool always_generate = true;
+	static RecursiveSpinLock spin_lock;
 
 protected:
 	static void _bind_methods();
@@ -39,8 +41,9 @@ public:
 	// bool is_always_generating();
 	// void set_generate_always(bool p_always_generate);
 
-	static void lock();
-	static void unlock();
+	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
+	_FORCE_INLINE_ static void unlock() { spin_lock.unlock(); }
+	_FORCE_INLINE_ static RecursiveSpinLock::Autolock autolock() { return spin_lock.autolock(); }
 };
 
 class AudioStreamBlipKitPlayback : public AudioStreamPlayback {

@@ -45,12 +45,12 @@ func set_waveform(value: BlipKitWaveform) -> void:
 		waveform.changed.connect(_on_waveform_changed)
 
 	if waveform:
-		#if waveform.get_length() < 4:
+		#if waveform.size() < 4:
 			#var frames := PackedFloat32Array([1.0, 1.0, 0.0, 0.0])
 			#waveform.frames = frames
 
 		_waveform_editor.frames = waveform.frames
-		_frame_count.value = waveform.get_length()
+		_frame_count.value = waveform.size()
 
 	_update_frame_values()
 
@@ -179,7 +179,7 @@ func _on_presets_id_pressed(id: int) -> void:
 
 func _on_waveform_changed() -> void:
 	if waveform:
-		_frame_count.value = waveform.get_length()
+		_frame_count.value = waveform.size()
 		_waveform_editor.frames = waveform.frames
 	else:
 		_frame_count.value = 0

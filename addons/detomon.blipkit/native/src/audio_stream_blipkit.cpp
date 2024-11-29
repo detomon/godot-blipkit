@@ -6,10 +6,7 @@
 using namespace detomon::BlipKit;
 using namespace godot;
 
-static thread_local int lock_thread_id;
-static std::atomic<int> lock_thread_id_inc = 0;
-static std::atomic<int> lock_owner = 0;
-static int lock_count = 0;
+RecursiveSpinLock AudioStreamBlipKit::spin_lock;
 
 void AudioStreamBlipKit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
@@ -22,7 +19,7 @@ void AudioStreamBlipKit::_bind_methods() {
 }
 
 String AudioStreamBlipKit::_to_string() const {
-	return "AudioStreamBlipKit";
+	return vformat("AudioStreamBlipKit: clock_rate=%d", clock_rate);
 }
 
 Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
@@ -61,39 +58,6 @@ void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 // 	always_generate = p_always_generate;
 // }
 
-void AudioStreamBlipKit::lock() {
-	int unlocked_id = 0;
-	int thread_id = lock_thread_id;
-
-	// Create new ID for the current thread.
-	if (unlikely(thread_id == unlocked_id)) {
-		lock_thread_id = ++lock_thread_id_inc;
-	}
-
-	// Not locked or locked by other thread.
-	if (lock_owner.load() != thread_id) {
-		// Wait for lock to be released.
-		while (!lock_owner.compare_exchange_weak(unlocked_id, thread_id, std::memory_order_acquire, std::memory_order_relaxed)) {
-			;
-		}
-	}
-
-	lock_count++;
-}
-
-void AudioStreamBlipKit::unlock() {
-	// Current thread is not the lock owner.
-	if (unlikely(lock_owner.load() != lock_thread_id)) {
-		return;
-	}
-
-	// Unlock.
-	if (--lock_count <= 0) {
-		lock_count = 0;
-		lock_owner.store(0, std::memory_order_release);
-	}
-}
-
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
 	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
@@ -129,10 +93,18 @@ void AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream, bo
 }
 
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {
+	if (active) {
+		return;
+	}
+
 	active = true;
 }
 
 void AudioStreamBlipKitPlayback::_stop() {
+	if (!active) {
+		return;
+	}
+
 	active = false;
 
 	AudioStreamBlipKit::lock();

@@ -39,4 +39,4 @@ GDExtensionBool GDE_EXPORT detomon_blipkit_init(GDExtensionInterfaceGetProcAddre
 
 	return init_obj.init();
 }
-}
+} // extern "C"

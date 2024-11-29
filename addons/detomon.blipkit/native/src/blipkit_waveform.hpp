@@ -26,8 +26,10 @@ public:
 	BlipKitWaveform();
 	~BlipKitWaveform();
 
+	static Ref<BlipKitWaveform> create_with_frames(PackedFloat32Array p_frames, bool p_normalized = false, float p_amplitude = 1.0);
+
 	_FORCE_INLINE_ BKData *get_waveform() { return &waveform; };
-	_FORCE_INLINE_ int get_length() { return frames.size(); };
+	_FORCE_INLINE_ int size() { return frames.size(); };
 	_FORCE_INLINE_ bool is_valid() { return !frames.is_empty(); };
 
 	PackedFloat32Array get_frames();

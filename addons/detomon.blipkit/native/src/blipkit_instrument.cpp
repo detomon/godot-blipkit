@@ -182,15 +182,13 @@ void BlipKitInstrument::set_sequence_float(SequenceType p_sequence, PackedFloat3
 
 	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
-	AudioStreamBlipKit::lock();
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 
 	BKInt result = BKInstrumentSetSequence(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
 
 	if (result == BK_INVALID_ATTRIBUTE) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG("Failed to set sequence: Sustain loop has zero steps.");
 	} else if (result != BK_SUCCESS) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG(vformat("Failed to set sequence: %s.", BKStatusGetName(result)));
 	}
 
@@ -200,7 +198,7 @@ void BlipKitInstrument::set_sequence_float(SequenceType p_sequence, PackedFloat3
 	seq.sustain_offset = p_sustain_offset;
 	seq.sustain_length = p_sustain_length;
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 
 	emit_changed();
 }
@@ -227,15 +225,13 @@ void BlipKitInstrument::set_sequence_int(SequenceType p_sequence, PackedInt32Arr
 
 	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
-	AudioStreamBlipKit::lock();
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 
 	BKInt result = BKInstrumentSetSequence(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
 
 	if (result == BK_INVALID_ATTRIBUTE) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG("Failed to set sequence: Sustain loop has zero steps.");
 	} else if (result != BK_SUCCESS) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG(vformat("Failed to set sequence: %s.", BKStatusGetName(result)));
 	}
 
@@ -245,7 +241,7 @@ void BlipKitInstrument::set_sequence_int(SequenceType p_sequence, PackedInt32Arr
 	seq.sustain_offset = p_sustain_offset;
 	seq.sustain_length = p_sustain_length;
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 
 	emit_changed();
 }
@@ -296,15 +292,13 @@ void BlipKitInstrument::set_envelope_float(SequenceType p_sequence, PackedInt32A
 	PackedInt32Array steps_copy = p_steps.duplicate();
 	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
-	AudioStreamBlipKit::lock();
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 
 	BKInt result = BKInstrumentSetEnvelope(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
 
 	if (result == BK_INVALID_ATTRIBUTE) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG("Failed to set envelope: Sustain loop has zero steps.");
 	} else if (result != BK_SUCCESS) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG(vformat("Failed to set envelope: %s.", BKStatusGetName(result)));
 	}
 
@@ -314,7 +308,7 @@ void BlipKitInstrument::set_envelope_float(SequenceType p_sequence, PackedInt32A
 	seq.sustain_offset = p_sustain_offset;
 	seq.sustain_length = p_sustain_length;
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 
 	emit_changed();
 }
@@ -345,15 +339,13 @@ void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Arr
 	PackedInt32Array steps_copy = p_steps.duplicate();
 	Variant values_copy = p_values.is_empty() ? Variant() : Variant(p_values.duplicate());
 
-	AudioStreamBlipKit::lock();
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 
 	BKInt result = BKInstrumentSetEnvelope(&instrument, p_sequence, values.ptr(), values.size(), p_sustain_offset, p_sustain_length);
 
 	if (result == BK_INVALID_ATTRIBUTE) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG("Failed to set envelope: Sustain loop has zero steps.");
 	} else if (result != BK_SUCCESS) {
-		AudioStreamBlipKit::unlock();
 		ERR_FAIL_MSG(vformat("Failed to set envelope: %s.", BKStatusGetName(result)));
 	}
 
@@ -363,7 +355,7 @@ void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Arr
 	seq.sustain_offset = p_sustain_offset;
 	seq.sustain_length = p_sustain_length;
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 
 	emit_changed();
 }

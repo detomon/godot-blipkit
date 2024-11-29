@@ -7,7 +7,8 @@ using namespace detomon::BlipKit;
 using namespace godot;
 
 void BlipKitWaveform::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_length"), &BlipKitWaveform::get_length);
+	ClassDB::bind_static_method("BlipKitWaveform", D_METHOD("create_with_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::create_with_frames);
+	ClassDB::bind_method(D_METHOD("size"), &BlipKitWaveform::size);
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
 	ClassDB::bind_method(D_METHOD("set_frames", "frames"), &BlipKitWaveform::set_frames);
@@ -47,6 +48,22 @@ void BlipKitWaveform::_update_waveform() {
 	AudioStreamBlipKit::unlock();
 
 	emit_changed();
+}
+
+Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(PackedFloat32Array p_frames, bool p_normalize, float p_amplitude) {
+	ERR_FAIL_COND_V(p_frames.size() < 2, nullptr);
+	ERR_FAIL_COND_V(p_frames.size() > BK_WAVE_MAX_LENGTH, nullptr);
+
+	Ref<BlipKitWaveform> instance;
+	instance.instantiate();
+
+	if (p_normalize) {
+		instance->set_frames_normalized(p_frames, p_amplitude);
+	} else {
+		instance->set_frames(p_frames);
+	}
+
+	return instance;
 }
 
 PackedFloat32Array BlipKitWaveform::get_frames() {
