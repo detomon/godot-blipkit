@@ -34,7 +34,7 @@ real_t BlipKitTrack::get_master_volume() const {
 	BKGetAttr(&track, BK_MASTER_VOLUME, &value);
 	AudioStreamBlipKit::unlock();
 
-	return (real_t)value / (real_t)BK_MAX_VOLUME;
+	return real_t(value) / real_t(BK_MAX_VOLUME);
 }
 
 void BlipKitTrack::set_master_volume(real_t p_master_volume) {
@@ -185,7 +185,7 @@ real_t BlipKitTrack::get_note() const {
 		return (real_t)NOTE_RELEASE;
 	}
 
-	return (real_t)value / (real_t)BK_FINT20_UNIT;
+	return real_t(value) / real_t(BK_FINT20_UNIT);
 }
 
 void BlipKitTrack::set_note(real_t p_note) {
@@ -211,7 +211,7 @@ real_t BlipKitTrack::get_pitch() const {
 	BKGetAttr(&track, BK_PITCH, &value);
 	AudioStreamBlipKit::unlock();
 
-	return (real_t)value / (real_t)BK_FINT20_UNIT;
+	return real_t(value) / real_t(BK_FINT20_UNIT);
 }
 
 void BlipKitTrack::set_pitch(real_t p_pitch) {
@@ -436,11 +436,11 @@ void BlipKitTrack::detach() {
 }
 
 void BlipKitTrack::release() {
-	set_note((real_t)NOTE_RELEASE);
+	set_note(real_t(NOTE_RELEASE));
 }
 
 void BlipKitTrack::mute() {
-	set_note((real_t)NOTE_MUTE);
+	set_note(real_t(NOTE_MUTE));
 }
 
 void BlipKitTrack::reset() {
