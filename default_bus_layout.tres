@@ -2,7 +2,6 @@
 
 [sub_resource type="AudioEffectReverb" id="AudioEffectReverb_4qjma"]
 resource_name = "Reverb"
-predelay_msec = 200.0
 predelay_feedback = 0.2
 room_size = 0.1
 hipass = 0.2

@@ -26,7 +26,7 @@ var _theme_cache := {
 
 
 func _init() -> void:
-	_instrument.set_envelope_adsr(8, 0, 1.0, 8)
+	_instrument.set_adsr(8, 0, 1.0, 8)
 
 	theme_changed.connect(_update_theme)
 

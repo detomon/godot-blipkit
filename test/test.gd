@@ -22,13 +22,12 @@ var _inactive_tracks: Array[BlipKitTrack] = []
 func _ready() -> void:
 	_init_track()
 
-	#_waveform.frames = [
+	#_waveform.set_frames_normalized([
 		#-255, -163, -154, -100, 45, 127, 9, -163, -163,
 		#-27, 63, 72, 63, 9, -100, -154, -127,
 		#-91, -91, -91, -91, -127, -154, -100, 45,
 		#127, 9, -163, -163, 9, 127, 45,
-	#]
-	#_waveform.normalize()
+	#])
 
 	#ResourceSaver.save(_waveform, "res://aah.tres")
 
@@ -63,24 +62,52 @@ func _process(_delta: float) -> void:
 
 
 func _init_track() -> void:
-	INSTRUMENT.set_sequence_duty_cycle([8, 0, 2], 1, 1)
+	INSTRUMENT.set_sequence(BlipKitInstrument.SEQUENCE_DUTY_CYCLE, [8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
 
-	var track := BlipKitTrack.new()
-	track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-	track.master_volume = 0.3
+	var track := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
+	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
+	#track.master_volume = 0.15
 	track.portamento = 8
+
+	var instr := BlipKitInstrument.new()
+	instr.set_adsr(0, 0, 1.0, 12)
+	instr.set_sequence(BlipKitInstrument.SEQUENCE_PITCH, [24, 0], 1, 1)
+	track.instrument = instr
+
 	track.attach(playback)
 	playback.add_tick_function(_on_tick.bind(track), 24)
 
-	var track2 := BlipKitTrack.new()
-	track2.waveform = BlipKitTrack.WAVEFORM_SQUARE
-	track2.instrument = INSTRUMENT
+
+	var track2 := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
+	#track2.waveform = BlipKitTrack.WAVEFORM_SQUARE
+	track2.duty_cycle = 4
+	#track2.master_volume = 0.15
+	track2.panning = -0.25
+	track2.portamento = 8
+
+	var instr2 := BlipKitInstrument.new()
+	instr2.set_adsr(1, 4, 0.75, 8)
+	track2.instrument = instr2
+
 	track2.attach(playback)
-	playback.add_tick_function(_on_tick2.bind(track2), 24)
+	playback.add_tick_function(_on_tick_2.bind(track2), 24)
+
+
+	var track3 := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
+	#track3.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+	#track3.master_volume = 0.25
+	track3.portamento = 4
+
+	var instr3 := BlipKitInstrument.new()
+	instr3.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [0, 8], [24, 0], 1, 1)
+	track3.instrument = instr3
+
+	track3.attach(playback)
+	playback.add_tick_function(_on_tick_3.bind(track3), 24)
 
 
 var _index := 0
@@ -92,32 +119,49 @@ var _notes := PackedFloat32Array([
 ])
 
 var _index2 := 0
-#var _notes2 := PackedFloat32Array([
-	#-1, -1, -1, -1, 24, -1, 24, -1, -1, -1, -1, -1, 24, -1, -1, -1,
-	#-1, -1, -1, -1, 27, -1, 27, -1, -1, -1, -1, -1, 26, -1, -1, -1,
-#])
-var _notes2 := [
-	-1, -1, -1, -1, [24, 27, 31], -1, [24, 27, 31], -1, -1, -1, -1, -1, [24, 27, 31], -1, -1, -1,
-	-1, -1, -1, -1, [27, 31, 34], -1, [27, 31, 34], -1, -1, -1, -1, -1, [26, 31, 33], -1, -1, -1,
-]
+var _notes2 := PackedFloat32Array([
+	-1, -1, -1, 24, -1, 24, -1, -1, -1, -1, -1, 24, -1, -1, -1, -1,
+	-1, -1, -1, 27, -1, 27, -1, -1, -1, -1, -1, 26, -1, -1, -1, -1,
+])
+
+var _index3 := 0
+var _notes3 := PackedFloat32Array([
+	12, 12, -1, -1, 12, -1, -1, -1, 12, 12, -1, -1, 12, -1, -1, -1,
+	15, 15, -1, -1, 15, -1, -1, -1, 14, 14, -1, -1, 14, -1, -1, -1,
+])
+
+#var _notes2 := [
+	#-1, -1, -1, -1, [24, 27, 31], -1, [24, 27, 31], -1, -1, -1, -1, -1, [24, 27, 31], -1, -1, -1,
+	#-1, -1, -1, -1, [27, 31, 34], -1, [27, 31, 34], -1, -1, -1, -1, -1, [26, 31, 33], -1, -1, -1,
+#]
 
 func _on_tick(_ticks: int, track: BlipKitTrack) -> void:
 	track.note = _notes[_index]
 	_index = wrapi(_index + 1, 0, len(_notes))
 
 
-func _on_tick2(_ticks: int, _track: BlipKitTrack) -> void:
-	var note = _notes2[_index2]
+func _on_tick_2(_ticks: int, track: BlipKitTrack) -> void:
+	track.note = _notes2[_index2]
 	_index2 = wrapi(_index2 + 1, 0, len(_notes2))
 
-	if note is Array:
-		var d := {}
-		for n in note:
-			d[n + 12] = 1.0
-		_on_midi_input_notes_changes(d)
 
-	else:
-		_on_midi_input_notes_changes({})
+func _on_tick_3(_ticks: int, track: BlipKitTrack) -> void:
+	track.note = _notes3[_index3]
+	_index3 = wrapi(_index3 + 1, 0, len(_notes3))
+
+
+#func _on_tick2(_ticks: int, _track: BlipKitTrack) -> void:
+	#var note = _notes2[_index2]
+	#_index2 = wrapi(_index2 + 1, 0, len(_notes2))
+#
+	#if note is Array:
+		#var d := {}
+		#for n in note:
+			#d[n + 12] = 1.0
+		#_on_midi_input_notes_changes(d)
+#
+	#else:
+		#_on_midi_input_notes_changes({})
 
 
 func _attach(track: BlipKitTrack) -> void:
