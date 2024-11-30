@@ -4,7 +4,6 @@
 #include "blipkit_waveform.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
-#include <godot_cpp/core/gdvirtual.gen.inc>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace godot;
@@ -17,7 +16,7 @@ class BlipKitTrack : public RefCounted {
 	GDCLASS(BlipKitTrack, RefCounted)
 
 private:
-	const real_t DEFAULT_MASTER_VOLUME = 0.125;
+	const real_t DEFAULT_MASTER_VOLUME = 0.15;
 
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
@@ -143,7 +142,9 @@ public:
 	BlipKitTrack();
 	~BlipKitTrack();
 
-	BlipKitTrack::Waveform get_waveform() const;
+	static Ref<BlipKitTrack> create_with_waveform(Waveform p_waveform);
+
+	Waveform get_waveform() const;
 	void set_waveform(BlipKitTrack::Waveform p_waveform);
 
 	int get_duty_cycle() const;
@@ -191,9 +192,7 @@ public:
 	void attach(AudioStreamBlipKitPlayback *p_playback);
 	void detach();
 
-	// This is the same as setting set_note(BK_NOTE_RELEASE).
 	void release();
-	// This is the same as setting set_note(BK_NOTE_MUTE).
 	void mute();
 
 	void reset();

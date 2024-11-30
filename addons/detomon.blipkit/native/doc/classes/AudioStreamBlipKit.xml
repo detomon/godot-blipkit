@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AudioStreamBlipKit" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Audio stream to playbackdata from a BlipKit context.
+		Audio stream for creating a [AudioStreamBlipKitPlayback].
 	</brief_description>
 	<description>
-		Allows to attach an arbitary number of [BlipKitTrack] objects.
+		Allows to attach [BlipKitTrack] objects.
 		[codeblocks]
 		[gdscript]
 		# Keep this object around. Freed tracks are detached from the stream playback.
@@ -29,8 +29,6 @@
 		[/gdscript]
 		[/codeblocks]
 	</description>
-	<methods>
-	</methods>
 	<members>
 		<member name="clock_rate" type="int" setter="" getter="" default="240">
 			The number of ticks per second at which dividers and instrument sequences are updated.

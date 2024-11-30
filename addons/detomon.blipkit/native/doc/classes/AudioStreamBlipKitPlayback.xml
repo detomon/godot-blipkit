@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AudioStreamBlipKitPlayback" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Audio stream to playback data from a BlipKit context.
+	</brief_description>
+	<description>
+		Allows to attach [BlipKitTrack] objects.
+		[codeblocks]
+		[gdscript]
+		# Keep this object around. Freed tracks are detached from the stream playback.
+		var track := BlipKitTrack.new()
+
+		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
+		var stream_player: AudioStreamPlayer = $AudioStreamPlayer
+
+		# Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set before retreiving the playback object.
+		stream_player.play()
+
+		# Get the playback object.
+		var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
+
+		# Attach the track.
+		track.attach(playback)
+
+		# Set some parameters and play a note.
+		track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+		track.portamento = 8
+		track.note = BlipKitTrack.NOTE_A_2
+		[/gdscript]
+		[/codeblocks]
+	</description>
+	<methods>
+		<method name="add_tick_function">
+			<return type="void" />
+			<param index="0" name="callable" type="Callable" />
+			<param index="1" name="ticks" type="int" />
+			<description>
+				Add a callback which is called every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]).
+				[b]Note:[/b] The callback is called on the next tick after adding.
+			</description>
+		</method>
+		<method name="remove_tick_function">
+			<return type="void" />
+			<param index="0" name="callable" type="Callable" />
+			<description>
+				Remove a callback that was added with [method add_tick_function].
+			</description>
+		</method>
+	</methods>
+</class>

@@ -8,6 +8,8 @@ using namespace detomon::BlipKit;
 using namespace godot;
 
 void BlipKitTrack::_bind_methods() {
+	ClassDB::bind_static_method("BlipKitTrack", D_METHOD("create_with_waveform", "waveform"), &BlipKitTrack::create_with_waveform);
+
 	ClassDB::bind_method(D_METHOD("set_waveform"), &BlipKitTrack::set_waveform);
 	ClassDB::bind_method(D_METHOD("get_waveform"), &BlipKitTrack::get_waveform);
 	ClassDB::bind_method(D_METHOD("set_duty_cycle"), &BlipKitTrack::set_duty_cycle);
@@ -196,6 +198,32 @@ BlipKitTrack::~BlipKitTrack() {
 	AudioStreamBlipKit::unlock();
 }
 
+Ref<BlipKitTrack> BlipKitTrack::create_with_waveform(BlipKitTrack::Waveform p_waveform) {
+	real_t master_volume = 0.0;
+
+	switch (p_waveform) {
+		case WAVEFORM_SQUARE:
+		case WAVEFORM_NOISE:
+		case WAVEFORM_SAWTOOTH: {
+			master_volume = 0.15;
+		} break;
+		case WAVEFORM_TRIANGLE:
+		case WAVEFORM_SINE: {
+			master_volume = 0.3;
+		} break;
+		default: {
+			ERR_FAIL_V_MSG(nullptr, vformat("Cannot create track with waveform %d directly.", p_waveform));
+		} break;
+	}
+
+	Ref<BlipKitTrack> instance;
+	instance.instantiate();
+	instance->set_waveform(p_waveform);
+	instance->set_master_volume(master_volume);
+
+	return instance;
+}
+
 String BlipKitTrack::_to_string() const {
 	return vformat("BlipKitTrack: waveform=%d, volume=%f (%f), note=%f", (int)get_waveform(), get_volume(), get_master_volume(), get_note());
 }
@@ -318,8 +346,7 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 			waveform = BK_SAMPLE;
 		} break;
 		default: {
-			ERR_FAIL_MSG(vformat("Invalid waveform: %d", p_waveform));
-			return;
+			ERR_FAIL_MSG(vformat("Cannot set waveform %d directly.", p_waveform));
 		} break;
 	}
 
@@ -532,7 +559,7 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
-		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE) * double(BK_FINT20_UNIT)));
+		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE)) * double(BK_FINT20_UNIT));
 	}
 
 	AudioStreamBlipKit::lock();

@@ -90,10 +90,6 @@ public:
 
 	void add_tick_function(Callable p_callable, int p_ticks);
 	void remove_tick_function(Callable p_callable);
-
-	// Ref<BlipKitTrack> create_track(BlipKitTrack::Waveform p_waveform);
-	// Ref<BlipKitInstrument> create_instrument();
-	// Ref<BlipKitWaveform> create_custom_waveform(PackedFloat32Array p_frames, bool p_normalize = true);
 };
 
 } // namespace detomon::BlipKit

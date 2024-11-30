@@ -13,7 +13,7 @@ namespace detomon::BlipKit {
 class BlipKitInstrument : public Resource {
 	GDCLASS(BlipKitInstrument, Resource)
 
-private:
+public:
 	enum SequenceType {
 		SEQUENCE_VOLUME = BK_SEQUENCE_VOLUME,
 		SEQUENCE_PANNING = BK_SEQUENCE_PANNING,
@@ -21,6 +21,7 @@ private:
 		SEQUENCE_DUTY_CYCLE = BK_SEQUENCE_DUTY_CYCLE,
 	};
 
+private:
 	struct Sequence {
 		PackedInt32Array steps;
 		Variant values;
@@ -49,16 +50,21 @@ public:
 
 	_FORCE_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
-	void set_sequence_volume(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_sequence_panning(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_sequence_pitch(PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_sequence_duty_cycle(PackedInt32Array p_values, int p_sustain_offset, int p_sustain_length);
+	void set_sequence(SequenceType p_type, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
+	void set_envelope(SequenceType p_type, PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
+	void set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
 
-	void set_envelope_volume(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_envelope_panning(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_envelope_pitch(PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_envelope_duty_cycle(PackedInt32Array p_steps, PackedInt32Array p_values, int p_sustain_offset, int p_sustain_length);
-	void set_envelope_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
+	/*
+	bool has_sequence(SequenceType p_type);
+
+	PackedFloat32Array get_sequence_values(SequenceType p_type);
+	PackedInt32Array get_envelope_steps(SequenceType p_type);
+	PackedFloat32Array get_envelope_values(SequenceType p_type);
+	int get_sequence_sustain_offset(SequenceType p_type);
+	int get_sequence_sustain_length(SequenceType p_type);
+	*/
 };
 
 } // namespace detomon::BlipKit
+
+VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitInstrument::SequenceType);

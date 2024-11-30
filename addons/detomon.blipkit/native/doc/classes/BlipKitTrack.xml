@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitTrack" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+
+	</brief_description>
+	<description>
+
+	</description>
+	<methods>
+		<method name="create_with_waveform" qualifier="static">
+			<return type="BlipKitTrack" />
+			<param index="0" name="waveform" type="BlipKitWaveform" />
+			<description>
+				Creates a track with the given [param waveform]. Sets the master volume to the following values:
+				- [constant BlipKitTrack.WAVEFORM_SQUARE]: [code]0.15[/code]
+				- [constant BlipKitTrack.WAVEFORM_NOISE]: [code]0.15[/code]
+				- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: [code]0.15[/code]
+				- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: [code]0.3[/code]
+				- [constant BlipKitTrack.WAVEFORM_SINE]: [code]0.3[/code]
+			</description>
+		</method>
+	</methods>
+</class>
+
+<!--
+Negative values pan towards the left channel and positive values towards the right channel.
+-->
