@@ -2,6 +2,7 @@
 #include <atomic>
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
+#include <godot_cpp/core/memory.hpp>
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -59,6 +60,10 @@ AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 
 AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 	active = false;
+
+	// Explicitly clear function to free memory.
+	clear_tick_functions();
+
 	AudioStreamBlipKit::lock();
 	BKDispose(&context);
 	AudioStreamBlipKit::unlock();
@@ -69,7 +74,7 @@ void AudioStreamBlipKitPlayback::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_tick_function", "index"), &AudioStreamBlipKitPlayback::remove_tick_function);
 	ClassDB::bind_method(D_METHOD("get_tick_function_count"), &AudioStreamBlipKitPlayback::get_tick_function_count);
 	ClassDB::bind_method(D_METHOD("clear_tick_functions"), &AudioStreamBlipKitPlayback::clear_tick_functions);
-	ClassDB::bind_method(D_METHOD("reset_tick_function", "index", "ticks"), &AudioStreamBlipKitPlayback::reset_tick_function, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("reset_tick_counter", "index", "ticks"), &AudioStreamBlipKitPlayback::reset_tick_counter, DEFVAL(0));
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -160,9 +165,9 @@ void AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_ti
 
 	AudioStreamBlipKit::lock();
 
-	tick_functions.push_back(TickFunction());
-	TickFunction &function = tick_functions[tick_functions.size() - 1];
-	function.initialize(p_callable, p_ticks, this);
+	TickFunction *function = memnew(TickFunction);
+	function->initialize(p_callable, p_ticks, this);
+	tick_functions.push_back(function);
 
 	AudioStreamBlipKit::unlock();
 }
@@ -171,7 +176,10 @@ void AudioStreamBlipKitPlayback::remove_tick_function(int p_index) {
 	ERR_FAIL_INDEX(p_index, tick_functions.size());
 
 	AudioStreamBlipKit::lock();
+
+	memdelete(tick_functions[p_index]);
 	tick_functions.remove_at(p_index);
+
 	AudioStreamBlipKit::unlock();
 }
 
@@ -181,15 +189,20 @@ int AudioStreamBlipKitPlayback::get_tick_function_count() const {
 
 void AudioStreamBlipKitPlayback::clear_tick_functions() {
 	AudioStreamBlipKit::lock();
+
+	for (TickFunction *function : tick_functions) {
+		memdelete(function);
+	}
 	tick_functions.clear();
+
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::reset_tick_function(int p_index, int p_ticks) {
+void AudioStreamBlipKitPlayback::reset_tick_counter(int p_index, int p_ticks) {
 	ERR_FAIL_INDEX(p_index, tick_functions.size());
 
 	AudioStreamBlipKit::lock();
-	tick_functions[p_index].reset(p_ticks);
+	tick_functions[p_index]->reset(p_ticks);
 	AudioStreamBlipKit::unlock();
 }
 

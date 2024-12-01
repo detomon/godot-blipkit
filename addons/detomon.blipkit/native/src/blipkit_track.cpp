@@ -579,7 +579,7 @@ void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
 	if (p_instrument.is_null()) {
 		BKSetPtr(&track, BK_INSTRUMENT, nullptr, 0);
 	} else {
-		BKSetPtr(&track, BK_INSTRUMENT, p_instrument->get_instrument(), sizeof(BKInstrument *));
+		BKSetPtr(&track, BK_INSTRUMENT, p_instrument->get_instrument(), 0);
 	}
 
 	AudioStreamBlipKit::unlock();
@@ -615,13 +615,18 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 
 	ERR_FAIL_COND(!p_waveform->is_valid());
 
-	BKData *bk_data = p_waveform->get_waveform();
+	BKData *data = p_waveform->get_waveform();
 
 	AudioStreamBlipKit::lock();
-	BKInt result = BKSetPtr(&track, BK_WAVEFORM, bk_data, sizeof(bk_data));
+	custom_waveform = p_waveform;
+	BKInt result = BKSetPtr(&track, BK_WAVEFORM, data, 0);
 	AudioStreamBlipKit::unlock();
 
-	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set custom waveform: %s.", BKStatusGetName(result)));
+	if (result == BK_INVALID_STATE) {
+		// OK. Track is not attached yet.
+	} else {
+		ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set custom waveform: %s.", BKStatusGetName(result)));
+	}
 }
 
 void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
@@ -630,7 +635,13 @@ void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 	BKContext *context = p_playback->get_context();
 
 	AudioStreamBlipKit::lock();
+
 	BKTrackAttach(&track, context);
+	// Custom waveform needs to be set again after attaching.
+	if (custom_waveform.is_valid()) {
+		set_custom_waveform(custom_waveform);
+	}
+
 	AudioStreamBlipKit::unlock();
 }
 

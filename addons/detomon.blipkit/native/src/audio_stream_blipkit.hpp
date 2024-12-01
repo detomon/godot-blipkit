@@ -67,7 +67,7 @@ private:
 
 	BKContext context;
 	Ref<AudioStreamBlipKit> stream;
-	LocalVector<TickFunction> tick_functions;
+	LocalVector<TickFunction*> tick_functions;
 	bool active = false;
 
 protected:
@@ -91,7 +91,7 @@ public:
 	void remove_tick_function(int p_index);
 	int get_tick_function_count() const;
 	void clear_tick_functions();
-	void reset_tick_function(int p_index, int p_ticks = 0);
+	void reset_tick_counter(int p_index, int p_ticks = 0);
 };
 
 } // namespace detomon::BlipKit

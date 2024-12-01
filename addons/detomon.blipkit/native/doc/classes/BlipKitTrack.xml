@@ -20,8 +20,16 @@
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="custom_waveform" type="BlipKitWaveform" setter="" getter="" default="null">
+			Sets a custom waveform. [member BlipKitTrack.waveform] returns [method BlipKitTrack.WAVEFORM_CUSTOM] in this case.
+			[b]Note:[/b] This fails if the track is not attached yet with [method BlipKitTrack.attach].
+		</member>
+		<member name="panning" type="float" setter="" getter="" default="0.0">
+			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
+		</member>
+	</members>
 </class>
 
 <!--
-Negative values pan towards the left channel and positive values towards the right channel.
 -->
