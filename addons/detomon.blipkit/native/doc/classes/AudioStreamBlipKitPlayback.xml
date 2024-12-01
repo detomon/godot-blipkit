@@ -35,8 +35,19 @@
 			<param index="0" name="callable" type="Callable" />
 			<param index="1" name="ticks" type="int" />
 			<description>
-				Adds a callback which is called every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The functions are called in the same order as they are added.
-				[b]Note:[/b] The callback is called on the next tick after adding.
+				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The callbacks are called in the same order as they are added.
+				The callback function does not receive any argument and should return [code]0[/code]. If a value greater than [code]0[/code] is returned, the tick interval is changed to that value. This has the same effect as calling [method reset_tick_function] with a given tick count for this callback.
+				[b]Note:[/b] The callback is fired first on the next tick after adding.
+				[codeblocks]
+				[gdscript]
+				playback.add_tick_function(func () -> int:
+				    track.note += 1.0
+
+				    # Change tick interval to 90.
+				    return 150
+				, 120)
+				[/gdscript]
+				[/codeblocks]
 			</description>
 		</method>
 		<method name="clear_tick_functions">
@@ -48,14 +59,22 @@
 		<method name="get_tick_function_count">
 			<return type="int" />
 			<description>
-				Returns the number of callbacks.
+				Returns the number of tick callbacks.
 			</description>
 		</method>
 		<method name="remove_tick_function">
 			<return type="void" />
 			<param index="0" name="index" type="int" />
 			<description>
-				Removes a callback at [param index].
+				Removes the tick callback at [param index].
+			</description>
+		</method>
+		<method name="reset_tick_function">
+			<return type="void" />
+			<param index="0" name="index" type="int" />
+			<param index="1" name="ticks" type="int" default="0" />
+			<description>
+				Resets the tick counter of a tick callback at [param index] so that it fires on the next tick. If [param ticks] is greater than [code]0[/code], the tick interval is changed to that value.
 			</description>
 		</method>
 	</methods>

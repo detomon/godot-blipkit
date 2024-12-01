@@ -50,8 +50,8 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 private:
 	struct TickFunction {
 	private:
-		Callable callable;
 		BKDivider divider = { 0 };
+		Callable callable;
 
 		static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
 
@@ -60,16 +60,15 @@ private:
 		~TickFunction();
 
 		void initialize(Callable &p_callable, int p_ticks, AudioStreamBlipKitPlayback *p_playback);
-		void detach();
-		void reset();
+		void reset(int p_ticks = 0);
 	};
 
 	static const int NUM_CHANNELS = 2;
 
-	Ref<AudioStreamBlipKit> stream;
-	bool active = false;
 	BKContext context;
+	Ref<AudioStreamBlipKit> stream;
 	LocalVector<TickFunction> tick_functions;
+	bool active = false;
 
 protected:
 	static void _bind_methods();
@@ -92,6 +91,7 @@ public:
 	void remove_tick_function(int p_index);
 	int get_tick_function_count() const;
 	void clear_tick_functions();
+	void reset_tick_function(int p_index, int p_ticks = 0);
 };
 
 } // namespace detomon::BlipKit
