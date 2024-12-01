@@ -67,6 +67,8 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 void AudioStreamBlipKitPlayback::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_tick_function", "callable", "ticks"), &AudioStreamBlipKitPlayback::add_tick_function);
 	ClassDB::bind_method(D_METHOD("remove_tick_function", "callable"), &AudioStreamBlipKitPlayback::remove_tick_function);
+	ClassDB::bind_method(D_METHOD("get_tick_function_count"), &AudioStreamBlipKitPlayback::get_tick_function_count);
+	ClassDB::bind_method(D_METHOD("clear_tick_functions"), &AudioStreamBlipKitPlayback::clear_tick_functions);
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -155,23 +157,30 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 void AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_ticks) {
 	ERR_FAIL_COND(p_ticks <= 0);
 
-	uint32_t hash = p_callable.hash();
-
 	AudioStreamBlipKit::lock();
 
-	if (!tick_functions.has(hash)) {
-		TickFunction &function = tick_functions[hash];
-		function.initialize(p_callable, p_ticks, this);
-	}
+	tick_functions.push_back(TickFunction());
+	TickFunction &function = tick_functions[tick_functions.size() - 1];
+	function.initialize(p_callable, p_ticks, this);
 
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::remove_tick_function(Callable p_callable) {
-	uint32_t hash = p_callable.hash();
+void AudioStreamBlipKitPlayback::remove_tick_function(int p_index) {
+	ERR_FAIL_INDEX(p_index, tick_functions.size());
 
 	AudioStreamBlipKit::lock();
-	tick_functions.erase(hash);
+	tick_functions.remove_at(p_index);
+	AudioStreamBlipKit::unlock();
+}
+
+int AudioStreamBlipKitPlayback::get_tick_function_count() const {
+	return tick_functions.size();
+}
+
+void AudioStreamBlipKitPlayback::clear_tick_functions() {
+	AudioStreamBlipKit::lock();
+	tick_functions.clear();
 	AudioStreamBlipKit::unlock();
 }
 

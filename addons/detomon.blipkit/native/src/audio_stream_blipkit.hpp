@@ -7,7 +7,7 @@
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
-#include <godot_cpp/templates/hash_map.hpp>
+#include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/callable.hpp>
 
 using namespace godot;
@@ -51,7 +51,7 @@ private:
 	struct TickFunction {
 	private:
 		Callable callable;
-		BKDivider divider;
+		BKDivider divider = { 0 };
 
 		static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
 
@@ -69,7 +69,7 @@ private:
 	Ref<AudioStreamBlipKit> stream;
 	bool active = false;
 	BKContext context;
-	HashMap<uint32_t, TickFunction> tick_functions;
+	LocalVector<TickFunction> tick_functions;
 
 protected:
 	static void _bind_methods();
@@ -89,7 +89,9 @@ public:
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 
 	void add_tick_function(Callable p_callable, int p_ticks);
-	void remove_tick_function(Callable p_callable);
+	void remove_tick_function(int p_index);
+	int get_tick_function_count() const;
+	void clear_tick_functions();
 };
 
 } // namespace detomon::BlipKit

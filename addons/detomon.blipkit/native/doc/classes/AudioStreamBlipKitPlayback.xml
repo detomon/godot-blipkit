@@ -35,15 +35,27 @@
 			<param index="0" name="callable" type="Callable" />
 			<param index="1" name="ticks" type="int" />
 			<description>
-				Add a callback which is called every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]).
+				Adds a callback which is called every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The functions are called in the same order as they are added.
 				[b]Note:[/b] The callback is called on the next tick after adding.
+			</description>
+		</method>
+		<method name="clear_tick_functions">
+			<return type="void" />
+			<description>
+				Remove all tick callbacks.
+			</description>
+		</method>
+		<method name="get_tick_function_count">
+			<return type="int" />
+			<description>
+				Returns the number of callbacks.
 			</description>
 		</method>
 		<method name="remove_tick_function">
 			<return type="void" />
-			<param index="0" name="callable" type="Callable" />
+			<param index="0" name="index" type="int" />
 			<description>
-				Remove a callback that was added with [method add_tick_function].
+				Removes a callback at [param index].
 			</description>
 		</method>
 	</methods>
