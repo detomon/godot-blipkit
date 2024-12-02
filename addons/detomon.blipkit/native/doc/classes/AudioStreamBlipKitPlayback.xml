@@ -36,15 +36,22 @@
 			<param index="1" name="ticks" type="int" />
 			<description>
 				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The callbacks are called in the same order as they are added.
-				The callback function does not receive any argument and should return [code]0[/code]. If a value greater than [code]0[/code] is returned, the tick interval is changed to that value. This has the same effect as calling [method reset_tick_function] with a given tick count for this callback.
-				[b]Note:[/b] The callback is fired first on the next tick after adding.
+				The callback function does not receive any argument. If a value greater than [code]0[/code] is returned, the tick interval is changed to that value and the callback is fired again after the given number of ticks.
+				[b]Note:[/b] The callback is fired for the first time on the next tick.
 				[codeblocks]
 				[gdscript]
 				playback.add_tick_function(func () -> int:
 				    track.note += 1.0
 
+				    # Keep tick interval.
+				    return 0
+				, 120)
+
+				playback.add_tick_function(func () -> int:
+				    track.note += 1.0
+
 				    # Change tick interval to 90.
-				    return 150
+				    return 90
 				, 120)
 				[/gdscript]
 				[/codeblocks]
@@ -69,12 +76,13 @@
 				Removes the tick callback at [param index].
 			</description>
 		</method>
-		<method name="reset_tick_function">
+		<method name="reset_tick_counter">
 			<return type="void" />
 			<param index="0" name="index" type="int" />
 			<param index="1" name="ticks" type="int" default="0" />
 			<description>
-				Resets the tick counter of a tick callback at [param index] so that it fires on the next tick. If [param ticks] is greater than [code]0[/code], the tick interval is changed to that value.
+				Resets the tick counter of a tick callback at [param index]. If [param ticks] is greater than [code]0[/code], the tick interval is changed to that value.
+				[b]Note:[/b] The callback is fired for the first time with the new interval on the next tick.
 			</description>
 		</method>
 	</methods>
