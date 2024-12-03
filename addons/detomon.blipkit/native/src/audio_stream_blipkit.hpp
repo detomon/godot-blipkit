@@ -87,11 +87,11 @@ public:
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 
-	void add_tick_function(Callable p_callable, int p_ticks);
+	void add_tick_function(Callable p_callable, int p_tick_interval);
 	void remove_tick_function(int p_index);
 	int get_tick_function_count() const;
 	void clear_tick_functions();
-	void reset_tick_counter(int p_index, int p_ticks = 0);
+	void reset_tick_counter(int p_index, int p_tick_interval = 0);
 };
 
 } // namespace detomon::BlipKit

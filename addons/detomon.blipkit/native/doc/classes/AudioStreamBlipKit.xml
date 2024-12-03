@@ -4,34 +4,24 @@
 		Audio stream for creating a [AudioStreamBlipKitPlayback].
 	</brief_description>
 	<description>
-		Allows to attach [BlipKitTrack] objects.
 		[codeblocks]
 		[gdscript]
-		# Keep this object around. Freed tracks are detached from the stream playback.
-		var track := BlipKitTrack.new()
-
 		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
-		var stream_player: AudioStreamPlayer = $AudioStreamPlayer
+		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
-		# Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set before retreiving the playback object.
-		stream_player.play()
+		func _ready() -> void:
+		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
+		    # before retreiving the playback object.
+		    stream_player.play()
 
-		# Get the playback object.
-		var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
-
-		# Attach the track.
-		track.attach(playback)
-
-		# Set some parameters and play a note.
-		track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-		track.portamento = 8
-		track.note = BlipKitTrack.NOTE_A_2
+		    # Get the playback object.
+		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
 		[/gdscript]
 		[/codeblocks]
 	</description>
 	<members>
 		<member name="clock_rate" type="int" setter="" getter="" default="240">
-			The number of ticks per second at which dividers and instrument sequences are updated.
+			Sets the number of ticks per second at which tick functions are called in [AudioStreamBlipKitPlayback], and effects and instrument sequences are updated in [BlipKitTrack].
 		</member>
 	</members>
 </class>

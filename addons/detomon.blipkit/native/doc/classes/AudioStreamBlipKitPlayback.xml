@@ -4,28 +4,26 @@
 		Audio stream to playback data from a BlipKit context.
 	</brief_description>
 	<description>
-		Allows to attach [BlipKitTrack] objects.
+		Allows to attach [BlipKitTrack] objects. If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack] are detached.
 		[codeblocks]
 		[gdscript]
-		# Keep this object around. Freed tracks are detached from the stream playback.
+		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
+		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
+
+		# Keep this object around.
+		# Freed tracks are detached from the stream playback.
 		var track := BlipKitTrack.new()
 
-		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
-		var stream_player: AudioStreamPlayer = $AudioStreamPlayer
+		func _ready() -> void:
+		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
+		    # before retreiving the playback object.
+		    stream_player.play()
 
-		# Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set before retreiving the playback object.
-		stream_player.play()
+		    # Get the playback object.
+		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
 
-		# Get the playback object.
-		var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
-
-		# Attach the track.
-		track.attach(playback)
-
-		# Set some parameters and play a note.
-		track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-		track.portamento = 8
-		track.note = BlipKitTrack.NOTE_A_2
+		    # Attach the track.
+		    track.attach(playback)
 		[/gdscript]
 		[/codeblocks]
 	</description>
@@ -33,23 +31,24 @@
 		<method name="add_tick_function">
 			<return type="void" />
 			<param index="0" name="callable" type="Callable" />
-			<param index="1" name="ticks" type="int" />
+			<param index="1" name="tick_interval" type="int" />
 			<description>
-				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The callbacks are called in the same order as they are added.
-				The callback function does not receive any argument. If a value greater than [code]0[/code] is returned, the tick interval is changed to that value and the callback is fired again after the given number of ticks.
+				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The callbacks are called in the same order as they are added. The callback function does not receive any argument and should return an integer indicating whether to change the tick interval.
 				[b]Note:[/b] The callback is fired for the first time on the next tick.
 				[codeblocks]
 				[gdscript]
 				playback.add_tick_function(func () -> int:
 				    track.note += 1.0
-
 				    # Keep tick interval.
 				    return 0
 				, 120)
-
+				[/gdscript]
+				[/codeblocks]
+				If a value greater than [code]0[/code] is returned, the tick interval is changed to that value and the callback is fired again after the given number of ticks.
+				[codeblocks]
+				[gdscript]
 				playback.add_tick_function(func () -> int:
 				    track.note += 1.0
-
 				    # Change tick interval to 90.
 				    return 90
 				, 120)
@@ -79,9 +78,9 @@
 		<method name="reset_tick_counter">
 			<return type="void" />
 			<param index="0" name="index" type="int" />
-			<param index="1" name="ticks" type="int" default="0" />
+			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
-				Resets the tick counter of a tick callback at [param index]. If [param ticks] is greater than [code]0[/code], the tick interval is changed to that value.
+				Resets the tick counter of a tick callback at [param index]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
 				[b]Note:[/b] The callback is fired for the first time with the new interval on the next tick.
 			</description>
 		</method>

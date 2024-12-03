@@ -70,11 +70,11 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("add_tick_function", "callable", "ticks"), &AudioStreamBlipKitPlayback::add_tick_function);
+	ClassDB::bind_method(D_METHOD("add_tick_function", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_tick_function);
 	ClassDB::bind_method(D_METHOD("remove_tick_function", "index"), &AudioStreamBlipKitPlayback::remove_tick_function);
 	ClassDB::bind_method(D_METHOD("get_tick_function_count"), &AudioStreamBlipKitPlayback::get_tick_function_count);
 	ClassDB::bind_method(D_METHOD("clear_tick_functions"), &AudioStreamBlipKitPlayback::clear_tick_functions);
-	ClassDB::bind_method(D_METHOD("reset_tick_counter", "index", "ticks"), &AudioStreamBlipKitPlayback::reset_tick_counter, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("reset_tick_counter", "index", "tick_interval"), &AudioStreamBlipKitPlayback::reset_tick_counter, DEFVAL(0));
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -160,13 +160,13 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	return out_count;
 }
 
-void AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_ticks) {
-	ERR_FAIL_COND(p_ticks <= 0);
+void AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_tick_interval) {
+	ERR_FAIL_COND(p_tick_interval <= 0);
 
 	AudioStreamBlipKit::lock();
 
 	TickFunction *function = memnew(TickFunction);
-	function->initialize(p_callable, p_ticks, this);
+	function->initialize(p_callable, p_tick_interval, this);
 	tick_functions.push_back(function);
 
 	AudioStreamBlipKit::unlock();
@@ -198,11 +198,11 @@ void AudioStreamBlipKitPlayback::clear_tick_functions() {
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::reset_tick_counter(int p_index, int p_ticks) {
+void AudioStreamBlipKitPlayback::reset_tick_counter(int p_index, int p_tick_interval) {
 	ERR_FAIL_INDEX(p_index, tick_functions.size());
 
 	AudioStreamBlipKit::lock();
-	tick_functions[p_index]->reset(p_ticks);
+	tick_functions[p_index]->reset(p_tick_interval);
 	AudioStreamBlipKit::unlock();
 }
 
