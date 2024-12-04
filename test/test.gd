@@ -68,46 +68,51 @@ func _init_track() -> void:
 
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
 
-	var track := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
+	var saw := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
 	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
 	#track.master_volume = 0.15
-	track.portamento = 8
+	saw.portamento = 8
 
-	var instr := BlipKitInstrument.new()
-	instr.set_adsr(0, 0, 1.0, 12)
-	instr.set_sequence(BlipKitInstrument.SEQUENCE_PITCH, [24, 0], 1, 1)
-	track.instrument = instr
+	var saw_instr := BlipKitInstrument.new()
+	saw_instr.set_adsr(0, 0, 1.0, 12)
+	saw_instr.set_sequence(BlipKitInstrument.SEQUENCE_PITCH, [24, 0, 12], 1, 1)
+	saw.instrument = saw_instr
+	saw.attach(playback)
+	playback.add_tick_function(_on_tick.bind(saw), 24)
 
-	track.attach(playback)
-	playback.add_tick_function(_on_tick.bind(track), 24)
-
-
-	var track2 := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
-	#track2.waveform = BlipKitTrack.WAVEFORM_SQUARE
-	track2.duty_cycle = 4
-	#track2.master_volume = 0.15
-	track2.panning = -0.25
-	track2.portamento = 8
-
-	var instr2 := BlipKitInstrument.new()
-	instr2.set_adsr(1, 4, 0.75, 8)
-	track2.instrument = instr2
-
-	track2.attach(playback)
-	playback.add_tick_function(_on_tick_2.bind(track2), 24)
-
-
-	var track3 := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
-	#track3.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-	#track3.master_volume = 0.25
-	track3.portamento = 4
-
-	var instr3 := BlipKitInstrument.new()
-	instr3.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [0, 8], [24, 0], 1, 1)
-	track3.instrument = instr3
-
-	track3.attach(playback)
-	playback.add_tick_function(_on_tick_3.bind(track3), 24)
+	prints("has_sequence", saw_instr.has_sequence(BlipKitInstrument.SEQUENCE_PITCH))
+	prints("values", saw_instr.get_sequence_values(BlipKitInstrument.SEQUENCE_PITCH))
+	prints("sustain",
+		saw_instr.get_sequence_sustain_offset(BlipKitInstrument.SEQUENCE_PITCH),
+		saw_instr.get_sequence_sustain_length(BlipKitInstrument.SEQUENCE_PITCH)
+	)
+#
+	#var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
+	##lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
+	#lead.duty_cycle = 2
+	##lead.master_volume = 0.0
+	#lead.panning = -0.25
+	#lead.portamento = 8
+#
+	#var lead_instr := BlipKitInstrument.new()
+	#lead_instr.set_adsr(1, 4, 0.75, 8)
+	#lead.instrument = lead_instr
+#
+	#lead.attach(playback)
+	#playback.add_tick_function(_on_tick_2.bind(lead), 24)
+#
+	#var bass := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
+	##bass.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+	##bass.master_volume = 0.0
+	#bass.portamento = 4
+	#bass.pitch = 0.07 # Slightly detune bass to reduce clash with same notes on other tracks.
+#
+	#var bass_instr := BlipKitInstrument.new()
+	#bass_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [0, 8], [24, 0], 1, 1)
+	#bass.instrument = bass_instr
+#
+	#bass.attach(playback)
+	#playback.add_tick_function(_on_tick_3.bind(bass), 24)
 
 
 var _index := 0
