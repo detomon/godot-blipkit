@@ -25,18 +25,13 @@ public:
 private:
 	struct Sequence {
 		PackedInt32Array steps;
-		Variant values;
+		PackedFloat32Array values;
 		int sustain_offset = 0;
 		int sustain_length = 0;
 	};
 
 	BKInstrument instrument;
 	Sequence sequences[BK_MAX_SEQUENCES];
-
-	void set_sequence_float(SequenceType p_sequence, PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length, real_t p_multiplier);
-	void set_sequence_int(SequenceType p_sequence, PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length);
-	void set_envelope_float(SequenceType p_sequence, PackedInt32Array &p_steps, PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length, real_t p_multiplier);
-	void set_envelope_int(SequenceType p_sequence, PackedInt32Array &p_steps, PackedInt32Array &p_values, int p_sustain_offset, int p_sustain_length);
 
 protected:
 	static void _bind_methods();
@@ -51,14 +46,13 @@ public:
 
 	_FORCE_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
-	void set_sequence(SequenceType p_type, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_envelope(SequenceType p_type, PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
-	bool has_sequence(SequenceType p_type) const;
-	Variant get_sequence_values(SequenceType p_type) const;
-	PackedInt32Array get_sequence_steps(SequenceType p_type) const;
-	int get_sequence_sustain_offset(SequenceType p_type) const;
-	int get_sequence_sustain_length(SequenceType p_type) const;
+	bool has_envelope(SequenceType p_type) const;
+	PackedFloat32Array get_envelope_values(SequenceType p_type) const;
+	PackedInt32Array get_envelope_steps(SequenceType p_type) const;
+	int get_envelope_sustain_offset(SequenceType p_type) const;
+	int get_envelope_sustain_length(SequenceType p_type) const;
 };
 
 } // namespace detomon::BlipKit

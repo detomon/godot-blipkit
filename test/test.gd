@@ -62,7 +62,7 @@ func _process(_delta: float) -> void:
 
 
 func _init_track() -> void:
-	INSTRUMENT.set_sequence(BlipKitInstrument.SEQUENCE_DUTY_CYCLE, [8, 0, 2], 1, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
@@ -75,44 +75,44 @@ func _init_track() -> void:
 
 	var saw_instr := BlipKitInstrument.new()
 	saw_instr.set_adsr(0, 0, 1.0, 12)
-	saw_instr.set_sequence(BlipKitInstrument.SEQUENCE_PITCH, [24, 0, 12], 1, 1)
+	saw_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
 	saw.attach(playback)
 	playback.add_tick_function(_on_tick.bind(saw), 24)
 
-	prints("has_sequence", saw_instr.has_sequence(BlipKitInstrument.SEQUENCE_PITCH))
-	prints("values", saw_instr.get_sequence_values(BlipKitInstrument.SEQUENCE_PITCH))
+	prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.SEQUENCE_PITCH))
+	prints("values", saw_instr.get_envelope_values(BlipKitInstrument.SEQUENCE_PITCH))
 	prints("sustain",
-		saw_instr.get_sequence_sustain_offset(BlipKitInstrument.SEQUENCE_PITCH),
-		saw_instr.get_sequence_sustain_length(BlipKitInstrument.SEQUENCE_PITCH)
+		saw_instr.get_envelope_sustain_offset(BlipKitInstrument.SEQUENCE_PITCH),
+		saw_instr.get_envelope_sustain_length(BlipKitInstrument.SEQUENCE_PITCH)
 	)
 #
-	#var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
-	##lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
-	#lead.duty_cycle = 2
-	##lead.master_volume = 0.0
-	#lead.panning = -0.25
-	#lead.portamento = 8
-#
-	#var lead_instr := BlipKitInstrument.new()
-	#lead_instr.set_adsr(1, 4, 0.75, 8)
-	#lead.instrument = lead_instr
-#
-	#lead.attach(playback)
-	#playback.add_tick_function(_on_tick_2.bind(lead), 24)
-#
-	#var bass := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
-	##bass.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-	##bass.master_volume = 0.0
-	#bass.portamento = 4
-	#bass.pitch = 0.07 # Slightly detune bass to reduce clash with same notes on other tracks.
-#
-	#var bass_instr := BlipKitInstrument.new()
-	#bass_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [0, 8], [24, 0], 1, 1)
-	#bass.instrument = bass_instr
-#
-	#bass.attach(playback)
-	#playback.add_tick_function(_on_tick_3.bind(bass), 24)
+	var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
+	#lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
+	lead.duty_cycle = 2
+	#lead.master_volume = 0.0
+	lead.panning = -0.25
+	lead.portamento = 8
+
+	var lead_instr := BlipKitInstrument.new()
+	lead_instr.set_adsr(1, 4, 0.75, 8)
+	lead.instrument = lead_instr
+
+	lead.attach(playback)
+	playback.add_tick_function(_on_tick_2.bind(lead), 24)
+
+	var bass := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
+	#bass.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
+	#bass.master_volume = 0.0
+	bass.portamento = 4
+	bass.pitch = 0.07 # Slightly detune bass to reduce clash with same notes on other tracks.
+
+	var bass_instr := BlipKitInstrument.new()
+	bass_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [0, 8], [24, 0], 1, 1)
+	bass.instrument = bass_instr
+
+	bass.attach(playback)
+	playback.add_tick_function(_on_tick_3.bind(bass), 24)
 
 
 var _index := 0
