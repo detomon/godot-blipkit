@@ -12,6 +12,11 @@ void BlipKitInstrument::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_sequence", "type", "values", "sustain_offset", "sustain_length"), &BlipKitInstrument::set_sequence);
 	ClassDB::bind_method(D_METHOD("set_envelope", "type", "steps", "values", "sustain_offset", "sustain_length"), &BlipKitInstrument::set_envelope);
 	ClassDB::bind_method(D_METHOD("set_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::set_adsr);
+	ClassDB::bind_method(D_METHOD("has_sequence", "type"), &BlipKitInstrument::has_sequence);
+	ClassDB::bind_method(D_METHOD("get_sequence_values", "type"), &BlipKitInstrument::get_sequence_values);
+	ClassDB::bind_method(D_METHOD("get_sequence_steps", "type"), &BlipKitInstrument::get_sequence_steps);
+	ClassDB::bind_method(D_METHOD("get_sequence_sustain_offset", "type"), &BlipKitInstrument::get_sequence_sustain_offset);
+	ClassDB::bind_method(D_METHOD("get_sequence_sustain_length", "type"), &BlipKitInstrument::get_sequence_sustain_length);
 
 	BIND_ENUM_CONSTANT(SEQUENCE_VOLUME);
 	BIND_ENUM_CONSTANT(SEQUENCE_PANNING);
@@ -344,6 +349,8 @@ void BlipKitInstrument::set_envelope_int(SequenceType p_sequence, PackedInt32Arr
 }
 
 void BlipKitInstrument::set_sequence(SequenceType p_type, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
+	ERR_FAIL_INDEX(p_type, SEQUENCE_MAX);
+
 	switch (p_type) {
 		case SEQUENCE_VOLUME: {
 			set_sequence_float(SEQUENCE_VOLUME, p_values, p_sustain_offset, p_sustain_length, real_t(BK_MAX_VOLUME));
@@ -364,12 +371,13 @@ void BlipKitInstrument::set_sequence(SequenceType p_type, PackedFloat32Array p_v
 			set_sequence_int(SEQUENCE_DUTY_CYCLE, values, p_sustain_offset, p_sustain_length);
 		} break;
 		default: {
-			ERR_FAIL_MSG(vformat("Invalid instrument sequence type: %d.", p_type));
 		} break;
 	}
 }
 
 void BlipKitInstrument::set_envelope(SequenceType p_type, PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
+	ERR_FAIL_INDEX(p_type, SEQUENCE_MAX);
+
 	switch (p_type) {
 		case SEQUENCE_VOLUME: {
 			set_envelope_float(SEQUENCE_VOLUME, p_steps, p_values, p_sustain_offset, p_sustain_length, real_t(BK_MAX_VOLUME));
@@ -390,7 +398,6 @@ void BlipKitInstrument::set_envelope(SequenceType p_type, PackedInt32Array p_ste
 			set_envelope_int(SEQUENCE_DUTY_CYCLE, p_steps, values, p_sustain_offset, p_sustain_length);
 		} break;
 		default: {
-			ERR_FAIL_MSG(vformat("Invalid instrument envelope type: %d.", p_type));
 		} break;
 	}
 }
@@ -398,4 +405,61 @@ void BlipKitInstrument::set_envelope(SequenceType p_type, PackedInt32Array p_ste
 void BlipKitInstrument::set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release) {
 	BKInt sustain = BKInt(CLAMP(p_sustain, 0.0, 1.0) * real_t(BK_MAX_VOLUME));
 	set_envelope(SEQUENCE_VOLUME, { p_attack, p_decay, 240, p_release }, { 1.0, p_sustain, p_sustain, 0.0 }, 2, 1);
+}
+
+bool BlipKitInstrument::has_sequence(SequenceType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, false);
+
+	const Sequence &sequence = sequences[p_type];
+
+	switch (p_type) {
+		case SEQUENCE_VOLUME:
+		case SEQUENCE_PANNING:
+		case SEQUENCE_PITCH: {
+			PackedFloat32Array float_value = sequence.values;
+			return !float_value.is_empty();
+		} break;
+		case SEQUENCE_DUTY_CYCLE: {
+			PackedInt32Array float_value = sequence.values;
+			return !float_value.is_empty();
+		} break;
+		default: {
+		} break;
+	}
+
+	return false;
+}
+
+Variant BlipKitInstrument::get_sequence_values(SequenceType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, Variant());
+
+	const Sequence &sequence = sequences[p_type];
+
+	AudioStreamBlipKit::lock();
+	Variant values = sequence.values.duplicate();
+	AudioStreamBlipKit::unlock();
+
+	return values;
+}
+
+PackedInt32Array BlipKitInstrument::get_sequence_steps(SequenceType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, PackedInt32Array());
+
+	Sequence &sequence = const_cast<BlipKitInstrument *>(this)->sequences[p_type];
+
+	AudioStreamBlipKit::lock();
+	PackedInt32Array steps = sequence.steps.duplicate();
+	AudioStreamBlipKit::unlock();
+
+	return steps;
+}
+
+int BlipKitInstrument::get_sequence_sustain_offset(SequenceType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, 0);
+	return sequences[p_type].sustain_offset;
+}
+
+int BlipKitInstrument::get_sequence_sustain_length(SequenceType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, 0);
+	return sequences[p_type].sustain_length;
 }

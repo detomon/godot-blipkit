@@ -19,6 +19,7 @@ public:
 		SEQUENCE_PANNING = BK_SEQUENCE_PANNING,
 		SEQUENCE_PITCH = BK_SEQUENCE_PITCH,
 		SEQUENCE_DUTY_CYCLE = BK_SEQUENCE_DUTY_CYCLE,
+		SEQUENCE_MAX = BK_MAX_SEQUENCES,
 	};
 
 private:
@@ -53,16 +54,11 @@ public:
 	void set_sequence(SequenceType p_type, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_envelope(SequenceType p_type, PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
-
-	/*
-	bool has_sequence(SequenceType p_type);
-
-	PackedFloat32Array get_sequence_values(SequenceType p_type);
-	PackedInt32Array get_envelope_steps(SequenceType p_type);
-	PackedFloat32Array get_envelope_values(SequenceType p_type);
-	int get_sequence_sustain_offset(SequenceType p_type);
-	int get_sequence_sustain_length(SequenceType p_type);
-	*/
+	bool has_sequence(SequenceType p_type) const;
+	Variant get_sequence_values(SequenceType p_type) const;
+	PackedInt32Array get_sequence_steps(SequenceType p_type) const;
+	int get_sequence_sustain_offset(SequenceType p_type) const;
+	int get_sequence_sustain_length(SequenceType p_type) const;
 };
 
 } // namespace detomon::BlipKit
