@@ -67,7 +67,7 @@ private:
 
 	BKContext context;
 	Ref<AudioStreamBlipKit> stream;
-	LocalVector<TickFunction*> tick_functions;
+	LocalVector<TickFunction *> tick_functions;
 	bool active = false;
 
 protected:

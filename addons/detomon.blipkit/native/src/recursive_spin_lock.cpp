@@ -6,27 +6,31 @@ static thread_local int lock_thread_id;
 static std::atomic<int> lock_thread_id_inc = 0;
 
 void RecursiveSpinLock::lock() {
-	int unlocked_id = 0;
 	int thread_id = lock_thread_id;
 
-	// Create new ID for the current thread.
-	if (unlikely(thread_id == unlocked_id)) {
-		lock_thread_id = ++lock_thread_id_inc;
+	// Create new ID for current thread.
+	if (unlikely(thread_id == 0)) {
+		thread_id = ++lock_thread_id_inc;
+		lock_thread_id = thread_id;
 	}
 
 	// Not locked or locked by other thread.
 	if (lock_owner.load() != thread_id) {
 		// Wait for lock to be released.
-		while (!lock_owner.compare_exchange_weak(unlocked_id, thread_id, std::memory_order_acquire, std::memory_order_relaxed)) {
-			;
+		while (true) {
+			int expect = 0;
+			if (lock_owner.compare_exchange_weak(expect, thread_id, std::memory_order_acquire, std::memory_order_relaxed)) {
+				break;
+			}
 		}
 	}
 
+	// Increment locks held by current thread.
 	lock_count++;
 }
 
 void RecursiveSpinLock::unlock() {
-	// Current thread is not the lock owner.
+	// Current thread is not lock owner.
 	if (unlikely(lock_owner.load() != lock_thread_id)) {
 		return;
 	}

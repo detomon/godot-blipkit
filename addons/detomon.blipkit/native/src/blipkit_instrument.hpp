@@ -49,8 +49,8 @@ public:
 	void set_envelope(SequenceType p_type, PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length);
 	void set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
 	bool has_envelope(SequenceType p_type) const;
-	PackedFloat32Array get_envelope_values(SequenceType p_type) const;
 	PackedInt32Array get_envelope_steps(SequenceType p_type) const;
+	PackedFloat32Array get_envelope_values(SequenceType p_type) const;
 	int get_envelope_sustain_offset(SequenceType p_type) const;
 	int get_envelope_sustain_length(SequenceType p_type) const;
 };
