@@ -12,12 +12,7 @@
 			<return type="BlipKitTrack" />
 			<param index="0" name="waveform" type="BlipKitWaveform" />
 			<description>
-				Creates a track with the given [param waveform]. Sets the master volume according to the waveform:
-				- [constant BlipKitTrack.WAVEFORM_SQUARE]: master_volume = [code]0.15[/code]
-				- [constant BlipKitTrack.WAVEFORM_NOISE]: master_volume = [code]0.15[/code]
-				- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: master_volume = [code]0.15[/code]
-				- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: master_volume = [code]0.3[/code]
-				- [constant BlipKitTrack.WAVEFORM_SINE]: master_volume = [code]0.3[/code]
+				Creates a track with the given [param waveform] and sets [member master_volume] accordingly.
 			</description>
 		</method>
 		<method name="attach">
@@ -33,28 +28,51 @@
 				Detach the track from a playback instance.
 			</description>
 		</method>
-		<method name="release">
-			<return type="void" />
-			<description>
-				Releases the note. Has the same effect as setting [member note] to [code]-1.0[/code]. When an instrument is set, plays the release part of the instrument envelopes.
-			</description>
-		</method>
 		<method name="mute">
 			<return type="void" />
 			<description>
 				Mutes the note immediately without playing the relase part of the instrument envelopes.
 			</description>
 		</method>
+		<method name="release">
+			<return type="void" />
+			<description>
+				Releases the note. Has the same effect as setting [member note] to [code]-1.0[/code]. When an instrument is set, plays the release part of the instrument envelopes.
+			</description>
+		</method>
 		<method name="reset">
 			<return type="void" />
 			<description>
-				Resets the track properties to the initial values (except [member master_volume]) and mutes the [member note].
+				Resets the track properties to the initial values (except [member waveform] and [member master_volume]) and mutes [member note].
+			</description>
+		</method>
+		<method name="set_tremolo">
+			<return type="void" />
+			<param index="0" name="ticks" type="int" />
+			<param index="1" name="delta" type="float" />
+			<param index="2" name="slide_ticks" type="int" default="0" />
+			<description>
+				Sets the vibrato effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+			</description>
+		</method>
+		<method name="set_vibrato">
+			<return type="void" />
+			<param index="0" name="ticks" type="int" />
+			<param index="1" name="delta" type="float" />
+			<param index="2" name="slide_ticks" type="int" default="0" />
+			<description>
+				Sets the tremolo effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="waveform" type="int" enum="Waveform" setter="" getter="" default="0">
-			Sets the waveform. This does not change the [member master_volume].
+			Sets the waveform and [member master_volume] according to the following list:
+			- [constant BlipKitTrack.WAVEFORM_SQUARE]: [code]0.15[/code]
+			- [constant BlipKitTrack.WAVEFORM_NOISE]: [code]0.15[/code]
+			- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: [code]0.15[/code]
+			- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: [code]0.3[/code]
+			- [constant BlipKitTrack.WAVEFORM_SINE]: [code]0.3[/code]
 		</member>
 		<member name="duty_cycle" type="int" setter="" getter="" default="4">
 			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect for other waveforms.
@@ -69,7 +87,7 @@
 			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
 		</member>
 		<member name="note" type="float" setter="" getter="" default="-1.0">
-			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants NOTE_C_0]). A negative value releases the note.
+			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants BlipKitTrack.NOTE_C_0]). A negative value releases the note.
 			When an instrument is set, plays the attack part of the instrument envelopes.
 		</member>
 		<member name="pitch" type="float" setter="" getter="" default="0.0">
@@ -84,6 +102,9 @@
 		<member name="portamento" type="int" setter="" getter="" default="0">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
 		</member>
+		<member name="effect_divider" type="int" setter="" getter="" default="1">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which effects change the value of the corresponding property.
+		</member>
 		<member name="arpeggio" type="PackedFloat32Array" setter="" getter="" default="[]">
 			Sets the arpeggio sequence consisting of an array of pitch changes with a maximum length of 8. The number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played is set with [member arpeggio_divider].
 		</member>
@@ -91,7 +112,7 @@
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
 		</member>
 		<member name="instrument" type="BlipKitInstrument" setter="" getter="" default="null">
-			Sets the instrument. See [BKInstrument].
+			Sets the instrument. See [BlipKitInstrument].
 		</member>
 		<member name="instrument_divider" type="int" setter="" getter="" default="4">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope step is played for envelopes which have only values set.

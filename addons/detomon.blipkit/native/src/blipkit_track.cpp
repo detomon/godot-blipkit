@@ -199,27 +199,9 @@ BlipKitTrack::~BlipKitTrack() {
 }
 
 Ref<BlipKitTrack> BlipKitTrack::create_with_waveform(BlipKitTrack::Waveform p_waveform) {
-	real_t master_volume = 0.0;
-
-	switch (p_waveform) {
-		case WAVEFORM_SQUARE:
-		case WAVEFORM_NOISE:
-		case WAVEFORM_SAWTOOTH: {
-			master_volume = 0.15;
-		} break;
-		case WAVEFORM_TRIANGLE:
-		case WAVEFORM_SINE: {
-			master_volume = 0.3;
-		} break;
-		default: {
-			ERR_FAIL_V_MSG(nullptr, vformat("Cannot create track with waveform %d directly.", p_waveform));
-		} break;
-	}
-
 	Ref<BlipKitTrack> instance;
 	instance.instantiate();
 	instance->set_waveform(p_waveform);
-	instance->set_master_volume(master_volume);
 
 	return instance;
 }
@@ -322,28 +304,28 @@ BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 
 void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 	BKInt waveform = 0;
+	real_t master_volume = 0.0;
 
 	switch (p_waveform) {
 		case WAVEFORM_SQUARE: {
 			waveform = BK_SQUARE;
+			master_volume = 0.15;
 		} break;
 		case WAVEFORM_TRIANGLE: {
 			waveform = BK_TRIANGLE;
+			master_volume = 0.3;
 		} break;
 		case WAVEFORM_NOISE: {
 			waveform = BK_NOISE;
+			master_volume = 0.15;
 		} break;
 		case WAVEFORM_SAWTOOTH: {
 			waveform = BK_SAWTOOTH;
+			master_volume = 0.15;
 		} break;
 		case WAVEFORM_SINE: {
 			waveform = BK_SINE;
-		} break;
-		case WAVEFORM_CUSTOM: {
-			waveform = BK_CUSTOM;
-		} break;
-		case WAVEFORM_SAMPLE: {
-			waveform = BK_SAMPLE;
+			master_volume = 0.3;
 		} break;
 		default: {
 			ERR_FAIL_MSG(vformat("Cannot set waveform %d directly.", p_waveform));
@@ -354,6 +336,7 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_WAVEFORM, waveform);
+	set_master_volume(master_volume);
 	AudioStreamBlipKit::unlock();
 }
 
@@ -701,8 +684,19 @@ void BlipKitTrack::mute() {
 }
 
 void BlipKitTrack::reset() {
+	real_t master_volume = get_master_volume();
+	Waveform waveform = get_waveform();
+
 	AudioStreamBlipKit::lock();
+
 	BKTrackReset(&track);
 	instrument.unref();
+
 	AudioStreamBlipKit::unlock();
+
+	set_waveform(waveform);
+	set_master_volume(master_volume);
+	if (custom_waveform.is_valid()) {
+		set_custom_waveform(custom_waveform);
+	}
 }

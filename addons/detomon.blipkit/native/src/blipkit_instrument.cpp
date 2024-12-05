@@ -149,10 +149,11 @@ void BlipKitInstrument::set_envelope(SequenceType p_type, const PackedInt32Array
 	}
 
 	PackedFloat32Array values_copy;
-	steps_copy.resize(p_steps.size());
-	for (int i = 0; i < p_steps.size(); i++) {
-		steps_copy[i] = p_steps[i];
+	values_copy.resize(p_values.size());
+	for (int i = 0; i < p_values.size(); i++) {
+		values_copy[i] = p_values[i];
 	}
+
 	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 	BKInt result = 0;
 
