@@ -389,14 +389,13 @@ real_t BlipKitTrack::get_note() const {
 }
 
 void BlipKitTrack::set_note(real_t p_note) {
-	BKInt value = 0;
+	BKInt value;
 
 	if (p_note >= 0.0) {
 		p_note = CLAMP(p_note, real_t(BK_MIN_NOTE), real_t(BK_MAX_NOTE));
-		value = p_note * real_t(BK_FINT20_UNIT);
+		value = BKInt(p_note * real_t(BK_FINT20_UNIT));
 	} else {
-		// NOTE_RELEASE or NOTE_MUTE.
-		value = BKInt(Math::round(p_note));
+		value = NOTE_RELEASE;
 	}
 
 	AudioStreamBlipKit::lock();
@@ -478,14 +477,52 @@ void BlipKitTrack::set_portamento(int p_portamento) {
 }
 
 void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
-	p_delta = MAX(p_delta, 0);
+	p_delta = CLAMP(p_delta, 0.0, 1.0);
 	p_slide_ticks = MAX(p_slide_ticks, 0);
 	BKInt delta = BKInt(p_delta * real_t(BK_MAX_VOLUME));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
-	BKInt result = BKSetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
+	BKSetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
 	AudioStreamBlipKit::unlock();
+}
+
+Dictionary BlipKitTrack::get_tremolo() const {
+	BKInt values[3] = { 0 };
+
+	AudioStreamBlipKit::lock();
+	BKGetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
+	AudioStreamBlipKit::unlock();
+
+	int ticks = values[0];
+	real_t delta = real_t(values[1]) / real_t(BK_MAX_VOLUME);
+	int slide_ticks = values[2];
+
+	Dictionary ret;
+	ret["ticks"] = ticks;
+	ret["delta"] = delta;
+	ret["slide_ticks"] = slide_ticks;
+
+	return ret;
+}
+
+Dictionary BlipKitTrack::get_vibrato() const {
+	BKInt values[3] = { 0 };
+
+	AudioStreamBlipKit::lock();
+	BKGetPtr(&track, BK_EFFECT_VIBRATO, values, sizeof(values));
+	AudioStreamBlipKit::unlock();
+
+	int ticks = values[0];
+	real_t delta = real_t(values[1]) / real_t(BK_FINT20_UNIT);
+	int slide_ticks = values[2];
+
+	Dictionary ret;
+	ret["ticks"] = ticks;
+	ret["delta"] = delta;
+	ret["slide_ticks"] = slide_ticks;
+
+	return ret;
 }
 
 void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
@@ -495,7 +532,7 @@ void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
-	BKInt result = BKSetPtr(&track, BK_EFFECT_VIBRATO, values, sizeof(values));
+	BKSetPtr(&track, BK_EFFECT_VIBRATO, values, sizeof(values));
 	AudioStreamBlipKit::unlock();
 }
 
@@ -545,14 +582,6 @@ int BlipKitTrack::get_arpeggio_divider() const {
 	return value;
 }
 
-void BlipKitTrack::set_arpeggio_divider(int p_arpeggio_divider) {
-	p_arpeggio_divider = MAX(0, p_arpeggio_divider);
-
-	AudioStreamBlipKit::lock();
-	BKSetAttr(&track, BK_ARPEGGIO_DIVIDER, p_arpeggio_divider);
-	AudioStreamBlipKit::unlock();
-}
-
 void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
 	int count = MIN(BK_MAX_ARPEGGIO, p_arpeggio.size());
@@ -564,6 +593,14 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 
 	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_ARPEGGIO, value, (count + 1) * sizeof(BKInt));
+	AudioStreamBlipKit::unlock();
+}
+
+void BlipKitTrack::set_arpeggio_divider(int p_arpeggio_divider) {
+	p_arpeggio_divider = MAX(0, p_arpeggio_divider);
+
+	AudioStreamBlipKit::lock();
+	BKSetAttr(&track, BK_ARPEGGIO_DIVIDER, p_arpeggio_divider);
 	AudioStreamBlipKit::unlock();
 }
 
@@ -652,11 +689,15 @@ void BlipKitTrack::detach() {
 }
 
 void BlipKitTrack::release() {
-	set_note(real_t(NOTE_RELEASE));
+	AudioStreamBlipKit::lock();
+	BKSetAttr(&track, BK_NOTE, NOTE_RELEASE);
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::mute() {
-	set_note(real_t(NOTE_MUTE));
+	AudioStreamBlipKit::lock();
+	BKSetAttr(&track, BK_NOTE, NOTE_MUTE);
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::reset() {

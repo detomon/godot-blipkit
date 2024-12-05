@@ -114,7 +114,7 @@ BlipKitInstrument::~BlipKitInstrument() {
 	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitInstrument::set_envelope(SequenceType p_type, PackedInt32Array p_steps, PackedFloat32Array p_values, int p_sustain_offset, int p_sustain_length) {
+void BlipKitInstrument::set_envelope(SequenceType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length) {
 	ERR_FAIL_INDEX(p_type, SEQUENCE_MAX);
 
 	real_t multiplier = 1.0;
@@ -142,11 +142,19 @@ void BlipKitInstrument::set_envelope(SequenceType p_type, PackedInt32Array p_ste
 	p_sustain_offset = CLAMP(p_sustain_offset, 0, p_values.size());
 	p_sustain_length = CLAMP(p_sustain_length, 0, p_values.size() - p_sustain_offset);
 
-	PackedInt32Array steps_copy = p_steps.duplicate();
-	PackedFloat32Array values_copy = p_values.duplicate();
-	BKInt result = 0;
+	PackedInt32Array steps_copy;
+	steps_copy.resize(p_steps.size());
+	for (int i = 0; i < p_steps.size(); i++) {
+		steps_copy[i] = p_steps[i];
+	}
 
+	PackedFloat32Array values_copy;
+	steps_copy.resize(p_steps.size());
+	for (int i = 0; i < p_steps.size(); i++) {
+		steps_copy[i] = p_steps[i];
+	}
 	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+	BKInt result = 0;
 
 	if (is_envelope) {
 		LocalVector<BKSequencePhase> phases;

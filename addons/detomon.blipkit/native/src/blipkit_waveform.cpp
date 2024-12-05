@@ -35,22 +35,25 @@ BlipKitWaveform::~BlipKitWaveform() {
 	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitWaveform::_update_waveform() {
+void BlipKitWaveform::_update_waveform(const LocalVector<real_t> &p_frames) {
 	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
-	const float *ptr = frames.ptr();
+	const real_t *ptr = p_frames.ptr();
 
-	for (int i = 0; i < frames.size(); i++) {
+	for (int i = 0; i < p_frames.size(); i++) {
 		wave_frames[i] = BKFrame(ptr[i] * real_t(BK_FRAME_MAX));
 	}
 
 	AudioStreamBlipKit::lock();
-	BKDataSetFrames(&waveform, wave_frames, frames.size(), 1, true);
+
+	frames = p_frames;
+	BKDataSetFrames(&waveform, wave_frames, p_frames.size(), 1, true);
+
 	AudioStreamBlipKit::unlock();
 
 	emit_changed();
 }
 
-Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(PackedFloat32Array p_frames, bool p_normalize, float p_amplitude) {
+Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND_V(p_frames.size() < 2, nullptr);
 	ERR_FAIL_COND_V(p_frames.size() > BK_WAVE_MAX_LENGTH, nullptr);
 
@@ -67,34 +70,36 @@ Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(PackedFloat32Array p_fr
 }
 
 PackedFloat32Array BlipKitWaveform::get_frames() {
-	return frames;
-}
-
-void BlipKitWaveform::set_frames(PackedFloat32Array p_frames) {
-	ERR_FAIL_COND(p_frames.size() < 2);
-	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
-
-	LocalVector<real_t> frames_copy;
-	real_t *ptrw = p_frames.ptrw();
-
-	frames_copy.resize(p_frames.size());
-	for (int i = 0; i < frames_copy.size(); i++) {
-		frames_copy[i] = CLAMP(ptrw[i], -1.0, +1.0);
-	}
+	PackedFloat32Array ret;
 
 	AudioStreamBlipKit::lock();
 
-	frames.resize(frames_copy.size());
-	for (int i = 0; i < frames_copy.size(); i++) {
-		frames[i] = frames_copy[i];
+	ret.resize(frames.size());
+	for (int i = 0; i < frames.size(); i++) {
+		ret[i] = frames[i];
 	}
 
 	AudioStreamBlipKit::unlock();
 
-	_update_waveform();
+	return ret;
 }
 
-void BlipKitWaveform::set_frames_normalized(PackedFloat32Array p_frames, float p_amplitude) {
+void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames) {
+	ERR_FAIL_COND(p_frames.size() < 2);
+	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
+
+	LocalVector<real_t> frames_copy;
+	const real_t *ptr = p_frames.ptr();
+
+	frames_copy.resize(p_frames.size());
+	for (int i = 0; i < frames_copy.size(); i++) {
+		frames_copy[i] = CLAMP(ptr[i], -1.0, +1.0);
+	}
+
+	_update_waveform(frames_copy);
+}
+
+void BlipKitWaveform::set_frames_normalized(const PackedFloat32Array &p_frames, float p_amplitude) {
 	ERR_FAIL_COND(p_frames.size() < 2);
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 
@@ -102,11 +107,11 @@ void BlipKitWaveform::set_frames_normalized(PackedFloat32Array p_frames, float p
 
 	real_t max_value = 0.0;
 	LocalVector<real_t> frames_copy;
-	real_t *ptrw = p_frames.ptrw();
+	const real_t *ptr = p_frames.ptr();
 
 	frames_copy.resize(p_frames.size());
 	for (int i = 0; i < frames_copy.size(); i++) {
-		frames_copy[i] = CLAMP(ptrw[i], -1.0, +1.0);
+		frames_copy[i] = CLAMP(ptr[i], -1.0, +1.0);
 		max_value = MAX(max_value, ABS(frames_copy[i]));
 	}
 
@@ -117,14 +122,5 @@ void BlipKitWaveform::set_frames_normalized(PackedFloat32Array p_frames, float p
 		}
 	}
 
-	AudioStreamBlipKit::lock();
-
-	frames.resize(frames_copy.size());
-	for (int i = 0; i < frames_copy.size(); i++) {
-		frames[i] = frames_copy[i];
-	}
-
-	AudioStreamBlipKit::unlock();
-
-	_update_waveform();
+	_update_waveform(frames_copy);
 }

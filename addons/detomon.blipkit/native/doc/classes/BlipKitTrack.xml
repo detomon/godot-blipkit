@@ -4,28 +4,123 @@
 		Generates a single waveform.
 	</brief_description>
 	<description>
-		[b]Note:[/b] When a track is freed, it is detached from the [AudioStreamBlipKitPlayback] which it was attached to.
+		To create an output, [BlipKitTrack] has to be attached with [method attach] to a [AudioStreamBlipKitPlayback].
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from the [AudioStreamBlipKitPlayback] which it was attached to.
 	</description>
 	<methods>
 		<method name="create_with_waveform" qualifier="static">
 			<return type="BlipKitTrack" />
 			<param index="0" name="waveform" type="BlipKitWaveform" />
 			<description>
-				Creates a track with the given [param waveform]. Sets the master volume to the following values:
-				- [constant BlipKitTrack.WAVEFORM_SQUARE]: [code]0.15[/code]
-				- [constant BlipKitTrack.WAVEFORM_NOISE]: [code]0.15[/code]
-				- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: [code]0.15[/code]
-				- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: [code]0.3[/code]
-				- [constant BlipKitTrack.WAVEFORM_SINE]: [code]0.3[/code]
+				Creates a track with the given [param waveform]. Sets the master volume according to the waveform:
+				- [constant BlipKitTrack.WAVEFORM_SQUARE]: master_volume = [code]0.15[/code]
+				- [constant BlipKitTrack.WAVEFORM_NOISE]: master_volume = [code]0.15[/code]
+				- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: master_volume = [code]0.15[/code]
+				- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: master_volume = [code]0.3[/code]
+				- [constant BlipKitTrack.WAVEFORM_SINE]: master_volume = [code]0.3[/code]
+			</description>
+		</method>
+		<method name="attach">
+			<return type="void" />
+			<param index="0" name="playback" type="AudioStreamBlipKitPlayback" />
+			<description>
+				Attach the track to a playback instance.
+			</description>
+		</method>
+		<method name="detach">
+			<return type="void" />
+			<description>
+				Detach the track from a playback instance.
+			</description>
+		</method>
+		<method name="release">
+			<return type="void" />
+			<description>
+				Releases the note. Has the same effect as setting [member note] to [code]-1.0[/code]. When an instrument is set, plays the release part of the instrument envelopes.
+			</description>
+		</method>
+		<method name="mute">
+			<return type="void" />
+			<description>
+				Mutes the note immediately without playing the relase part of the instrument envelopes.
+			</description>
+		</method>
+		<method name="reset">
+			<return type="void" />
+			<description>
+				Resets the track properties to the initial values (except [member master_volume]) and mutes the [member note].
 			</description>
 		</method>
 	</methods>
 	<members>
-		<member name="custom_waveform" type="BlipKitWaveform" setter="" getter="" default="null">
-			Sets a custom waveform. [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM] in this case.
+		<member name="waveform" type="int" enum="Waveform" setter="" getter="" default="0">
+			Sets the waveform. This does not change the [member master_volume].
+		</member>
+		<member name="duty_cycle" type="int" setter="" getter="" default="4">
+			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect for other waveforms.
+		</member>
+		<member name="master_volume" type="float" setter="" getter="" default="0.15">
+			Sets the mix volume. This is multiplied with [member volume] to be used as the final volume.
+		</member>
+		<member name="volume" type="float" setter="" getter="" default="1.0">
+			Sets the note volume. This is multiplied with [member master_volume] to be used as the final volume.
 		</member>
 		<member name="panning" type="float" setter="" getter="" default="0.0">
 			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
 		</member>
+		<member name="note" type="float" setter="" getter="" default="-1.0">
+			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants NOTE_C_0]). A negative value releases the note.
+			When an instrument is set, plays the attack part of the instrument envelopes.
+		</member>
+		<member name="pitch" type="float" setter="" getter="" default="0.0">
+			Sets the pitch values which is added to [member note]. For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
+		</member>
+		<member name="volume_slide" type="int" setter="" getter="" default="0">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member volume] changes to a new value.
+		</member>
+		<member name="panning_slide" type="int" setter="" getter="" default="0">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
+		</member>
+		<member name="portamento" type="int" setter="" getter="" default="0">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
+		</member>
+		<member name="arpeggio" type="PackedFloat32Array" setter="" getter="" default="[]">
+			Sets the arpeggio sequence consisting of an array of pitch changes with a maximum length of 8. The number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played is set with [member arpeggio_divider].
+		</member>
+		<member name="arpeggio_divider" type="int" setter="" getter="" default="4">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
+		</member>
+		<member name="instrument" type="BlipKitInstrument" setter="" getter="" default="null">
+			Sets the instrument. See [BKInstrument].
+		</member>
+		<member name="instrument_divider" type="int" setter="" getter="" default="4">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope step is played for envelopes which have only values set.
+		</member>
+		<member name="custom_waveform" type="BlipKitWaveform" setter="" getter="" default="null">
+			Sets a custom waveform. [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM] in this case.
+		</member>
 	</members>
+	<constants>
+		<constant name="WAVEFORM_SQUARE" value="0" enum="Waveform">
+			A square wave with 16 phases. The duty cycle can be set with [member duty_cycle].
+		</constant>
+		<constant name="WAVEFORM_TRIANGLE" value="1" enum="Waveform">
+			A triangle wave with 32 phases.
+		</constant>
+		<constant name="WAVEFORM_NOISE" value="2" enum="Waveform">
+			Noise. Like a square wave with a duty cycle of 50% but with random low or high amplitudes.
+		</constant>
+		<constant name="WAVEFORM_SAWTOOTH" value="3" enum="Waveform">
+			A sawtooth wave with 7 phases.
+		</constant>
+		<constant name="WAVEFORM_SINE" value="4" enum="Waveform">
+			A sine wave with 32 phases.
+		</constant>
+		<constant name="WAVEFORM_CUSTOM" value="5" enum="Waveform">
+			Set when a [member custom_waveform] is set. Cannot be set directly.
+		</constant>
+		<constant name="WAVEFORM_SAMPLE" value="6" enum="Waveform">
+			Not implemented yet.
+		</constant>
+	</constants>
 </class>

@@ -4,6 +4,7 @@
 #include "blipkit_waveform.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace godot;
@@ -171,7 +172,9 @@ public:
 	void set_panning_slide(int p_panning_slide);
 	int get_portamento() const;
 	void set_portamento(int p_portamento);
+	Dictionary get_tremolo() const;
 	void set_tremolo(int p_ticks, float p_delta, int p_slide_ticks = 0);
+	Dictionary get_vibrato() const;
 	void set_vibrato(int p_ticks, float p_delta, int p_slide_ticks = 0);
 	int get_effect_divider() const;
 	void set_effect_divider(int p_effect_divider);
