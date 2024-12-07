@@ -1,0 +1,5 @@
+[gd_resource type="BlipKitWaveform" format=3 uid="uid://cve2kh1rql0p8"]
+
+[resource]
+frames = PackedFloat32Array(0.107296, 0.364807, 0.653333, 0.819743, 0.964444, 1, 0.955556, 0.857778, 0.768889, 0.622318, 0.52, 0.390558, 0.261803, 0.164444, 0.0643778, 0.0222222)
+metadata/editor_lock = true

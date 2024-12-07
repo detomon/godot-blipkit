@@ -74,17 +74,16 @@ func set_editor_lock(value: bool) -> void:
 
 func set_waveform(value: BlipKitWaveform) -> void:
 	if waveform:
-		waveform.changed.disconnect(_on_waveform_changed)
+		waveform.changed.disconnect(_update_waveform)
 	waveform = value
 	if waveform:
-		waveform.changed.connect(_on_waveform_changed)
+		waveform.changed.connect(_update_waveform)
 
 	if waveform:
-		editor_lock = waveform.get_meta(&"editor_lock", false)
 		_waveform_editor.frames = waveform.frames
 		_frame_count.value = waveform.size()
 
-	_update_frame_values()
+	_update_waveform()
 
 
 func set_snap_steps_visible(value: bool) -> void:
@@ -147,21 +146,18 @@ func _update_editor_lock() -> void:
 	_presets_button.disabled = locked
 
 
-func _update_frame_values() -> void:
-	if not _frame_values:
-		return
+func _update_waveform() -> void:
+	var frames := waveform.frames \
+		if waveform \
+		else PackedFloat32Array()
 
-	if not waveform:
-		_frame_values.text = ""
-		return
+	_frame_count.set_value_no_signal(len(frames))
+	_waveform_editor.frames = frames
 
-	var frames := waveform.frames
 	var values := PackedStringArray()
 	values.resize(len(frames))
-
 	for i in len(frames):
 		values[i] = str(roundi(frames[i] * 255.0))
-
 	_frame_values.text = ", ".join(values)
 
 
@@ -178,7 +174,7 @@ func _on_frame_count_value_changed(value: float) -> void:
 	var frames := waveform.frames
 	frames.resize(int(value))
 
-	_waveform_set_frames_undo(waveform, frames, tr(&"Change Waveform Length", &"DMBK"))
+	_waveform_set_frames_undo(waveform, frames, tr(&"Set Waveform Size to %d", &"DMBK") % value)
 
 
 func _on_snap_button_toggled(toggled_on: bool) -> void:
@@ -259,18 +255,6 @@ func _on_presets_id_pressed(id: int) -> void:
 	_waveform_set_frames_undo(waveform, frames, action_name)
 
 
-func _on_waveform_changed() -> void:
-	if waveform:
-		_frame_count.set_value_no_signal(waveform.size())
-		_waveform_editor.frames = waveform.frames
-
-	else:
-		_frame_count.set_value_no_signal(0)
-		_waveform_editor.frames = []
-
-	_update_frame_values()
-
-
 func _on_waveform_editor_frames_changed(frames: PackedFloat32Array) -> void:
 	waveform.frames = frames
 
@@ -283,7 +267,7 @@ func _on_frame_values_text_submitted(new_text: String) -> void:
 	for i in len(floats):
 		new_frames[i] = clampf(floats[i] / 255.0, -1.0, +1.0)
 
-	_waveform_set_frames_undo(waveform, new_frames, tr(&"Change Waveform Amplitudes", &"DMBK"))
+	_waveform_set_frames_undo(waveform, new_frames, tr(&"Set Waveform Frames", &"DMBK"))
 
 
 func _on_lock_button_toggled(toggled_on: bool) -> void:

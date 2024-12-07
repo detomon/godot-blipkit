@@ -82,7 +82,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "Frames"
+text = "Size"
 
 [node name="FrameCount" type="SpinBox" parent="HBoxContainer"]
 unique_name_in_owner = true
@@ -161,7 +161,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer2"]
 layout_mode = 2
-text = "Amplitudes"
+text = "Frames"
 
 [node name="FrameValues" type="LineEdit" parent="HBoxContainer2"]
 unique_name_in_owner = true

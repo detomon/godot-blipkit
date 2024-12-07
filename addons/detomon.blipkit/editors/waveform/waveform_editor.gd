@@ -61,7 +61,7 @@ func _gui_input(event: InputEvent) -> void:
 					_state = State.DRAW_FRAMES
 
 			else:
-				undo_redo.create_action(tr(&"Change Waveform Frames", &"DMBK"))
+				undo_redo.create_action(tr(&"Set Waveform Amplitudes", &"DMBK"))
 				undo_redo.add_undo_method(self, &"_set_frames_changed", frames)
 				undo_redo.add_do_method(self, &"_set_frames_changed", _frames_edit)
 				undo_redo.commit_action()
@@ -265,11 +265,9 @@ func _draw_frames() -> void:
 
 		draw_rect(rect, bar_color)
 
-		var tip_rect = Rect2(Vector2.ZERO, Vector2(rect.size.x, 3.0))
-		if value >= 0:
-			tip_rect.position = rect.position
-		else:
-			tip_rect.position = Vector2(rect.position.x, rect.end.y)
+		var tip_rect := Rect2(rect.position, Vector2(rect.size.x, 3.0))
+		if value < 0:
+			tip_rect.position.y = rect.end.y
 		tip_rect.position.y -= 2.0
 
 		draw_rect(tip_rect, bar_tip_color)

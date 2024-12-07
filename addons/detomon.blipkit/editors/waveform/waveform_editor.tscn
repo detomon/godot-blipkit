@@ -5,7 +5,7 @@
 [node name="WaveformEditor" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 320.0
+offset_right = 397.0
 offset_bottom = 600.0
 focus_mode = 2
 script = ExtResource("1_8m3rk")
