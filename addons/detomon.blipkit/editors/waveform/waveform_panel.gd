@@ -1,6 +1,17 @@
 @tool
 extends "../resource_editor.gd"
 
+enum EditMenuItem {
+	NORMALIZE,
+}
+
+enum PresetsMenuItem {
+	SQUARE,
+	TRIANGLE,
+	SAWOOTH,
+	SINE,
+}
+
 const WaveformEditor := preload("waveform_editor.gd")
 
 @export var snap_steps_visible := false: set = set_snap_steps_visible
@@ -22,6 +33,7 @@ var _instrument := BlipKitInstrument.new()
 @onready var _play_button: Button = %PlayButton
 @onready var _frame_values: LineEdit = %FrameValues
 @onready var _waveform_editor: WaveformEditor = %WaveformEditor
+@onready var _waveform_container: PanelContainer = %WaveformContainer
 @onready var _test_audio: AudioStreamPlayer = %TestAudio
 
 
@@ -101,10 +113,12 @@ func _update_theme_cache() -> void:
 		_theme_cache.lock_icon = get_theme_icon(&"Lock", &"EditorIcons")
 	if has_theme_icon(&"Unlock", &"EditorIcons"):
 		_theme_cache.unlock_icon = get_theme_icon(&"Unlock", &"EditorIcons")
+	if has_theme_stylebox(&"panel", &"Panel"):
+		_theme_cache.panel_style = get_theme_stylebox(&"panel", &"Panel")
 
 
-func _update_theme_icons() -> void:
-	if not is_inside_tree():
+func _update_theme_elements() -> void:
+	if not is_node_ready():
 		return
 
 	_snap_button.icon = _theme_cache.snap_icon
@@ -113,9 +127,11 @@ func _update_theme_icons() -> void:
 		if editor_lock \
 		else _theme_cache.unlock_icon
 
+	_waveform_container[&"theme_override_styles/panel"] = _theme_cache.panel_style
+
 
 func _update_editor_lock() -> void:
-	if not is_inside_tree():
+	if not is_node_ready() or not waveform:
 		return
 
 	var locked: bool = waveform.get_meta(&"editor_lock", false)
@@ -190,7 +206,7 @@ func _on_play_button_button_up() -> void:
 
 func _on_edit_id_pressed(id: int) -> void:
 	match id:
-		0: # Normalize.
+		EditMenuItem.NORMALIZE:
 			var frames := waveform.frames
 
 			var max_value := 0.0
@@ -210,11 +226,11 @@ func _on_presets_id_pressed(id: int) -> void:
 	var action_name := &""
 
 	match id:
-		0: # Square.
+		PresetsMenuItem.SQUARE:
 			frames = PackedFloat32Array([1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 			action_name = tr(&"Set Square Waveform", &"DMBK")
 
-		1: # Triangle.
+		PresetsMenuItem.TRIANGLE:
 			frames = PackedFloat32Array([
 				0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875,
 				0.875, 0.75, 0.625, 0.5, 0.375, 0.25, 0.125, 0.0,
@@ -223,11 +239,11 @@ func _on_presets_id_pressed(id: int) -> void:
 			])
 			action_name = tr(&"Set Triangle Waveform", &"DMBK")
 
-		2: # Sawtooth.
+		PresetsMenuItem.SAWOOTH:
 			frames = PackedFloat32Array([1.0,  0.8333, 0.6667, 0.5, 0.3333, 0.1667, 0.0])
 			action_name = tr(&"Set Sawtooth Waveform", &"DMBK")
 
-		3: # Sine.
+		PresetsMenuItem.SINE:
 			frames = PackedFloat32Array([
 				0.0, 0.195068, 0.38266, 0.555542, 0.707062, 0.831421, 0.923828, 0.980743,
 				1.0, 0.980743, 0.923828, 0.831421, 0.707062, 0.555542, 0.38266, 0.195068,
@@ -237,6 +253,7 @@ func _on_presets_id_pressed(id: int) -> void:
 			action_name = tr(&"Set Sine Waveform", &"DMBK")
 
 		_:
+			printerr("Invalid preset: %d" % id)
 			return
 
 	_waveform_set_frames_undo(waveform, frames, action_name)

@@ -26,13 +26,15 @@ var _theme_cache := {
 	font_size = 0,
 	font_color = Color.WHITE,
 	margin = 0,
+	frame_margin = 0,
+	margin_left = 0,
 	grid_color = Color.WHITE,
 	grid_color_light = Color.WHITE,
 	grid_width = 1.0,
 	line_color = Color.WHITE,
 	line_width = 2.0,
 	bar_color = Color.WHITE,
-	frame_margin = 1,
+	bar_tip_color = Color.WHITE,
 }
 
 
@@ -111,7 +113,9 @@ func _update_theme_cache() -> void:
 	_theme_cache.font_size = font_size
 	_theme_cache.font_color = mono_color
 	_theme_cache.margin = font.get_height(font_size)
-	_theme_cache.bar_color = mono_color.lerp(mono_color_transparent, 0.5)
+	_theme_cache.margin_left = font_size * 2.5
+	_theme_cache.bar_color = mono_color.lerp(mono_color_transparent, 0.85)
+	_theme_cache.bar_tip_color = mono_color.lerp(mono_color_transparent, 0.1)
 	_theme_cache.grid_color = mono_color.lerp(mono_color_transparent, 0.7)
 	_theme_cache.grid_color_light = mono_color.lerp(mono_color_transparent, 0.95)
 
@@ -124,14 +128,11 @@ func _update_frame_at_position(point: Vector2, allow_out_of_bounds := false) -> 
 	var value := transform * point
 
 	var x := floori(value.x * len(frames))
-	var y := value.y
+	var y := clampf(value.y, -1.0, +1.0)
 
 	if not allow_out_of_bounds:
 		if x < 0 or x >= len(frames):
 			return false
-
-	if y < -1.0 or y > +1.0:
-		return false
 
 	x = clampi(x, 0, len(frames) - 1)
 
@@ -153,7 +154,7 @@ func _update_transform() -> void:
 	var rect_size := _get_size()
 	var margin: float = _theme_cache.margin
 	var rect := Rect2(Vector2.ZERO, rect_size).grow(-margin)
-	var margin_left: float = _theme_cache.font_size * 2.5
+	var margin_left: float = _theme_cache.margin_left
 	rect = rect.grow_individual(-margin_left, 0.0, 0.0, 0.0)
 	var transform := Transform2D()
 
@@ -183,7 +184,8 @@ func _get_local_to_frames_transform() -> Transform2D:
 
 func _get_size() -> Vector2i:
 	var margin: float = _theme_cache.margin
-	var width_min := (len(_frames_edit) * 20.0 + float(margin) * 2.0)
+	var margin_left: float = _theme_cache.margin_left
+	var width_min := len(_frames_edit) * 20.0 + float(margin) * 2.0 + margin_left
 	var width := int(width_min)
 
 	return Vector2i(width, int(size.y))
@@ -246,6 +248,7 @@ func _draw_frames() -> void:
 
 	var frame_width := 1.0 / float(len(_frames_edit))
 	var bar_color: Color = _theme_cache.bar_color
+	var bar_tip_color: Color = _theme_cache.bar_tip_color
 	var frame_margin: int = _theme_cache.frame_margin
 	var transform := _get_frames_to_local_transform()
 
@@ -253,16 +256,20 @@ func _draw_frames() -> void:
 		var value := _frames_edit[i]
 		var x := frame_width * float(i)
 		var rect := transform * Rect2(Vector2(x, 0.0), Vector2(frame_width, value))
-		rect.position.x += frame_margin
-		rect.size.x -= frame_margin * 2.0
+		rect = rect.grow_individual(-frame_margin, 0.0, -frame_margin, 0.0)
 
-		if is_zero_approx(rect.size.y):
-			rect.position.y += 3.0
-			rect.size.y -= 6.0
-
-		rect.position.x = roundi(rect.position.x)
-		rect.position.y = roundi(rect.position.y)
-		rect.size.x = roundi(rect.size.x)
-		rect.size.y = roundi(rect.size.y)
+		rect.position.x = ceili(rect.position.x)
+		rect.position.y = ceili(rect.position.y)
+		rect.end.x = floori(rect.end.x)
+		rect.end.y = floori(rect.end.y)
 
 		draw_rect(rect, bar_color)
+
+		var tip_rect = Rect2(Vector2.ZERO, Vector2(rect.size.x, 3.0))
+		if value >= 0:
+			tip_rect.position = rect.position
+		else:
+			tip_rect.position = Vector2(rect.position.x, rect.end.y)
+		tip_rect.position.y -= 2.0
+
+		draw_rect(tip_rect, bar_tip_color)

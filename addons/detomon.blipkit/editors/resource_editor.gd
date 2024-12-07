@@ -12,7 +12,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	_update_theme_icons()
+	_update_theme_elements()
 
 
 func get_panel_title() -> String:
@@ -35,12 +35,12 @@ func _get_panel_title() -> String:
 
 func _update_theme() -> void:
 	_update_theme_cache()
-	_update_theme_icons()
+	_update_theme_elements()
 
 
 func _update_theme_cache() -> void:
 	pass
 
 
-func _update_theme_icons() -> void:
+func _update_theme_elements() -> void:
 	pass

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dc1ntp5a3rtaq"]
+[gd_scene load_steps=15 format=3 uid="uid://dc1ntp5a3rtaq"]
 
 [ext_resource type="Script" uid="uid://cn730vdtp3nc5" path="res://addons/detomon.blipkit/editors/waveform/waveform_panel.gd" id="1_kt6rd"]
 [ext_resource type="PackedScene" uid="uid://bpicfdpqpewby" path="res://addons/detomon.blipkit/editors/waveform/waveform_editor.tscn" id="2_5g71l"]
@@ -42,6 +42,19 @@ data = {
 
 [sub_resource type="ImageTexture" id="ImageTexture_buyqs"]
 image = SubResource("Image_ys6nc")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vyoy"]
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+bg_color = Color(0.147, 0.168, 0.203, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 3
+anti_aliasing = false
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_i3ra2"]
 
@@ -155,23 +168,25 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Panel" type="Panel" parent="."]
+[node name="WaveformContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_0vyoy")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="WaveformContainer"]
+layout_mode = 2
 
-[node name="WaveformEditor" parent="Panel/HBoxContainer" instance=ExtResource("2_5g71l")]
+[node name="WaveformEditor" parent="WaveformContainer/HBoxContainer" instance=ExtResource("2_5g71l")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 250)
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="."]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="TestAudio" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
@@ -184,4 +199,4 @@ stream = SubResource("AudioStreamBlipKit_i3ra2")
 [connection signal="button_down" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_down"]
 [connection signal="button_up" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_up"]
 [connection signal="text_submitted" from="HBoxContainer2/FrameValues" to="." method="_on_frame_values_text_submitted"]
-[connection signal="frames_changed" from="Panel/HBoxContainer/WaveformEditor" to="." method="_on_waveform_editor_frames_changed"]
+[connection signal="frames_changed" from="WaveformContainer/HBoxContainer/WaveformEditor" to="." method="_on_waveform_editor_frames_changed"]
