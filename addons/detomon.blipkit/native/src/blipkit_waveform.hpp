@@ -32,7 +32,7 @@ public:
 	_FORCE_INLINE_ int size() const { return frames.size(); };
 	_FORCE_INLINE_ bool is_valid() const { return !frames.is_empty(); };
 
-	PackedFloat32Array get_frames();
+	PackedFloat32Array get_frames() const;
 	void set_frames(const PackedFloat32Array &p_frames);
 	void set_frames_normalized(const PackedFloat32Array &p_frames, float p_amplitude = 1.0);
 };

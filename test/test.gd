@@ -1,6 +1,6 @@
 extends Control
 
-const AAH: BlipKitWaveform = preload("waveforms/aah.tres")
+const AAH2: BlipKitWaveform = preload("waveforms/aah2.tres")
 const INSTRUMENT: BlipKitInstrument = preload("instruments/simple.tres")
 
 var _active_tracks := {}
@@ -8,8 +8,6 @@ var _roll: Array[Dictionary] = []
 var _playing := false
 var _play_index := 0
 var _inactive_tracks: Array[BlipKitTrack] = []
-#var _instrument := BlipKitInstrument.new()
-#var _waveform := BlipKitWaveform.new()
 
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 @onready var _visualizer: Node2D = %Visualizer
@@ -30,6 +28,16 @@ func _ready() -> void:
 	#])
 
 	#ResourceSaver.save(_waveform, "res://aah.tres")
+
+	#INSTRUMENT.set_adsr(0, 12, 0.5, 24)
+	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_VOLUME, [4, 12, 24], [1.0, 0.5, 0.0], 1, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [], [12, 0, -0.2], 1, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_DUTY_CYCLE, [], [8, 8, 0, 2], 2, 1)
+	INSTRUMENT.set_meta(&"name", "MIDI")
+	ResourceSaver.save(INSTRUMENT)
+
+	prints(INSTRUMENT)
+	#prints(AAH)
 
 
 func _process(_delta: float) -> void:
@@ -68,38 +76,38 @@ func _init_track() -> void:
 
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
 
-	var saw := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
-	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
-	#track.master_volume = 0.15
-	saw.portamento = 8
-
-	var saw_instr := BlipKitInstrument.new()
-	saw_instr.set_adsr(0, 0, 1.0, 12)
-	saw_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [], [24, 0, 12], 1, 1)
-	saw.instrument = saw_instr
-	saw.attach(playback)
-	playback.add_tick_function(_on_tick.bind(saw), 24)
-
-	prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.SEQUENCE_PITCH))
-	prints("values", saw_instr.get_envelope_values(BlipKitInstrument.SEQUENCE_PITCH))
-	prints("sustain",
-		saw_instr.get_envelope_sustain_offset(BlipKitInstrument.SEQUENCE_PITCH),
-		saw_instr.get_envelope_sustain_length(BlipKitInstrument.SEQUENCE_PITCH)
-	)
+	#var saw := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
+	##track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
+	##track.master_volume = 0.15
+	#saw.portamento = 8
 #
-	var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
-	#lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
-	lead.duty_cycle = 2
-	#lead.master_volume = 0.0
-	lead.panning = -0.25
-	lead.portamento = 8
+	#var saw_instr := BlipKitInstrument.new()
+	#saw_instr.set_adsr(0, 0, 1.0, 12)
+	#saw_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [], [24, 0, 12], 1, 1)
+	#saw.instrument = saw_instr
+	#saw.attach(playback)
+	#playback.add_tick_function(_on_tick.bind(saw), 24)
 
-	var lead_instr := BlipKitInstrument.new()
-	lead_instr.set_adsr(1, 4, 0.75, 8)
-	lead.instrument = lead_instr
-
-	lead.attach(playback)
-	playback.add_tick_function(_on_tick_2.bind(lead), 24)
+	#prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.SEQUENCE_PITCH))
+	#prints("values", saw_instr.get_envelope_values(BlipKitInstrument.SEQUENCE_PITCH))
+	#prints("sustain",
+		#saw_instr.get_envelope_sustain_offset(BlipKitInstrument.SEQUENCE_PITCH),
+		#saw_instr.get_envelope_sustain_length(BlipKitInstrument.SEQUENCE_PITCH)
+	#)
+#
+	#var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
+	##lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
+	#lead.duty_cycle = 2
+	##lead.master_volume = 0.0
+	#lead.panning = -0.25
+	#lead.portamento = 8
+#
+	#var lead_instr := BlipKitInstrument.new()
+	#lead_instr.set_adsr(1, 4, 0.75, 8)
+	#lead.instrument = lead_instr
+#
+	#lead.attach(playback)
+	#playback.add_tick_function(_on_tick_2.bind(lead), 24)
 
 	var bass := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
 	#bass.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
@@ -175,6 +183,8 @@ func _attach(track: BlipKitTrack) -> void:
 
 
 func _on_midi_input_notes_changes(notes: Dictionary) -> void:
+	#print(notes)
+
 	for note in notes:
 		if note not in _active_tracks:
 			var track: BlipKitTrack = _inactive_tracks.pop_back()
@@ -182,11 +192,11 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 				track = BlipKitTrack.new()
 				_attach(track)
 			track.duty_cycle = 4
-			#track.set_tremolo(16, 0.2)
+			track.set_tremolo(24, 0.2)
 			#track.arpeggio = [0, 12]
 			#track.arpeggio_divider = 8
 			track.instrument = INSTRUMENT
-			#track.custom_waveform = AAH
+			track.custom_waveform = AAH2
 
 			_active_tracks[note] = track
 

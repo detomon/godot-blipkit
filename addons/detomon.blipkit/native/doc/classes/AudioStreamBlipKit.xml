@@ -10,12 +10,12 @@
 		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
 		func _ready() -> void:
-		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
-		    # before retreiving the playback object.
-		    stream_player.play()
+			# Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
+			# before retreiving the playback object.
+			stream_player.play()
 
-		    # Get the playback object.
-		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
+			# Get the playback object.
+			var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
 		[/gdscript]
 		[/codeblocks]
 	</description>

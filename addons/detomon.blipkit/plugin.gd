@@ -11,9 +11,14 @@ var _resource_editors: Array[ResourceEditor] = [
 
 
 func _enter_tree() -> void:
+	var undo_redo := get_undo_redo()
+
 	for editor in _resource_editors:
+		editor.undo_redo = undo_redo
+
 		var title := editor.get_panel_title()
 		var button := add_control_to_bottom_panel(editor, title)
+
 		editor.panel_button = button
 		button.visible = false
 

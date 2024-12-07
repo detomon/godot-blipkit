@@ -24,7 +24,6 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_note"), &BlipKitTrack::get_note);
 	ClassDB::bind_method(D_METHOD("set_pitch"), &BlipKitTrack::set_pitch);
 	ClassDB::bind_method(D_METHOD("get_pitch"), &BlipKitTrack::get_pitch);
-
 	ClassDB::bind_method(D_METHOD("set_volume_slide"), &BlipKitTrack::set_volume_slide);
 	ClassDB::bind_method(D_METHOD("get_volume_slide"), &BlipKitTrack::get_volume_slide);
 	ClassDB::bind_method(D_METHOD("set_panning_slide"), &BlipKitTrack::set_panning_slide);
@@ -35,25 +34,20 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_vibrato", "ticks", "delta", "slide_ticks"), &BlipKitTrack::set_vibrato, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("set_effect_divider"), &BlipKitTrack::set_effect_divider);
 	ClassDB::bind_method(D_METHOD("get_effect_divider"), &BlipKitTrack::get_effect_divider);
-
 	ClassDB::bind_method(D_METHOD("set_arpeggio"), &BlipKitTrack::set_arpeggio);
 	ClassDB::bind_method(D_METHOD("get_arpeggio"), &BlipKitTrack::get_arpeggio);
 	ClassDB::bind_method(D_METHOD("set_arpeggio_divider"), &BlipKitTrack::set_arpeggio_divider);
 	ClassDB::bind_method(D_METHOD("get_arpeggio_divider"), &BlipKitTrack::get_arpeggio_divider);
-
 	ClassDB::bind_method(D_METHOD("set_instrument"), &BlipKitTrack::set_instrument);
 	ClassDB::bind_method(D_METHOD("get_instrument"), &BlipKitTrack::get_instrument);
 	ClassDB::bind_method(D_METHOD("set_instrument_divider"), &BlipKitTrack::set_instrument_divider);
 	ClassDB::bind_method(D_METHOD("get_instrument_divider"), &BlipKitTrack::get_instrument_divider);
-
 	ClassDB::bind_method(D_METHOD("set_custom_waveform"), &BlipKitTrack::set_custom_waveform);
 	ClassDB::bind_method(D_METHOD("get_custom_waveform"), &BlipKitTrack::get_custom_waveform);
-
 	ClassDB::bind_method(D_METHOD("attach", "playback"), &BlipKitTrack::attach);
 	ClassDB::bind_method(D_METHOD("detach"), &BlipKitTrack::detach);
 	ClassDB::bind_method(D_METHOD("release"), &BlipKitTrack::release);
 	ClassDB::bind_method(D_METHOD("mute"), &BlipKitTrack::mute);
-
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitTrack::reset);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "waveform"), "set_waveform", "get_waveform");
@@ -186,8 +180,8 @@ BlipKitTrack::BlipKitTrack() {
 	BKInt result = BKTrackInit(&track, BK_SQUARE);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKTrack: %s.", BKStatusGetName(result)));
 
-	// Set default master volume.
-	BKSetAttr(&track, BK_MASTER_VOLUME, BKInt(DEFAULT_MASTER_VOLUME * real_t(BK_MAX_VOLUME)));
+	// Set default waveform and master volume.
+	set_waveform(WAVEFORM_SQUARE);
 	// Allow setting volume of triangle wave.
 	BKSetAttr(&track, BK_TRIANGLE_IGNORES_VOLUME, 0);
 }
@@ -365,7 +359,7 @@ real_t BlipKitTrack::get_note() const {
 
 	// No note set.
 	if (value < 0) {
-		return (real_t)NOTE_RELEASE;
+		return real_t(NOTE_RELEASE);
 	}
 
 	return real_t(value) / real_t(BK_FINT20_UNIT);
@@ -555,19 +549,9 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 	return arpeggio;
 }
 
-int BlipKitTrack::get_arpeggio_divider() const {
-	BKInt value = 0;
-
-	AudioStreamBlipKit::lock();
-	BKGetAttr(&track, BK_ARPEGGIO_DIVIDER, &value);
-	AudioStreamBlipKit::unlock();
-
-	return value;
-}
-
 void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
-	int count = MIN(BK_MAX_ARPEGGIO, p_arpeggio.size());
+	int count = MIN(p_arpeggio.size(), BK_MAX_ARPEGGIO);
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
@@ -577,6 +561,16 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	AudioStreamBlipKit::lock();
 	BKSetPtr(&track, BK_ARPEGGIO, value, (count + 1) * sizeof(BKInt));
 	AudioStreamBlipKit::unlock();
+}
+
+int BlipKitTrack::get_arpeggio_divider() const {
+	BKInt value = 0;
+
+	AudioStreamBlipKit::lock();
+	BKGetAttr(&track, BK_ARPEGGIO_DIVIDER, &value);
+	AudioStreamBlipKit::unlock();
+
+	return value;
 }
 
 void BlipKitTrack::set_arpeggio_divider(int p_arpeggio_divider) {
