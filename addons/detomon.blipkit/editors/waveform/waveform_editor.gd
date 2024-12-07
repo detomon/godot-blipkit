@@ -12,7 +12,7 @@ var undo_redo: EditorUndoRedoManager
 
 @export var frames: PackedFloat32Array: set = set_frames
 @export var snap_steps := 0
-@export var editor_lock := false
+@export var locked := false
 @export var display_range := 255
 
 var _frames_edit := PackedFloat32Array()
@@ -46,7 +46,7 @@ func _init() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	if editor_lock:
+	if locked:
 		return
 
 	if event is InputEventMouseButton:

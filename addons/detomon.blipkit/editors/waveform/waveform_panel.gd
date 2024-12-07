@@ -12,12 +12,14 @@ enum PresetsMenuItem {
 	SINE,
 }
 
+const SNAP_STEPS_DEFAULT := 8
+
 const WaveformEditor := preload("waveform_editor.gd")
 
-@export var snap_steps_visible := false: set = set_snap_steps_visible
-@export var snap_steps := 0: set = set_snap_steps
+@export var snap_enabled := false: set = set_snap_enabled
+@export var snap_steps := SNAP_STEPS_DEFAULT: set = set_snap_steps
 
-var editor_lock := false: set = set_editor_lock
+var locked := false: set = set_locked
 var waveform: BlipKitWaveform: set = set_waveform
 
 var _track := BlipKitTrack.new()
@@ -38,7 +40,7 @@ var _instrument := BlipKitInstrument.new()
 
 
 func _enter_tree() -> void:
-	set_editor_lock(editor_lock)
+	set_locked(locked)
 	_update_theme_cache()
 
 
@@ -51,7 +53,7 @@ func _ready() -> void:
 	_presets_button.get_popup().id_pressed.connect(_on_presets_id_pressed)
 	_waveform_editor.undo_redo = undo_redo
 
-	set_snap_steps_visible(snap_steps_visible)
+	set_snap_enabled(snap_enabled)
 	set_snap_steps(snap_steps)
 
 
@@ -67,9 +69,9 @@ func _get_panel_title() -> String:
 	return "BlipKit Waveform"
 
 
-func set_editor_lock(value: bool) -> void:
-	editor_lock = value
-	_update_editor_lock()
+func set_locked(value: bool) -> void:
+	locked = value
+	_update_locked()
 
 
 func set_waveform(value: BlipKitWaveform) -> void:
@@ -84,23 +86,38 @@ func set_waveform(value: BlipKitWaveform) -> void:
 		_frame_count.value = waveform.size()
 
 	_update_waveform()
+	_update_locked()
 
 
-func set_snap_steps_visible(value: bool) -> void:
-	snap_steps_visible = value
+func set_snap_enabled(value: bool) -> void:
+	snap_enabled = value
+
+	if _snap_button:
+		_snap_button.set_pressed_no_signal(snap_enabled)
 
 	if _snap_steps:
-		_snap_steps.visible = snap_steps_visible
+		_snap_steps.visible = snap_enabled
+
 	if _waveform_editor:
 		_waveform_editor.snap_steps = int(_snap_steps.value) \
-			if snap_steps_visible \
+			if snap_enabled \
 			else 0
+
+	if waveform:
+		waveform.set_meta(&"snap_enabled", snap_enabled)
 
 
 func set_snap_steps(value: int) -> void:
 	snap_steps = value
+
+	if _snap_steps:
+		_snap_steps.set_value_no_signal(snap_steps)
+
 	if _waveform_editor:
 		_waveform_editor.snap_steps = value
+
+	if waveform:
+		waveform.set_meta(&"snap_steps", snap_steps)
 
 
 func _update_theme_cache() -> void:
@@ -123,27 +140,27 @@ func _update_theme_elements() -> void:
 	_snap_button.icon = _theme_cache.snap_icon
 	_play_button.icon = _theme_cache.play_icon
 	_lock_button.icon = _theme_cache.lock_icon \
-		if editor_lock \
+		if locked \
 		else _theme_cache.unlock_icon
 
 	_waveform_container[&"theme_override_styles/panel"] = _theme_cache.panel_style
 
 
-func _update_editor_lock() -> void:
+func _update_locked() -> void:
 	if not is_node_ready() or not waveform:
 		return
 
-	var locked: bool = waveform.get_meta(&"editor_lock", false)
+	var waveform_locked: bool = waveform.get_meta(&"locked", false)
 
-	_waveform_editor.editor_lock = locked
-	_lock_button.set_pressed_no_signal(locked)
+	_waveform_editor.locked = waveform_locked
+	_lock_button.set_pressed_no_signal(waveform_locked)
 	_lock_button.icon = _theme_cache.lock_icon \
-		if locked \
+		if waveform_locked \
 		else _theme_cache.unlock_icon
-	_frame_values.editable = not locked
-	_frame_count.editable = not locked
-	_edit_button.disabled = locked
-	_presets_button.disabled = locked
+	_frame_values.editable = not waveform_locked
+	_frame_count.editable = not waveform_locked
+	_edit_button.disabled = waveform_locked
+	_presets_button.disabled = waveform_locked
 
 
 func _update_waveform() -> void:
@@ -153,6 +170,9 @@ func _update_waveform() -> void:
 
 	_frame_count.set_value_no_signal(len(frames))
 	_waveform_editor.frames = frames
+
+	snap_steps = waveform.get_meta(&"snap_steps", SNAP_STEPS_DEFAULT)
+	snap_enabled = waveform.get_meta(&"snap_enabled", false)
 
 	var values := PackedStringArray()
 	values.resize(len(frames))
@@ -178,7 +198,7 @@ func _on_frame_count_value_changed(value: float) -> void:
 
 
 func _on_snap_button_toggled(toggled_on: bool) -> void:
-	snap_steps_visible = toggled_on
+	snap_enabled = toggled_on
 
 
 func _on_snap_steps_value_changed(value: float) -> void:
@@ -276,10 +296,10 @@ func _on_lock_button_toggled(toggled_on: bool) -> void:
 		else tr(&"Unlock Waveform", &"DMBK")
 
 	undo_redo.create_action(action_name)
-	undo_redo.add_undo_method(waveform, &"set_meta", &"editor_lock", editor_lock)
-	undo_redo.add_undo_method(self, &"_update_editor_lock")
-	undo_redo.add_do_method(waveform, &"set_meta", &"editor_lock", toggled_on)
-	undo_redo.add_do_method(self, &"_update_editor_lock")
+	undo_redo.add_undo_method(waveform, &"set_meta", &"locked", locked)
+	undo_redo.add_undo_method(self, &"_update_locked")
+	undo_redo.add_do_method(waveform, &"set_meta", &"locked", toggled_on)
+	undo_redo.add_do_method(self, &"_update_locked")
 	undo_redo.commit_action()
 
-	editor_lock = toggled_on
+	locked = toggled_on
