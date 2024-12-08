@@ -1,6 +1,6 @@
 GODOT = godot
 ROOT_DIR = ../../..
-NATIVE_DIR = $(shell cd "$(ROOT_DIR)" && realpath --relative-to=. "$(CURDIR)")
+NATIVE_DIR = $(shell realpath --relative-to="$(ROOT_DIR)" "$(CURDIR)")
 
 BUILD_FLAGS = -j7
 TARGET_DEBUG = target=template_debug debug_symbols=yes $(BUILD_FLAGS)
