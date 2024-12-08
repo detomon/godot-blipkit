@@ -7,21 +7,15 @@ TARGET_DEBUG = target=template_debug debug_symbols=yes $(BUILD_FLAGS)
 TARGET_RELEASE = target=template_release $(BUILD_FLAGS)
 
 
-build: git
+build:
+	git submodule update --init --recursive
+
 	# Build extension before creating docs.
 	@$(call build_extension)
 	@$(call build_doc)
 
 	# Build extension again to include changed docs.
 	@$(call build_extension)
-
-
-git:
-	git submodule update --init --recursive
-
-
-doc:
-	@$(call build_doc)
 
 
 define build_extension

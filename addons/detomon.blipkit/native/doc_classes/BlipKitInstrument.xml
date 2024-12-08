@@ -24,6 +24,7 @@
 			<return type="PackedInt32Array" />
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.SequenceType" />
 			<description>
+				Get the steps from the envelope with [param type].
 			</description>
 		</method>
 		<method name="get_envelope_sustain_length" qualifiers="const">
@@ -81,20 +82,16 @@
 	</methods>
 	<constants>
 		<constant name="SEQUENCE_VOLUME" value="0" enum="SequenceType">
-			Volume envelope.
-			Changes the output value of [member BlipKitTrack.volume] by multiplying it with values from the envelope.
+			Volume envelope. Changes the output value of [member BlipKitTrack.volume] by multiplying it with values from the envelope.
 		</constant>
 		<constant name="SEQUENCE_PANNING" value="1" enum="SequenceType">
-			Panning envelope.
-			Changes the output value of [member BlipKitTrack.panning] by adding values from the envelope.
+			Panning envelope. Changes the output value of [member BlipKitTrack.panning] by adding values from the envelope.
 		</constant>
 		<constant name="SEQUENCE_PITCH" value="2" enum="SequenceType">
-			Pitch envelope.
-			Changes the output value of [member BlipKitTrack.note] by adding values from the envelope.
+			Pitch envelope. Changes the output value of [member BlipKitTrack.note] by adding values from the envelope.
 		</constant>
 		<constant name="SEQUENCE_DUTY_CYCLE" value="3" enum="SequenceType">
-			Duty cycle envelope.
-			Changes the output value of [member BlipKitTrack.duty_cycle] by overriding it with values from the envelope.
+			Duty cycle envelope. Changes the output value of [member BlipKitTrack.duty_cycle] by overriding it with values from the envelope.
 			If an envelope value is [code]0[/code], [member BlipKitTrack.duty_cycle] is not changed.
 			[b]Node:[/b] Values are cast to integers and clamped between [code]0[/code] and [code]15[/code].
 		</constant>
