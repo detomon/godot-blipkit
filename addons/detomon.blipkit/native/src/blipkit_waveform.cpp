@@ -27,6 +27,7 @@ BlipKitWaveform::BlipKitWaveform() {
 
 	frames.resize(2);
 	frames[0] = 1.0;
+	frames[1] = 0.0;
 }
 
 BlipKitWaveform::~BlipKitWaveform() {
