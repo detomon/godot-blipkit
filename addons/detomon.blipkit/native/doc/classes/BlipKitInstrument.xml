@@ -19,17 +19,47 @@
 		[/gdscript]
 		[/codeblocks]
 	</description>
+	<tutorials>
+	</tutorials>
 	<methods>
-		<method name="set_sequence">
-			<return type="void" />
+		<method name="get_envelope_steps" qualifiers="const">
+			<return type="PackedInt32Array" />
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.SequenceType" />
-			<param index="1" name="values" type="PackedFloat32Array" />
-			<param index="2" name="sustain_offset" type="int" />
-			<param index="3" name="sustain_length" type="int" />
 			<description>
-				Set a sequence of values which are multiplied with [member BlipKitTrack.volume].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-				[b]Note:[/b] The number of ticks at which sequences update the track parameters is determined by [member BlipKitTrack.instrument_divider].
+			</description>
+		</method>
+		<method name="get_envelope_sustain_length" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.SequenceType" />
+			<description>
+			</description>
+		</method>
+		<method name="get_envelope_sustain_offset" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.SequenceType" />
+			<description>
+			</description>
+		</method>
+		<method name="get_envelope_values" qualifiers="const">
+			<return type="PackedFloat32Array" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.SequenceType" />
+			<description>
+			</description>
+		</method>
+		<method name="has_envelope" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.SequenceType" />
+			<description>
+			</description>
+		</method>
+		<method name="set_adsr">
+			<return type="void" />
+			<param index="0" name="attack" type="int" />
+			<param index="1" name="decay" type="int" />
+			<param index="2" name="sustain" type="float" />
+			<param index="3" name="release" type="int" />
+			<description>
+				Initializes the volume envelope with an ADSR envelope.
 			</description>
 		</method>
 		<method name="set_envelope">
@@ -44,107 +74,6 @@
 				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
 			</description>
 		</method>
-		<method name="set_adsr">
-			<return type="void" />
-			<param index="0" name="attack" type="int" />
-			<param index="1" name="decay" type="int" />
-			<param index="2" name="sustain" type="float" />
-			<param index="3" name="release" type="int" />
-			<description>
-				Initializes the volume envelope with an ADSR envelope.
-			</description>
-		</method>
-
-<!--
-		<method name="set_sequence_volume">
-			<return type="void" />
-			<param index="0" name="values" type="PackedFloat32Array" />
-			<param index="1" name="sustain_offset" type="int" />
-			<param index="2" name="sustain_length" type="int" />
-			<description>
-				Set a sequence of values which are multiplied with [member BlipKitTrack.volume].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-				[b]Note:[/b] The number of ticks at which sequences update the track parameters is determined by [member BlipKitTrack.instrument_divider].
-			</description>
-		</method>
-		<method name="set_sequence_panning">
-			<return type="void" />
-			<param index="0" name="values" type="PackedFloat32Array" />
-			<param index="1" name="sustain_offset" type="int" />
-			<param index="2" name="sustain_length" type="int" />
-			<description>
-				Set a sequence of values which are added to [member BlipKitTrack.panning].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-				[b]Note:[/b] The number of ticks at which sequences update the track parameters is determined by [member BlipKitTrack.instrument_divider].
-			</description>
-		</method>
-		<method name="set_sequence_pitch">
-			<return type="void" />
-			<param index="0" name="values" type="PackedFloat32Array" />
-			<param index="1" name="sustain_offset" type="int" />
-			<param index="2" name="sustain_length" type="int" />
-			<description>
-				Set a sequence of values which are added to [member BlipKitTrack.note].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-				[b]Note:[/b] The number of ticks at which sequences update the track parameters is determined by [member BlipKitTrack.instrument_divider].
-			</description>
-		</method>
-		<method name="set_sequence_duty_cycle">
-			<return type="void" />
-			<param index="0" name="values" type="PackedInt32Array" />
-			<param index="1" name="sustain_offset" type="int" />
-			<param index="2" name="sustain_length" type="int" />
-			<description>
-				Set a sequence of values which override [member BlipKitTrack.duty_cycle]. If a value is [code]0[/code], [member BlipKitTrack.duty_cycle] is not changed.
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-				[b]Note:[/b] The number of ticks at which sequences update the track parameters is determined by [member BlipKitTrack.instrument_divider].
-			</description>
-		</method>
-		<method name="set_envelope_volume">
-			<return type="void" />
-			<param index="0" name="steps" type="PackedInt32Array" />
-			<param index="1" name="values" type="PackedFloat32Array" />
-			<param index="2" name="sustain_offset" type="int" />
-			<param index="3" name="sustain_length" type="int" />
-			<description>
-				Set the volume envelope which is multiplied with [member BlipKitTrack.volume].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-			</description>
-		</method>
-		<method name="set_envelope_panning">
-			<return type="void" />
-			<param index="0" name="steps" type="PackedInt32Array" />
-			<param index="1" name="values" type="PackedFloat32Array" />
-			<param index="2" name="sustain_offset" type="int" />
-			<param index="3" name="sustain_length" type="int" />
-			<description>
-				Set the panning envelope which is added to [member BlipKitTrack.panning].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-			</description>
-		</method>
-		<method name="set_envelope_pitch">
-			<return type="void" />
-			<param index="0" name="steps" type="PackedInt32Array" />
-			<param index="1" name="values" type="PackedFloat32Array" />
-			<param index="2" name="sustain_offset" type="int" />
-			<param index="3" name="sustain_length" type="int" />
-			<description>
-				Set the pitch envelope which is added to [member BlipKitTrack.note].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-			</description>
-		</method>
-		<method name="set_envelope_duty_cycle">
-			<return type="void" />
-			<param index="0" name="steps" type="PackedInt32Array" />
-			<param index="1" name="values" type="PackedFloat32Array" />
-			<param index="2" name="sustain_offset" type="int" />
-			<param index="3" name="sustain_length" type="int" />
-			<description>
-				Set the pitch envelope which overrides [member BlipKitTrack.duty_cycle]. If a value is [code]0[/code], [member BlipKitTrack.duty_cycle] is not changed.
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
-			</description>
-		</method>
--->
 	</methods>
 	<constants>
 		<constant name="SEQUENCE_VOLUME" value="0" enum="SequenceType">

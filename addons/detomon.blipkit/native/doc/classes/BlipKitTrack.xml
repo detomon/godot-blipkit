@@ -7,19 +7,21 @@
 		To create an output, [BlipKitTrack] has to be attached with [method attach] to a [AudioStreamBlipKitPlayback].
 		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from the [AudioStreamBlipKitPlayback] which it was attached to.
 	</description>
+	<tutorials>
+	</tutorials>
 	<methods>
-		<method name="create_with_waveform" qualifier="static">
-			<return type="BlipKitTrack" />
-			<param index="0" name="waveform" type="BlipKitWaveform" />
-			<description>
-				Creates a track with the given [param waveform] and sets [member master_volume] accordingly.
-			</description>
-		</method>
 		<method name="attach">
 			<return type="void" />
 			<param index="0" name="playback" type="AudioStreamBlipKitPlayback" />
 			<description>
 				Attach the track to a playback instance.
+			</description>
+		</method>
+		<method name="create_with_waveform" qualifiers="static">
+			<return type="BlipKitTrack" />
+			<param index="0" name="waveform" type="int" enum="BlipKitTrack.Waveform" />
+			<description>
+				Creates a track with the given [param waveform] and sets [member master_volume] accordingly.
 			</description>
 		</method>
 		<method name="detach">
@@ -66,59 +68,59 @@
 		</method>
 	</methods>
 	<members>
-		<member name="waveform" type="int" enum="Waveform" setter="" getter="" default="0">
+		<member name="arpeggio" type="PackedFloat32Array" setter="set_arpeggio" getter="get_arpeggio" default="PackedFloat32Array()">
+			Sets the arpeggio sequence consisting of an array of pitch changes with a maximum length of 8. The number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played is set with [member arpeggio_divider].
+		</member>
+		<member name="arpeggio_divider" type="int" setter="set_arpeggio_divider" getter="get_arpeggio_divider" default="4">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
+		</member>
+		<member name="custom_waveform" type="BlipKitWaveform" setter="set_custom_waveform" getter="get_custom_waveform">
+			Sets a custom waveform. [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM] in this case.
+		</member>
+		<member name="duty_cycle" type="int" setter="set_duty_cycle" getter="get_duty_cycle" default="4">
+			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect for other waveforms.
+		</member>
+		<member name="effect_divider" type="int" setter="set_effect_divider" getter="get_effect_divider" default="1">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which effects change the value of the corresponding property.
+		</member>
+		<member name="instrument" type="BlipKitInstrument" setter="set_instrument" getter="get_instrument">
+			Sets the instrument. See [BlipKitInstrument].
+		</member>
+		<member name="instrument_divider" type="int" setter="set_instrument_divider" getter="get_instrument_divider" default="4">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope step is played for envelopes which have only values set.
+		</member>
+		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
+			Sets the mix volume. This is multiplied with [member volume] to be used as the final volume.
+		</member>
+		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
+			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants BlipKitTrack.NOTE_C_0]). A negative value releases the note.
+			When an instrument is set, plays the attack part of the instrument envelopes.
+		</member>
+		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">
+			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
+		</member>
+		<member name="panning_slide" type="int" setter="set_panning_slide" getter="get_panning_slide" default="0">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
+		</member>
+		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
+			Sets the pitch values which is added to [member note]. For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
+		</member>
+		<member name="portamento" type="int" setter="set_portamento" getter="get_portamento" default="0">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
+		</member>
+		<member name="volume" type="float" setter="set_volume" getter="get_volume" default="1.0">
+			Sets the note volume. This is multiplied with [member master_volume] to be used as the final volume.
+		</member>
+		<member name="volume_slide" type="int" setter="set_volume_slide" getter="get_volume_slide" default="0">
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member volume] changes to a new value.
+		</member>
+		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
 			Sets the waveform and [member master_volume] according to the following list:
 			- [constant BlipKitTrack.WAVEFORM_SQUARE]: [code]0.15[/code]
 			- [constant BlipKitTrack.WAVEFORM_NOISE]: [code]0.15[/code]
 			- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: [code]0.15[/code]
 			- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: [code]0.3[/code]
 			- [constant BlipKitTrack.WAVEFORM_SINE]: [code]0.3[/code]
-		</member>
-		<member name="duty_cycle" type="int" setter="" getter="" default="4">
-			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect for other waveforms.
-		</member>
-		<member name="master_volume" type="float" setter="" getter="" default="0.15">
-			Sets the mix volume. This is multiplied with [member volume] to be used as the final volume.
-		</member>
-		<member name="volume" type="float" setter="" getter="" default="1.0">
-			Sets the note volume. This is multiplied with [member master_volume] to be used as the final volume.
-		</member>
-		<member name="panning" type="float" setter="" getter="" default="0.0">
-			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
-		</member>
-		<member name="note" type="float" setter="" getter="" default="-1.0">
-			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants BlipKitTrack.NOTE_C_0]). A negative value releases the note.
-			When an instrument is set, plays the attack part of the instrument envelopes.
-		</member>
-		<member name="pitch" type="float" setter="" getter="" default="0.0">
-			Sets the pitch values which is added to [member note]. For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
-		</member>
-		<member name="volume_slide" type="int" setter="" getter="" default="0">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member volume] changes to a new value.
-		</member>
-		<member name="panning_slide" type="int" setter="" getter="" default="0">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
-		</member>
-		<member name="portamento" type="int" setter="" getter="" default="0">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
-		</member>
-		<member name="effect_divider" type="int" setter="" getter="" default="1">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which effects change the value of the corresponding property.
-		</member>
-		<member name="arpeggio" type="PackedFloat32Array" setter="" getter="" default="[]">
-			Sets the arpeggio sequence consisting of an array of pitch changes with a maximum length of 8. The number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played is set with [member arpeggio_divider].
-		</member>
-		<member name="arpeggio_divider" type="int" setter="" getter="" default="4">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
-		</member>
-		<member name="instrument" type="BlipKitInstrument" setter="" getter="" default="null">
-			Sets the instrument. See [BlipKitInstrument].
-		</member>
-		<member name="instrument_divider" type="int" setter="" getter="" default="4">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope step is played for envelopes which have only values set.
-		</member>
-		<member name="custom_waveform" type="BlipKitWaveform" setter="" getter="" default="null">
-			Sets a custom waveform. [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM] in this case.
 		</member>
 	</members>
 	<constants>
@@ -142,6 +144,204 @@
 		</constant>
 		<constant name="WAVEFORM_SAMPLE" value="6" enum="Waveform">
 			Not implemented yet.
+		</constant>
+		<constant name="NOTE_C_0" value="0" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_0" value="1" enum="Note">
+		</constant>
+		<constant name="NOTE_D_0" value="2" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_0" value="3" enum="Note">
+		</constant>
+		<constant name="NOTE_E_0" value="4" enum="Note">
+		</constant>
+		<constant name="NOTE_F_0" value="5" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_0" value="6" enum="Note">
+		</constant>
+		<constant name="NOTE_G_0" value="7" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_0" value="8" enum="Note">
+		</constant>
+		<constant name="NOTE_A_0" value="9" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_0" value="10" enum="Note">
+		</constant>
+		<constant name="NOTE_B_0" value="11" enum="Note">
+		</constant>
+		<constant name="NOTE_C_1" value="12" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_1" value="13" enum="Note">
+		</constant>
+		<constant name="NOTE_D_1" value="14" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_1" value="15" enum="Note">
+		</constant>
+		<constant name="NOTE_E_1" value="16" enum="Note">
+		</constant>
+		<constant name="NOTE_F_1" value="17" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_1" value="18" enum="Note">
+		</constant>
+		<constant name="NOTE_G_1" value="19" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_1" value="20" enum="Note">
+		</constant>
+		<constant name="NOTE_A_1" value="21" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_1" value="22" enum="Note">
+		</constant>
+		<constant name="NOTE_B_1" value="23" enum="Note">
+		</constant>
+		<constant name="NOTE_C_2" value="24" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_2" value="25" enum="Note">
+		</constant>
+		<constant name="NOTE_D_2" value="26" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_2" value="27" enum="Note">
+		</constant>
+		<constant name="NOTE_E_2" value="28" enum="Note">
+		</constant>
+		<constant name="NOTE_F_2" value="29" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_2" value="30" enum="Note">
+		</constant>
+		<constant name="NOTE_G_2" value="31" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_2" value="32" enum="Note">
+		</constant>
+		<constant name="NOTE_A_2" value="33" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_2" value="34" enum="Note">
+		</constant>
+		<constant name="NOTE_B_2" value="35" enum="Note">
+		</constant>
+		<constant name="NOTE_C_3" value="36" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_3" value="37" enum="Note">
+		</constant>
+		<constant name="NOTE_D_3" value="38" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_3" value="39" enum="Note">
+		</constant>
+		<constant name="NOTE_E_3" value="40" enum="Note">
+		</constant>
+		<constant name="NOTE_F_3" value="41" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_3" value="42" enum="Note">
+		</constant>
+		<constant name="NOTE_G_3" value="43" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_3" value="44" enum="Note">
+		</constant>
+		<constant name="NOTE_A_3" value="45" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_3" value="46" enum="Note">
+		</constant>
+		<constant name="NOTE_B_3" value="47" enum="Note">
+		</constant>
+		<constant name="NOTE_C_4" value="48" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_4" value="49" enum="Note">
+		</constant>
+		<constant name="NOTE_D_4" value="50" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_4" value="51" enum="Note">
+		</constant>
+		<constant name="NOTE_E_4" value="52" enum="Note">
+		</constant>
+		<constant name="NOTE_F_4" value="53" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_4" value="54" enum="Note">
+		</constant>
+		<constant name="NOTE_G_4" value="55" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_4" value="56" enum="Note">
+		</constant>
+		<constant name="NOTE_A_4" value="57" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_4" value="58" enum="Note">
+		</constant>
+		<constant name="NOTE_B_4" value="59" enum="Note">
+		</constant>
+		<constant name="NOTE_C_5" value="60" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_5" value="61" enum="Note">
+		</constant>
+		<constant name="NOTE_D_5" value="62" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_5" value="63" enum="Note">
+		</constant>
+		<constant name="NOTE_E_5" value="64" enum="Note">
+		</constant>
+		<constant name="NOTE_F_5" value="65" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_5" value="66" enum="Note">
+		</constant>
+		<constant name="NOTE_G_5" value="67" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_5" value="68" enum="Note">
+		</constant>
+		<constant name="NOTE_A_5" value="69" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_5" value="70" enum="Note">
+		</constant>
+		<constant name="NOTE_B_5" value="71" enum="Note">
+		</constant>
+		<constant name="NOTE_C_6" value="72" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_6" value="73" enum="Note">
+		</constant>
+		<constant name="NOTE_D_6" value="74" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_6" value="75" enum="Note">
+		</constant>
+		<constant name="NOTE_E_6" value="76" enum="Note">
+		</constant>
+		<constant name="NOTE_F_6" value="77" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_6" value="78" enum="Note">
+		</constant>
+		<constant name="NOTE_G_6" value="79" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_6" value="80" enum="Note">
+		</constant>
+		<constant name="NOTE_A_6" value="81" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_6" value="82" enum="Note">
+		</constant>
+		<constant name="NOTE_B_6" value="83" enum="Note">
+		</constant>
+		<constant name="NOTE_C_7" value="84" enum="Note">
+		</constant>
+		<constant name="NOTE_C_SH_7" value="85" enum="Note">
+		</constant>
+		<constant name="NOTE_D_7" value="86" enum="Note">
+		</constant>
+		<constant name="NOTE_D_SH_7" value="87" enum="Note">
+		</constant>
+		<constant name="NOTE_E_7" value="88" enum="Note">
+		</constant>
+		<constant name="NOTE_F_7" value="89" enum="Note">
+		</constant>
+		<constant name="NOTE_F_SH_7" value="90" enum="Note">
+		</constant>
+		<constant name="NOTE_G_7" value="91" enum="Note">
+		</constant>
+		<constant name="NOTE_G_SH_7" value="92" enum="Note">
+		</constant>
+		<constant name="NOTE_A_7" value="93" enum="Note">
+		</constant>
+		<constant name="NOTE_A_SH_7" value="94" enum="Note">
+		</constant>
+		<constant name="NOTE_B_7" value="95" enum="Note">
+		</constant>
+		<constant name="NOTE_C_8" value="96" enum="Note">
+		</constant>
+		<constant name="NOTE_RELEASE" value="-1" enum="Note">
+		</constant>
+		<constant name="NOTE_MUTE" value="-2" enum="Note">
 		</constant>
 	</constants>
 </class>

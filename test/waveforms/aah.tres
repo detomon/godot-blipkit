@@ -2,7 +2,6 @@
 
 [resource]
 frames = PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.875, 0.75, 0.625, 0.5, 0.375, 0.25, 0.125, 0, -0.125, -0.25, -0.375, -0.5, -0.625, -0.75, -0.875, -1, -1, -0.875, -0.75, -0.625, -0.5, -0.375, -0.25, -0.125)
-metadata/editor_lock = false
 metadata/locked = false
 metadata/snap_enabled = true
 metadata/snap_steps = 12

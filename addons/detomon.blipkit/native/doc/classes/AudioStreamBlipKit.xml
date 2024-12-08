@@ -9,7 +9,7 @@
 		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
 		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
-		func _ready() -> void:
+		func _ready() -&gt; void:
 			# Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
 			# before retreiving the playback object.
 			stream_player.play()
@@ -19,8 +19,10 @@
 		[/gdscript]
 		[/codeblocks]
 	</description>
+	<tutorials>
+	</tutorials>
 	<members>
-		<member name="clock_rate" type="int" setter="" getter="" default="240">
+		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
 			Sets the number of ticks per second at which tick functions are called in [AudioStreamBlipKitPlayback], and effects and instrument sequences are updated in [BlipKitTrack].
 		</member>
 	</members>

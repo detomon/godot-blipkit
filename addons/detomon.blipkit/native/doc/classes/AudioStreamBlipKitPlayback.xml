@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="AudioStreamBlipKitPlayback" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+<class name="AudioStreamBlipKitPlayback" inherits="AudioStreamPlayback" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
 		Audio stream to playback data from a BlipKit context.
 	</brief_description>
@@ -14,7 +14,7 @@
 		# Freed tracks are detached from the stream playback.
 		var track := BlipKitTrack.new()
 
-		func _ready() -> void:
+		func _ready() -&gt; void:
 		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
 		    # before retreiving the playback object.
 		    stream_player.play()
@@ -27,6 +27,8 @@
 		[/gdscript]
 		[/codeblocks]
 	</description>
+	<tutorials>
+	</tutorials>
 	<methods>
 		<method name="add_tick_function">
 			<return type="void" />
@@ -37,7 +39,7 @@
 				[b]Note:[/b] The callback is fired for the first time on the next tick.
 				[codeblocks]
 				[gdscript]
-				playback.add_tick_function(func () -> int:
+				playback.add_tick_function(func () -&gt; int:
 				    track.note += 1.0
 				    # Keep tick interval.
 				    return 0
@@ -47,7 +49,7 @@
 				If a value greater than [code]0[/code] is returned, the tick interval is changed to that value and the callback is fired again after the given number of ticks.
 				[codeblocks]
 				[gdscript]
-				playback.add_tick_function(func () -> int:
+				playback.add_tick_function(func () -&gt; int:
 				    track.note += 1.0
 				    # Change tick interval to 90.
 				    return 90
@@ -62,7 +64,7 @@
 				Remove all tick callbacks.
 			</description>
 		</method>
-		<method name="get_tick_function_count">
+		<method name="get_tick_function_count" qualifiers="const">
 			<return type="int" />
 			<description>
 				Returns the number of tick callbacks.
