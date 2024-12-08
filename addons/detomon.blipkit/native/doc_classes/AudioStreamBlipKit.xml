@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AudioStreamBlipKit" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Audio stream for creating a [AudioStreamBlipKitPlayback].
+		An audio stream used to configure a [AudioStreamBlipKitPlayback].
 	</brief_description>
 	<description>
-		[codeblocks]
-		[gdscript]
-		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
-		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
-
-		func _ready() -&gt; void:
-			# Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
-			# before retreiving the playback object.
-			stream_player.play()
-
-			# Get the playback object.
-			var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
-		[/gdscript]
-		[/codeblocks]
+		See the description of [AudioStreamBlipKitPlayback] on how to attach [BlipKitTrack]s.
 	</description>
 	<tutorials>
 	</tutorials>

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitInstrument" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Changes parameters of a [BlipKitTrack] while a note is played or released.
+		Changes the output parameters of a [BlipKitTrack] while a note is playing or after it was released.
 	</brief_description>
 	<description>
-		Changes the parameters [member BlipKitTrack.note], [member BlipKitTrack.volume], [member BlipKitTrack.panning] and [member BlipKitTrack.duty_cycle] while a note is played or released using a sequence of values.
-
 		[codeblocks]
 		[gdscript]
 		var instrument := BlipKitInstrument.new()
@@ -59,7 +57,13 @@
 			<param index="2" name="sustain" type="float" />
 			<param index="3" name="release" type="int" />
 			<description>
-				Initializes the volume envelope with an ADSR envelope.
+				Initializes the [constant SEQUENCE_VOLUME] envelope with an ADSR envelope.
+				This corresponds to the following call:
+				[codeblocks]
+				[gdscript]
+				instrument.set_envelope(BlipKitInstrument.SEQUENCE_VOLUME, [attack, decay, 240, release], [1.0, sustain, sustain, 0.0], 2, 1)
+				[/gdscript]
+				[/codeblocks]
 			</description>
 		</method>
 		<method name="set_envelope">
@@ -70,23 +74,29 @@
 			<param index="3" name="sustain_offset" type="int" />
 			<param index="4" name="sustain_length" type="int" />
 			<description>
-				Set the volume envelope which is multiplied with [member BlipKitTrack.volume].
-				[param sustain_offset] defines the offset of the sustain cycle which is repeated. [param p_sustain_length] defines the length of the sustain cycle which is repeated.
+				Creates an envelope with [param type]. The values [param sustain_offset] and [param sustain_length] define the range of the sustain cycle which is repeated while the note is playing.
+				If [param steps] is empty, [param values] is used as a sequence. In this case, the duration of each value is defined with [BlipKitTrack.instrument_divider].
 			</description>
 		</method>
 	</methods>
 	<constants>
 		<constant name="SEQUENCE_VOLUME" value="0" enum="SequenceType">
-			Volume sequence or envelope.
+			Volume envelope.
+			Changes the output value of [member BlipKitTrack.volume] by multiplying it with values from the envelope.
 		</constant>
 		<constant name="SEQUENCE_PANNING" value="1" enum="SequenceType">
-			Panning sequence or envelope.
+			Panning envelope.
+			Changes the output value of [member BlipKitTrack.panning] by adding values from the envelope.
 		</constant>
 		<constant name="SEQUENCE_PITCH" value="2" enum="SequenceType">
-			Pitch sequence or envelope.
+			Pitch envelope.
+			Changes the output value of [member BlipKitTrack.note] by adding values from the envelope.
 		</constant>
 		<constant name="SEQUENCE_DUTY_CYCLE" value="3" enum="SequenceType">
-			Duty cycle sequence or envelope.
+			Duty cycle envelope.
+			Changes the output value of [member BlipKitTrack.duty_cycle] by overriding it with values from the envelope.
+			If an envelope value is [code]0[/code], [member BlipKitTrack.duty_cycle] is not changed.
+			[b]Node:[/b] Values are cast to integers and clamped between [code]0[/code] and [code]15[/code].
 		</constant>
 	</constants>
 </class>

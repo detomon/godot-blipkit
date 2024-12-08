@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AudioStreamBlipKitPlayback" inherits="AudioStreamPlayback" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Audio stream to playback data from a BlipKit context.
+		Plays back audio generated from [BlipKitTrack]s.
 	</brief_description>
 	<description>
-		Allows to attach [BlipKitTrack] objects. If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack] are detached.
+		If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack] are detached.
 		[codeblocks]
 		[gdscript]
 		# Some audio stream player with a [AudioStreamBlipKit] stream resource.

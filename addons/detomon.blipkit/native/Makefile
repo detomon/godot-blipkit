@@ -20,6 +20,10 @@ git:
 	git submodule update --init --recursive
 
 
+doc:
+	@$(call build_doc)
+
+
 define build_extension
 	scons platform=macos arch=universal $(TARGET_DEBUG)
 #	scons platform=macos arch=universal $(TARGET_RELEASE)
