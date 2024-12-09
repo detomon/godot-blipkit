@@ -116,7 +116,7 @@ void BlipKitWaveform::set_frames_normalized(const PackedFloat32Array &p_frames, 
 
 	frames_copy.resize(p_frames.size());
 	for (int i = 0; i < frames_copy.size(); i++) {
-		frames_copy[i] = CLAMP(ptr[i], -1.0, +1.0);
+		frames_copy[i] = ptr[i];
 		max_value = MAX(max_value, ABS(frames_copy[i]));
 	}
 
@@ -125,8 +125,8 @@ void BlipKitWaveform::set_frames_normalized(const PackedFloat32Array &p_frames, 
 		factor = p_amplitude / max_value;
 	}
 
-	for (int i = 0; i < frames.size(); i++) {
-		frames_copy[i] *= factor;
+	for (int i = 0; i < frames_copy.size(); i++) {
+		frames_copy[i] = CLAMP(frames_copy[i] * factor, -1.0, +1.0);
 	}
 
 	_update_waveform(frames_copy);

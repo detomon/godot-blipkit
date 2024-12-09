@@ -20,13 +20,6 @@ var _inactive_tracks: Array[BlipKitTrack] = []
 func _ready() -> void:
 	_init_track()
 
-	#_waveform.set_frames_normalized([
-		#-255, -163, -154, -100, 45, 127, 9, -163, -163,
-		#-27, 63, 72, 63, 9, -100, -154, -127,
-		#-91, -91, -91, -91, -127, -154, -100, 45,
-		#127, 9, -163, -163, 9, 127, 45,
-	#])
-
 	#ResourceSaver.save(_waveform, "res://aah.tres")
 
 	#INSTRUMENT.set_adsr(0, 12, 0.5, 24)
@@ -70,31 +63,39 @@ func _process(_delta: float) -> void:
 
 
 func _init_track() -> void:
+	var waveform := BlipKitWaveform.create_with_frames([
+		-255, -163, -154, -100, 45, 127, 9, -163, -163,
+		-27, 63, 72, 63, 9, -100, -154, -127,
+		-91, -91, -91, -91, -127, -154, -100, 45,
+		127, 9, -163, -163, 9, 127, 45,
+	], true, 0.5)
+
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
 
-	#var saw := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
-	##track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
-	##track.master_volume = 0.15
-	#saw.portamento = 8
+	var saw := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
+	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
+	#track.master_volume = 0.15
+	saw.portamento = 8
 #
-	#var saw_instr := BlipKitInstrument.new()
-	#saw_instr.set_adsr(0, 0, 1.0, 12)
-	#saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
-	#saw.instrument = saw_instr
-	#saw.attach(playback)
-	#playback.add_tick_function(_on_tick.bind(saw), 24)
+	var saw_instr := BlipKitInstrument.new()
+	saw_instr.set_adsr(0, 0, 1.0, 12)
+	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
+	saw.instrument = saw_instr
+	saw.custom_waveform = waveform
+	saw.attach(playback)
+	playback.add_tick_function(_on_tick.bind(saw), 24)
 
-	#prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
-	#prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))
-	#prints("sustain",
-		#saw_instr.get_envelope_sustain_offset(BlipKitInstrument.ENVELOPE_PITCH),
-		#saw_instr.get_envelope_sustain_length(BlipKitInstrument.ENVELOPE_PITCH)
-	#)
-#
+	prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
+	prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))
+	prints("sustain",
+		saw_instr.get_envelope_sustain_offset(BlipKitInstrument.ENVELOPE_PITCH),
+		saw_instr.get_envelope_sustain_length(BlipKitInstrument.ENVELOPE_PITCH)
+	)
+
 	#var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
 	##lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
 	#lead.duty_cycle = 2
