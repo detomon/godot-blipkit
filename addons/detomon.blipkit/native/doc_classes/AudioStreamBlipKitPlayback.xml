@@ -5,6 +5,7 @@
 	</brief_description>
 	<description>
 		If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack] are detached.
+		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
 		[codeblocks]
 		[gdscript]
 		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
@@ -37,6 +38,7 @@
 			<description>
 				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The callbacks are called in the same order as they are added. The callback function does not receive any argument and should return an integer indicating whether to change the tick interval.
 				[b]Note:[/b] The callback is fired for the first time on the next tick.
+				[b]Example:[/b] Add a tick function and play a higher note on each call:
 				[codeblocks]
 				[gdscript]
 				playback.add_tick_function(func () -&gt; int:
@@ -47,6 +49,7 @@
 				[/gdscript]
 				[/codeblocks]
 				If a value greater than [code]0[/code] is returned, the tick interval is changed to that value and the callback is fired again after the given number of ticks.
+				[b]Example:[/b] Add a tick function and change the tick interval to [code]90[/code] after the first call:
 				[codeblocks]
 				[gdscript]
 				playback.add_tick_function(func () -&gt; int:
