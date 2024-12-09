@@ -30,9 +30,9 @@ func _ready() -> void:
 	#ResourceSaver.save(_waveform, "res://aah.tres")
 
 	#INSTRUMENT.set_adsr(0, 12, 0.5, 24)
-	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_VOLUME, [4, 12, 24], [1.0, 0.5, 0.0], 1, 1)
-	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [], [12, 0, -0.2], 1, 1)
-	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_DUTY_CYCLE, [], [8, 8, 0, 2], 2, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME, [4, 12, 24], [1.0, 0.5, 0.0], 1, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [12, 0, -0.2], 1, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 8, 0, 2], 2, 1)
 	INSTRUMENT.set_meta(&"name", "MIDI")
 	ResourceSaver.save(INSTRUMENT)
 
@@ -70,7 +70,7 @@ func _process(_delta: float) -> void:
 
 
 func _init_track() -> void:
-	INSTRUMENT.set_envelope(BlipKitInstrument.SEQUENCE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
+	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
@@ -83,16 +83,16 @@ func _init_track() -> void:
 #
 	#var saw_instr := BlipKitInstrument.new()
 	#saw_instr.set_adsr(0, 0, 1.0, 12)
-	#saw_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [], [24, 0, 12], 1, 1)
+	#saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	#saw.instrument = saw_instr
 	#saw.attach(playback)
 	#playback.add_tick_function(_on_tick.bind(saw), 24)
 
-	#prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.SEQUENCE_PITCH))
-	#prints("values", saw_instr.get_envelope_values(BlipKitInstrument.SEQUENCE_PITCH))
+	#prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
+	#prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))
 	#prints("sustain",
-		#saw_instr.get_envelope_sustain_offset(BlipKitInstrument.SEQUENCE_PITCH),
-		#saw_instr.get_envelope_sustain_length(BlipKitInstrument.SEQUENCE_PITCH)
+		#saw_instr.get_envelope_sustain_offset(BlipKitInstrument.ENVELOPE_PITCH),
+		#saw_instr.get_envelope_sustain_length(BlipKitInstrument.ENVELOPE_PITCH)
 	#)
 #
 	#var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
@@ -116,7 +116,7 @@ func _init_track() -> void:
 	bass.pitch = 0.07 # Slightly detune bass to reduce clash with same notes on other tracks.
 
 	var bass_instr := BlipKitInstrument.new()
-	bass_instr.set_envelope(BlipKitInstrument.SEQUENCE_PITCH, [0, 8], [24, 0], 1, 1)
+	bass_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [0, 8], [24, 0], 1, 1)
 	bass.instrument = bass_instr
 
 	bass.attach(playback)

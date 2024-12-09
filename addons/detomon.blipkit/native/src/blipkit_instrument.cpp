@@ -17,10 +17,10 @@ void BlipKitInstrument::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_envelope_sustain_offset", "type"), &BlipKitInstrument::get_envelope_sustain_offset);
 	ClassDB::bind_method(D_METHOD("get_envelope_sustain_length", "type"), &BlipKitInstrument::get_envelope_sustain_length);
 
-	BIND_ENUM_CONSTANT(SEQUENCE_VOLUME);
-	BIND_ENUM_CONSTANT(SEQUENCE_PANNING);
-	BIND_ENUM_CONSTANT(SEQUENCE_PITCH);
-	BIND_ENUM_CONSTANT(SEQUENCE_DUTY_CYCLE);
+	BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
+	BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
+	BIND_ENUM_CONSTANT(ENVELOPE_PITCH);
+	BIND_ENUM_CONSTANT(ENVELOPE_DUTY_CYCLE);
 }
 
 String BlipKitInstrument::_to_string() const {
@@ -41,16 +41,16 @@ void BlipKitInstrument::_get_property_list(List<PropertyInfo> *p_list) const {
 bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 	if (p_name.begins_with("envelope/")) {
 		const String name = p_name;
-		SequenceType type;
+		EnvelopeType type;
 
 		if (name == "envelope/volume") {
-			type = SEQUENCE_VOLUME;
+			type = ENVELOPE_VOLUME;
 		} else if (name == "envelope/panning") {
-			type = SEQUENCE_PANNING;
+			type = ENVELOPE_PANNING;
 		} else if (name == "envelope/pitch") {
-			type = SEQUENCE_PITCH;
+			type = ENVELOPE_PITCH;
 		} else if (name == "envelope/duty_cycle") {
-			type = SEQUENCE_DUTY_CYCLE;
+			type = ENVELOPE_DUTY_CYCLE;
 		} else {
 			ERR_FAIL_V_MSG(false, vformat("Invalid instrument envelope: %s.", name));
 		}
@@ -75,16 +75,16 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 	if (p_name.begins_with("envelope/")) {
 		const String name = p_name;
-		SequenceType type;
+		EnvelopeType type;
 
 		if (name == "envelope/volume") {
-			type = SEQUENCE_VOLUME;
+			type = ENVELOPE_VOLUME;
 		} else if (name == "envelope/panning") {
-			type = SEQUENCE_PANNING;
+			type = ENVELOPE_PANNING;
 		} else if (name == "envelope/pitch") {
-			type = SEQUENCE_PITCH;
+			type = ENVELOPE_PITCH;
 		} else if (name == "envelope/duty_cycle") {
-			type = SEQUENCE_DUTY_CYCLE;
+			type = ENVELOPE_DUTY_CYCLE;
 		} else {
 			ERR_FAIL_V_MSG(false, vformat("Invalid instrument envelope: %s.", name));
 		}
@@ -118,22 +118,22 @@ BlipKitInstrument::~BlipKitInstrument() {
 	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitInstrument::set_envelope(SequenceType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length) {
-	ERR_FAIL_INDEX(p_type, SEQUENCE_MAX);
+void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length) {
+	ERR_FAIL_INDEX(p_type, ENVELOPE_MAX);
 
 	real_t multiplier = 1.0;
 
 	switch (p_type) {
-		case SEQUENCE_VOLUME: {
+		case ENVELOPE_VOLUME: {
 			multiplier = real_t(BK_MAX_VOLUME);
 		} break;
-		case SEQUENCE_PANNING: {
+		case ENVELOPE_PANNING: {
 			multiplier = real_t(BK_MAX_VOLUME);
 		} break;
-		case SEQUENCE_PITCH: {
+		case ENVELOPE_PITCH: {
 			multiplier = real_t(BK_FINT20_UNIT);
 		} break;
-		case SEQUENCE_DUTY_CYCLE: {
+		case ENVELOPE_DUTY_CYCLE: {
 			multiplier = 1.0;
 		} break;
 		default: {
@@ -183,7 +183,7 @@ void BlipKitInstrument::set_envelope(SequenceType p_type, const PackedInt32Array
 	}
 
 	if (result == BK_INVALID_ATTRIBUTE) {
-		ERR_FAIL_MSG("Failed to set envelope: Sustain loop has zero steps.");
+		ERR_FAIL_MSG("Failed to set envelope: Sustain cycle has zero steps.");
 	} else if (result != BK_SUCCESS) {
 		ERR_FAIL_MSG(vformat("Failed to set envelope: %s.", BKStatusGetName(result)));
 	}
@@ -201,16 +201,16 @@ void BlipKitInstrument::set_envelope(SequenceType p_type, const PackedInt32Array
 
 void BlipKitInstrument::set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release) {
 	BKInt sustain = BKInt(CLAMP(p_sustain, 0.0, 1.0) * real_t(BK_MAX_VOLUME));
-	set_envelope(SEQUENCE_VOLUME, { p_attack, p_decay, 240, p_release }, { 1.0, p_sustain, p_sustain, 0.0 }, 2, 1);
+	set_envelope(ENVELOPE_VOLUME, { p_attack, p_decay, 240, p_release }, { 1.0, p_sustain, p_sustain, 0.0 }, 2, 1);
 }
 
-bool BlipKitInstrument::has_envelope(SequenceType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, false);
+bool BlipKitInstrument::has_envelope(EnvelopeType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, false);
 	return !sequences[p_type].values.is_empty();
 }
 
-PackedInt32Array BlipKitInstrument::get_envelope_steps(SequenceType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, PackedInt32Array());
+PackedInt32Array BlipKitInstrument::get_envelope_steps(EnvelopeType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, PackedInt32Array());
 
 	Sequence &sequence = const_cast<BlipKitInstrument *>(this)->sequences[p_type];
 
@@ -221,8 +221,8 @@ PackedInt32Array BlipKitInstrument::get_envelope_steps(SequenceType p_type) cons
 	return steps;
 }
 
-PackedFloat32Array BlipKitInstrument::get_envelope_values(SequenceType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, Variant());
+PackedFloat32Array BlipKitInstrument::get_envelope_values(EnvelopeType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, Variant());
 
 	Sequence &sequence = const_cast<BlipKitInstrument *>(this)->sequences[p_type];
 
@@ -233,12 +233,12 @@ PackedFloat32Array BlipKitInstrument::get_envelope_values(SequenceType p_type) c
 	return values;
 }
 
-int BlipKitInstrument::get_envelope_sustain_offset(SequenceType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, 0);
+int BlipKitInstrument::get_envelope_sustain_offset(EnvelopeType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, 0);
 	return sequences[p_type].sustain_offset;
 }
 
-int BlipKitInstrument::get_envelope_sustain_length(SequenceType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, SEQUENCE_MAX, 0);
+int BlipKitInstrument::get_envelope_sustain_length(EnvelopeType p_type) const {
+	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, 0);
 	return sequences[p_type].sustain_length;
 }

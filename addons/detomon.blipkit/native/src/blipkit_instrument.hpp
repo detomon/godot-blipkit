@@ -14,12 +14,12 @@ class BlipKitInstrument : public Resource {
 	GDCLASS(BlipKitInstrument, Resource)
 
 public:
-	enum SequenceType {
-		SEQUENCE_VOLUME = BK_SEQUENCE_VOLUME,
-		SEQUENCE_PANNING = BK_SEQUENCE_PANNING,
-		SEQUENCE_PITCH = BK_SEQUENCE_PITCH,
-		SEQUENCE_DUTY_CYCLE = BK_SEQUENCE_DUTY_CYCLE,
-		SEQUENCE_MAX = BK_MAX_SEQUENCES,
+	enum EnvelopeType {
+		ENVELOPE_VOLUME = BK_SEQUENCE_VOLUME,
+		ENVELOPE_PANNING = BK_SEQUENCE_PANNING,
+		ENVELOPE_PITCH = BK_SEQUENCE_PITCH,
+		ENVELOPE_DUTY_CYCLE = BK_SEQUENCE_DUTY_CYCLE,
+		ENVELOPE_MAX = BK_MAX_SEQUENCES,
 	};
 
 private:
@@ -46,15 +46,15 @@ public:
 
 	_FORCE_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
-	void set_envelope(SequenceType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length);
+	void set_envelope(EnvelopeType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length);
 	void set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
-	bool has_envelope(SequenceType p_type) const;
-	PackedInt32Array get_envelope_steps(SequenceType p_type) const;
-	PackedFloat32Array get_envelope_values(SequenceType p_type) const;
-	int get_envelope_sustain_offset(SequenceType p_type) const;
-	int get_envelope_sustain_length(SequenceType p_type) const;
+	bool has_envelope(EnvelopeType p_type) const;
+	PackedInt32Array get_envelope_steps(EnvelopeType p_type) const;
+	PackedFloat32Array get_envelope_values(EnvelopeType p_type) const;
+	int get_envelope_sustain_offset(EnvelopeType p_type) const;
+	int get_envelope_sustain_length(EnvelopeType p_type) const;
 };
 
 } // namespace detomon::BlipKit
 
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitInstrument::SequenceType);
+VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitInstrument::EnvelopeType);

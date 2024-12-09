@@ -120,11 +120,13 @@ void BlipKitWaveform::set_frames_normalized(const PackedFloat32Array &p_frames, 
 		max_value = MAX(max_value, ABS(frames_copy[i]));
 	}
 
+	real_t factor = 0.0;
 	if (!Math::is_zero_approx(max_value)) {
-		real_t factor = p_amplitude / max_value;
-		for (int i = 0; i < frames.size(); i++) {
-			frames_copy[i] *= factor;
-		}
+		factor = p_amplitude / max_value;
+	}
+
+	for (int i = 0; i < frames.size(); i++) {
+		frames_copy[i] *= factor;
 	}
 
 	_update_waveform(frames_copy);
