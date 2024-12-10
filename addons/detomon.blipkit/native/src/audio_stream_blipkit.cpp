@@ -61,11 +61,11 @@ AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 	active = false;
 
-	// Explicitly clear function to free memory.
-	clear_tick_functions();
-
 	AudioStreamBlipKit::lock();
+
+	clear_tick_functions(); // Explicitly clear function to free memory.
 	BKDispose(&context);
+
 	AudioStreamBlipKit::unlock();
 }
 
