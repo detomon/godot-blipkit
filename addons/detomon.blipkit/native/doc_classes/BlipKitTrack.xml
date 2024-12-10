@@ -4,7 +4,28 @@
 		Generates a single waveform.
 	</brief_description>
 	<description>
-		To create an output, [BlipKitTrack] has to be attached with [method attach] to a [AudioStreamBlipKitPlayback].
+		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
+		[codeblocks]
+		[gdscript]
+		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
+		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
+
+		# Keep this object around.
+		# Freed tracks are detached from the stream playback.
+		var track := BlipKitTrack.new()
+
+		func _ready() -&gt; void:
+		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
+		    # before retreiving the playback object.
+		    stream_player.play()
+
+		    # Get the playback object.
+		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
+
+		    # Attach the track.
+		    track.attach(playback)
+		[/gdscript]
+		[/codeblocks]
 		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from the [AudioStreamBlipKitPlayback] which it was attached to.
 	</description>
 	<tutorials>
@@ -90,11 +111,11 @@
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope step is played for envelopes which have only values set.
 		</member>
 		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
-			Sets the mix volume. This is multiplied with [member volume] to be used as the final volume.
+			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
 		</member>
 		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
-			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants BlipKitTrack.NOTE_C_0]). A negative value releases the note.
-			When an instrument is set, plays the attack part of the instrument envelopes.
+			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants NOTE_C_0]). Setting a negative value releases the note.
+			If [member instrument] is set, playing a not plays the attack and sustain part of the envelopes. When releasing the note, plays the release part of the envelopes.
 		</member>
 		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">
 			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
@@ -103,41 +124,37 @@
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
 		</member>
 		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
-			Sets the pitch values which is added to [member note]. For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
+			Sets the pitch values which is added to [member note].
+			For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
 		</member>
 		<member name="portamento" type="int" setter="set_portamento" getter="get_portamento" default="0">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
 		</member>
 		<member name="volume" type="float" setter="set_volume" getter="get_volume" default="1.0">
-			Sets the note volume. This is multiplied with [member master_volume] to be used as the final volume.
+			Sets the note volume. This is multiplied with [member master_volume] to be used as the output volume.
 		</member>
 		<member name="volume_slide" type="int" setter="set_volume_slide" getter="get_volume_slide" default="0">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member volume] changes to a new value.
 		</member>
 		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
-			Sets the waveform and [member master_volume] according to the following list:
-			- [constant BlipKitTrack.WAVEFORM_SQUARE]: [code]0.15[/code]
-			- [constant BlipKitTrack.WAVEFORM_NOISE]: [code]0.15[/code]
-			- [constant BlipKitTrack.WAVEFORM_SAWTOOTH]: [code]0.15[/code]
-			- [constant BlipKitTrack.WAVEFORM_TRIANGLE]: [code]0.3[/code]
-			- [constant BlipKitTrack.WAVEFORM_SINE]: [code]0.3[/code]
+			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]).
 		</member>
 	</members>
 	<constants>
 		<constant name="WAVEFORM_SQUARE" value="0" enum="Waveform">
-			A square wave with 16 phases. The duty cycle can be set with [member duty_cycle].
+			A square wave with 16 phases. The duty cycle (number of high amplitudes) can be set with [member duty_cycle]. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_TRIANGLE" value="1" enum="Waveform">
-			A triangle wave with 32 phases.
+			A triangle wave with 32 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.3[/code].
 		</constant>
 		<constant name="WAVEFORM_NOISE" value="2" enum="Waveform">
-			Noise. Like a square wave with a duty cycle of 50% but with random low or high amplitudes.
+			Noise. Like a square wave but with random low or high amplitudes. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_SAWTOOTH" value="3" enum="Waveform">
-			A sawtooth wave with 7 phases.
+			A sawtooth wave with 7 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_SINE" value="4" enum="Waveform">
-			A sine wave with 32 phases.
+			A sine wave with 32 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.3[/code].
 		</constant>
 		<constant name="WAVEFORM_CUSTOM" value="5" enum="Waveform">
 			Set when a [member custom_waveform] is set. Cannot be set directly.

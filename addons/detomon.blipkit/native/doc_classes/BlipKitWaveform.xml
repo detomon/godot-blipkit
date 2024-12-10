@@ -8,10 +8,6 @@
 		[gdscript]
 		var aah := BlipKitWaveform.new()
 		aah.set_frames_normalized([-255, -163, -154, -100, 45, 127, 9, -163, -163, -27, 63, 72, 63, 9, -100, -154, -127, -91, -91, -91, -91, -127, -154, -100, 45, 127, 9, -163, -163, 9, 127, 45])
-
-		var track := BlipKitTrack.new()
-		track.custom_waveform = aah
-		track.note = BlipKitTrack.NOTE_G_4
 		[/gdscript]
 		[/codeblocks]
 	</description>
@@ -24,7 +20,14 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Creates a waveform and set its amplitudes to the given [param frames]. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude], and [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				Creates a waveform and set its amplitudes to the given [param frames]. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
+			</description>
+		</method>
+		<method name="get_frames" qualifiers="const">
+			<return type="PackedFloat32Array" />
+			<description>
+				Get the waveform amplitudes.
 			</description>
 		</method>
 		<method name="is_valid" qualifiers="const">
@@ -33,12 +36,14 @@
 				Returns [code]true[/code] if the waveform was initialized with frames.
 			</description>
 		</method>
-		<method name="set_frames_normalized">
+		<method name="set_frames">
 			<return type="void" />
 			<param index="0" name="frames" type="PackedFloat32Array" />
-			<param index="1" name="amplitude" type="float" default="1.0" />
+			<param index="1" name="normalize" type="bool" default="false" />
+			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Set the waveform's amplitudes and normalize the values between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				Set the waveform's amplitudes. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
 			</description>
 		</method>
 		<method name="size" qualifiers="const">
@@ -48,10 +53,4 @@
 			</description>
 		</method>
 	</methods>
-	<members>
-		<member name="frames" type="PackedFloat32Array" setter="set_frames" getter="get_frames" default="PackedFloat32Array(1, 0)">
-			Set or get the waveform's values. Values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code].
-			[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code]. Fails if otherwise.
-		</member>
-	</members>
 </class>

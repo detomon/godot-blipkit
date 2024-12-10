@@ -4,29 +4,7 @@
 		Plays back audio generated from [BlipKitTrack]s.
 	</brief_description>
 	<description>
-		If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack] are detached.
-		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
-		[codeblocks]
-		[gdscript]
-		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
-		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
-
-		# Keep this object around.
-		# Freed tracks are detached from the stream playback.
-		var track := BlipKitTrack.new()
-
-		func _ready() -&gt; void:
-		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
-		    # before retreiving the playback object.
-		    stream_player.play()
-
-		    # Get the playback object.
-		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
-
-		    # Attach the track.
-		    track.attach(playback)
-		[/gdscript]
-		[/codeblocks]
+		[b]Note:[/b] If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack]s are detached.
 	</description>
 	<tutorials>
 	</tutorials>

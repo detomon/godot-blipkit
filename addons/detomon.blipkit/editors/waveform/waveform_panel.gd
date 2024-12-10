@@ -164,7 +164,7 @@ func _update_locked() -> void:
 
 
 func _update_waveform() -> void:
-	var frames := waveform.frames \
+	var frames := waveform.get_frames() \
 		if waveform \
 		else PackedFloat32Array()
 
@@ -182,7 +182,7 @@ func _update_waveform() -> void:
 
 
 func _waveform_set_frames_undo(a_waveform: BlipKitWaveform, frames: PackedFloat32Array, action_name: StringName) -> void:
-	var old_frames := a_waveform.frames
+	var old_frames := a_waveform.get_frames()
 
 	undo_redo.create_action(action_name)
 	undo_redo.add_undo_property(a_waveform, &"frames", old_frames)
@@ -191,7 +191,7 @@ func _waveform_set_frames_undo(a_waveform: BlipKitWaveform, frames: PackedFloat3
 
 
 func _on_frame_count_value_changed(value: float) -> void:
-	var frames := waveform.frames
+	var frames := waveform.get_frames()
 	frames.resize(int(value))
 
 	_waveform_set_frames_undo(waveform, frames, tr(&"Set Waveform Size to %d", &"DMBK") % value)
@@ -223,7 +223,7 @@ func _on_play_button_button_up() -> void:
 func _on_edit_id_pressed(id: int) -> void:
 	match id:
 		EditMenuItem.NORMALIZE:
-			var frames := waveform.frames
+			var frames := waveform.get_frames()
 
 			var max_value := 0.0
 			for frame in frames:

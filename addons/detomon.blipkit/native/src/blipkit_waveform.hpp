@@ -26,15 +26,14 @@ public:
 	BlipKitWaveform();
 	~BlipKitWaveform();
 
-	static Ref<BlipKitWaveform> create_with_frames(const PackedFloat32Array &p_frames, bool p_normalized = false, float p_amplitude = 1.0);
+	static Ref<BlipKitWaveform> create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 
 	_FORCE_INLINE_ BKData *get_waveform() { return &waveform; };
 	_FORCE_INLINE_ int size() const { return frames.size(); };
 	_FORCE_INLINE_ bool is_valid() const { return !frames.is_empty(); };
 
 	PackedFloat32Array get_frames() const;
-	void set_frames(const PackedFloat32Array &p_frames);
-	void set_frames_normalized(const PackedFloat32Array &p_frames, float p_amplitude = 1.0);
+	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 };
 
 } // namespace detomon::BlipKit

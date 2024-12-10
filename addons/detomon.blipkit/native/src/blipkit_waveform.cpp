@@ -11,10 +11,7 @@ void BlipKitWaveform::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("size"), &BlipKitWaveform::size);
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
-	ClassDB::bind_method(D_METHOD("set_frames", "frames"), &BlipKitWaveform::set_frames);
-	ClassDB::bind_method(D_METHOD("set_frames_normalized", "frames", "amplitude"), &BlipKitWaveform::set_frames_normalized, DEFVAL(1.0));
-
-	ADD_PROPERTY(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "frames"), "set_frames", "get_frames");
+	ClassDB::bind_method(D_METHOD("set_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::set_frames, DEFVAL(false), DEFVAL(1.0));
 }
 
 String BlipKitWaveform::_to_string() const {
@@ -64,12 +61,7 @@ Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Arra
 
 	Ref<BlipKitWaveform> instance;
 	instance.instantiate();
-
-	if (p_normalize) {
-		instance->set_frames_normalized(p_frames, p_amplitude);
-	} else {
-		instance->set_frames(p_frames);
-	}
+	instance->set_frames(p_frames, p_normalize, p_amplitude);
 
 	return instance;
 }
@@ -89,44 +81,35 @@ PackedFloat32Array BlipKitWaveform::get_frames() const {
 	return ret;
 }
 
-void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames) {
-	ERR_FAIL_COND(p_frames.size() < 2);
-	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
-
-	LocalVector<real_t> frames_copy;
-	const real_t *ptr = p_frames.ptr();
-
-	frames_copy.resize(p_frames.size());
-	for (int i = 0; i < frames_copy.size(); i++) {
-		frames_copy[i] = CLAMP(ptr[i], -1.0, +1.0);
-	}
-
-	_update_waveform(frames_copy);
-}
-
-void BlipKitWaveform::set_frames_normalized(const PackedFloat32Array &p_frames, float p_amplitude) {
+void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND(p_frames.size() < 2);
 	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
 
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
-	LocalVector<real_t> frames_copy;
 	const real_t *ptr = p_frames.ptr();
-	real_t max_value = 0.0;
-
+	LocalVector<real_t> frames_copy;
 	frames_copy.resize(p_frames.size());
-	for (int i = 0; i < frames_copy.size(); i++) {
-		frames_copy[i] = ptr[i];
-		max_value = MAX(max_value, ABS(frames_copy[i]));
-	}
 
-	real_t factor = 0.0;
-	if (!Math::is_zero_approx(max_value)) {
-		factor = p_amplitude / max_value;
-	}
+	if (p_normalize) {
+		real_t max_value = 0.0;
+		for (int i = 0; i < frames_copy.size(); i++) {
+			frames_copy[i] = ptr[i];
+			max_value = MAX(max_value, ABS(frames_copy[i]));
+		}
 
-	for (int i = 0; i < frames_copy.size(); i++) {
-		frames_copy[i] = CLAMP(frames_copy[i] * factor, -1.0, +1.0);
+		real_t factor = 0.0;
+		if (!Math::is_zero_approx(max_value)) {
+			factor = p_amplitude / max_value;
+		}
+
+		for (int i = 0; i < frames_copy.size(); i++) {
+			frames_copy[i] = CLAMP(frames_copy[i] * factor, -1.0, +1.0);
+		}
+	} else {
+		for (int i = 0; i < frames_copy.size(); i++) {
+			frames_copy[i] = CLAMP(ptr[i], -1.0, +1.0);
+		}
 	}
 
 	_update_waveform(frames_copy);
