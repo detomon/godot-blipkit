@@ -43,8 +43,10 @@ void BlipKitWaveform::_update_waveform(const LocalVector<real_t> &p_frames) {
 
 	AudioStreamBlipKit::lock();
 
-	frames = p_frames;
 	BKInt result = BKDataSetFrames(&waveform, wave_frames, p_frames.size(), 1, true);
+	if (result == BK_SUCCESS) {
+		frames = p_frames;
+	}
 
 	AudioStreamBlipKit::unlock();
 

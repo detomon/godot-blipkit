@@ -52,7 +52,7 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 		} else if (name == "envelope/duty_cycle") {
 			type = ENVELOPE_DUTY_CYCLE;
 		} else {
-			ERR_FAIL_V_MSG(false, vformat("Invalid instrument envelope: %s.", name));
+			return false;
 		}
 
 		Array data = p_value;
@@ -86,7 +86,7 @@ bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 		} else if (name == "envelope/duty_cycle") {
 			type = ENVELOPE_DUTY_CYCLE;
 		} else {
-			ERR_FAIL_V_MSG(false, vformat("Invalid instrument envelope: %s.", name));
+			return false;
 		}
 
 		Array data;

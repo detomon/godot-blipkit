@@ -29,7 +29,7 @@ func set_notes(value: PackedInt32Array) -> void:
 		particles = _active_particles[note]
 		particles.emitting = true
 
-	for note in _active_particles:
+	for note: int in _active_particles:
 		if note not in notes:
 			_active_particles[note].emitting = false
 

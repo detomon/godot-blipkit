@@ -358,7 +358,5 @@
 		</constant>
 		<constant name="NOTE_RELEASE" value="-1" enum="Note">
 		</constant>
-		<constant name="NOTE_MUTE" value="-2" enum="Note">
-		</constant>
 	</constants>
 </class>

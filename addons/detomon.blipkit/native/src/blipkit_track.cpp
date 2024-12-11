@@ -173,7 +173,6 @@ void BlipKitTrack::_bind_methods() {
 	BIND_ENUM_CONSTANT(NOTE_B_7);
 	BIND_ENUM_CONSTANT(NOTE_C_8);
 	BIND_ENUM_CONSTANT(NOTE_RELEASE);
-	BIND_ENUM_CONSTANT(NOTE_MUTE);
 }
 
 BlipKitTrack::BlipKitTrack() {

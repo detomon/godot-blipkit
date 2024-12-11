@@ -145,22 +145,16 @@ public:
 
 	Waveform get_waveform() const;
 	void set_waveform(BlipKitTrack::Waveform p_waveform);
-
 	int get_duty_cycle() const;
 	void set_duty_cycle(int p_duty_cycle);
-
 	real_t get_master_volume() const;
 	void set_master_volume(real_t p_master_volume);
-
 	real_t get_volume() const;
 	void set_volume(real_t p_volume);
-
 	real_t get_panning() const;
 	void set_panning(real_t p_panning);
-
 	real_t get_note() const;
 	void set_note(real_t p_note);
-
 	real_t get_pitch() const;
 	void set_pitch(real_t p_pitch);
 

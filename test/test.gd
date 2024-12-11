@@ -186,7 +186,7 @@ func _attach(track: BlipKitTrack) -> void:
 func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 	#print(notes)
 
-	for note in notes:
+	for note: int in notes:
 		if note not in _active_tracks:
 			var track: BlipKitTrack = _inactive_tracks.pop_back()
 			if not track:
@@ -201,7 +201,7 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 
 			_active_tracks[note] = track
 
-	for note in _active_tracks:
+	for note: int in _active_tracks:
 		if note not in notes:
 			var track: BlipKitTrack = _active_tracks[note]
 			track.release()
@@ -209,7 +209,7 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			_inactive_tracks.append(track)
 			_active_tracks.erase(note)
 
-	for note in _active_tracks:
+	for note: int in _active_tracks:
 		var track: BlipKitTrack = _active_tracks[note]
 
 		track.note = note
