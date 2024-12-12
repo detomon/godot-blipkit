@@ -1,7 +1,7 @@
 [gd_resource type="BlipKitWaveform" format=3 uid="uid://rkyu70qtncbl"]
 
 [resource]
-frames = PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.875, 0.75, 0.625, 0.5, 0.375, 0.25, 0.125, 0, -0.125, -0.25, -0.375, -0.5, -0.625, -0.75, -0.875, -1, -1, -0.875, -0.75, -0.625, -0.5, -0.375, -0.25, -0.125)
-metadata/locked = false
+frames = PackedFloat32Array(1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0)
+metadata/locked = true
 metadata/snap_enabled = true
-metadata/snap_steps = 12
+metadata/snap_steps = 2

@@ -37,6 +37,8 @@ var _instrument := BlipKitInstrument.new()
 @onready var _waveform_editor: WaveformEditor = %WaveformEditor
 @onready var _waveform_container: PanelContainer = %WaveformContainer
 @onready var _test_audio: AudioStreamPlayer = %TestAudio
+@onready var _normalize_dialog: ConfirmationDialog = %NormalizeDialog
+@onready var _amplitude_spin_box: SpinBox = %AmplitudeSpinBox
 
 
 func _enter_tree() -> void:
@@ -52,6 +54,8 @@ func _ready() -> void:
 	_edit_button.get_popup().id_pressed.connect(_on_edit_id_pressed)
 	_presets_button.get_popup().id_pressed.connect(_on_presets_id_pressed)
 	_waveform_editor.undo_redo = undo_redo
+
+	_normalize_dialog.visible = false
 
 	set_snap_enabled(snap_enabled)
 	set_snap_steps(snap_steps)
@@ -82,7 +86,7 @@ func set_waveform(value: BlipKitWaveform) -> void:
 		waveform.changed.connect(_update_waveform)
 
 	if waveform:
-		_waveform_editor.frames = waveform.frames
+		_waveform_editor.frames = waveform.get_frames()
 		_frame_count.value = waveform.size()
 
 	_update_waveform()
@@ -213,7 +217,7 @@ func _on_play_button_button_down() -> void:
 	_track.attach(playback)
 	_track.instrument = _instrument
 	_track.custom_waveform = waveform
-	_track.note = BlipKitTrack.NOTE_A_3
+	_track.note = BlipKitTrack.NOTE_C_2
 
 
 func _on_play_button_button_up() -> void:
@@ -223,18 +227,8 @@ func _on_play_button_button_up() -> void:
 func _on_edit_id_pressed(id: int) -> void:
 	match id:
 		EditMenuItem.NORMALIZE:
-			var frames := waveform.get_frames()
-
-			var max_value := 0.0
-			for frame in frames:
-				max_value = maxf(max_value, absf(frame))
-
-			if not is_zero_approx(max_value):
-				var factor := 1.0 / max_value
-				for i in len(frames):
-					frames[i] *= factor
-
-			_waveform_set_frames_undo(waveform, frames, tr(&"Normalize Waveform", &"DMBK"))
+			_amplitude_spin_box.value = 1.0
+			_normalize_dialog.popup_centered()
 
 
 func _on_presets_id_pressed(id: int) -> void:
@@ -276,7 +270,7 @@ func _on_presets_id_pressed(id: int) -> void:
 
 
 func _on_waveform_editor_frames_changed(frames: PackedFloat32Array) -> void:
-	waveform.frames = frames
+	waveform.set_frames(frames)
 
 
 func _on_frame_values_text_submitted(new_text: String) -> void:
@@ -303,3 +297,19 @@ func _on_lock_button_toggled(toggled_on: bool) -> void:
 	undo_redo.commit_action()
 
 	locked = toggled_on
+
+
+func _on_normalize_dialog_confirmed() -> void:
+	var frames := waveform.get_frames()
+
+	var max_value := 0.0
+	for frame in frames:
+		max_value = maxf(max_value, absf(frame))
+
+	if not is_zero_approx(max_value):
+		var amplitude := _amplitude_spin_box.value
+		var factor := amplitude / max_value
+		for i in len(frames):
+			frames[i] *= factor
+
+	_waveform_set_frames_undo(waveform, frames, tr(&"Normalize Waveform", &"DMBK"))

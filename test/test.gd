@@ -1,6 +1,6 @@
 extends Control
 
-const AAH2: BlipKitWaveform = preload("waveforms/aah2.tres")
+const AAH2: BlipKitWaveform = preload("waveforms/aah.tres")
 const INSTRUMENT: BlipKitInstrument = preload("instruments/simple.tres")
 
 var _active_tracks := {}
@@ -44,7 +44,8 @@ func _process(_delta: float) -> void:
 		var item := _roll[_play_index]
 
 		while time >= item.time:
-			_on_midi_input_notes_changes(item.notes)
+			var notes: Dictionary = item.notes
+			_on_midi_input_notes_changes(notes)
 
 			_play_index += 1
 			if _play_index >= len(_roll):
@@ -64,10 +65,10 @@ func _process(_delta: float) -> void:
 
 func _init_track() -> void:
 	var waveform := BlipKitWaveform.create_with_frames([
-		-255, -163, -154, -100, 45, 127, 9, -163, -163,
-		-27, 63, 72, 63, 9, -100, -154, -127,
-		-91, -91, -91, -91, -127, -154, -100, 45,
-		127, 9, -163, -163, 9, 127, 45,
+		-255, -163, -154, -100, 45, 127, 9, -163,
+		-163, -27, 63, 72, 63, 9, -100, -154,
+		-127, -91, -91, -91, -91, -127, -154, -100,
+		45, 127, 9, -163, -163, 9, 127, 45,
 	], true, 0.5)
 
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)

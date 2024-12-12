@@ -1,7 +1,7 @@
-[gd_resource type="BlipKitWaveform" format=3 uid="uid://cve2kh1rql0p8"]
+[gd_resource type="BlipKitWaveform" format=3 uid="uid://ds3jfn6w6qy27"]
 
 [resource]
-frames = PackedFloat32Array(0.107296, 0.364807, 0.653333, 0.819743, 0.964444, 1, 0.955556, 0.857778, 0.768889, 0.622318, 0.52, 0.390558, 0.261803, 0.164444, 0.0643778, 0.0222222)
-metadata/locked = true
-metadata/snap_enabled = false
+frames = PackedFloat32Array(-0.5, -0.319608, -0.301961, -0.196078, 0.0882353, 0.24902, 0.0176471, -0.319608, -0.319608, -0.0529412, 0.123529, 0.141176, 0.123529, 0.0176471, -0.196078, -0.301961, -0.24902, -0.178431, -0.178431, -0.178431, -0.178431, -0.24902, -0.301961, -0.196078, 0.0882353, 0.24902, 0.0176471, -0.319608, -0.319608, 0.0176471, 0.24902, 0.0882353)
 metadata/snap_steps = 8
+metadata/snap_enabled = false
+metadata/locked = false

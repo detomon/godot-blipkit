@@ -20,7 +20,8 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMIDI:
-		_input_midi_event(event)
+		var midi_event: InputEventMIDI = event
+		_input_midi_event(midi_event)
 
 
 func set_enabled(value: bool) -> void:

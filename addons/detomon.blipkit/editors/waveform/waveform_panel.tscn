@@ -118,7 +118,7 @@ text = "Edit"
 flat = false
 switch_on_hover = true
 item_count = 1
-popup/item_0/text = "Normalize"
+popup/item_0/text = "Normalize…"
 popup/item_0/id = 0
 
 [node name="Spacer" type="Control" parent="HBoxContainer"]
@@ -193,6 +193,31 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 stream = SubResource("AudioStreamBlipKit_i3ra2")
 
+[node name="NormalizeDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Normalize Waveform"
+position = Vector2i(0, 24)
+size = Vector2i(244, 122)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NormalizeDialog"]
+offset_left = 9.0
+offset_top = 9.0
+offset_right = 235.0
+offset_bottom = 71.0
+
+[node name="Label" type="Label" parent="NormalizeDialog/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderSmall"
+text = "Amplitude:"
+
+[node name="AmplitudeSpinBox" type="SpinBox" parent="NormalizeDialog/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.0
+value = 1.0
+custom_arrow_step = 0.01
+
 [connection signal="toggled" from="HBoxContainer/LockButton" to="." method="_on_lock_button_toggled"]
 [connection signal="value_changed" from="HBoxContainer/FrameCount" to="." method="_on_frame_count_value_changed"]
 [connection signal="toggled" from="HBoxContainer/SnapButton" to="." method="_on_snap_button_toggled"]
@@ -201,3 +226,4 @@ stream = SubResource("AudioStreamBlipKit_i3ra2")
 [connection signal="button_up" from="HBoxContainer/PlayButton" to="." method="_on_play_button_button_up"]
 [connection signal="text_submitted" from="HBoxContainer2/FrameValues" to="." method="_on_frame_values_text_submitted"]
 [connection signal="frames_changed" from="WaveformContainer/HBoxContainer/WaveformEditor" to="." method="_on_waveform_editor_frames_changed"]
+[connection signal="confirmed" from="NormalizeDialog" to="." method="_on_normalize_dialog_confirmed"]

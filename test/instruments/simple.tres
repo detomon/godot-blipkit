@@ -1,4 +1,4 @@
-[gd_resource type="BlipKitInstrument" format=3 uid="uid://2hfcb3da3r5f"]
+[gd_resource type="BlipKitInstrument" format=3 uid="uid://crp5of70831ot"]
 
 [resource]
 envelope/volume = [PackedInt32Array(4, 12, 24), PackedFloat32Array(1, 0.5, 0), 1, 1]
