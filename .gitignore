@@ -1,9 +1,14 @@
 # Godot 4+ specific ignores
 .godot/
-android/
 
 # macOS
 .DS_Store
 
 # Windows
 Thumbs.db
+
+# Build
+/bin
+.sconsign.dblite
+*.o
+*.os

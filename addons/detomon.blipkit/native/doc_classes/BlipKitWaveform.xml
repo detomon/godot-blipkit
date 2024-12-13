@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitWaveform" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Defines a waveform consisting of amplitude values.
 	</brief_description>
 	<description>
-		[codeblocks]
-		[gdscript]
-		var aah := BlipKitWaveform.new()
-		aah.set_frames_normalized([
-		    -255, -163, -154, -100, 45, 127, 9, -163,
-		    -163, -27, 63, 72, 63, 9, -100, -154,
-		    -127, -91, -91, -91, -91, -127, -154, -100,
-		    45, 127, 9, -163, -163, 9, 127, 45,
-		])
-		[/gdscript]
-		[/codeblocks]
 	</description>
 	<tutorials>
 	</tutorials>
@@ -25,20 +13,16 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Creates a waveform and set its amplitudes to the given [param frames]. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
-				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
 			</description>
 		</method>
 		<method name="get_frames" qualifiers="const">
 			<return type="PackedFloat32Array" />
 			<description>
-				Get the waveform amplitudes.
 			</description>
 		</method>
 		<method name="is_valid" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the waveform was initialized with frames.
 			</description>
 		</method>
 		<method name="set_frames">
@@ -47,14 +31,11 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Set the waveform's amplitudes. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
-				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
 			</description>
 		</method>
 		<method name="size" qualifiers="const">
 			<return type="int" />
 			<description>
-				Returns the number of frames in the waveform.
 			</description>
 		</method>
 	</methods>

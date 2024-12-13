@@ -1,6 +1,5 @@
 GODOT = godot
-ROOT_DIR = ../../..
-THIS_DIR = addons/detomon.blipkit/native
+NATIVE_DIR = addons/detomon.blipkit/native
 
 BUILD_FLAGS = -j7
 TARGET_DEBUG = target=template_debug debug_symbols=yes $(BUILD_FLAGS)
@@ -33,5 +32,5 @@ endef
 
 
 define build_doc
-	cd "$(ROOT_DIR)" && $(GODOT) --headless --gdextension-docs --doctool "$(THIS_DIR)"
+	$(GODOT) --headless --gdextension-docs --doctool "$(NATIVE_DIR)"
 endef
