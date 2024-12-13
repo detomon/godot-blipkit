@@ -70,7 +70,7 @@ func _edit(object: Object) -> void:
 
 
 func _get_panel_title() -> String:
-	return "BlipKit Waveform"
+	return "Waveform"
 
 
 func set_locked(value: bool) -> void:

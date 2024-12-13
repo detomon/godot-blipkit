@@ -7,6 +7,7 @@
 		[b]Note:[/b] If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack]s are detached.
 	</description>
 	<tutorials>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
 	</tutorials>
 	<methods>
 		<method name="add_tick_function">

@@ -64,12 +64,12 @@ func _process(_delta: float) -> void:
 
 
 func _init_track() -> void:
-	var waveform := BlipKitWaveform.create_with_frames([
-		-255, -163, -154, -100, 45, 127, 9, -163,
-		-163, -27, 63, 72, 63, 9, -100, -154,
-		-127, -91, -91, -91, -91, -127, -154, -100,
-		45, 127, 9, -163, -163, 9, 127, 45,
-	], true, 0.5)
+	#var waveform := BlipKitWaveform.create_with_frames([
+		#-255, -163, -154, -100, 45, 127, 9, -163,
+		#-163, -27, 63, 72, 63, 9, -100, -154,
+		#-127, -91, -91, -91, -91, -127, -154, -100,
+		#45, 127, 9, -163, -163, 9, 127, 45,
+	#], true, 0.5)
 
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
 
@@ -86,7 +86,7 @@ func _init_track() -> void:
 	saw_instr.set_adsr(0, 0, 1.0, 12)
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
-	saw.custom_waveform = waveform
+	#saw.custom_waveform = waveform
 	saw.attach(playback)
 	playback.add_tick_function(_on_tick.bind(saw), 24)
 
@@ -185,8 +185,6 @@ func _attach(track: BlipKitTrack) -> void:
 
 
 func _on_midi_input_notes_changes(notes: Dictionary) -> void:
-	#print(notes)
-
 	for note: int in notes:
 		if note not in _active_tracks:
 			var track: BlipKitTrack = _inactive_tracks.pop_back()
@@ -194,7 +192,8 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 				track = BlipKitTrack.new()
 				_attach(track)
 			track.duty_cycle = 4
-			track.set_tremolo(24, 0.2)
+			#track.set_tremolo(24, 0.2)
+			track.set_vibrato(12, 0.1)
 			#track.arpeggio = [0, 12]
 			#track.arpeggio_divider = 8
 			track.instrument = INSTRUMENT

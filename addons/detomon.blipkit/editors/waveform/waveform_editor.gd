@@ -93,8 +93,8 @@ func set_frames(value: PackedFloat32Array) -> void:
 	_frames_edit = frames
 
 	_make_transform_dirty()
-	queue_redraw()
 	size = _get_size()
+	queue_redraw()
 
 
 func _set_frames_changed(value: PackedFloat32Array) -> void:
@@ -183,12 +183,15 @@ func _get_local_to_frames_transform() -> Transform2D:
 
 
 func _get_size() -> Vector2i:
-	var margin: float = _theme_cache.margin
+	const bar_width_default := 20.0
+	var margin_right: float = _theme_cache.margin
 	var margin_left: float = _theme_cache.margin_left
-	var width_min := len(_frames_edit) * 20.0 + float(margin) * 2.0 + margin_left
-	var width := int(width_min)
+	var field_min_width := size.x - margin_left - margin_right
+	var field_width := minf(bar_width_default * len(frames), field_min_width)
+	var bar_width := floorf(field_width / len(frames))
+	var width := len(_frames_edit) * bar_width + margin_left + margin_right
 
-	return Vector2i(width, int(size.y))
+	return Vector2i(int(width), int(size.y))
 
 
 func _draw_grid(rect: Rect2i) -> void:

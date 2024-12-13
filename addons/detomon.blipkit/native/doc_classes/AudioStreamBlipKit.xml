@@ -7,10 +7,12 @@
 		See the description of [AudioStreamBlipKitPlayback] on how to attach [BlipKitTrack]s.
 	</description>
 	<tutorials>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
 	</tutorials>
 	<members>
 		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
-			Sets the number of ticks per second at which tick functions are called in [AudioStreamBlipKitPlayback], and effects and instrument sequences are updated in [BlipKitTrack].
+			Sets the number of ticks per second for the master clock at which effects and instrument envelopes are updated in [BlipKitTrack].
+			This also defines the interval at which tick functions are called in [AudioStreamBlipKitPlayback].
 		</member>
 	</members>
 </class>
