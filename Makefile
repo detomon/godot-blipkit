@@ -1,9 +1,8 @@
 GODOT = godot
 NATIVE_DIR = addons/detomon.blipkit/native
 
-BUILD_FLAGS = -j7
-TARGET_DEBUG = target=template_debug debug_symbols=yes $(BUILD_FLAGS)
-TARGET_RELEASE = target=template_release $(BUILD_FLAGS)
+TARGET_DEBUG = target=template_debug debug_symbols=yes
+TARGET_RELEASE = target=template_release
 
 
 build:

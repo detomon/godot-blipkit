@@ -23,7 +23,22 @@ if env["platform"] != "windows":
     env.Append(CFLAGS=["-Wno-shift-negative-value"])
 
 sources = Glob(projectdir + "/src/*.cpp")
-sources += Glob(projectdir + "/vendor/BlipKit/src/*.c")
+
+blipkitsrc = projectdir + "/vendor/BlipKit/src/"
+sources += map(lambda src: blipkitsrc + src, [
+    "BKBase.c",
+    "BKBuffer.c",
+    "BKClock.c",
+    "BKContext.c",
+    "BKData.c",
+    "BKInstrument.c",
+    "BKInterpolation.c",
+    "BKObject.c",
+    "BKSequence.c",
+    "BKTone.c",
+    "BKTrack.c",
+    "BKUnit.c",
+])
 
 if env["target"] in ["editor", "template_debug"]:
     sources += env.GodotCPPDocData(projectdir + "/src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
