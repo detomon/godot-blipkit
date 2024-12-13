@@ -224,10 +224,9 @@ void AudioStreamBlipKitPlayback::TickFunction::initialize(Callable &p_callable, 
 
 	callable = p_callable;
 
-	BKCallback callback = {
-		.func = divider_callback,
-		.userInfo = (void *)this,
-	};
+	BKCallback callback = { 0 };
+	callback.func = divider_callback;
+	callback.userInfo = (void *)this;
 	BKDividerInit(&divider, p_ticks, &callback);
 
 	BKContext *context = p_playback->get_context();

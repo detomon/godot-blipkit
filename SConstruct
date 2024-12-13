@@ -19,7 +19,8 @@ env = localenv.Clone()
 env = SConscript(projectdir + "/vendor/godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 env.Append(CPPPATH=[projectdir + "/src/", projectdir + "/vendor/BlipKit/src/"])
-env.Append(CFLAGS=["-Wno-shift-negative-value", "-fno-permissive"])
+if env["platform"] != "windows":
+    env.Append(CFLAGS=["-Wno-shift-negative-value"])
 
 sources = Glob(projectdir + "/src/*.cpp")
 sources += Glob(projectdir + "/vendor/BlipKit/src/*.c")
