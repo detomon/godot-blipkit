@@ -4,6 +4,7 @@ An addon for creating the beautiful sound of old sound chips. This uses the [Bli
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Thread-safety](#thread-safety)
 
 ## Installation
 
@@ -25,3 +26,7 @@ or...
 - Configure and attach `BlipKitTrack` objects to the playback object
 
 See the [examples](examples) directory on how to use the extension.
+
+## Thread safety
+
+Function calls and property changes for all objects are thread-safe.

@@ -4,6 +4,8 @@
 		Generates a single waveform.
 	</brief_description>
 	<description>
+		...
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from the [AudioStreamBlipKitPlayback] which it was attached to.
 		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
 		[codeblocks]
 		[gdscript]
@@ -26,7 +28,6 @@
 		    track.attach(playback)
 		[/gdscript]
 		[/codeblocks]
-		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from the [AudioStreamBlipKitPlayback] which it was attached to.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -90,16 +91,16 @@
 	</methods>
 	<members>
 		<member name="arpeggio" type="PackedFloat32Array" setter="set_arpeggio" getter="get_arpeggio" default="PackedFloat32Array()">
-			Sets the arpeggio sequence consisting of an array of pitch changes with a maximum length of 8. The number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played is set with [member arpeggio_divider].
+			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently played [member note]. The array can have a maximum size of [code]8[/code]. The duration each arpeggio note is played is defined with [member arpeggio_divider] which is the number of ticks (see [member AudioStreamBlipKit.clock_rate]).
 		</member>
 		<member name="arpeggio_divider" type="int" setter="set_arpeggio_divider" getter="get_arpeggio_divider" default="4">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
 		</member>
 		<member name="custom_waveform" type="BlipKitWaveform" setter="set_custom_waveform" getter="get_custom_waveform">
-			Sets a custom waveform. [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM] in this case.
+			Sets a custom waveform. If set, [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM]. If set to [code]null[/code] [member waveform] is reset to [constant BlipKitTrack.WAVEFORM_SQUARE].
 		</member>
 		<member name="duty_cycle" type="int" setter="set_duty_cycle" getter="get_duty_cycle" default="4">
-			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect for other waveforms.
+			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect on other waveforms.
 		</member>
 		<member name="effect_divider" type="int" setter="set_effect_divider" getter="get_effect_divider" default="1">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which effects change the value of the corresponding property.
@@ -108,23 +109,23 @@
 			Sets the instrument when playing a note.
 		</member>
 		<member name="instrument_divider" type="int" setter="set_instrument_divider" getter="get_instrument_divider" default="4">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope step is played for envelopes which have only values set.
+			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope value is played when no steps are defined.
 		</member>
 		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
 			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
 		</member>
 		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
-			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. A value of [code]0.0[/code] corresponds to note C on octave 0 ([constants NOTE_C_0]). Setting a negative value releases the note.
-			If [member instrument] is set, playing a not plays the attack and sustain part of the envelopes. When releasing the note, plays the release part of the envelopes.
+			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. The value can be between [code]0.0[/code] and [code]96.0[/code]. Setting a negative value releases the note.
+			If [member instrument] is set, setting a note plays the attack and sustain part of the envelopes. When releasing the note, plays the release part of the envelopes.
 		</member>
 		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">
-			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan towards the left channel and positive values towards the right channel.
+			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan to the left channel and positive values to the right channel.
 		</member>
 		<member name="panning_slide" type="int" setter="set_panning_slide" getter="get_panning_slide" default="0">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
 		</member>
 		<member name="phase_wrap" type="int" setter="set_phase_wrap" getter="get_phase_wrap" default="0">
-			Sets the number of wave phases after which the waveform is reset to the beginning. Set the value to [code]0[/code] to disable it.
+			Sets the number of wave phases after which the waveform is reset to the beginning. If set to [code]0[/code], this behaviour is disabled.
 			This has only an effect on [constant WAVEFORM_NOISE] or when [member custom_waveform] is set.
 			[b]Example:[/b] Limit noise to the first 32 phases:
 			[codeblocks]

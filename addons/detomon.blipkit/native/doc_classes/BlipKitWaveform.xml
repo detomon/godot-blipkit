@@ -32,13 +32,13 @@
 		<method name="get_frames" qualifiers="const">
 			<return type="PackedFloat32Array" />
 			<description>
-				Get the waveform amplitudes.
+				Get the waveform amplitudes as values between [code]-1.0[/code] and [code]+1.0[/code].
 			</description>
 		</method>
 		<method name="is_valid" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the waveform was initialized with frames.
+				Returns [code]true[/code] if the waveform was initialized with amplitudes.
 			</description>
 		</method>
 		<method name="set_frames">
@@ -54,7 +54,7 @@
 		<method name="size" qualifiers="const">
 			<return type="int" />
 			<description>
-				Returns the number of frames in the waveform.
+				Returns the number of amplitudes in the waveform.
 			</description>
 		</method>
 	</methods>

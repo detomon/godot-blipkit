@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitInstrument" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Changes the output parameters of a [BlipKitTrack] while a note is playing or after it was released.
+		Changes the output parameters of a [BlipKitTrack] while a note is playing or after it is released.
 	</brief_description>
 	<description>
 		[codeblocks]
@@ -31,7 +31,7 @@
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
 			<description>
 				Returns the steps for the envelope with [param type].
-				Returns an empty array if the envelope is not set or no steps are set.
+				Returns an empty array if the envelope is not set or no steps are defined.
 			</description>
 		</method>
 		<method name="get_envelope_sustain_length" qualifiers="const">
@@ -72,11 +72,14 @@
 			<param index="2" name="sustain" type="float" />
 			<param index="3" name="release" type="int" />
 			<description>
-				Initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope. On attack, raises the volume to [code]1.0[/code] within [param attack] ticks, then lowers it to [param sustain] within [param decay] ticks where it is kept until the note is released. On release, the volume is lowered to [code]0.0[/code] within [param release] ticks.
+				Initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope. This first raises the volume to [code]1.0[/code] within [param attack] ticks, then lowers it to [param sustain] within [param decay] ticks. This value is kept until the note is released, after which the volume is lowered to [code]0.0[/code] within [param release] ticks.
 				This corresponds to the following call:
 				[codeblocks]
 				[gdscript]
-				instrument.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME, [attack, decay, 240, release], [1.0, sustain, sustain, 0.0], 2, 1)
+				instrument.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME,
+				    [attack, decay, 240, release],
+				    [1.0, sustain, sustain, 0.0],
+				    2, 1)
 				[/gdscript]
 				[/codeblocks]
 			</description>
@@ -89,9 +92,10 @@
 			<param index="3" name="sustain_offset" type="int" />
 			<param index="4" name="sustain_length" type="int" />
 			<description>
-				Sets the envelope with [param type]. [param values] define the individual values for each step.
-				If [param steps] is empty, [param values] is used as a sequence. In this case, the duration of each value is defined with [member BlipKitTrack.instrument_divider].
-				The values [param sustain_offset] and [param sustain_length] define the range of the sustain cycle which is repeated while the note is playing.
+				Sets the envelope with [param type]. [param values] define the individual values for each phase.
+				If [param steps] is not empty, it has to have the same size as [param values]. In this case, [param values] are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in [param steps] as number of ticks. Values in [param steps] are allowed to be [code]0[/code] to instantly change a value.
+				If [param steps] is empty, [param values] is used as a sequence and values are changed instantly. In this case, the duration of each phase is defined by [member BlipKitTrack.instrument_divider].
+				The parameters [param sustain_offset] and [param sustain_length] define the range of the sustain cycle which is repeated while the note is playing.
 			</description>
 		</method>
 	</methods>

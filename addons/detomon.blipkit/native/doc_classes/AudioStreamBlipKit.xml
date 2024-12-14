@@ -11,8 +11,7 @@
 	</tutorials>
 	<members>
 		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
-			Sets the number of ticks per second for the master clock at which effects and instrument envelopes are updated in [BlipKitTrack].
-			This also defines the interval at which tick functions are called in [AudioStreamBlipKitPlayback].
+			Sets the master clock's frequency as number of ticks per second. This influences the speed of effects and instrument envelopes in [BlipKitTrack], and tick functions in [AudioStreamBlipKitPlayback].
 		</member>
 	</members>
 </class>
