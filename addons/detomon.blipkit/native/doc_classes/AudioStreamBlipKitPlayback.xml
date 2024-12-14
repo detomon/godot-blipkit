@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AudioStreamBlipKitPlayback" inherits="AudioStreamPlayback" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
+		Plays back audio generated from [BlipKitTrack]s.
 	</brief_description>
 	<description>
+		[b]Note:[/b] If an [AudioStreamBlipKitPlayback] is freed, all attached [BlipKitTrack]s are detached.
 	</description>
 	<tutorials>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
 	</tutorials>
 	<methods>
 		<method name="add_tick_function">
@@ -12,22 +15,48 @@
 			<param index="0" name="callable" type="Callable" />
 			<param index="1" name="tick_interval" type="int" />
 			<description>
+				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). The callbacks are called in the same order as they are added. The callback function does not receive any argument and should return an integer indicating whether to change the tick interval.
+				[b]Note:[/b] The callback is fired for the first time on the next tick.
+				[b]Example:[/b] Add a tick function and play a higher note on each call:
+				[codeblocks]
+				[gdscript]
+				playback.add_tick_function(func () -&gt; int:
+				    track.note += 1.0
+				    # Keep tick interval.
+				    return 0
+				, 120)
+				[/gdscript]
+				[/codeblocks]
+				If a value greater than [code]0[/code] is returned, the tick interval is changed to that value and the callback is fired again after the given number of ticks.
+				[b]Example:[/b] Add a tick function and change the tick interval to [code]90[/code] after the first call:
+				[codeblocks]
+				[gdscript]
+				playback.add_tick_function(func () -&gt; int:
+				    track.note += 1.0
+				    # Change tick interval to 90.
+				    return 90
+				, 120)
+				[/gdscript]
+				[/codeblocks]
 			</description>
 		</method>
 		<method name="clear_tick_functions">
 			<return type="void" />
 			<description>
+				Remove all tick callbacks.
 			</description>
 		</method>
 		<method name="get_tick_function_count" qualifiers="const">
 			<return type="int" />
 			<description>
+				Returns the number of tick callbacks.
 			</description>
 		</method>
 		<method name="remove_tick_function">
 			<return type="void" />
 			<param index="0" name="index" type="int" />
 			<description>
+				Removes the tick callback at [param index].
 			</description>
 		</method>
 		<method name="reset_tick_counter">
@@ -35,6 +64,8 @@
 			<param index="0" name="index" type="int" />
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
+				Resets the tick counter of a tick callback at [param index]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
+				[b]Note:[/b] The callback is fired for the first time with the new interval on the next tick.
 			</description>
 		</method>
 	</methods>
