@@ -41,7 +41,7 @@ sources += map(lambda src: blipkitsrc + src, [
 ])
 
 if env["target"] in ["editor", "template_debug"]:
-    sources += env.GodotCPPDocData(projectdir + "/src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
+    sources += env.GodotCPPDocData(projectdir + "/src/gen/doc_data.gen.cpp", source=Glob(projectdir + "/doc_classes/*.xml"))
 
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 filepath = ""

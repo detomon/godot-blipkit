@@ -123,6 +123,9 @@
 		<member name="panning_slide" type="int" setter="set_panning_slide" getter="get_panning_slide" default="0">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
 		</member>
+		<member name="phase_wrap" type="int" setter="set_phase_wrap" getter="get_phase_wrap" default="0">
+			Sets the number of wave phases after which to reset to the beginning. This has only an effect on [constant WAVEFORM_NOISE] and [constant WAVEFORM_CUSTOM].
+		</member>
 		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
 			Sets the pitch values which is added to [member note].
 			For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
