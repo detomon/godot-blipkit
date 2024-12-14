@@ -284,7 +284,7 @@ jobs:
 # Sign
       - name: Mac/iOS Sign
         # Disable sign if secrets are not set
-        if: ${{ (matrix.platform == 'macos' || matrix.platform == 'ios') && env.APPLE_CERT_BASE64 }}
+        if: ${{ matrix.platform == 'macos' && env.APPLE_CERT_BASE64 }}
         env:
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
         uses: ./.github/actions/sign
