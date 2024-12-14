@@ -46,7 +46,7 @@ if env["target"] in ["editor", "template_debug"]:
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 filepath = ""
 
-if env["platform"] == "macos" or env["platform"] == "ios":
+if env["platform"] in ["macos", "ios"]:
     filepath = "{}.framework/".format(env["platform"])
     file = "{}.{}.{}".format(libname, env["platform"], env["target"])
 

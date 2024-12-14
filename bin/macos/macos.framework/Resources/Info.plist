@@ -7,15 +7,15 @@
         <key>CFBundleDevelopmentRegion</key>
         <string>en</string>
         <key>CFBundleExecutable</key>
-        <string>libEXTENSION-NAME.macos.template_release</string>
+        <string>libgodot-blipkit.macos.template_release</string>
         <key>CFBundleName</key>
-        <string>Godot Cpp Template</string>
+        <string>Godot BlipKit</string>
         <key>CFBundleDisplayName</key>
-        <string>Godot Cpp Template</string>
+        <string>Godot BlipKit</string>
         <key>CFBundleIdentifier</key>
-        <string>org.godot.godot-template-cpp</string>
+        <string>ch.monoxid.godot-blipkit</string>
         <key>NSHumanReadableCopyright</key>
-        <string>Unlicensed</string>
+        <string>MIT</string>
         <key>CFBundleVersion</key>
         <string>1.0.0</string>
         <key>CFBundleShortVersionString</key>

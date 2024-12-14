@@ -8,7 +8,6 @@
 Thumbs.db
 
 # Build
-/bin
 .sconsign.dblite
 *.o
 *.os
