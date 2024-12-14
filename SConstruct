@@ -47,7 +47,7 @@ lib_filename = "{}{}{}{}".format(env.subst("$SHLIBPREFIX"), libname, env["suffix
 lib_filepath = ""
 
 if env["platform"] in ["macos", "ios"]:
-    framework_name = "{}{}".format(libname, env["suffix"])
+    framework_name = "lib{}{}".format(libname, env["suffix"])
     lib_filename = framework_name
     lib_filepath = "{}.framework/".format(framework_name)
 

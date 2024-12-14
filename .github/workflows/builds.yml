@@ -282,14 +282,14 @@ jobs:
           build-target-type: ${{ matrix.target-type }}
 
 # Sign
-      - name: Mac Sign
+      - name: Mac/iOS Sign
         # Disable sign if secrets are not set
-        if: ${{ matrix.platform == 'macos' && env.APPLE_CERT_BASE64 }}
+        if: ${{ (matrix.platform == 'macos' || matrix.platform == 'ios') && env.APPLE_CERT_BASE64 }}
         env:
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
         uses: ./.github/actions/sign
         with:
-          FRAMEWORK_PATH: bin/macos/macos.framework
+          FRAMEWORK_PATH: bin/${{ matrix.platform }}/libblipkit.${{ matrix.platform }}.${{ matrix.target-type }}.${{ matrix.arch }}.framework
           SIGN_FLAGS: --deep
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
           APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
