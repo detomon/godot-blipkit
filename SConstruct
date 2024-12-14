@@ -43,20 +43,25 @@ sources += map(lambda src: blipkitsrc + src, [
 if env["target"] in ["editor", "template_debug"]:
     sources += env.GodotCPPDocData(projectdir + "/src/gen/doc_data.gen.cpp", source=Glob(projectdir + "/doc_classes/*.xml"))
 
-file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
-filepath = ""
+lib_filename = "{}{}{}{}".format(env.subst("$SHLIBPREFIX"), libname, env["suffix"], env.subst("$SHLIBSUFFIX"))
+lib_filepath = ""
 
 if env["platform"] in ["macos", "ios"]:
-    filepath = "{}.framework/".format(env["platform"])
-    file = "{}.{}.{}".format(libname, env["platform"], env["target"])
+    framework_name = "{}{}".format(libname, env["suffix"])
+    lib_filename = framework_name
+    lib_filepath = "{}.framework/".format(framework_name)
 
-libraryfile = "bin/{}/{}{}".format(env["platform"], filepath, file)
+    # Prevents the binary from getting a prefix / suffix automatically
+    env["SHLIBPREFIX"] = ""
+    env["SHLIBSUFFIX"] = ""
+
+libraryfile = "bin/{}/{}{}".format(env["platform"], lib_filepath, lib_filename)
 library = env.SharedLibrary(
     libraryfile,
     source=sources,
 )
 
-copy = env.InstallAs("{}/bin/{}/{}lib{}".format(projectdir, env["platform"], filepath, file), library)
+copy = env.Install("{}/bin/{}/{}".format(projectdir, env["platform"], lib_filepath), library)
 
 default_args = [library, copy]
 Default(*default_args)

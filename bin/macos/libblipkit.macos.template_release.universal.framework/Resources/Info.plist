@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>libblipkit.macos.template_release</string>
+	<string>libblipkit.macos.template_release.universal</string>
 	<key>CFBundleName</key>
 	<string>Godot BlipKit</string>
 	<key>CFBundleDisplayName</key>
