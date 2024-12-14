@@ -19,6 +19,13 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="clear_envelope">
+			<return type="void" />
+			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
+			<description>
+				Removes the envelope with [param type].
+			</description>
+		</method>
 		<method name="get_envelope_steps" qualifiers="const">
 			<return type="PackedInt32Array" />
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />

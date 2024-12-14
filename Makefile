@@ -10,7 +10,7 @@ build:
 	scons platform=macos arch=universal $(TARGET_DEBUG)
 #	scons platform=macos arch=universal $(TARGET_RELEASE)
 
-	scons platform=ios arch=arm64 $(TARGET_DEBUG)
+#	scons platform=ios arch=arm64 $(TARGET_DEBUG)
 #	scons platform=ios arch=arm64 $(TARGET_RELEASE)
 
 .PHONY: doc

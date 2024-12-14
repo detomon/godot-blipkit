@@ -133,6 +133,7 @@
 			track.phase_wrap = 32
 			[/gdscript]
 			[/codeblocks]
+			[b]Note:[/b] Non-power-of-two values change the pitch.
 		</member>
 		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
 			Sets the pitch values which is added to [member note].
@@ -179,295 +180,295 @@
 			Not implemented yet.
 		</constant>
 		<constant name="NOTE_C_0" value="0" enum="Note">
-			Note C on octave [code]0[/code]
+			Note C on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_C_SH_0" value="1" enum="Note">
-			Note C# on octave [code]0[/code]
+			Note C# on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_D_0" value="2" enum="Note">
-			Note D on octave [code]0[/code]
+			Note D on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_D_SH_0" value="3" enum="Note">
-			Note D# on octave [code]0[/code]
+			Note D# on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_E_0" value="4" enum="Note">
-			Note E on octave [code]0[/code]
+			Note E on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_F_0" value="5" enum="Note">
-			Note F on octave [code]0[/code]
+			Note F on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_F_SH_0" value="6" enum="Note">
-			Note F# on octave [code]0[/code]
+			Note F# on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_G_0" value="7" enum="Note">
-			Note G# on octave [code]0[/code]
+			Note G# on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_G_SH_0" value="8" enum="Note">
-			Note G on octave [code]0[/code]
+			Note G on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_A_0" value="9" enum="Note">
-			Note A on octave [code]0[/code]
+			Note A on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_A_SH_0" value="10" enum="Note">
-			Note A# on octave [code]0[/code]
+			Note A# on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_B_0" value="11" enum="Note">
-			Note B on octave [code]0[/code]
+			Note B on octave [code]0[/code].
 		</constant>
 		<constant name="NOTE_C_1" value="12" enum="Note">
-			Note C on octave [code]1[/code]
+			Note C on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_C_SH_1" value="13" enum="Note">
-			Note C# on octave [code]1[/code]
+			Note C# on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_D_1" value="14" enum="Note">
-			Note D on octave [code]1[/code]
+			Note D on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_D_SH_1" value="15" enum="Note">
-			Note D# on octave [code]1[/code]
+			Note D# on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_E_1" value="16" enum="Note">
-			Note E on octave [code]1[/code]
+			Note E on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_F_1" value="17" enum="Note">
-			Note F on octave [code]1[/code]
+			Note F on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_F_SH_1" value="18" enum="Note">
-			Note F# on octave [code]1[/code]
+			Note F# on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_G_1" value="19" enum="Note">
-			Note G on octave [code]1[/code]
+			Note G on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_G_SH_1" value="20" enum="Note">
-			Note G# on octave [code]1[/code]
+			Note G# on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_A_1" value="21" enum="Note">
-			Note A on octave [code]1[/code]
+			Note A on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_A_SH_1" value="22" enum="Note">
-			Note A# on octave [code]1[/code]
+			Note A# on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_B_1" value="23" enum="Note">
-			Note B on octave [code]1[/code]
+			Note B on octave [code]1[/code].
 		</constant>
 		<constant name="NOTE_C_2" value="24" enum="Note">
-			Note C on octave [code]2[/code]
+			Note C on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_C_SH_2" value="25" enum="Note">
-			Note C on octave [code]2[/code]
+			Note C on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_D_2" value="26" enum="Note">
-			Note D on octave [code]2[/code]
+			Note D on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_D_SH_2" value="27" enum="Note">
-			Note D# on octave [code]2[/code]
+			Note D# on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_E_2" value="28" enum="Note">
-			Note E on octave [code]2[/code]
+			Note E on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_F_2" value="29" enum="Note">
-			Note F on octave [code]2[/code]
+			Note F on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_F_SH_2" value="30" enum="Note">
-			Note F# on octave [code]2[/code]
+			Note F# on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_G_2" value="31" enum="Note">
-			Note G on octave [code]2[/code]
+			Note G on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_G_SH_2" value="32" enum="Note">
-			Note G# on octave [code]2[/code]
+			Note G# on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_A_2" value="33" enum="Note">
-			Note A on octave [code]2[/code]
+			Note A on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_A_SH_2" value="34" enum="Note">
-			Note A# on octave [code]2[/code]
+			Note A# on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_B_2" value="35" enum="Note">
-			Note B on octave [code]2[/code]
+			Note B on octave [code]2[/code].
 		</constant>
 		<constant name="NOTE_C_3" value="36" enum="Note">
-			Note C on octave [code]3[/code]
+			Note C on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_C_SH_3" value="37" enum="Note">
-			Note C on octave [code]3[/code]
+			Note C on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_D_3" value="38" enum="Note">
-			Note C# on octave [code]3[/code]
+			Note C# on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_D_SH_3" value="39" enum="Note">
-			Note D# on octave [code]3[/code]
+			Note D# on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_E_3" value="40" enum="Note">
-			Note E on octave [code]3[/code]
+			Note E on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_F_3" value="41" enum="Note">
-			Note F on octave [code]3[/code]
+			Note F on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_F_SH_3" value="42" enum="Note">
-			Note F# on octave [code]3[/code]
+			Note F# on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_G_3" value="43" enum="Note">
-			Note G on octave [code]3[/code]
+			Note G on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_G_SH_3" value="44" enum="Note">
-			Note G# on octave [code]3[/code]
+			Note G# on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_A_3" value="45" enum="Note">
-			Note A on octave [code]3[/code]
+			Note A on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_A_SH_3" value="46" enum="Note">
-			Note A# on octave [code]3[/code]
+			Note A# on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_B_3" value="47" enum="Note">
-			Note B on octave [code]3[/code]
+			Note B on octave [code]3[/code].
 		</constant>
 		<constant name="NOTE_C_4" value="48" enum="Note">
-			Note C on octave [code]4[/code]
+			Note C on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_C_SH_4" value="49" enum="Note">
-			Note C# on octave [code]4[/code]
+			Note C# on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_D_4" value="50" enum="Note">
-			Note D on octave [code]4[/code]
+			Note D on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_D_SH_4" value="51" enum="Note">
-			Note D# on octave [code]4[/code]
+			Note D# on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_E_4" value="52" enum="Note">
-			Note E on octave [code]4[/code]
+			Note E on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_F_4" value="53" enum="Note">
-			Note F on octave [code]4[/code]
+			Note F on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_F_SH_4" value="54" enum="Note">
-			Note F# on octave [code]4[/code]
+			Note F# on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_G_4" value="55" enum="Note">
-			Note G on octave [code]4[/code]
+			Note G on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_G_SH_4" value="56" enum="Note">
-			Note G# on octave [code]4[/code]
+			Note G# on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_A_4" value="57" enum="Note">
-			Note A on octave [code]4[/code]
+			Note A on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_A_SH_4" value="58" enum="Note">
-			Note A# on octave [code]4[/code]
+			Note A# on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_B_4" value="59" enum="Note">
-			Note B on octave [code]4[/code]
+			Note B on octave [code]4[/code].
 		</constant>
 		<constant name="NOTE_C_5" value="60" enum="Note">
-			Note C on octave [code]5[/code]
+			Note C on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_C_SH_5" value="61" enum="Note">
-			Note C# on octave [code]5[/code]
+			Note C# on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_D_5" value="62" enum="Note">
-			Note D on octave [code]5[/code]
+			Note D on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_D_SH_5" value="63" enum="Note">
-			Note D# on octave [code]5[/code]
+			Note D# on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_E_5" value="64" enum="Note">
-			Note E on octave [code]5[/code]
+			Note E on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_F_5" value="65" enum="Note">
-			Note F on octave [code]5[/code]
+			Note F on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_F_SH_5" value="66" enum="Note">
-			Note F# on octave [code]5[/code]
+			Note F# on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_G_5" value="67" enum="Note">
-			Note G on octave [code]5[/code]
+			Note G on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_G_SH_5" value="68" enum="Note">
-			Note G# on octave [code]5[/code]
+			Note G# on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_A_5" value="69" enum="Note">
-			Note A on octave [code]5[/code]
+			Note A on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_A_SH_5" value="70" enum="Note">
-			Note A# on octave [code]5[/code]
+			Note A# on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_B_5" value="71" enum="Note">
-			Note B on octave [code]5[/code]
+			Note B on octave [code]5[/code].
 		</constant>
 		<constant name="NOTE_C_6" value="72" enum="Note">
-			Note C on octave [code]6[/code]
+			Note C on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_C_SH_6" value="73" enum="Note">
-			Note C# on octave [code]6[/code]
+			Note C# on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_D_6" value="74" enum="Note">
-			Note D on octave [code]6[/code]
+			Note D on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_D_SH_6" value="75" enum="Note">
-			Note D# on octave [code]6[/code]
+			Note D# on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_E_6" value="76" enum="Note">
-			Note E on octave [code]6[/code]
+			Note E on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_F_6" value="77" enum="Note">
-			Note F on octave [code]6[/code]
+			Note F on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_F_SH_6" value="78" enum="Note">
-			Note F# on octave [code]6[/code]
+			Note F# on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_G_6" value="79" enum="Note">
-			Note G on octave [code]6[/code]
+			Note G on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_G_SH_6" value="80" enum="Note">
-			Note G# on octave [code]6[/code]
+			Note G# on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_A_6" value="81" enum="Note">
-			Note A on octave [code]6[/code]
+			Note A on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_A_SH_6" value="82" enum="Note">
-			Note A# on octave [code]6[/code]
+			Note A# on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_B_6" value="83" enum="Note">
-			Note B on octave [code]6[/code]
+			Note B on octave [code]6[/code].
 		</constant>
 		<constant name="NOTE_C_7" value="84" enum="Note">
-			Note C on octave [code]7[/code]
+			Note C on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_C_SH_7" value="85" enum="Note">
-			Note C# on octave [code]7[/code]
+			Note C# on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_D_7" value="86" enum="Note">
-			Note D on octave [code]7[/code]
+			Note D on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_D_SH_7" value="87" enum="Note">
-			Note D# on octave [code]7[/code]
+			Note D# on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_E_7" value="88" enum="Note">
-			Note E on octave [code]7[/code]
+			Note E on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_F_7" value="89" enum="Note">
-			Note F on octave [code]7[/code]
+			Note F on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_F_SH_7" value="90" enum="Note">
-			Note F# on octave [code]7[/code]
+			Note F# on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_G_7" value="91" enum="Note">
-			Note G on octave [code]7[/code]
+			Note G on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_G_SH_7" value="92" enum="Note">
-			Note G on octave [code]7[/code]
+			Note G on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_A_7" value="93" enum="Note">
-			Note A on octave [code]7[/code]
+			Note A on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_A_SH_7" value="94" enum="Note">
-			Note A# on octave [code]7[/code]
+			Note A# on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_B_7" value="95" enum="Note">
-			Note B on octave [code]7[/code]
+			Note B on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_C_8" value="96" enum="Note">
-			Note C on octave [code]8[/code]
+			Note C on octave [code]8[/code].
 		</constant>
 		<constant name="NOTE_RELEASE" value="-1" enum="Note">
 			Releases the note.

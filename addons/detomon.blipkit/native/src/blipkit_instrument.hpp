@@ -53,6 +53,7 @@ public:
 	PackedFloat32Array get_envelope_values(EnvelopeType p_type) const;
 	int get_envelope_sustain_offset(EnvelopeType p_type) const;
 	int get_envelope_sustain_length(EnvelopeType p_type) const;
+	void clear_envelope(EnvelopeType p_type);
 };
 
 } // namespace detomon::BlipKit

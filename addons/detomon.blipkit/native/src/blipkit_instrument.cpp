@@ -16,6 +16,7 @@ void BlipKitInstrument::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_envelope_values", "type"), &BlipKitInstrument::get_envelope_values);
 	ClassDB::bind_method(D_METHOD("get_envelope_sustain_offset", "type"), &BlipKitInstrument::get_envelope_sustain_offset);
 	ClassDB::bind_method(D_METHOD("get_envelope_sustain_length", "type"), &BlipKitInstrument::get_envelope_sustain_length);
+	ClassDB::bind_method(D_METHOD("clear_envelope", "type"), &BlipKitInstrument::clear_envelope);
 
 	BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
 	BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
@@ -241,4 +242,8 @@ int BlipKitInstrument::get_envelope_sustain_offset(EnvelopeType p_type) const {
 int BlipKitInstrument::get_envelope_sustain_length(EnvelopeType p_type) const {
 	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, 0);
 	return sequences[p_type].sustain_length;
+}
+
+void BlipKitInstrument::clear_envelope(EnvelopeType p_type) {
+	set_envelope(p_type, PackedInt32Array(), PackedFloat32Array(), 0, 0);
 }
