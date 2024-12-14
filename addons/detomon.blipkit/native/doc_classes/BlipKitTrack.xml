@@ -124,11 +124,24 @@
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
 		</member>
 		<member name="phase_wrap" type="int" setter="set_phase_wrap" getter="get_phase_wrap" default="0">
-			Sets the number of wave phases after which to reset to the beginning. This has only an effect on [constant WAVEFORM_NOISE] and [constant WAVEFORM_CUSTOM].
+			Sets the number of wave phases after which the waveform is reset to the beginning. Set the value to [code]0[/code] to disable it.
+			This has only an effect on [constant WAVEFORM_NOISE] or when [member custom_waveform] is set.
+			[b]Example:[/b] Limit noise to the first 32 phases:
+			[codeblocks]
+			[gdscript]
+			track.waveform = BlipKitTrack.WAVEFORM_NOISE
+			track.phase_wrap = 32
+			[/gdscript]
+			[/codeblocks]
 		</member>
 		<member name="pitch" type="float" setter="set_pitch" getter="get_pitch" default="0.0">
 			Sets the pitch values which is added to [member note].
-			For example, setting the pitch to [code]-12.0[/code] always play the note an octave lower.
+			[b]Example:[/b] Play all notes one octave lower:
+			[codeblocks]
+			[gdscript]
+			track.pitch = -12.0
+			[/gdscript]
+			[/codeblocks]
 		</member>
 		<member name="portamento" type="int" setter="set_portamento" getter="get_portamento" default="0">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
