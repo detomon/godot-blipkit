@@ -24,6 +24,8 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_note"), &BlipKitTrack::get_note);
 	ClassDB::bind_method(D_METHOD("set_pitch"), &BlipKitTrack::set_pitch);
 	ClassDB::bind_method(D_METHOD("get_pitch"), &BlipKitTrack::get_pitch);
+	ClassDB::bind_method(D_METHOD("set_phase_wrap"), &BlipKitTrack::set_phase_wrap);
+	ClassDB::bind_method(D_METHOD("get_phase_wrap"), &BlipKitTrack::get_phase_wrap);
 	ClassDB::bind_method(D_METHOD("set_volume_slide"), &BlipKitTrack::set_volume_slide);
 	ClassDB::bind_method(D_METHOD("get_volume_slide"), &BlipKitTrack::get_volume_slide);
 	ClassDB::bind_method(D_METHOD("set_panning_slide"), &BlipKitTrack::set_panning_slide);
@@ -57,6 +59,7 @@ void BlipKitTrack::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "panning"), "set_panning", "get_panning");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "note"), "set_note", "get_note");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "pitch"), "set_pitch", "get_pitch");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "phase_wrap"), "set_phase_wrap", "get_phase_wrap");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "volume_slide"), "set_volume_slide", "get_volume_slide");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "panning_slide"), "set_panning_slide", "get_panning_slide");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "portamento"), "set_portamento", "get_portamento");
@@ -395,6 +398,28 @@ void BlipKitTrack::set_pitch(real_t p_pitch) {
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PITCH, value);
+	AudioStreamBlipKit::unlock();
+}
+
+int BlipKitTrack::get_phase_wrap() const {
+	BKInt value = 0;
+
+	AudioStreamBlipKit::lock();
+	BKGetAttr(&track, BK_PHASE_WRAP, &value);
+	AudioStreamBlipKit::unlock();
+
+	return value;
+}
+
+void BlipKitTrack::set_phase_wrap(int p_phase_wrap) {
+	if (p_phase_wrap > 0) {
+		p_phase_wrap = MAX(2, p_phase_wrap);
+	} else {
+		p_phase_wrap = 0;
+	}
+
+	AudioStreamBlipKit::lock();
+	BKSetAttr(&track, BK_PHASE_WRAP, p_phase_wrap);
 	AudioStreamBlipKit::unlock();
 }
 

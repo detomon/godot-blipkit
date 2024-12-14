@@ -157,6 +157,8 @@ public:
 	void set_note(real_t p_note);
 	real_t get_pitch() const;
 	void set_pitch(real_t p_pitch);
+	int get_phase_wrap() const;
+	void set_phase_wrap(int p_phase_wrap);
 
 	int get_volume_slide() const;
 	void set_volume_slide(int p_volume_slide);
