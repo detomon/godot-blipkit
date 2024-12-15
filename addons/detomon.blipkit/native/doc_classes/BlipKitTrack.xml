@@ -76,7 +76,8 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Sets the vibrato effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				Enables the vibrato effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				If [param ticks] is set to [code]0[/code], the effect is disabled.
 			</description>
 		</method>
 		<method name="set_vibrato">
@@ -85,13 +86,14 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Sets the tremolo effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				Enables the tremolo effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				If [param ticks] is set to [code]0[/code], the effect is disabled.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="arpeggio" type="PackedFloat32Array" setter="set_arpeggio" getter="get_arpeggio" default="PackedFloat32Array()">
-			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently played [member note]. The array can have a maximum size of [code]8[/code]. The duration each arpeggio note is played is defined with [member arpeggio_divider] which is the number of ticks (see [member AudioStreamBlipKit.clock_rate]).
+			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently playing [member note]. The array can have a maximum size of [code]8[/code]. The duration for which each arpeggio note is played is defined with [member arpeggio_divider] which is the number of ticks (see [member AudioStreamBlipKit.clock_rate]).
 		</member>
 		<member name="arpeggio_divider" type="int" setter="set_arpeggio_divider" getter="get_arpeggio_divider" default="4">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
