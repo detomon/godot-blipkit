@@ -4,6 +4,7 @@ extends Control
 var panel_button: Button
 var undo_redo: EditorUndoRedoManager
 
+@warning_ignore("unused_private_class_variable")
 var _theme_cache := {}
 
 
@@ -19,11 +20,13 @@ func get_panel_title() -> String:
 	return _get_panel_title()
 
 
+@warning_ignore("unused_parameter")
 func _handles(object: Object) -> bool:
 	printerr("Not implemented.")
 	return false
 
 
+@warning_ignore("unused_parameter")
 func _edit(object: Object) -> void:
 	printerr("Not implemented.")
 
