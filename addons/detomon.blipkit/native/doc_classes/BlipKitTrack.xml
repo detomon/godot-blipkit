@@ -4,24 +4,21 @@
 		Generates a single waveform.
 	</brief_description>
 	<description>
-		...
-		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from the [AudioStreamBlipKitPlayback] which it was attached to.
+		This object generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe and can be changed any time.
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKitPlayback].
 		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
 		[codeblocks]
 		[gdscript]
-		# Some audio stream player with a [AudioStreamBlipKit] stream resource.
+		# Some audio stream player with an [AudioStreamBlipKit] stream resource.
 		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
+		# Create a track with the default [BlipKitTrack.WAVEFORM_SQUARE].
 		# Keep this object around.
-		# Freed tracks are detached from the stream playback.
 		var track := BlipKitTrack.new()
 
 		func _ready() -&gt; void:
-		    # Make sure the stream is playing or has [member AudioStreamPlayer.autoplay] set
-		    # before retreiving the playback object.
-		    stream_player.play()
-
 		    # Get the playback object.
+		    # Make sure the audio player is playing or has autoplay set before retreiving the playback.
 		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
 
 		    # Attach the track.
@@ -36,7 +33,7 @@
 			<return type="void" />
 			<param index="0" name="playback" type="AudioStreamBlipKitPlayback" />
 			<description>
-				Attach the track to a [AudioStreamBlipKitPlayback] instance.
+				Attaches the track to a [AudioStreamBlipKitPlayback] instance.
 			</description>
 		</method>
 		<method name="create_with_waveform" qualifiers="static">
@@ -49,19 +46,19 @@
 		<method name="detach">
 			<return type="void" />
 			<description>
-				Detaches the track from the [AudioStreamBlipKitPlayback] instance.
+				Detaches the track from its [AudioStreamBlipKitPlayback].
 			</description>
 		</method>
 		<method name="mute">
 			<return type="void" />
 			<description>
-				Mutes the note immediately without playing the release part of the instrument envelopes.
+				Mutes the note immediately without playing the release part of the instrument envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_MUTE].
 			</description>
 		</method>
 		<method name="release">
 			<return type="void" />
 			<description>
-				Releases the note. Has the same effect as setting [member note] to [code]-1.0[/code]. When [member instrument] is set, plays the release part of the instrument envelopes.
+				Releases the note. When [member instrument] is set, plays the release part of the instrument envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_RELEASE].
 			</description>
 		</method>
 		<method name="reset">
@@ -102,7 +99,7 @@
 			Sets a custom waveform. If set, [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM]. If set to [code]null[/code] [member waveform] is reset to [constant BlipKitTrack.WAVEFORM_SQUARE].
 		</member>
 		<member name="duty_cycle" type="int" setter="set_duty_cycle" getter="get_duty_cycle" default="4">
-			Sets the duty cycle when [member waveform] is [constant WAVEFORM_SQUARE]. Has no effect on other waveforms.
+			Sets the duty cycle when [member waveform] is set to [constant WAVEFORM_SQUARE]. This defines the number of high amplitudes and is a value between [code]1[/code] and [code]15[/code]. Has no effect on other waveforms.
 		</member>
 		<member name="effect_divider" type="int" setter="set_effect_divider" getter="get_effect_divider" default="1">
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which effects change the value of the corresponding property.
@@ -157,7 +154,7 @@
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member volume] changes to a new value.
 		</member>
 		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
-			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]).
+			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [BlipKitTrack.WAVFORM_SQUARE].
 		</member>
 	</members>
 	<constants>
@@ -178,9 +175,6 @@
 		</constant>
 		<constant name="WAVEFORM_CUSTOM" value="5" enum="Waveform">
 			Set when a [member custom_waveform] is set. Cannot be set directly.
-		</constant>
-		<constant name="WAVEFORM_SAMPLE" value="6" enum="Waveform">
-			Not implemented yet.
 		</constant>
 		<constant name="NOTE_C_0" value="0" enum="Note">
 			Note C on octave [code]0[/code].
@@ -474,7 +468,10 @@
 			Note C on octave [code]8[/code].
 		</constant>
 		<constant name="NOTE_RELEASE" value="-1" enum="Note">
-			Releases the note.
+			Releases the note. Has the same effect as calling [method release].
+		</constant>
+		<constant name="NOTE_MUTE" value="-2" enum="Note">
+			Mutes the note immediately. Has the same effect as calling [method mute].
 		</constant>
 	</constants>
 </class>

@@ -76,7 +76,6 @@ void BlipKitTrack::_bind_methods() {
 	BIND_ENUM_CONSTANT(WAVEFORM_SAWTOOTH);
 	BIND_ENUM_CONSTANT(WAVEFORM_SINE);
 	BIND_ENUM_CONSTANT(WAVEFORM_CUSTOM);
-	BIND_ENUM_CONSTANT(WAVEFORM_SAMPLE);
 
 	BIND_ENUM_CONSTANT(NOTE_C_0);
 	BIND_ENUM_CONSTANT(NOTE_C_SH_0);
@@ -176,6 +175,7 @@ void BlipKitTrack::_bind_methods() {
 	BIND_ENUM_CONSTANT(NOTE_B_7);
 	BIND_ENUM_CONSTANT(NOTE_C_8);
 	BIND_ENUM_CONSTANT(NOTE_RELEASE);
+	BIND_ENUM_CONSTANT(NOTE_MUTE);
 }
 
 BlipKitTrack::BlipKitTrack() {
@@ -373,6 +373,8 @@ void BlipKitTrack::set_note(real_t p_note) {
 	if (p_note >= 0.0) {
 		p_note = CLAMP(p_note, real_t(BK_MIN_NOTE), real_t(BK_MAX_NOTE));
 		value = BKInt(p_note * real_t(BK_FINT20_UNIT));
+	} else if (p_note <= -2.0) {
+		value = NOTE_MUTE;
 	} else {
 		value = NOTE_RELEASE;
 	}
@@ -690,15 +692,11 @@ void BlipKitTrack::detach() {
 }
 
 void BlipKitTrack::release() {
-	AudioStreamBlipKit::lock();
-	BKSetAttr(&track, BK_NOTE, NOTE_RELEASE);
-	AudioStreamBlipKit::unlock();
+	set_note(real_t(NOTE_RELEASE));
 }
 
 void BlipKitTrack::mute() {
-	AudioStreamBlipKit::lock();
-	BKSetAttr(&track, BK_NOTE, NOTE_MUTE);
-	AudioStreamBlipKit::unlock();
+	set_note(real_t(NOTE_MUTE));
 }
 
 void BlipKitTrack::reset() {
