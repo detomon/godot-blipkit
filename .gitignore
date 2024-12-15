@@ -1,13 +1,29 @@
-# Godot 4+ specific ignores
+# Godot
+*.gen.*
 .godot/
 
-# macOS
+# OS
 .DS_Store
-
-# Windows
 Thumbs.db
 
-# Build
-.sconsign.dblite
+# Binaries
 *.o
 *.os
+*.so
+*.obj
+*.bc
+*.pyc
+*.dblite
+*.pdb
+*.lib
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
+*.idb
+*.exp
+
+# Editors
+.vscode/*
+.idea/
