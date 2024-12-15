@@ -128,13 +128,15 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	buffer.resize(buffer_size);
 	AudioFrame *out_buffer = p_buffer;
 
-	AudioStreamBlipKit::lock();
-
 	while (out_count < p_frames) {
 		BKInt chunk_size = MIN(p_frames - out_count, channel_size);
 
+		AudioStreamBlipKit::lock();
+
 		// Generate frames; produces no errors.
 		chunk_size = BKContextGenerate(&context, buffer.ptr(), chunk_size);
+
+		AudioStreamBlipKit::unlock();
 
 		// Nothing was generated.
 		if (chunk_size <= 0) {
@@ -150,8 +152,6 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 			*out_buffer++ = { left, right };
 		}
 	}
-
-	AudioStreamBlipKit::unlock();
 
 	// Fill rest of output buffer if too few frames are generated.
 	for (; out_count < p_frames; out_count++) {
