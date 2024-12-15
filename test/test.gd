@@ -23,13 +23,13 @@ func _ready() -> void:
 	#ResourceSaver.save(_waveform, "res://aah.tres")
 
 	#INSTRUMENT.set_adsr(0, 12, 0.5, 24)
-	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME, [4, 12, 24], [1.0, 0.5, 0.0], 1, 1)
-	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [12, 0, -0.2], 1, 1)
-	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 8, 0, 2], 2, 1)
-	INSTRUMENT.set_meta(&"name", "MIDI")
-	ResourceSaver.save(INSTRUMENT)
+	#INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME, [4, 12, 24], [1.0, 0.5, 0.0], 1, 1)
+	#INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [12, 0, -0.2], 1, 1)
+	#INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 8, 0, 2], 2, 1)
+	#INSTRUMENT.set_meta(&"name", "MIDI")
+	#ResourceSaver.save(INSTRUMENT)
 
-	prints(INSTRUMENT)
+	#prints(INSTRUMENT)
 	#prints(AAH)
 
 
@@ -89,6 +89,8 @@ func _init_track() -> void:
 	#saw.custom_waveform = waveform
 	saw.attach(playback)
 	playback.add_tick_function(_on_tick.bind(saw), 24)
+
+	print_debug(saw.get_tremolo())
 
 	prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
 	prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))

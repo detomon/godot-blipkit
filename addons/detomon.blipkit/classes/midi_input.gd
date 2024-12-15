@@ -46,6 +46,8 @@ func _open_midi_inputs() -> void:
 
 	OS.open_midi_inputs()
 
+	print_debug("MIDI inputs: ", OS.get_connected_midi_inputs())
+
 
 func _close_midi_inputs() -> void:
 	if not _is_midi_open:

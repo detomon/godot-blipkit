@@ -4,7 +4,7 @@
 		Generates a single waveform.
 	</brief_description>
 	<description>
-		This object generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe and can be changed any time.
+		This class generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe.
 		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKitPlayback].
 		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
 		[codeblocks]

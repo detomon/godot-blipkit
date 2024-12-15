@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitInstrument" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Changes the output parameters of a [BlipKitTrack] while a note is playing or after it is released.
+		Changes parameters of a [BlipKitTrack] while a note is playing or after it is released.
 	</brief_description>
 	<description>
 		[codeblocks]
@@ -31,7 +31,7 @@
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
 			<description>
 				Returns the steps for the envelope with [param type].
-				Returns an empty array if the envelope is not set or no steps are defined.
+				Returns an empty array if the envelope with [param type] is not set or has no steps.
 			</description>
 		</method>
 		<method name="get_envelope_sustain_length" qualifiers="const">
@@ -55,7 +55,7 @@
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
 			<description>
 				Returns the values for the envelope with [param type].
-				Returns an empty array if the envelope is not set.
+				Returns an empty array if the envelope with [param type] is not set.
 			</description>
 		</method>
 		<method name="has_envelope" qualifiers="const">

@@ -14,6 +14,8 @@ using namespace godot;
 
 namespace detomon::BlipKit {
 
+struct TickFunction;
+
 class AudioStreamBlipKit : public AudioStream {
 	GDCLASS(AudioStreamBlipKit, AudioStream);
 
@@ -68,7 +70,7 @@ private:
 	BKContext context;
 	Ref<AudioStreamBlipKit> stream;
 	HashMap<int, TickFunction *> tick_functions;
-	int tick_func_id = 0;
+	static int tick_func_id;
 	bool active = false;
 
 protected:

@@ -47,6 +47,8 @@ int AudioStreamBlipKit::get_clock_rate() {
 	return clock_rate;
 }
 
+int AudioStreamBlipKitPlayback::tick_func_id = 0;
+
 void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 	clock_rate = CLAMP(p_clock_rate, MIN_CLOCK_RATE, MAX_CLOCK_RATE);
 }
