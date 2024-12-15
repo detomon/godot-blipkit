@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/math.hpp>
+#include <godot_cpp/variant/variant.hpp>
 
 using namespace detomon::BlipKit;
 using namespace godot;
@@ -34,6 +35,8 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_portamento"), &BlipKitTrack::get_portamento);
 	ClassDB::bind_method(D_METHOD("set_tremolo", "ticks", "delta", "slide_ticks"), &BlipKitTrack::set_tremolo, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("set_vibrato", "ticks", "delta", "slide_ticks"), &BlipKitTrack::set_vibrato, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("get_tremolo"), &BlipKitTrack::get_tremolo);
+	ClassDB::bind_method(D_METHOD("get_vibrato"), &BlipKitTrack::get_vibrato);
 	ClassDB::bind_method(D_METHOD("set_effect_divider"), &BlipKitTrack::set_effect_divider);
 	ClassDB::bind_method(D_METHOD("get_effect_divider"), &BlipKitTrack::get_effect_divider);
 	ClassDB::bind_method(D_METHOD("set_arpeggio"), &BlipKitTrack::set_arpeggio);
@@ -502,9 +505,9 @@ Dictionary BlipKitTrack::get_tremolo() const {
 	int slide_ticks = values[2];
 
 	Dictionary ret;
-	ret["ticks"] = ticks;
-	ret["delta"] = delta;
-	ret["slide_ticks"] = slide_ticks;
+	ret[StringName("ticks")] = ticks;
+	ret[StringName("delta")] = delta;
+	ret[StringName("slide_ticks")] = slide_ticks;
 
 	return ret;
 }
@@ -521,9 +524,9 @@ Dictionary BlipKitTrack::get_vibrato() const {
 	int slide_ticks = values[2];
 
 	Dictionary ret;
-	ret["ticks"] = ticks;
-	ret["delta"] = delta;
-	ret["slide_ticks"] = slide_ticks;
+	ret[StringName("ticks")] = ticks;
+	ret[StringName("delta")] = delta;
+	ret[StringName("slide_ticks")] = slide_ticks;
 
 	return ret;
 }

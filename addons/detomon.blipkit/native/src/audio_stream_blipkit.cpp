@@ -71,10 +71,9 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_tick_function", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_tick_function);
-	ClassDB::bind_method(D_METHOD("remove_tick_function", "index"), &AudioStreamBlipKitPlayback::remove_tick_function);
-	ClassDB::bind_method(D_METHOD("get_tick_function_count"), &AudioStreamBlipKitPlayback::get_tick_function_count);
+	ClassDB::bind_method(D_METHOD("remove_tick_function", "id"), &AudioStreamBlipKitPlayback::remove_tick_function);
 	ClassDB::bind_method(D_METHOD("clear_tick_functions"), &AudioStreamBlipKitPlayback::clear_tick_functions);
-	ClassDB::bind_method(D_METHOD("reset_tick_counter", "index", "tick_interval"), &AudioStreamBlipKitPlayback::reset_tick_counter, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("reset_tick_counter", "id", "tick_interval"), &AudioStreamBlipKitPlayback::reset_tick_counter, DEFVAL(0));
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -161,49 +160,49 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	return out_count;
 }
 
-void AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_tick_interval) {
-	ERR_FAIL_COND(p_tick_interval <= 0);
+int AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_tick_interval) {
+	ERR_FAIL_COND_V(p_tick_interval <= 0, -1);
 
 	AudioStreamBlipKit::lock();
 
 	TickFunction *function = memnew(TickFunction);
 	function->initialize(p_callable, p_tick_interval, this);
-	tick_functions.push_back(function);
+
+	tick_func_id++;
+	tick_functions[tick_func_id] = function;
 
 	AudioStreamBlipKit::unlock();
+
+	return tick_func_id;
 }
 
-void AudioStreamBlipKitPlayback::remove_tick_function(int p_index) {
-	ERR_FAIL_INDEX(p_index, tick_functions.size());
+void AudioStreamBlipKitPlayback::remove_tick_function(int p_id) {
+	ERR_FAIL_COND(!tick_functions.has(p_id));
 
 	AudioStreamBlipKit::lock();
 
-	memdelete(tick_functions[p_index]);
-	tick_functions.remove_at(p_index);
+	memdelete(tick_functions[p_id]);
+	tick_functions.erase(p_id);
 
 	AudioStreamBlipKit::unlock();
-}
-
-int AudioStreamBlipKitPlayback::get_tick_function_count() const {
-	return tick_functions.size();
 }
 
 void AudioStreamBlipKitPlayback::clear_tick_functions() {
 	AudioStreamBlipKit::lock();
 
-	for (TickFunction *function : tick_functions) {
-		memdelete(function);
+	for (KeyValue<int, TickFunction *> &E : tick_functions) {
+		memdelete(E.value);
 	}
 	tick_functions.clear();
 
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::reset_tick_counter(int p_index, int p_tick_interval) {
-	ERR_FAIL_INDEX(p_index, tick_functions.size());
+void AudioStreamBlipKitPlayback::reset_tick_counter(int p_id, int p_tick_interval) {
+	ERR_FAIL_COND(!tick_functions.has(p_id));
 
 	AudioStreamBlipKit::lock();
-	tick_functions[p_index]->reset(p_tick_interval);
+	tick_functions[p_id]->reset(p_tick_interval);
 	AudioStreamBlipKit::unlock();
 }
 

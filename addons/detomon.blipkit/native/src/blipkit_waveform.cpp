@@ -8,6 +8,7 @@ using namespace godot;
 
 void BlipKitWaveform::_bind_methods() {
 	ClassDB::bind_static_method("BlipKitWaveform", D_METHOD("create_with_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::create_with_frames, DEFVAL(false), DEFVAL(1.0));
+
 	ClassDB::bind_method(D_METHOD("size"), &BlipKitWaveform::size);
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);

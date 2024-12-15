@@ -12,13 +12,13 @@
 		# Some audio stream player with an [AudioStreamBlipKit] stream resource.
 		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
-		# Create a track with the default [BlipKitTrack.WAVEFORM_SQUARE].
+		# Create a track with the default waveform [BlipKitTrack.WAVEFORM_SQUARE].
 		# Keep this object around.
 		var track := BlipKitTrack.new()
 
 		func _ready() -&gt; void:
-		    # Get the playback object.
-		    # Make sure the audio player is playing or has autoplay set before retreiving the playback.
+		    # Get the playback instance.
+		    # Make sure the audio player is playing or has autoplay set before retreiving it.
 		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
 
 		    # Attach the track.
@@ -49,16 +49,28 @@
 				Detaches the track from its [AudioStreamBlipKitPlayback].
 			</description>
 		</method>
+		<method name="get_tremolo" qualifiers="const">
+			<return type="Dictionary" />
+			<description>
+				Returns the tremolo values as [Dictionary]. Contains the keys [code]ticks[/code], [code]delta[/code], and [code]slide_ticks[/code].
+			</description>
+		</method>
+		<method name="get_vibrato" qualifiers="const">
+			<return type="Dictionary" />
+			<description>
+				Returns the vibrato values as [Dictionary]. Contains the keys [code]ticks[/code], [code]delta[/code], and [code]slide_ticks[/code].
+			</description>
+		</method>
 		<method name="mute">
 			<return type="void" />
 			<description>
-				Mutes the note immediately without playing the release part of the instrument envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_MUTE].
+				Mutes [member note] immediately without playing the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_MUTE].
 			</description>
 		</method>
 		<method name="release">
 			<return type="void" />
 			<description>
-				Releases the note. When [member instrument] is set, plays the release part of the instrument envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_RELEASE].
+				Releases [member note]. When [member instrument] is set, plays the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_RELEASE].
 			</description>
 		</method>
 		<method name="reset">
@@ -73,8 +85,8 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Enables the vibrato effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
-				If [param ticks] is set to [code]0[/code], the effect is disabled.
+				Enables the tremolo effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				If [param ticks] is [code]0[/code], the effect is disabled.
 			</description>
 		</method>
 		<method name="set_vibrato">
@@ -83,8 +95,8 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Enables the tremolo effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
-				If [param ticks] is set to [code]0[/code], the effect is disabled.
+				Enables the vibrato effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				If [param ticks] is [code]0[/code], the effect is disabled.
 			</description>
 		</method>
 	</methods>
@@ -124,8 +136,8 @@
 			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
 		</member>
 		<member name="phase_wrap" type="int" setter="set_phase_wrap" getter="get_phase_wrap" default="0">
-			Sets the number of wave phases after which the waveform is reset to the beginning. If set to [code]0[/code], this behaviour is disabled.
-			This has only an effect on [constant WAVEFORM_NOISE] or when [member custom_waveform] is set.
+			Sets the number of wave phases after which the waveform is reset to the beginning. This has only an effect on [constant WAVEFORM_NOISE] or when [member custom_waveform] is set.
+			If [param phase_wrap] is [code]0[/code], this behaviour is disabled.
 			[b]Example:[/b] Limit noise to the first 32 phases:
 			[codeblocks]
 			[gdscript]
@@ -468,10 +480,10 @@
 			Note C on octave [code]8[/code].
 		</constant>
 		<constant name="NOTE_RELEASE" value="-1" enum="Note">
-			Releases the note. Has the same effect as calling [method release].
+			Releases [member note]. Has the same effect as calling [method release].
 		</constant>
 		<constant name="NOTE_MUTE" value="-2" enum="Note">
-			Mutes the note immediately. Has the same effect as calling [method mute].
+			Mutes [member note] immediately. Has the same effect as calling [method mute].
 		</constant>
 	</constants>
 </class>
