@@ -5,7 +5,7 @@
 	</brief_description>
 	<description>
 		This class generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe.
-		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKitPlayback].
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKitPlayback] and all dividers are removed.
 		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
 		[codeblocks]
 		[gdscript]
@@ -27,6 +27,7 @@
 		[/codeblocks]
 	</description>
 	<tutorials>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
 	</tutorials>
 	<methods>
 		<method name="add_divider">
@@ -35,8 +36,29 @@
 			<param index="1" name="tick_interval" type="int" />
 			<description>
 				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is fired again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is fired again after the returned number of ticks. Callbacks are called in the same order as they are added.
-				Returns a unique ID which can be used as parameter for [method remove_divider] and [method reset_tick_counter].
+				Returns an ID which can be used as parameter for [method remove_divider] and [method reset_divider].
 				Callbacks are called from the audio thread. Consider using [method Object.call_deferred] non-addon objects or functions which are expensive to run.
+				[b]Note:[/b] The callback is fired for the first time on the next tick.
+				[b]Example:[/b] Add a divider and play a higher note on each call:
+				[codeblocks]
+				[gdscript]
+				track.add_divider(func () -&gt; int:
+				    track.note += 1.0
+				    # Keep tick interval.
+				    return 0
+				, 60)
+				[/gdscript]
+				[/codeblocks]
+				[b]Example:[/b] Add a divider and change the tick interval to [code]90[/code] after the first call:
+				[codeblocks]
+				[gdscript]
+				track.add_divider(func () -&gt; int:
+				    track.note += 1.0
+				    # Change tick interval to 90.
+				    return 90
+				, 180)
+				[/gdscript]
+				[/codeblocks]
 			</description>
 		</method>
 		<method name="attach">
@@ -63,7 +85,13 @@
 			<return type="void" />
 			<description>
 				Detaches the track from its [AudioStreamBlipKitPlayback].
-				This also clears all dividers added to this [BlipKitTrack].
+				This also removes all dividers.
+			</description>
+		</method>
+		<method name="get_divider_ids" qualifiers="const">
+			<return type="PackedInt32Array" />
+			<description>
+				Returns all divider IDs.
 			</description>
 		</method>
 		<method name="get_tremolo" qualifiers="const">

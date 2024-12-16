@@ -197,6 +197,7 @@ public:
 
 	void reset();
 
+	PackedInt32Array get_divider_ids() const;
 	int add_divider(Callable p_callable, int p_tick_interval);
 	void remove_divider(int p_id);
 	void clear_dividers();

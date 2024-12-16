@@ -54,6 +54,7 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("release"), &BlipKitTrack::release);
 	ClassDB::bind_method(D_METHOD("mute"), &BlipKitTrack::mute);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitTrack::reset);
+	ClassDB::bind_method(D_METHOD("get_divider_ids"), &BlipKitTrack::get_divider_ids);
 	ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &BlipKitTrack::add_divider);
 	ClassDB::bind_method(D_METHOD("remove_divider", "id"), &BlipKitTrack::remove_divider);
 	ClassDB::bind_method(D_METHOD("clear_dividers"), &BlipKitTrack::clear_dividers);
@@ -737,6 +738,23 @@ void BlipKitTrack::reset() {
 	if (custom_waveform.is_valid()) {
 		set_custom_waveform(custom_waveform);
 	}
+}
+
+PackedInt32Array BlipKitTrack::get_divider_ids() const {
+	PackedInt32Array ids;
+
+	AudioStreamBlipKit::lock();
+
+	ids.resize(divider_ids.size());
+	int *ptr = ids.ptrw();
+
+	for (int i = 0; i < divider_ids.size(); i++) {
+		ptr[i] = divider_ids[i];
+	}
+
+	AudioStreamBlipKit::unlock();
+
+	return ids;
 }
 
 int BlipKitTrack::add_divider(Callable p_callable, int p_tick_interval) {

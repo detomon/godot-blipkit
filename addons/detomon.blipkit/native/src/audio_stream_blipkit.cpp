@@ -76,10 +76,10 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_divider);
-	ClassDB::bind_method(D_METHOD("remove_divider", "id"), &AudioStreamBlipKitPlayback::remove_divider);
-	ClassDB::bind_method(D_METHOD("clear_dividers"), &AudioStreamBlipKitPlayback::clear_dividers);
-	ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &AudioStreamBlipKitPlayback::reset_divider, DEFVAL(0));
+	// ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_divider);
+	// ClassDB::bind_method(D_METHOD("remove_divider", "id"), &AudioStreamBlipKitPlayback::remove_divider);
+	// ClassDB::bind_method(D_METHOD("clear_dividers"), &AudioStreamBlipKitPlayback::clear_dividers);
+	// ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &AudioStreamBlipKitPlayback::reset_divider, DEFVAL(0));
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {

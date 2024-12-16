@@ -88,7 +88,7 @@ func _init_track() -> void:
 	saw.instrument = saw_instr
 	#saw.custom_waveform = waveform
 	saw.attach(playback)
-	playback.add_divider(_on_tick.bind(saw), 24)
+	saw.add_divider(_on_tick.bind(saw), 24)
 
 	print_debug(saw.get_tremolo())
 
@@ -124,7 +124,9 @@ func _init_track() -> void:
 	bass.instrument = bass_instr
 
 	bass.attach(playback)
-	playback.add_divider(_on_tick_3.bind(bass), 24)
+	bass.add_divider(_on_tick_3.bind(bass), 24)
+
+	print_debug(bass.get_divider_ids())
 
 
 var _index := 0
