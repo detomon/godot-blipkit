@@ -88,7 +88,7 @@ func _init_track() -> void:
 	saw.instrument = saw_instr
 	#saw.custom_waveform = waveform
 	saw.attach(playback)
-	playback.add_tick_function(_on_tick.bind(saw), 24)
+	playback.add_divider(_on_tick.bind(saw), 24)
 
 	print_debug(saw.get_tremolo())
 
@@ -111,7 +111,7 @@ func _init_track() -> void:
 	#lead.instrument = lead_instr
 #
 	#lead.attach(playback)
-	#playback.add_tick_function(_on_tick_2.bind(lead), 24)
+	#playback.add_divider(_on_tick_2.bind(lead), 24)
 
 	var bass := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
 	#bass.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
@@ -124,7 +124,7 @@ func _init_track() -> void:
 	bass.instrument = bass_instr
 
 	bass.attach(playback)
-	playback.add_tick_function(_on_tick_3.bind(bass), 24)
+	playback.add_divider(_on_tick_3.bind(bass), 24)
 
 
 var _index := 0
@@ -152,17 +152,17 @@ var _notes3 := PackedFloat32Array([
 	#-1, -1, -1, -1, [27, 31, 34], -1, [27, 31, 34], -1, -1, -1, -1, -1, [26, 31, 33], -1, -1, -1,
 #]
 
-func _on_tick(_ticks: int, track: BlipKitTrack) -> void:
+func _on_tick(track: BlipKitTrack) -> void:
 	track.note = _notes[_index]
 	_index = wrapi(_index + 1, 0, len(_notes))
 
 
-func _on_tick_2(_ticks: int, track: BlipKitTrack) -> void:
+func _on_tick_2(track: BlipKitTrack) -> void:
 	track.note = _notes2[_index2]
 	_index2 = wrapi(_index2 + 1, 0, len(_notes2))
 
 
-func _on_tick_3(_ticks: int, track: BlipKitTrack) -> void:
+func _on_tick_3(track: BlipKitTrack) -> void:
 	track.note = _notes3[_index3]
 	_index3 = wrapi(_index3 + 1, 0, len(_notes3))
 

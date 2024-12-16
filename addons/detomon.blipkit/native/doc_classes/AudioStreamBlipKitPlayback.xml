@@ -44,14 +44,14 @@
 		<method name="clear_dividers">
 			<return type="void" />
 			<description>
-				Removes all tick callbacks.
+				Removes all divider callbacks.
 			</description>
 		</method>
 		<method name="remove_divider">
 			<return type="void" />
 			<param index="0" name="id" type="int" />
 			<description>
-				Removes the tick callback with [param id].
+				Removes the divider callback with [param id].
 			</description>
 		</method>
 		<method name="reset_divider">
@@ -59,7 +59,7 @@
 			<param index="0" name="id" type="int" />
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
-				Resets the tick counter of a tick callback with [param id]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
+				Resets the counter of a divider with [param id]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
 				[b]Note:[/b] The callback is fired the first time on the next tick.
 			</description>
 		</method>

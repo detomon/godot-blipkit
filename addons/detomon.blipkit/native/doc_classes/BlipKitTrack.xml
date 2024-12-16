@@ -34,6 +34,9 @@
 			<param index="0" name="callable" type="Callable" />
 			<param index="1" name="tick_interval" type="int" />
 			<description>
+				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is fired again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is fired again after the returned number of ticks. Callbacks are called in the same order as they are added.
+				Returns a unique ID which can be used as parameter for [method remove_divider] and [method reset_tick_counter].
+				Callbacks are called from the audio thread. Consider using [method Object.call_deferred] non-addon objects or functions which are expensive to run.
 			</description>
 		</method>
 		<method name="attach">
@@ -46,6 +49,7 @@
 		<method name="clear_dividers">
 			<return type="void" />
 			<description>
+				Removes all divider callbacks.
 			</description>
 		</method>
 		<method name="create_with_waveform" qualifiers="static">
@@ -59,6 +63,7 @@
 			<return type="void" />
 			<description>
 				Detaches the track from its [AudioStreamBlipKitPlayback].
+				This also clears all dividers added to this [BlipKitTrack].
 			</description>
 		</method>
 		<method name="get_tremolo" qualifiers="const">
@@ -89,6 +94,7 @@
 			<return type="void" />
 			<param index="0" name="id" type="int" />
 			<description>
+				Removes the divider callback with [param id].
 			</description>
 		</method>
 		<method name="reset">
@@ -102,6 +108,8 @@
 			<param index="0" name="id" type="int" />
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
+				Resets the counter of a divider with [param id]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
+				[b]Note:[/b] The callback is fired the first time on the next tick.
 			</description>
 		</method>
 		<method name="set_tremolo">

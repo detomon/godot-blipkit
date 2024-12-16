@@ -742,34 +742,52 @@ void BlipKitTrack::reset() {
 int BlipKitTrack::add_divider(Callable p_callable, int p_tick_interval) {
 	ERR_FAIL_NULL_V(playback, -1);
 
-	// TODO: Implement.
+	AudioStreamBlipKit::lock();
 
-	return -1;
+	int divider_id = playback->add_divider(p_callable, p_tick_interval);
+	divider_ids.push_back(divider_id);
+
+	AudioStreamBlipKit::unlock();
+
+	return divider_id;
 }
 
 void BlipKitTrack::remove_divider(int p_id) {
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+
 	ERR_FAIL_NULL(playback);
+	ERR_FAIL_COND(!divider_ids.has(p_id));
 
-	// TODO: Implement.
+	AudioStreamBlipKit::lock();
 
-	//p_playback->remove_divider(p_id);
+	playback->remove_divider(p_id);
+	divider_ids.erase(p_id);
 
+	lock.unlock();
 }
 
 void BlipKitTrack::clear_dividers() {
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+
 	ERR_FAIL_NULL(playback);
 
 	AudioStreamBlipKit::lock();
 
-	// TODO: Implement.
+	for (int id : divider_ids) {
+		playback->remove_divider(id);
+	}
+	divider_ids.clear();
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 }
 
 void BlipKitTrack::reset_divider(int p_id, int p_tick_interval) {
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+
 	ERR_FAIL_NULL(playback);
+	ERR_FAIL_COND(!divider_ids.has(p_id));
 
-	// TODO: Implement.
+	playback->reset_divider(p_id, p_tick_interval);
 
-	//p_playback->reset_divider(p_id, p_tick_interval);
+	lock.unlock();
 }
