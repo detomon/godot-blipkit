@@ -18,7 +18,11 @@ var _inactive_tracks: Array[BlipKitTrack] = []
 
 
 func _ready() -> void:
-	_init_track()
+	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+
+	playback.call_synced(func ():
+		_init_track()
+	)
 
 	#ResourceSaver.save(_waveform, "res://aah.tres")
 

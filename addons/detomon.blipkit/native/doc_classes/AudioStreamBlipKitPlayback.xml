@@ -8,4 +8,13 @@
 	</description>
 	<tutorials>
 	</tutorials>
+	<methods>
+		<method name="call_synced" qualifiers="const">
+			<return type="void" />
+			<param index="0" name="callback" type="Callable" />
+			<description>
+				Calls the callback synced to the audio thread. This can be used to make modification on the same time.
+			</description>
+		</method>
+	</methods>
 </class>

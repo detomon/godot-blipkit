@@ -76,6 +76,7 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("call_synced", "callback"), &AudioStreamBlipKitPlayback::call_synced);
 	// ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_divider);
 	// ClassDB::bind_method(D_METHOD("remove_divider", "id"), &AudioStreamBlipKitPlayback::remove_divider);
 	// ClassDB::bind_method(D_METHOD("clear_dividers"), &AudioStreamBlipKitPlayback::clear_dividers);
@@ -174,6 +175,14 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	}
 
 	return out_count;
+}
+
+void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) const {
+	ERR_FAIL_COND(!p_callable.is_valid());
+
+	AudioStreamBlipKit::lock();
+	p_callable.call();
+	AudioStreamBlipKit::unlock();
 }
 
 int AudioStreamBlipKitPlayback::add_divider(Callable p_callable, int p_tick_interval) {

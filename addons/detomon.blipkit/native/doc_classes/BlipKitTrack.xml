@@ -35,10 +35,10 @@
 			<param index="0" name="callable" type="Callable" />
 			<param index="1" name="tick_interval" type="int" />
 			<description>
-				Adds a callback which is fired every multiple number of ticks (see [member AudioStreamBlipKit.clock_rate]). [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is fired again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is fired again after the returned number of ticks. Callbacks are called in the same order as they are added.
+				Adds a callback which is called every multiple number of [i]ticks[/i]. [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is called again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is called again after the returned number of ticks. Callbacks are called in the same order as they are added.
 				Returns an ID which can be used as parameter for [method remove_divider] and [method reset_divider].
 				Callbacks are called from the audio thread. Consider using [method Object.call_deferred] non-addon objects or functions which are expensive to run.
-				[b]Note:[/b] The callback is fired for the first time on the next tick.
+				[b]Note:[/b] The callback is called for the first time on the next tick.
 				[b]Example:[/b] Add a divider and play a higher note on each call:
 				[codeblocks]
 				[gdscript]
@@ -65,7 +65,7 @@
 			<return type="void" />
 			<param index="0" name="playback" type="AudioStreamBlipKitPlayback" />
 			<description>
-				Attaches the track to a [AudioStreamBlipKitPlayback] instance.
+				Attaches the track to an [AudioStreamBlipKitPlayback] instance.
 			</description>
 		</method>
 		<method name="clear_dividers">
@@ -98,12 +98,18 @@
 			<return type="Dictionary" />
 			<description>
 				Returns the tremolo values as [Dictionary]. Contains the keys [code]ticks[/code], [code]delta[/code], and [code]slide_ticks[/code].
+				[codeblock lang=gdscript]
+				{ ticks = 0, delta = 0.0, slide_ticks = 0 }
+				[/codeblock]
 			</description>
 		</method>
 		<method name="get_vibrato" qualifiers="const">
 			<return type="Dictionary" />
 			<description>
 				Returns the vibrato values as [Dictionary]. Contains the keys [code]ticks[/code], [code]delta[/code], and [code]slide_ticks[/code].
+				[codeblock lang=gdscript]
+				{ ticks = 0, delta = 0.0, slide_ticks = 0 }
+				[/codeblock]
 			</description>
 		</method>
 		<method name="mute">
@@ -137,7 +143,7 @@
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
 				Resets the counter of a divider with [param id]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
-				[b]Note:[/b] The callback is fired the first time on the next tick.
+				[b]Note:[/b] The callback is called the first time on the next tick.
 			</description>
 		</method>
 		<method name="set_tremolo">
@@ -146,7 +152,7 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Enables the tremolo effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				Enables the tremolo effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks]. If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
 				If [param ticks] is [code]0[/code], the effect is disabled.
 			</description>
 		</method>
@@ -156,17 +162,17 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Enables the vibrato effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks] (see [member AudioStreamBlipKit.clock_rate]). If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				Enables the vibrato effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks]. If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
 				If [param ticks] is [code]0[/code], the effect is disabled.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="arpeggio" type="PackedFloat32Array" setter="set_arpeggio" getter="get_arpeggio" default="PackedFloat32Array()">
-			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently playing [member note]. The array can have a maximum size of [code]8[/code]. The duration for which each arpeggio note is played is defined with [member arpeggio_divider] which is the number of ticks (see [member AudioStreamBlipKit.clock_rate]).
+			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently playing [member note]. The array can have a maximum size of [code]8[/code]. The duration for which each arpeggio note is played is defined with [member arpeggio_divider] which is the number of ticks.
 		</member>
 		<member name="arpeggio_divider" type="int" setter="set_arpeggio_divider" getter="get_arpeggio_divider" default="4">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each arpeggio note is played.
+			Sets the number of [i]ticks[/i] each [member arpeggio] note is played.
 		</member>
 		<member name="custom_waveform" type="BlipKitWaveform" setter="set_custom_waveform" getter="get_custom_waveform">
 			Sets a custom waveform. If set, [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM]. If set to [code]null[/code] [member waveform] is reset to [constant BlipKitTrack.WAVEFORM_SQUARE].
@@ -175,13 +181,13 @@
 			Sets the duty cycle when [member waveform] is set to [constant WAVEFORM_SQUARE]. This defines the number of high amplitudes and is a value between [code]1[/code] and [code]15[/code]. Has no effect on other waveforms.
 		</member>
 		<member name="effect_divider" type="int" setter="set_effect_divider" getter="get_effect_divider" default="1">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which effects change the value of the corresponding property.
+			Sets the number of [i]ticks[/i] in which effects change the value of the corresponding property.
 		</member>
 		<member name="instrument" type="BlipKitInstrument" setter="set_instrument" getter="get_instrument">
 			Sets the instrument when playing a note.
 		</member>
 		<member name="instrument_divider" type="int" setter="set_instrument_divider" getter="get_instrument_divider" default="4">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) each instrument envelope value is played when no steps are defined.
+			Sets the number of [i]ticks[/i] each instrument envelope value is played when no steps are defined.
 		</member>
 		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
 			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
@@ -194,7 +200,7 @@
 			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan to the left channel and positive values to the right channel.
 		</member>
 		<member name="panning_slide" type="int" setter="set_panning_slide" getter="get_panning_slide" default="0">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member panning] changes to a new value.
+			Sets the number of [i]ticks[/i] in which [member panning] changes to a new value.
 		</member>
 		<member name="phase_wrap" type="int" setter="set_phase_wrap" getter="get_phase_wrap" default="0">
 			Sets the number of wave phases after which the waveform is reset to the beginning. This has only an effect on [constant WAVEFORM_NOISE] or when [member custom_waveform] is set.
@@ -218,16 +224,16 @@
 			[/codeblocks]
 		</member>
 		<member name="portamento" type="int" setter="set_portamento" getter="get_portamento" default="0">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member note] changes to a new value.
+			Sets the number of [i]ticks[/i] in which [member note] changes to a new value.
 		</member>
 		<member name="volume" type="float" setter="set_volume" getter="get_volume" default="1.0">
 			Sets the note volume. This is multiplied with [member master_volume] to be used as the output volume.
 		</member>
 		<member name="volume_slide" type="int" setter="set_volume_slide" getter="get_volume_slide" default="0">
-			Sets the number of ticks (see [member AudioStreamBlipKit.clock_rate]) in which [member volume] changes to a new value.
+			Sets the number of [i]ticks[/i] in which [member volume] changes to a new value.
 		</member>
 		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
-			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [BlipKitTrack.WAVFORM_SQUARE].
+			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [constant BlipKitTrack.WAVFORM_SQUARE].
 		</member>
 	</members>
 	<constants>

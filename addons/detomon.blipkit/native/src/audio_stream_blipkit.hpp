@@ -97,6 +97,8 @@ public:
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 
+	void call_synced(Callable p_callable) const;
+
 	int add_divider(Callable p_callable, int p_tick_interval);
 	void remove_divider(int p_id);
 	void clear_dividers();
