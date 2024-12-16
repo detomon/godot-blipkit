@@ -1,20 +1,20 @@
 #pragma once
 
 #include "blipkit_instrument.hpp"
-#include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
 #include "recursive_spin_lock.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
+#include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/callable.hpp>
 
 using namespace godot;
 
 namespace detomon::BlipKit {
 
-struct TickFunction;
+class BlipKitTrack;
 
 class AudioStreamBlipKit : public AudioStream {
 	GDCLASS(AudioStreamBlipKit, AudioStream);
@@ -48,6 +48,7 @@ public:
 class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	GDCLASS(AudioStreamBlipKitPlayback, AudioStreamPlayback)
 	friend class AudioStreamBlipKit;
+	friend class BlipKitTrack;
 
 private:
 	struct TickFunction {
@@ -69,6 +70,7 @@ private:
 
 	BKContext context;
 	Ref<AudioStreamBlipKit> stream;
+	LocalVector<BlipKitTrack *> tracks;
 	HashMap<int, TickFunction *> tick_functions;
 	static int tick_func_id;
 	bool active = false;
@@ -78,6 +80,9 @@ protected:
 	String _to_string() const;
 
 	bool initialize(Ref<AudioStreamBlipKit> p_stream);
+
+	void attach(BlipKitTrack *p_track);
+	void detach(BlipKitTrack *p_track);
 
 public:
 	AudioStreamBlipKitPlayback();

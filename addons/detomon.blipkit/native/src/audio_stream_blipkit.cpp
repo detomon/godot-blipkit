@@ -1,5 +1,5 @@
 #include "audio_stream_blipkit.hpp"
-#include <atomic>
+#include "blipkit_track.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/memory.hpp>
@@ -68,6 +68,10 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 	clear_tick_functions(); // Explicitly clear function to free memory.
 	BKDispose(&context);
 
+	for (BlipKitTrack *track : tracks) {
+		track->detach();
+	}
+
 	AudioStreamBlipKit::unlock();
 }
 
@@ -92,6 +96,16 @@ bool AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream) {
 	ERR_FAIL_COND_V_MSG(result != BK_SUCCESS, false, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
 
 	return true;
+}
+
+void AudioStreamBlipKitPlayback::attach(BlipKitTrack *p_track) {
+	if (!tracks.has(p_track)) {
+		tracks.push_back(p_track);
+	}
+}
+
+void AudioStreamBlipKitPlayback::detach(BlipKitTrack *p_track) {
+	tracks.erase(p_track);
 }
 
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {

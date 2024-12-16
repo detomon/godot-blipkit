@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_waveform.hpp"
 #include <BlipKit.h>
@@ -20,6 +21,7 @@ private:
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
+	AudioStreamBlipKitPlayback *playback = nullptr;
 
 protected:
 	static void _bind_methods();
