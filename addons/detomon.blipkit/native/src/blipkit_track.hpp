@@ -22,6 +22,7 @@ private:
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
 	AudioStreamBlipKitPlayback *playback = nullptr;
+	LocalVector<int> divider_ids;
 
 protected:
 	static void _bind_methods();

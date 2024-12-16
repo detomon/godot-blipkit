@@ -705,6 +705,7 @@ void BlipKitTrack::detach() {
 		return;
 	}
 
+	clear_dividers();
 	BKTrackDetach(&track);
 	playback->detach(this);
 	playback = nullptr;
@@ -738,19 +739,37 @@ void BlipKitTrack::reset() {
 	}
 }
 
-
 int BlipKitTrack::add_divider(Callable p_callable, int p_tick_interval) {
+	ERR_FAIL_NULL_V(playback, -1);
+
+	// TODO: Implement.
+
 	return -1;
 }
 
 void BlipKitTrack::remove_divider(int p_id) {
+	ERR_FAIL_NULL(playback);
+
+	// TODO: Implement.
+
+	//p_playback->remove_divider(p_id);
 
 }
 
 void BlipKitTrack::clear_dividers() {
+	ERR_FAIL_NULL(playback);
 
+	AudioStreamBlipKit::lock();
+
+	// TODO: Implement.
+
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::reset_divider(int p_id, int p_tick_interval) {
+	ERR_FAIL_NULL(playback);
 
+	// TODO: Implement.
+
+	//p_playback->reset_divider(p_id, p_tick_interval);
 }

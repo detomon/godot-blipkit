@@ -108,22 +108,6 @@ void AudioStreamBlipKitPlayback::detach(BlipKitTrack *p_track) {
 	tracks.erase(p_track);
 }
 
-void AudioStreamBlipKitPlayback::enable_divider(int p_id, bool p_enable) {
-	AudioStreamBlipKit::lock();
-
-	if (dividers.has(p_id)) {
-		Divider *divider = dividers[p_id];
-
-		if (p_enable) {
-			divider->detach();
-		} else {
-			divider->attach(this);
-		}
-	}
-
-	AudioStreamBlipKit::unlock();
-}
-
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {
 	if (active) {
 		return;
@@ -236,6 +220,22 @@ void AudioStreamBlipKitPlayback::reset_divider(int p_id, int p_tick_interval) {
 
 	AudioStreamBlipKit::lock();
 	dividers[p_id]->reset(p_tick_interval);
+	AudioStreamBlipKit::unlock();
+}
+
+void AudioStreamBlipKitPlayback::enable_divider(int p_id, bool p_enable) {
+	AudioStreamBlipKit::lock();
+
+	if (dividers.has(p_id)) {
+		Divider *divider = dividers[p_id];
+
+		if (p_enable) {
+			divider->detach();
+		} else {
+			divider->attach(this);
+		}
+	}
+
 	AudioStreamBlipKit::unlock();
 }
 
