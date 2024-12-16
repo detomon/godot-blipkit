@@ -54,6 +54,10 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("release"), &BlipKitTrack::release);
 	ClassDB::bind_method(D_METHOD("mute"), &BlipKitTrack::mute);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitTrack::reset);
+	ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &BlipKitTrack::add_divider);
+	ClassDB::bind_method(D_METHOD("remove_divider", "id"), &BlipKitTrack::remove_divider);
+	ClassDB::bind_method(D_METHOD("clear_dividers"), &BlipKitTrack::clear_dividers);
+	ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &BlipKitTrack::reset_divider, DEFVAL(0));
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "waveform"), "set_waveform", "get_waveform");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "duty_cycle"), "set_duty_cycle", "get_duty_cycle");
@@ -192,6 +196,8 @@ BlipKitTrack::BlipKitTrack() {
 }
 
 BlipKitTrack::~BlipKitTrack() {
+	detach();
+
 	AudioStreamBlipKit::lock();
 	BKDispose(&track);
 	AudioStreamBlipKit::unlock();
@@ -674,11 +680,11 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 
 void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 	ERR_FAIL_NULL(p_playback);
-	ERR_FAIL_COND(playback != nullptr);
 
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 	BKContext *context = p_playback->get_context();
 
-	AudioStreamBlipKit::lock();
+	ERR_FAIL_COND(playback != nullptr);
 
 	BKTrackAttach(&track, context);
 	playback = p_playback;
@@ -689,19 +695,21 @@ void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 		set_custom_waveform(custom_waveform);
 	}
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 }
 
 void BlipKitTrack::detach() {
-	ERR_FAIL_COND(!playback);
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 
-	AudioStreamBlipKit::lock();
+	if (!playback) {
+		return;
+	}
 
 	BKTrackDetach(&track);
 	playback->detach(this);
 	playback = nullptr;
 
-	AudioStreamBlipKit::unlock();
+	lock.unlock();
 }
 
 void BlipKitTrack::release() {
@@ -728,4 +736,21 @@ void BlipKitTrack::reset() {
 	if (custom_waveform.is_valid()) {
 		set_custom_waveform(custom_waveform);
 	}
+}
+
+
+int BlipKitTrack::add_divider(Callable p_callable, int p_tick_interval) {
+	return -1;
+}
+
+void BlipKitTrack::remove_divider(int p_id) {
+
+}
+
+void BlipKitTrack::clear_dividers() {
+
+}
+
+void BlipKitTrack::reset_divider(int p_id, int p_tick_interval) {
+
 }

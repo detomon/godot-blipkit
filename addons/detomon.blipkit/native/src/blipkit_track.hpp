@@ -195,6 +195,11 @@ public:
 	void mute();
 
 	void reset();
+
+	int add_divider(Callable p_callable, int p_tick_interval);
+	void remove_divider(int p_id);
+	void clear_dividers();
+	void reset_divider(int p_id, int p_tick_interval = 0);
 };
 
 } // namespace detomon::BlipKit

@@ -51,7 +51,7 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	friend class BlipKitTrack;
 
 private:
-	struct TickFunction {
+	struct Divider {
 	private:
 		BKDivider divider = { 0 };
 		Callable callable;
@@ -59,10 +59,12 @@ private:
 		static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
 
 	public:
-		TickFunction() = default;
-		~TickFunction();
+		Divider() = default;
+		~Divider();
 
-		void initialize(Callable &p_callable, int p_ticks, AudioStreamBlipKitPlayback *p_playback);
+		void initialize(Callable &p_callable, int p_ticks);
+		void attach(AudioStreamBlipKitPlayback *p_playback);
+		void detach();
 		void reset(int p_ticks = 0);
 	};
 
@@ -71,8 +73,8 @@ private:
 	BKContext context;
 	Ref<AudioStreamBlipKit> stream;
 	LocalVector<BlipKitTrack *> tracks;
-	HashMap<int, TickFunction *> tick_functions;
-	static int tick_func_id;
+	HashMap<int, Divider *> dividers;
+	static int divider_id;
 	bool active = false;
 
 protected:
@@ -83,6 +85,7 @@ protected:
 
 	void attach(BlipKitTrack *p_track);
 	void detach(BlipKitTrack *p_track);
+	void enable_divider(int p_id, bool p_enable);
 
 public:
 	AudioStreamBlipKitPlayback();
@@ -95,10 +98,10 @@ public:
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 
-	int add_tick_function(Callable p_callable, int p_tick_interval);
-	void remove_tick_function(int p_id);
-	void clear_tick_functions();
-	void reset_tick_counter(int p_id, int p_tick_interval = 0);
+	int add_divider(Callable p_callable, int p_tick_interval);
+	void remove_divider(int p_id);
+	void clear_dividers();
+	void reset_divider(int p_id, int p_tick_interval = 0);
 };
 
 } // namespace detomon::BlipKit

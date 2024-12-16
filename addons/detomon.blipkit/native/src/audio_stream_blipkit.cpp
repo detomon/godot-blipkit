@@ -47,11 +47,11 @@ int AudioStreamBlipKit::get_clock_rate() {
 	return clock_rate;
 }
 
-int AudioStreamBlipKitPlayback::tick_func_id = 0;
-
 void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 	clock_rate = CLAMP(p_clock_rate, MIN_CLOCK_RATE, MAX_CLOCK_RATE);
 }
+
+int AudioStreamBlipKitPlayback::divider_id = 0;
 
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
@@ -65,7 +65,7 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 
 	AudioStreamBlipKit::lock();
 
-	clear_tick_functions(); // Explicitly clear function to free memory.
+	clear_dividers(); // Explicitly clear functions to free memory.
 	BKDispose(&context);
 
 	for (BlipKitTrack *track : tracks) {
@@ -76,10 +76,10 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("add_tick_function", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_tick_function);
-	ClassDB::bind_method(D_METHOD("remove_tick_function", "id"), &AudioStreamBlipKitPlayback::remove_tick_function);
-	ClassDB::bind_method(D_METHOD("clear_tick_functions"), &AudioStreamBlipKitPlayback::clear_tick_functions);
-	ClassDB::bind_method(D_METHOD("reset_tick_counter", "id", "tick_interval"), &AudioStreamBlipKitPlayback::reset_tick_counter, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_divider);
+	ClassDB::bind_method(D_METHOD("remove_divider", "id"), &AudioStreamBlipKitPlayback::remove_divider);
+	ClassDB::bind_method(D_METHOD("clear_dividers"), &AudioStreamBlipKitPlayback::clear_dividers);
+	ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &AudioStreamBlipKitPlayback::reset_divider, DEFVAL(0));
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -106,6 +106,22 @@ void AudioStreamBlipKitPlayback::attach(BlipKitTrack *p_track) {
 
 void AudioStreamBlipKitPlayback::detach(BlipKitTrack *p_track) {
 	tracks.erase(p_track);
+}
+
+void AudioStreamBlipKitPlayback::enable_divider(int p_id, bool p_enable) {
+	AudioStreamBlipKit::lock();
+
+	if (dividers.has(p_id)) {
+		Divider *divider = dividers[p_id];
+
+		if (p_enable) {
+			divider->detach();
+		} else {
+			divider->attach(this);
+		}
+	}
+
+	AudioStreamBlipKit::unlock();
 }
 
 void AudioStreamBlipKitPlayback::_start(double p_from_pos) {
@@ -176,55 +192,62 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	return out_count;
 }
 
-int AudioStreamBlipKitPlayback::add_tick_function(Callable p_callable, int p_tick_interval) {
+int AudioStreamBlipKitPlayback::add_divider(Callable p_callable, int p_tick_interval) {
 	ERR_FAIL_COND_V(p_tick_interval <= 0, -1);
 
 	AudioStreamBlipKit::lock();
 
-	TickFunction *function = memnew(TickFunction);
-	function->initialize(p_callable, p_tick_interval, this);
+	Divider *divider = memnew(Divider);
+	divider->initialize(p_callable, p_tick_interval);
+	divider->attach(this);
 
-	tick_func_id++;
-	tick_functions[tick_func_id] = function;
+	divider_id++;
+	dividers[divider_id] = divider;
 
 	AudioStreamBlipKit::unlock();
 
-	return tick_func_id;
+	return divider_id;
 }
 
-void AudioStreamBlipKitPlayback::remove_tick_function(int p_id) {
-	ERR_FAIL_COND(!tick_functions.has(p_id));
+void AudioStreamBlipKitPlayback::remove_divider(int p_id) {
+	ERR_FAIL_COND(!dividers.has(p_id));
 
 	AudioStreamBlipKit::lock();
 
-	memdelete(tick_functions[p_id]);
-	tick_functions.erase(p_id);
+	memdelete(dividers[p_id]);
+	dividers.erase(p_id);
 
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::clear_tick_functions() {
+void AudioStreamBlipKitPlayback::clear_dividers() {
 	AudioStreamBlipKit::lock();
 
-	for (KeyValue<int, TickFunction *> &E : tick_functions) {
+	for (KeyValue<int, Divider *> &E : dividers) {
 		memdelete(E.value);
 	}
-	tick_functions.clear();
+	dividers.clear();
 
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::reset_tick_counter(int p_id, int p_tick_interval) {
-	ERR_FAIL_COND(!tick_functions.has(p_id));
+void AudioStreamBlipKitPlayback::reset_divider(int p_id, int p_tick_interval) {
+	ERR_FAIL_COND(!dividers.has(p_id));
 
 	AudioStreamBlipKit::lock();
-	tick_functions[p_id]->reset(p_tick_interval);
+	dividers[p_id]->reset(p_tick_interval);
 	AudioStreamBlipKit::unlock();
 }
 
-BKEnum AudioStreamBlipKitPlayback::TickFunction::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
-	TickFunction *function = static_cast<TickFunction *>(p_user_info);
-	int ticks = function->callable.call(p_info->divider);
+AudioStreamBlipKitPlayback::Divider::~Divider() {
+	AudioStreamBlipKit::lock();
+	BKDispose(&divider);
+	AudioStreamBlipKit::unlock();
+}
+
+BKEnum AudioStreamBlipKitPlayback::Divider::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
+	Divider *divider = static_cast<Divider *>(p_user_info);
+	int ticks = divider->callable.call();
 
 	// Update ticks if callable returned value.
 	if (ticks > 0) {
@@ -234,30 +257,33 @@ BKEnum AudioStreamBlipKitPlayback::TickFunction::divider_callback(BKCallbackInfo
 	return BK_SUCCESS;
 }
 
-void AudioStreamBlipKitPlayback::TickFunction::initialize(Callable &p_callable, int p_ticks, AudioStreamBlipKitPlayback *p_playback) {
-	ERR_FAIL_NULL(p_playback);
-
+void AudioStreamBlipKitPlayback::Divider::initialize(Callable &p_callable, int p_ticks) {
 	callable = p_callable;
 
 	BKCallback callback = { 0 };
 	callback.func = divider_callback;
 	callback.userInfo = (void *)this;
 	BKDividerInit(&divider, p_ticks, &callback);
+}
+
+void AudioStreamBlipKitPlayback::Divider::attach(AudioStreamBlipKitPlayback *p_playback) {
+	ERR_FAIL_NULL(p_playback);
+
+	AudioStreamBlipKit::lock();
 
 	BKContext *context = p_playback->get_context();
-
-	AudioStreamBlipKit::lock();
 	BKContextAttachDivider(context, &divider, BK_CLOCK_TYPE_BEAT);
+
 	AudioStreamBlipKit::unlock();
 }
 
-AudioStreamBlipKitPlayback::TickFunction::~TickFunction() {
+void AudioStreamBlipKitPlayback::Divider::detach() {
 	AudioStreamBlipKit::lock();
-	BKDispose(&divider);
+	BKDividerDetach(&divider);
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::TickFunction::reset(int p_ticks) {
+void AudioStreamBlipKitPlayback::Divider::reset(int p_ticks) {
 	AudioStreamBlipKit::lock();
 
 	BKDividerReset(&divider);

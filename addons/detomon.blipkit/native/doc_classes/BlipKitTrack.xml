@@ -29,11 +29,23 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="add_divider">
+			<return type="int" />
+			<param index="0" name="callable" type="Callable" />
+			<param index="1" name="tick_interval" type="int" />
+			<description>
+			</description>
+		</method>
 		<method name="attach">
 			<return type="void" />
 			<param index="0" name="playback" type="AudioStreamBlipKitPlayback" />
 			<description>
 				Attaches the track to a [AudioStreamBlipKitPlayback] instance.
+			</description>
+		</method>
+		<method name="clear_dividers">
+			<return type="void" />
+			<description>
 			</description>
 		</method>
 		<method name="create_with_waveform" qualifiers="static">
@@ -73,10 +85,23 @@
 				Releases [member note]. When [member instrument] is set, plays the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_RELEASE].
 			</description>
 		</method>
+		<method name="remove_divider">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<description>
+			</description>
+		</method>
 		<method name="reset">
 			<return type="void" />
 			<description>
 				Resets the track properties to the initial values (except [member waveform] and [member master_volume]) and mutes [member note].
+			</description>
+		</method>
+		<method name="reset_divider">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<param index="1" name="tick_interval" type="int" default="0" />
+			<description>
 			</description>
 		</method>
 		<method name="set_tremolo">
