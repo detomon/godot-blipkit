@@ -2,6 +2,7 @@
 
 #include "blipkit_instrument.hpp"
 #include "blipkit_waveform.hpp"
+#include "divider.hpp"
 #include "recursive_spin_lock.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
@@ -49,24 +50,6 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	GDCLASS(AudioStreamBlipKitPlayback, AudioStreamPlayback)
 	friend class AudioStreamBlipKit;
 	friend class BlipKitTrack;
-
-private:
-	struct Divider {
-	private:
-		BKDivider divider = { 0 };
-		Callable callable;
-
-		static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
-
-	public:
-		Divider() = default;
-		~Divider();
-
-		void initialize(Callable &p_callable, int p_ticks);
-		void attach(AudioStreamBlipKitPlayback *p_playback);
-		void detach();
-		void reset(int p_ticks = 0);
-	};
 
 	static const int NUM_CHANNELS = 2;
 

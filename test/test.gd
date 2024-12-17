@@ -20,7 +20,7 @@ var _inactive_tracks: Array[BlipKitTrack] = []
 func _ready() -> void:
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
 
-	playback.call_synced(func ():
+	playback.call_synced(func () -> void:
 		_init_track()
 	)
 

@@ -147,7 +147,7 @@ public:
 	static Ref<BlipKitTrack> create_with_waveform(Waveform p_waveform);
 
 	Waveform get_waveform() const;
-	void set_waveform(BlipKitTrack::Waveform p_waveform);
+	void set_waveform(Waveform p_waveform);
 	int get_duty_cycle() const;
 	void set_duty_cycle(int p_duty_cycle);
 	real_t get_master_volume() const;
