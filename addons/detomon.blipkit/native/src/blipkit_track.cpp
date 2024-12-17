@@ -1,5 +1,6 @@
 #include "blipkit_track.hpp"
 #include "audio_stream_blipkit.hpp"
+#include "divider.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/math.hpp>
@@ -54,11 +55,11 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("release"), &BlipKitTrack::release);
 	ClassDB::bind_method(D_METHOD("mute"), &BlipKitTrack::mute);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitTrack::reset);
-	ClassDB::bind_method(D_METHOD("get_divider_ids"), &BlipKitTrack::get_divider_ids);
-	ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &BlipKitTrack::add_divider);
-	ClassDB::bind_method(D_METHOD("remove_divider", "id"), &BlipKitTrack::remove_divider);
+	ClassDB::bind_method(D_METHOD("get_divider_names"), &BlipKitTrack::get_divider_names);
+	ClassDB::bind_method(D_METHOD("add_divider", "name", "tick_interval", "callable"), &BlipKitTrack::add_divider);
+	ClassDB::bind_method(D_METHOD("remove_divider", "name"), &BlipKitTrack::remove_divider);
 	ClassDB::bind_method(D_METHOD("clear_dividers"), &BlipKitTrack::clear_dividers);
-	ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &BlipKitTrack::reset_divider, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("reset_divider", "name", "tick_interval"), &BlipKitTrack::reset_divider, DEFVAL(0));
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "waveform"), "set_waveform", "get_waveform");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "duty_cycle"), "set_duty_cycle", "get_duty_cycle");
@@ -696,6 +697,10 @@ void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 		set_custom_waveform(custom_waveform);
 	}
 
+	for (DividerItem &divider : dividers) {
+		divider.divider.attach(p_playback);
+	}
+
 	lock.unlock();
 }
 
@@ -706,7 +711,10 @@ void BlipKitTrack::detach() {
 		return;
 	}
 
-	clear_dividers();
+	for (DividerItem &divider : dividers) {
+		divider.divider.detach();
+	}
+
 	BKTrackDetach(&track);
 	playback->detach(this);
 	playback = nullptr;
@@ -740,72 +748,68 @@ void BlipKitTrack::reset() {
 	}
 }
 
-PackedInt32Array BlipKitTrack::get_divider_ids() const {
-	PackedInt32Array ids;
+BlipKitTrack::DividerItem* BlipKitTrack::find_divider(const String &p_name) {
+	const int count = dividers.size();
 
-	AudioStreamBlipKit::lock();
-
-	ids.resize(divider_ids.size());
-	int *ptr = ids.ptrw();
-
-	for (int i = 0; i < divider_ids.size(); i++) {
-		ptr[i] = divider_ids[i];
+	for (int i = 0; i < count; i++) {
+		if (dividers[i].name == p_name) {
+			return &dividers[i];
+		}
 	}
 
-	AudioStreamBlipKit::unlock();
-
-	return ids;
+	return nullptr;
 }
 
-int BlipKitTrack::add_divider(Callable p_callable, int p_tick_interval) {
-	ERR_FAIL_NULL_V(playback, -1);
-
-	AudioStreamBlipKit::lock();
-
-	int divider_id = playback->add_divider(p_callable, p_tick_interval);
-	divider_ids.push_back(divider_id);
-
-	AudioStreamBlipKit::unlock();
-
-	return divider_id;
+bool BlipKitTrack::has_divider(const String &p_name) {
+	return find_divider(p_name) != nullptr;
 }
 
-void BlipKitTrack::remove_divider(int p_id) {
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+PackedStringArray BlipKitTrack::get_divider_names() const {
+	const int count = dividers.size();
+	PackedStringArray names;
+	names.resize(count);
 
-	ERR_FAIL_NULL(playback);
-	ERR_FAIL_COND(!divider_ids.has(p_id));
+	for (int i = 0; i < count; i++) {
+		names[i] = dividers[i].name;
+	}
 
-	AudioStreamBlipKit::lock();
+	return names;
+}
 
-	playback->remove_divider(p_id);
-	divider_ids.erase(p_id);
+void BlipKitTrack::add_divider(const String &p_name, int p_tick_interval, Callable p_callable) {
+	ERR_FAIL_COND(has_divider(p_name));
 
-	lock.unlock();
+	dividers.resize(dividers.size() + 1);
+	DividerItem &divider = dividers[dividers.size() - 1];
+
+	if (playback) {
+		divider.divider.attach(playback);
+	}
+}
+
+void BlipKitTrack::remove_divider(const String &p_name) {
+	const int count = dividers.size();
+
+	for (int i = 0; i < count; i++) {
+		if (dividers[i].name == p_name) {
+			dividers.remove_at(i);
+			break;
+		}
+	}
+
+	ERR_FAIL_MSG(vformat("Divider '%s' is not defined.", p_name));
 }
 
 void BlipKitTrack::clear_dividers() {
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
-
-	ERR_FAIL_NULL(playback);
-
 	AudioStreamBlipKit::lock();
-
-	for (int id : divider_ids) {
-		playback->remove_divider(id);
-	}
-	divider_ids.clear();
-
-	lock.unlock();
+	dividers.clear();
+	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitTrack::reset_divider(int p_id, int p_tick_interval) {
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+void BlipKitTrack::reset_divider(const String &p_name, int p_tick_interval) {
+	DividerItem *divider = find_divider(p_name);
 
-	ERR_FAIL_NULL(playback);
-	ERR_FAIL_COND(!divider_ids.has(p_id));
+	ERR_FAIL_NULL_MSG(divider, vformat("Divider '%s' is not defined.", p_name));
 
-	playback->reset_divider(p_id, p_tick_interval);
-
-	lock.unlock();
+	divider->divider.reset(p_tick_interval);
 }

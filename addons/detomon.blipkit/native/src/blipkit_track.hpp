@@ -7,6 +7,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
+#include <godot_cpp/variant/packed_string_array.hpp>
 
 using namespace godot;
 
@@ -18,11 +19,20 @@ class BlipKitTrack : public RefCounted {
 	GDCLASS(BlipKitTrack, RefCounted)
 
 private:
+	struct DividerItem {
+		String name;
+		Divider divider;
+	};
+
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
 	AudioStreamBlipKitPlayback *playback = nullptr;
 	LocalVector<int> divider_ids;
+	LocalVector<DividerItem> dividers;
+
+	DividerItem* find_divider(const String &p_name);
+	bool has_divider(const String &p_name);
 
 protected:
 	static void _bind_methods();
@@ -197,11 +207,11 @@ public:
 
 	void reset();
 
-	PackedInt32Array get_divider_ids() const;
-	int add_divider(Callable p_callable, int p_tick_interval);
-	void remove_divider(int p_id);
+	PackedStringArray get_divider_names() const;
+	void add_divider(const String &p_name, int p_tick_interval, Callable p_callable);
+	void remove_divider(const String &p_name);
 	void clear_dividers();
-	void reset_divider(int p_id, int p_tick_interval = 0);
+	void reset_divider(const String &p_name, int p_tick_interval = 0);
 };
 
 } // namespace detomon::BlipKit

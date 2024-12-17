@@ -31,12 +31,12 @@
 	</tutorials>
 	<methods>
 		<method name="add_divider">
-			<return type="int" />
-			<param index="0" name="callable" type="Callable" />
+			<return type="void" />
+			<param index="0" name="name" type="String" />
 			<param index="1" name="tick_interval" type="int" />
+			<param index="2" name="callable" type="Callable" />
 			<description>
-				Adds a callback which is called every multiple number of [i]ticks[/i]. [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is called again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is called again after the returned number of ticks. Callbacks are called in the same order as they are added.
-				Returns an ID which can be used as parameter for [method remove_divider] and [method reset_divider].
+				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is called again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is called again after the returned number of ticks. Callbacks are called in the same order as they are added.
 				Callbacks are called from the audio thread. Consider using [method Object.call_deferred] non-addon objects or functions which are expensive to run.
 				[b]Note:[/b] The callback is called for the first time on the next tick.
 				[b]Example:[/b] Add a divider and play a higher note on each call:
@@ -88,10 +88,10 @@
 				This also removes all dividers.
 			</description>
 		</method>
-		<method name="get_divider_ids" qualifiers="const">
-			<return type="PackedInt32Array" />
+		<method name="get_divider_names" qualifiers="const">
+			<return type="PackedStringArray" />
 			<description>
-				Returns all divider IDs.
+				Returns the names of added dividers.
 			</description>
 		</method>
 		<method name="get_tremolo" qualifiers="const">
@@ -126,9 +126,9 @@
 		</method>
 		<method name="remove_divider">
 			<return type="void" />
-			<param index="0" name="id" type="int" />
+			<param index="0" name="name" type="String" />
 			<description>
-				Removes the divider callback with [param id].
+				Removes the divider callback with [param name].
 			</description>
 		</method>
 		<method name="reset">
@@ -139,10 +139,10 @@
 		</method>
 		<method name="reset_divider">
 			<return type="void" />
-			<param index="0" name="id" type="int" />
+			<param index="0" name="name" type="String" />
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
-				Resets the counter of a divider with [param id]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
+				Resets the counter of a divider with [param name]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
 				[b]Note:[/b] The callback is called the first time on the next tick.
 			</description>
 		</method>
