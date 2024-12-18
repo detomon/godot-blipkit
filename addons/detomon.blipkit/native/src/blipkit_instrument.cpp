@@ -109,7 +109,7 @@ bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 }
 
 BlipKitInstrument::BlipKitInstrument() {
-	BKInt result = BKInstrumentInit(&instrument);
+	const BKInt result = BKInstrumentInit(&instrument);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKInstrument: %s.", BKStatusGetName(result)));
 }
 

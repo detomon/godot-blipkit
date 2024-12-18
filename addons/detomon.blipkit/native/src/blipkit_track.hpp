@@ -3,6 +3,7 @@
 #include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_waveform.hpp"
+#include "divider.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
@@ -210,8 +211,8 @@ public:
 	PackedStringArray get_divider_names() const;
 	void add_divider(const StringName &p_name, int p_tick_interval, Callable p_callable);
 	void remove_divider(const StringName &p_name);
-	void clear_dividers();
 	void reset_divider(const StringName &p_name, int p_tick_interval = 0);
+	void clear_dividers();
 };
 
 } // namespace detomon::BlipKit

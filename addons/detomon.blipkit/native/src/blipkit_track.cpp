@@ -229,7 +229,7 @@ real_t BlipKitTrack::get_master_volume() const {
 
 void BlipKitTrack::set_master_volume(real_t p_master_volume) {
 	p_master_volume = CLAMP(p_master_volume, 0.0, 1.0);
-	BKInt value = BKInt(p_master_volume * real_t(BK_MAX_VOLUME));
+	const BKInt value = BKInt(p_master_volume * real_t(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_MASTER_VOLUME, value);
@@ -248,7 +248,7 @@ real_t BlipKitTrack::get_volume() const {
 
 void BlipKitTrack::set_volume(real_t p_volume) {
 	p_volume = CLAMP(p_volume, 0.0, 1.0);
-	BKInt value = BKInt(p_volume * real_t(BK_MAX_VOLUME));
+	const BKInt value = BKInt(p_volume * real_t(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_VOLUME, value);
@@ -437,63 +437,57 @@ void BlipKitTrack::set_phase_wrap(int p_phase_wrap) {
 }
 
 int BlipKitTrack::get_volume_slide() const {
-	BKInt value[1] = { 0 };
+	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
-	BKGetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
+	BKGetAttr(&track, BK_EFFECT_VOLUME_SLIDE, &value);
 	AudioStreamBlipKit::unlock();
 
-	return value[0];
+	return value;
 }
 
 void BlipKitTrack::set_volume_slide(int p_volume_slide) {
-	BKInt value[1] = { p_volume_slide };
-
 	AudioStreamBlipKit::lock();
-	BKSetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
+	BKSetAttr(&track, BK_EFFECT_VOLUME_SLIDE, p_volume_slide);
 	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_panning_slide() const {
-	BKInt value[1] = { 0 };
+	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
-	BKGetPtr(&track, BK_EFFECT_VOLUME_SLIDE, value, sizeof(value));
+	BKGetAttr(&track, BK_EFFECT_VOLUME_SLIDE, &value);
 	AudioStreamBlipKit::unlock();
 
-	return value[0];
+	return value;
 }
 
 void BlipKitTrack::set_panning_slide(int p_panning_slide) {
-	BKInt value[1] = { p_panning_slide };
-
 	AudioStreamBlipKit::lock();
-	BKSetPtr(&track, BK_EFFECT_PANNING_SLIDE, value, sizeof(value));
+	BKSetAttr(&track, BK_EFFECT_PANNING_SLIDE, p_panning_slide);
 	AudioStreamBlipKit::unlock();
 }
 
 int BlipKitTrack::get_portamento() const {
-	BKInt value[1] = { 0 };
+	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
-	BKGetPtr(&track, BK_EFFECT_PORTAMENTO, value, sizeof(value));
+	BKGetAttr(&track, BK_EFFECT_PORTAMENTO, &value);
 	AudioStreamBlipKit::unlock();
 
-	return value[0];
+	return value;
 }
 
 void BlipKitTrack::set_portamento(int p_portamento) {
-	BKInt value[1] = { p_portamento };
-
 	AudioStreamBlipKit::lock();
-	BKSetPtr(&track, BK_EFFECT_PORTAMENTO, value, sizeof(value));
+	BKSetAttr(&track, BK_EFFECT_PORTAMENTO, p_portamento);
 	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 	p_delta = CLAMP(p_delta, 0.0, 1.0);
 	p_slide_ticks = MAX(p_slide_ticks, 0);
-	BKInt delta = BKInt(p_delta * real_t(BK_MAX_VOLUME));
+	const BKInt delta = BKInt(p_delta * real_t(BK_MAX_VOLUME));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
@@ -508,9 +502,9 @@ Dictionary BlipKitTrack::get_tremolo() const {
 	BKGetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
 	AudioStreamBlipKit::unlock();
 
-	int ticks = values[0];
-	real_t delta = real_t(values[1]) / real_t(BK_MAX_VOLUME);
-	int slide_ticks = values[2];
+	const int ticks = values[0];
+	const real_t delta = real_t(values[1]) / real_t(BK_MAX_VOLUME);
+	const int slide_ticks = values[2];
 
 	Dictionary ret;
 	ret[StringName("ticks")] = ticks;
@@ -527,9 +521,9 @@ Dictionary BlipKitTrack::get_vibrato() const {
 	BKGetPtr(&track, BK_EFFECT_VIBRATO, values, sizeof(values));
 	AudioStreamBlipKit::unlock();
 
-	int ticks = values[0];
-	real_t delta = real_t(values[1]) / real_t(BK_FINT20_UNIT);
-	int slide_ticks = values[2];
+	const int ticks = values[0];
+	const real_t delta = real_t(values[1]) / real_t(BK_FINT20_UNIT);
+	const int slide_ticks = values[2];
 
 	Dictionary ret;
 	ret[StringName("ticks")] = ticks;
@@ -542,7 +536,7 @@ Dictionary BlipKitTrack::get_vibrato() const {
 void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
 	p_delta = CLAMP(p_delta, -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE));
 	p_slide_ticks = MAX(p_slide_ticks, 0);
-	BKInt delta = BKInt(p_delta * real_t(BK_FINT20_UNIT));
+	const BKInt delta = BKInt(p_delta * real_t(BK_FINT20_UNIT));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
@@ -588,7 +582,7 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 
 void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
-	int count = MIN(p_arpeggio.size(), BK_MAX_ARPEGGIO);
+	const int count = MIN(p_arpeggio.size(), BK_MAX_ARPEGGIO);
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
@@ -731,8 +725,8 @@ void BlipKitTrack::mute() {
 }
 
 void BlipKitTrack::reset() {
-	real_t master_volume = get_master_volume();
-	Waveform waveform = get_waveform();
+	const real_t master_volume = get_master_volume();
+	const Waveform waveform = get_waveform();
 
 	AudioStreamBlipKit::lock();
 
@@ -811,16 +805,16 @@ void BlipKitTrack::remove_divider(const StringName &p_name) {
 	ERR_FAIL_MSG(vformat("Divider '%s' is not defined.", p_name));
 }
 
-void BlipKitTrack::clear_dividers() {
-	AudioStreamBlipKit::lock();
-	dividers.clear();
-	AudioStreamBlipKit::unlock();
-}
-
 void BlipKitTrack::reset_divider(const StringName &p_name, int p_tick_interval) {
 	DividerItem *divider = find_divider(p_name);
 
 	ERR_FAIL_NULL_MSG(divider, vformat("Divider '%s' is not defined.", p_name));
 
 	divider->divider.reset(p_tick_interval);
+}
+
+void BlipKitTrack::clear_dividers() {
+	AudioStreamBlipKit::lock();
+	dividers.clear();
+	AudioStreamBlipKit::unlock();
 }

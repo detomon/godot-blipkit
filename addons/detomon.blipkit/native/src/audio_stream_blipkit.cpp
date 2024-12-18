@@ -54,8 +54,8 @@ void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 int AudioStreamBlipKitPlayback::divider_id = 0;
 
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
-	int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
-	BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
+	const int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
+	const BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
 
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKContext: %s.", BKStatusGetName(result)));
 }
@@ -90,7 +90,7 @@ String AudioStreamBlipKitPlayback::_to_string() const {
 bool AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream) {
 	stream = p_stream;
 
-	int clock_rate = stream->get_clock_rate();
+	const int clock_rate = stream->get_clock_rate();
 	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / double(clock_rate));
 
 	BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
