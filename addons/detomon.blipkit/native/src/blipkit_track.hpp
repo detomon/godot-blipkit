@@ -31,7 +31,7 @@ private:
 	LocalVector<int> divider_ids;
 	LocalVector<DividerItem> dividers;
 
-	DividerItem* find_divider(const StringName &p_name);
+	DividerItem *find_divider(const StringName &p_name);
 	bool has_divider(const StringName &p_name);
 
 protected:

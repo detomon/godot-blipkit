@@ -20,7 +20,7 @@ public:
 	Divider() = default;
 	~Divider();
 
-	void initialize(Callable &p_callable, int p_ticks);
+	void initialize(int p_ticks, Callable &p_callable);
 	void attach(AudioStreamBlipKitPlayback *p_playback);
 	void detach();
 	void reset(int p_ticks = 0);

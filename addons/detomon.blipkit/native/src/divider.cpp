@@ -22,7 +22,7 @@ BKEnum Divider::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
 	return BK_SUCCESS;
 }
 
-void Divider::initialize(Callable &p_callable, int p_ticks) {
+void Divider::initialize(int p_ticks, Callable &p_callable) {
 	callable = p_callable;
 
 	BKCallback callback = { 0 };

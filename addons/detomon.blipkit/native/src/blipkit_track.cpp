@@ -627,10 +627,10 @@ void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
 
 	instrument = p_instrument;
 
-	if (p_instrument.is_null()) {
-		BKSetPtr(&track, BK_INSTRUMENT, nullptr, 0);
+	if (instrument.is_valid()) {
+		BKSetPtr(&track, BK_INSTRUMENT, instrument->get_instrument(), 0);
 	} else {
-		BKSetPtr(&track, BK_INSTRUMENT, p_instrument->get_instrument(), 0);
+		BKSetPtr(&track, BK_INSTRUMENT, nullptr, 0);
 	}
 
 	AudioStreamBlipKit::unlock();
@@ -748,7 +748,7 @@ void BlipKitTrack::reset() {
 	}
 }
 
-BlipKitTrack::DividerItem* BlipKitTrack::find_divider(const StringName &p_name) {
+BlipKitTrack::DividerItem *BlipKitTrack::find_divider(const StringName &p_name) {
 	const int count = dividers.size();
 
 	for (int i = 0; i < count; i++) {
@@ -781,11 +781,12 @@ void BlipKitTrack::add_divider(const StringName &p_name, int p_tick_interval, Ca
 
 	AudioStreamBlipKit::lock();
 
-	dividers.resize(dividers.size() + 1);
-	DividerItem &divider = dividers[dividers.size() - 1];
+	const int count = dividers.size();
+	dividers.resize(count + 1);
+	DividerItem &divider = dividers[count];
 
 	divider.name = p_name;
-	divider.divider.initialize(p_callable, p_tick_interval);
+	divider.divider.initialize(p_tick_interval, p_callable);
 
 	if (playback) {
 		divider.divider.attach(playback);
@@ -795,10 +796,9 @@ void BlipKitTrack::add_divider(const StringName &p_name, int p_tick_interval, Ca
 }
 
 void BlipKitTrack::remove_divider(const StringName &p_name) {
-	const int count = dividers.size();
-
 	AudioStreamBlipKit::lock();
 
+	const int count = dividers.size();
 	for (int i = 0; i < count; i++) {
 		if (dividers[i].name == p_name) {
 			dividers.remove_at(i);

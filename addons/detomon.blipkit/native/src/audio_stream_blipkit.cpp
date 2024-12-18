@@ -191,7 +191,7 @@ int AudioStreamBlipKitPlayback::add_divider(Callable p_callable, int p_tick_inte
 	AudioStreamBlipKit::lock();
 
 	Divider *divider = memnew(Divider);
-	divider->initialize(p_callable, p_tick_interval);
+	divider->initialize(p_tick_interval, p_callable);
 	divider->attach(this);
 
 	divider_id++;
