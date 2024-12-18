@@ -748,7 +748,7 @@ void BlipKitTrack::reset() {
 	}
 }
 
-BlipKitTrack::DividerItem* BlipKitTrack::find_divider(const String &p_name) {
+BlipKitTrack::DividerItem* BlipKitTrack::find_divider(const StringName &p_name) {
 	const int count = dividers.size();
 
 	for (int i = 0; i < count; i++) {
@@ -760,7 +760,7 @@ BlipKitTrack::DividerItem* BlipKitTrack::find_divider(const String &p_name) {
 	return nullptr;
 }
 
-bool BlipKitTrack::has_divider(const String &p_name) {
+bool BlipKitTrack::has_divider(const StringName &p_name) {
 	return find_divider(p_name) != nullptr;
 }
 
@@ -776,19 +776,28 @@ PackedStringArray BlipKitTrack::get_divider_names() const {
 	return names;
 }
 
-void BlipKitTrack::add_divider(const String &p_name, int p_tick_interval, Callable p_callable) {
+void BlipKitTrack::add_divider(const StringName &p_name, int p_tick_interval, Callable p_callable) {
 	ERR_FAIL_COND(has_divider(p_name));
+
+	AudioStreamBlipKit::lock();
 
 	dividers.resize(dividers.size() + 1);
 	DividerItem &divider = dividers[dividers.size() - 1];
 
+	divider.name = p_name;
+	divider.divider.initialize(p_callable, p_tick_interval);
+
 	if (playback) {
 		divider.divider.attach(playback);
 	}
+
+	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitTrack::remove_divider(const String &p_name) {
+void BlipKitTrack::remove_divider(const StringName &p_name) {
 	const int count = dividers.size();
+
+	AudioStreamBlipKit::lock();
 
 	for (int i = 0; i < count; i++) {
 		if (dividers[i].name == p_name) {
@@ -796,6 +805,8 @@ void BlipKitTrack::remove_divider(const String &p_name) {
 			break;
 		}
 	}
+
+	AudioStreamBlipKit::unlock();
 
 	ERR_FAIL_MSG(vformat("Divider '%s' is not defined.", p_name));
 }
@@ -806,7 +817,7 @@ void BlipKitTrack::clear_dividers() {
 	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitTrack::reset_divider(const String &p_name, int p_tick_interval) {
+void BlipKitTrack::reset_divider(const StringName &p_name, int p_tick_interval) {
 	DividerItem *divider = find_divider(p_name);
 
 	ERR_FAIL_NULL_MSG(divider, vformat("Divider '%s' is not defined.", p_name));

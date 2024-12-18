@@ -9,6 +9,10 @@ var _playing := false
 var _play_index := 0
 var _inactive_tracks: Array[BlipKitTrack] = []
 
+var bass: BlipKitTrack
+var saw: BlipKitTrack
+var lead: BlipKitTrack
+
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 @onready var _visualizer: Node2D = %Visualizer
 #@onready var _visualizer2: Node2D = %Visualizer2
@@ -81,7 +85,7 @@ func _init_track() -> void:
 
 	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
 
-	var saw := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
+	saw = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
 	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
 	#track.master_volume = 0.15
 	saw.portamento = 8
@@ -92,7 +96,7 @@ func _init_track() -> void:
 	saw.instrument = saw_instr
 	#saw.custom_waveform = waveform
 	saw.attach(playback)
-	saw.add_divider(_on_tick.bind(saw), 24)
+	saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 
 	print_debug(saw.get_tremolo())
 
@@ -103,7 +107,7 @@ func _init_track() -> void:
 		saw_instr.get_envelope_sustain_length(BlipKitInstrument.ENVELOPE_PITCH)
 	)
 
-	#var lead := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
+	lead = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
 	##lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
 	#lead.duty_cycle = 2
 	##lead.master_volume = 0.0
@@ -117,7 +121,7 @@ func _init_track() -> void:
 	#lead.attach(playback)
 	#playback.add_divider(_on_tick_2.bind(lead), 24)
 
-	var bass := BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
+	bass = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
 	#bass.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
 	#bass.master_volume = 0.0
 	bass.portamento = 4
@@ -128,9 +132,10 @@ func _init_track() -> void:
 	bass.instrument = bass_instr
 
 	bass.attach(playback)
-	bass.add_divider(_on_tick_3.bind(bass), 24)
+	bass.add_divider(&"beat", 24, _on_tick_3.bind(bass))
+	#playback.add_divider(_on_tick_3.bind(bass), 24)
 
-	print_debug(bass.get_divider_ids())
+	print_debug("dividers: ", bass.get_divider_names())
 
 
 var _index := 0

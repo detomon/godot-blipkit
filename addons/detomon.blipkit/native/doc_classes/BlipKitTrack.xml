@@ -32,7 +32,7 @@
 	<methods>
 		<method name="add_divider">
 			<return type="void" />
-			<param index="0" name="name" type="String" />
+			<param index="0" name="name" type="StringName" />
 			<param index="1" name="tick_interval" type="int" />
 			<param index="2" name="callable" type="Callable" />
 			<description>
@@ -126,7 +126,7 @@
 		</method>
 		<method name="remove_divider">
 			<return type="void" />
-			<param index="0" name="name" type="String" />
+			<param index="0" name="name" type="StringName" />
 			<description>
 				Removes the divider callback with [param name].
 			</description>
@@ -139,7 +139,7 @@
 		</method>
 		<method name="reset_divider">
 			<return type="void" />
-			<param index="0" name="name" type="String" />
+			<param index="0" name="name" type="StringName" />
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
 				Resets the counter of a divider with [param name]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.

@@ -20,7 +20,7 @@ class BlipKitTrack : public RefCounted {
 
 private:
 	struct DividerItem {
-		String name;
+		StringName name;
 		Divider divider;
 	};
 
@@ -31,8 +31,8 @@ private:
 	LocalVector<int> divider_ids;
 	LocalVector<DividerItem> dividers;
 
-	DividerItem* find_divider(const String &p_name);
-	bool has_divider(const String &p_name);
+	DividerItem* find_divider(const StringName &p_name);
+	bool has_divider(const StringName &p_name);
 
 protected:
 	static void _bind_methods();
@@ -208,10 +208,10 @@ public:
 	void reset();
 
 	PackedStringArray get_divider_names() const;
-	void add_divider(const String &p_name, int p_tick_interval, Callable p_callable);
-	void remove_divider(const String &p_name);
+	void add_divider(const StringName &p_name, int p_tick_interval, Callable p_callable);
+	void remove_divider(const StringName &p_name);
 	void clear_dividers();
-	void reset_divider(const String &p_name, int p_tick_interval = 0);
+	void reset_divider(const StringName &p_name, int p_tick_interval = 0);
 };
 
 } // namespace detomon::BlipKit
