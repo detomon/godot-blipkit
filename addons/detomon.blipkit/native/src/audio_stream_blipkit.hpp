@@ -58,6 +58,7 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	LocalVector<BlipKitTrack *> tracks;
 	HashMap<int, Divider *> dividers;
 	static int divider_id;
+	LocalVector<Callable> sync_callables;
 	bool active = false;
 
 protected:
@@ -65,6 +66,8 @@ protected:
 	String _to_string() const;
 
 	bool initialize(Ref<AudioStreamBlipKit> p_stream);
+
+	void call_synced_callables();
 
 	void attach(BlipKitTrack *p_track);
 	void detach(BlipKitTrack *p_track);
@@ -80,7 +83,7 @@ public:
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
 
-	void call_synced(Callable p_callable) const;
+	void call_synced(Callable p_callable);
 
 	int add_divider(Callable p_callable, int p_tick_interval);
 	void remove_divider(int p_id);

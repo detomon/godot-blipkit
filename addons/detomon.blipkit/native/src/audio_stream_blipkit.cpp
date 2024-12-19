@@ -99,6 +99,14 @@ bool AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream) {
 	return true;
 }
 
+void AudioStreamBlipKitPlayback::call_synced_callables() {
+	for (Callable &callable : sync_callables) {
+		callable.call();
+	}
+
+	sync_callables.clear();
+}
+
 void AudioStreamBlipKitPlayback::attach(BlipKitTrack *p_track) {
 	if (!tracks.has(p_track)) {
 		tracks.push_back(p_track);
@@ -123,10 +131,6 @@ void AudioStreamBlipKitPlayback::_stop() {
 	}
 
 	active = false;
-
-	// AudioStreamBlipKit::lock();
-	// BKContextReset(&context);
-	// AudioStreamBlipKit::unlock();
 }
 
 bool AudioStreamBlipKitPlayback::_is_playing() const {
@@ -135,6 +139,10 @@ bool AudioStreamBlipKitPlayback::_is_playing() const {
 
 int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) {
 	ERR_FAIL_COND_V(!active, 0);
+
+	AudioStreamBlipKit::lock();
+	call_synced_callables();
+	AudioStreamBlipKit::unlock();
 
 	int channel_size = 1024;
 	int buffer_size = channel_size * NUM_CHANNELS;
@@ -148,10 +156,8 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 		BKInt chunk_size = MIN(p_frames - out_count, channel_size);
 
 		AudioStreamBlipKit::lock();
-
 		// Generate frames; produces no errors.
 		chunk_size = BKContextGenerate(&context, buffer.ptr(), chunk_size);
-
 		AudioStreamBlipKit::unlock();
 
 		// Nothing was generated.
@@ -177,11 +183,17 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	return out_count;
 }
 
-void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) const {
+void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) {
 	ERR_FAIL_COND(!p_callable.is_valid());
 
 	AudioStreamBlipKit::lock();
-	p_callable.call();
+
+	if (active) {
+		sync_callables.push_back(p_callable);
+	} else {
+		p_callable.call();
+	}
+
 	AudioStreamBlipKit::unlock();
 }
 
