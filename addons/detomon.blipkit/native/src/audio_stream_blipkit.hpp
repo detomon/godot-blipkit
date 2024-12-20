@@ -52,9 +52,11 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	friend class BlipKitTrack;
 
 	static const int NUM_CHANNELS = 2;
+	static const int CHANNEL_SIZE = 1024;
 
 	BKContext context;
 	Ref<AudioStreamBlipKit> stream;
+	LocalVector<BKFrame> buffer;
 	LocalVector<BlipKitTrack *> tracks;
 	HashMap<int, Divider *> dividers;
 	static int divider_id;

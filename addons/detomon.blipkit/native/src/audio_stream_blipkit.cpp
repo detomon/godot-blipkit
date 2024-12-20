@@ -58,6 +58,9 @@ AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	const BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
 
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKContext: %s.", BKStatusGetName(result)));
+
+	const int buffer_size = CHANNEL_SIZE * NUM_CHANNELS;
+	buffer.resize(buffer_size);
 }
 
 AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
@@ -144,20 +147,17 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	call_synced_callables();
 	AudioStreamBlipKit::unlock();
 
-	int channel_size = 1024;
-	int buffer_size = channel_size * NUM_CHANNELS;
 	int out_count = 0;
 
-	thread_local LocalVector<BKFrame> buffer;
-	buffer.resize(buffer_size);
 	AudioFrame *out_buffer = p_buffer;
+	BKFrame *chunk_buffer = buffer.ptr();
 
 	while (out_count < p_frames) {
-		BKInt chunk_size = MIN(p_frames - out_count, channel_size);
+		BKInt chunk_size = MIN(p_frames - out_count, CHANNEL_SIZE);
 
 		AudioStreamBlipKit::lock();
 		// Generate frames; produces no errors.
-		chunk_size = BKContextGenerate(&context, buffer.ptr(), chunk_size);
+		chunk_size = BKContextGenerate(&context, chunk_buffer, chunk_size);
 		AudioStreamBlipKit::unlock();
 
 		// Nothing was generated.

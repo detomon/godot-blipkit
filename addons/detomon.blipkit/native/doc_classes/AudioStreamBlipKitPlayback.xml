@@ -9,7 +9,7 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="call_synced" qualifiers="const">
+		<method name="call_synced">
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
 			<description>
