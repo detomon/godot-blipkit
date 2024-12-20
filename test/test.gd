@@ -89,7 +89,7 @@ func _init_track() -> void:
 	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
 	#track.master_volume = 0.15
 	saw.portamento = 8
-#
+
 	var saw_instr := BlipKitInstrument.new()
 	saw_instr.set_adsr(0, 0, 1.0, 12)
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
@@ -98,7 +98,7 @@ func _init_track() -> void:
 	saw.attach(playback)
 	saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 
-	print_debug(saw.get_tremolo())
+	print_debug.call_deferred(saw.get_tremolo())
 
 	prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
 	prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))
@@ -135,7 +135,7 @@ func _init_track() -> void:
 	bass.add_divider(&"beat", 24, _on_tick_3.bind(bass))
 	#playback.add_divider(_on_tick_3.bind(bass), 24)
 
-	print_debug("dividers: ", bass.get_divider_names())
+	print_debug.call_deferred("dividers: ", bass.get_divider_names())
 
 
 var _index := 0
@@ -207,7 +207,7 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			track.duty_cycle = 4
 			#track.set_tremolo(24, 0.2)
 			track.set_vibrato(12, 0.1)
-			#track.arpeggio = [0, 12]
+			#track.arpeggio = [0, 3, 7]
 			#track.arpeggio_divider = 8
 			track.instrument = INSTRUMENT
 			track.custom_waveform = AAH2

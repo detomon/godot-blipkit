@@ -316,23 +316,23 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 	switch (p_waveform) {
 		case WAVEFORM_SQUARE: {
 			waveform = BK_SQUARE;
-			master_volume = 0.15;
+			master_volume = MASTER_VOLUME_DEFAULT;
 		} break;
 		case WAVEFORM_TRIANGLE: {
 			waveform = BK_TRIANGLE;
-			master_volume = 0.3;
+			master_volume = MASTER_VOLUME_DEFAULT_2;
 		} break;
 		case WAVEFORM_NOISE: {
 			waveform = BK_NOISE;
-			master_volume = 0.15;
+			master_volume = MASTER_VOLUME_DEFAULT;
 		} break;
 		case WAVEFORM_SAWTOOTH: {
 			waveform = BK_SAWTOOTH;
-			master_volume = 0.15;
+			master_volume = MASTER_VOLUME_DEFAULT;
 		} break;
 		case WAVEFORM_SINE: {
 			waveform = BK_SINE;
-			master_volume = 0.3;
+			master_volume = MASTER_VOLUME_DEFAULT_2;
 		} break;
 		default: {
 			ERR_FAIL_MSG(vformat("Cannot set waveform %d directly.", p_waveform));

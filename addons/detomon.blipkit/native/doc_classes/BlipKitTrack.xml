@@ -36,9 +36,10 @@
 			<param index="1" name="tick_interval" type="int" />
 			<param index="2" name="callable" type="Callable" />
 			<description>
-				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. [param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [code]0[/code] is returned, the tick interval is not changed and [param callable] is called again after the same number of ticks. If a value greater than [code]0[/code] is returned, the tick interval is permanently changed and [param callable] is called again after the returned number of ticks. Callbacks are called in the same order as they are added.
-				Callbacks are called from the audio thread. Consider using [method Object.call_deferred] non-addon objects or functions which are expensive to run.
-				[b]Note:[/b] The callback is called for the first time on the next tick.
+				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKitPlayback] (see [method attach]). Callbacks are called in the same order as they are added.
+				[param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callable] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callable] is called next after the returned number of ticks.
+				Callbacks are called from the audio thread, they should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or not time critical.
+				[b]Note:[/b] [param callback] is called for the first time on the next tick.
 				[b]Example:[/b] Add a divider and play a higher note on each call:
 				[codeblocks]
 				[gdscript]
@@ -65,7 +66,7 @@
 			<return type="void" />
 			<param index="0" name="playback" type="AudioStreamBlipKitPlayback" />
 			<description>
-				Attaches the track to an [AudioStreamBlipKitPlayback] instance.
+				Attaches the track to an [AudioStreamBlipKitPlayback] instance and resumes all dividers from their last state.
 			</description>
 		</method>
 		<method name="clear_dividers">
@@ -78,20 +79,19 @@
 			<return type="BlipKitTrack" />
 			<param index="0" name="waveform" type="int" enum="BlipKitTrack.Waveform" />
 			<description>
-				Creates a track with the given [param waveform] and sets [member master_volume] according to [enum Waveform].
+				Creates a [BlipKitTrack] with the given [param waveform] and sets [member master_volume] according to [enum Waveform].
 			</description>
 		</method>
 		<method name="detach">
 			<return type="void" />
 			<description>
-				Detaches the track from its [AudioStreamBlipKitPlayback].
-				This also removes all dividers.
+				Detaches the track from its [AudioStreamBlipKitPlayback] and pauses all dividers.
 			</description>
 		</method>
 		<method name="get_divider_names" qualifiers="const">
 			<return type="PackedStringArray" />
 			<description>
-				Returns the names of added dividers.
+				Returns the names of all added dividers.
 			</description>
 		</method>
 		<method name="get_tremolo" qualifiers="const">
@@ -128,7 +128,7 @@
 			<return type="void" />
 			<param index="0" name="name" type="StringName" />
 			<description>
-				Removes the divider callback with [param name].
+				Removes the divider with [param name].
 			</description>
 		</method>
 		<method name="reset">
@@ -143,7 +143,7 @@
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
 				Resets the counter of a divider with [param name]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
-				[b]Note:[/b] The callback is called the first time on the next tick.
+				[b]Note:[/b] The divider callback is called the first time on the next tick.
 			</description>
 		</method>
 		<method name="set_tremolo">
@@ -152,7 +152,8 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Enables the tremolo effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks]. If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				Enables the tremolo effect. This decreases [member volume] periodically by [param delta] within the given number of [param ticks].
+				If [param slide_ticks] is greater than [code]0[/code], the current [code]ticks[/code] and [code]delta[/code] values are interpolated to the values within the given number of [i]ticks[/i] .
 				If [param ticks] is [code]0[/code], the effect is disabled.
 			</description>
 		</method>
@@ -162,14 +163,22 @@
 			<param index="1" name="delta" type="float" />
 			<param index="2" name="slide_ticks" type="int" default="0" />
 			<description>
-				Enables the vibrato effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks]. If [param slide_ticks] is greater than [code]0[/code], the new effect values are interpolated within the given number of ticks.
+				Enables the vibrato effect. This increases and decreases [member note] periodically by [param delta] within the given number of [param ticks].
+				If [param slide_ticks] is greater than [code]0[/code], the current [code]ticks[/code] and [code]delta[/code] values are interpolated to the values within the given number of [i]ticks[/i] .
 				If [param ticks] is [code]0[/code], the effect is disabled.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="arpeggio" type="PackedFloat32Array" setter="set_arpeggio" getter="get_arpeggio" default="PackedFloat32Array()">
-			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently playing [member note]. The array can have a maximum size of [code]8[/code]. The duration for which each arpeggio note is played is defined with [member arpeggio_divider] which is the number of ticks.
+			Sets the arpeggio sequence consisting of an array of pitch changes relative to the currently playing [member note]. The array can have a maximum size of [code]8[/code] and is truncated if it is larger.
+			The duration for which each arpeggio note is defined with [member arpeggio_divider].
+			[b]Example:[/b] Play a major chord:
+			[codeblocks]
+			[gdscript]
+			track.arpeggio = [0.0, 4.0, 7.0]
+			[/gdscript]
+			[/codeblocks]
 		</member>
 		<member name="arpeggio_divider" type="int" setter="set_arpeggio_divider" getter="get_arpeggio_divider" default="4">
 			Sets the number of [i]ticks[/i] each [member arpeggio] note is played.
@@ -193,8 +202,9 @@
 			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
 		</member>
 		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
-			Sets the note to play. Setting a value greater or equal to [code]0.0[/code] plays the corresponding note. The value can be between [code]0.0[/code] and [code]96.0[/code]. Setting a negative value releases the note.
-			If [member instrument] is set, setting a note plays the attack and sustain part of the envelopes. When releasing the note, plays the release part of the envelopes.
+			Sets the note to play between [code]0.0[/code] (note C on octave [code]0[/code]) and [code]96.0[/code] (note C on octave [code]8[/code]) (see [enum Note]).
+			Setting [constant BlipKitTrack.NOTE_RELEASE] releases the note (see [method release]). Setting [constant BlipKitTrack.NOTE_MUTE] mutes the note (see [method mute]).
+			If [member instrument] is set, setting a note plays the attack and sustain part of the envelopes, whereas releasing the note plays the release part of the envelopes.
 		</member>
 		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">
 			Sets the stereo panning between [code]-1.0[/code] and [code]+1.0[/code]. Negative values pan to the left channel and positive values to the right channel.

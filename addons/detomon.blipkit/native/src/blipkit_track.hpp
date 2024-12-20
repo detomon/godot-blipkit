@@ -25,6 +25,9 @@ private:
 		Divider divider;
 	};
 
+	const real_t MASTER_VOLUME_DEFAULT = 0.15;
+	const real_t MASTER_VOLUME_DEFAULT_2 = 0.3;
+
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
