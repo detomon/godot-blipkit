@@ -254,7 +254,7 @@
 			A triangle wave with 32 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.3[/code].
 		</constant>
 		<constant name="WAVEFORM_NOISE" value="2" enum="Waveform">
-			Noise. Like a square wave but with random low or high amplitudes. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
+			Generates noise using a 16-bit random generator. Looks like a square wave but with random low or high amplitudes. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_SAWTOOTH" value="3" enum="Waveform">
 			A sawtooth wave with 7 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
