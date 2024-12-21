@@ -9,7 +9,7 @@
 		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
 		[codeblocks]
 		[gdscript]
-		# Some audio stream player with an [AudioStreamBlipKit] stream resource.
+		# An audio stream player with an [AudioStreamBlipKit] stream resource.
 		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
 		# Create a track with the default waveform [BlipKitTrack.WAVEFORM_SQUARE].
@@ -17,8 +17,10 @@
 		var track := BlipKitTrack.new()
 
 		func _ready() -&gt; void:
+		    # Make sure the audio player is playing or has autoplay set before retreiving the playback.
+			stream_player.play()
+
 		    # Get the playback instance.
-		    # Make sure the audio player is playing or has autoplay set before retreiving it.
 		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
 
 		    # Attach the track.
@@ -248,19 +250,19 @@
 	</members>
 	<constants>
 		<constant name="WAVEFORM_SQUARE" value="0" enum="Waveform">
-			A square wave with 16 phases. The duty cycle (number of high amplitudes) can be set with [member duty_cycle]. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
+			A square wave with 16 phases. The duty cycle (number of high amplitudes) can be set with [member duty_cycle]. This waveform has a default [member master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_TRIANGLE" value="1" enum="Waveform">
-			A triangle wave with 32 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.3[/code].
+			A triangle wave with 32 phases. This waveform has a default [member master_volume] of [code]0.3[/code].
 		</constant>
 		<constant name="WAVEFORM_NOISE" value="2" enum="Waveform">
-			Generates noise using a 16-bit random generator. Looks like a square wave but with random low or high amplitudes. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
+			Generates noise using a 16-bit random generator. Looks like a square wave but with random low or high amplitudes. This waveform has a default [member master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_SAWTOOTH" value="3" enum="Waveform">
-			A sawtooth wave with 7 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.15[/code].
+			A sawtooth wave with 7 phases. This waveform has a default [member master_volume] of [code]0.15[/code].
 		</constant>
 		<constant name="WAVEFORM_SINE" value="4" enum="Waveform">
-			A sine wave with 32 phases. This waveform has a default [member BlipKitTrack.master_volume] of [code]0.3[/code].
+			A sine wave with 32 phases. This waveform has a default [member master_volume] of [code]0.3[/code].
 		</constant>
 		<constant name="WAVEFORM_CUSTOM" value="5" enum="Waveform">
 			Set when a [member custom_waveform] is set. Cannot be set directly.
