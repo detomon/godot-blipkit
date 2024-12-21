@@ -4,6 +4,8 @@ on:
 
 env:
   LIBNAME: godot-blipkit
+  BRANCH: next
+  AUTHOR: 'detomon <simon@monoxid.ch>'
 
 jobs:
   build:
@@ -260,9 +262,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ env.BRANCH }}
           submodules: true
 
-# Lint
+      # # Lint
       #- name: Setup clang-format
       #  shell: bash
       #  run: |
@@ -272,7 +275,7 @@ jobs:
       #  run: |
       #    clang-format src/** --dry-run --Werror
 
-# Build
+      # Build
       - name: 🔗 GDExtension Debug Build
         uses: ./.github/actions/build
         with:
@@ -281,7 +284,7 @@ jobs:
           float-precision: ${{ matrix.float-precision }}
           build-target-type: ${{ matrix.target-type }}
 
-# Sign
+      # Sign
       - name: Mac/iOS Sign
         # Disable sign if secrets are not set
         if: ${{ matrix.platform == 'macos' && env.APPLE_CERT_BASE64 }}
@@ -298,27 +301,77 @@ jobs:
           APPLE_DEV_TEAM_ID: ${{ secrets.APPLE_DEV_TEAM_ID }}
           APPLE_DEV_APP_ID: ${{ secrets.APPLE_DEV_APP_ID }}
 
+      # Windows.
       - name: Windows - Delete compilation files
         if: ${{ matrix.platform == 'windows' }}
         shell: pwsh
         run: |
           Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
-      - name: Upload Artifact
+
+      # Upload artifact.
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: godot-blipkit-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
             ${{ github.workspace }}/bin/**
 
-  # Merges all the build artifacts together into a single godot-blipkit artifact.
-  # If you comment out this step, all the builds will be uploaded individually.
-  merge:
-    runs-on: ubuntu-20.04
+  # # Merges all the build artifacts together into a single godot-blipkit artifact.
+  # # If you comment out this step, all the builds will be uploaded individually.
+  # merge:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     - name: Merge Artifacts
+  #       uses: actions/upload-artifact/merge@v4
+  #       with:
+  #         name: godot-blipkit
+  #         pattern: godot-blipkit-*
+  #         delete-merged: true
+
+  # Make pull request.
+  pull-request:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
     needs: build
+    env:
+      bin-path: ./addons/detomon.blipkit/native/bin
+
     steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          name: godot-blipkit
+          ref: ${{ env.BRANCH }}
+          submodules: false
+
+      - name: Store the revision
+        id: revision
+        run: |
+          hash=$(git rev-parse HEAD)
+          hash_short=$(git rev-parse --short HEAD)
+          echo "rev_hash=$hash" >> $GITHUB_OUTPUT
+          echo "rev_hash_short=$hash_short" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
           pattern: godot-blipkit-*
-          delete-merged: true
+          path: ./addons/detomon.blipkit/native/bin
+          merge-multiple: true
+
+      - name: Submit pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            Update binaries from branch ${{ env.BRANCH }} (${{ steps.revision.outputs.rev_hash_short }})
+          branch: build/bin-${{ steps.revision.outputs.rev_hash_short }}
+          add-paths: '${{ env.bin-path }}'
+          delete-branch: true
+          author: '${{ env.AUTHOR }}'
+          committer: '${{ env.AUTHOR }}'
+          title: 'Update binaries from branch ${{ env.BRANCH }} (${{ steps.revision.outputs.rev_hash_short }})'
+          body: |
+            Update binaries from https://github.com/detomon/godot-blipkit/commit/${{ steps.revision.outputs.rev_hash }} (`${{ env.BRANCH }}`).
+          labels: 'enhancement'

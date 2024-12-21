@@ -18,7 +18,7 @@
 
 		func _ready() -&gt; void:
 		    # Make sure the audio player is playing or has autoplay set before retreiving the playback.
-			stream_player.play()
+		    stream_player.play()
 
 		    # Get the playback instance.
 		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
@@ -117,13 +117,13 @@
 		<method name="mute">
 			<return type="void" />
 			<description>
-				Mutes [member note] immediately without playing the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_MUTE].
+				Mutes [member note] immediately without playing the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant NOTE_MUTE].
 			</description>
 		</method>
 		<method name="release">
 			<return type="void" />
 			<description>
-				Releases [member note]. When [member instrument] is set, plays the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant BlipKitTrack.NOTE_RELEASE].
+				Releases [member note]. When [member instrument] is set, plays the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant NOTE_RELEASE].
 			</description>
 		</method>
 		<method name="remove_divider">
@@ -186,7 +186,7 @@
 			Sets the number of [i]ticks[/i] each [member arpeggio] note is played.
 		</member>
 		<member name="custom_waveform" type="BlipKitWaveform" setter="set_custom_waveform" getter="get_custom_waveform">
-			Sets a custom waveform. If set, [member BlipKitTrack.waveform] returns [constant BlipKitTrack.WAVEFORM_CUSTOM]. If set to [code]null[/code] [member waveform] is reset to [constant BlipKitTrack.WAVEFORM_SQUARE].
+			Sets a custom waveform. If set, [member waveform] returns [constant WAVEFORM_CUSTOM]. If set to [code]null[/code] [member waveform] is reset to [constant WAVEFORM_SQUARE].
 		</member>
 		<member name="duty_cycle" type="int" setter="set_duty_cycle" getter="get_duty_cycle" default="4">
 			Sets the duty cycle when [member waveform] is set to [constant WAVEFORM_SQUARE]. This defines the number of high amplitudes and is a value between [code]1[/code] and [code]15[/code]. Has no effect on other waveforms.
@@ -205,7 +205,7 @@
 		</member>
 		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
 			Sets the note to play between [code]0.0[/code] (note C on octave [code]0[/code]) and [code]96.0[/code] (note C on octave [code]8[/code]) (see [enum Note]).
-			Setting [constant BlipKitTrack.NOTE_RELEASE] releases the note (see [method release]). Setting [constant BlipKitTrack.NOTE_MUTE] mutes the note (see [method mute]).
+			Setting [constant NOTE_RELEASE] releases the note (see [method release]). Setting [constant NOTE_MUTE] mutes the note (see [method mute]).
 			If [member instrument] is set, setting a note plays the attack and sustain part of the envelopes, whereas releasing the note plays the release part of the envelopes.
 		</member>
 		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">
@@ -245,7 +245,7 @@
 			Sets the number of [i]ticks[/i] in which [member volume] changes to a new value.
 		</member>
 		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
-			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [constant BlipKitTrack.WAVFORM_SQUARE].
+			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [constant WAVFORM_SQUARE].
 		</member>
 	</members>
 	<constants>
