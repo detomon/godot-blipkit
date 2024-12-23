@@ -1,11 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://cmkk4inee4owm"]
+[gd_scene load_steps=9 format=3 uid="uid://cmkk4inee4owm"]
 
 [ext_resource type="Script" uid="uid://dt5v1c03xagbb" path="res://test/test.gd" id="1_c5qdp"]
 [ext_resource type="PackedScene" uid="uid://ds37q704hu4oh" path="res://visualizer/ring/ring.tscn" id="2_r32xf"]
 [ext_resource type="PackedScene" uid="uid://c4xwfm0ygatv7" path="res://visualizer/rings/rings.tscn" id="3_vfjjs"]
 [ext_resource type="Script" uid="uid://0fgb5wdim45h" path="res://addons/detomon.blipkit/classes/midi_input.gd" id="3_y6xj0"]
+[ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://visualizer/oscilloscope/oscilloscope.tscn" id="5_tbfq4"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbfq4"]
+bg_color = Color(0.0627451, 1, 0.717647, 0.0117647)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.304801, 0.599544, 5.77569e-07, 1)
 
 [sub_resource type="Environment" id="Environment_vjgep"]
 background_mode = 3
@@ -41,6 +50,7 @@ wait_time = 2.0
 
 [node name="Visualizer" parent="." instance=ExtResource("2_r32xf")]
 unique_name_in_owner = true
+visible = false
 
 [node name="Visualizer2" parent="." instance=ExtResource("3_vfjjs")]
 unique_name_in_owner = true
@@ -77,6 +87,25 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tbfq4")
+
+[node name="Oscilloscope" parent="MarginContainer2/PanelContainer" instance=ExtResource("5_tbfq4")]
+layout_mode = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_vjgep")
