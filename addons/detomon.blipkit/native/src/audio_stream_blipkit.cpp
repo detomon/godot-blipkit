@@ -12,6 +12,7 @@ RecursiveSpinLock AudioStreamBlipKit::spin_lock;
 void AudioStreamBlipKit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
 	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
+	ClassDB::bind_method(D_METHOD("call_synced", "callback"), &AudioStreamBlipKit::call_synced);
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", PROPERTY_HINT_RANGE, vformat("%d,%d,1", MIN_CLOCK_RATE, MAX_CLOCK_RATE)), "set_clock_rate", "get_clock_rate");
 }
@@ -20,18 +21,22 @@ String AudioStreamBlipKit::_to_string() const {
 	return vformat("AudioStreamBlipKit: clock_rate=%d", clock_rate);
 }
 
-Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
-	Ref<AudioStreamBlipKitPlayback> &playback_ref = const_cast<AudioStreamBlipKit *>(this)->playback;
+Ref<AudioStreamBlipKitPlayback> AudioStreamBlipKit::get_playback() {
+	if (playback.is_valid()) {
+		return playback;
+	}
 
-	if (playback_ref.is_null()) {
-		playback_ref.instantiate();
+	playback.instantiate();
 
-		if (!playback_ref->initialize(clock_rate)) {
-			return nullptr;
-		}
+	if (!playback->initialize(clock_rate)) {
+		ERR_FAIL_V_MSG(playback, "Could not initialize AudioStreamBlipKitPlayback.");
 	}
 
 	return playback;
+}
+
+Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
+	return const_cast<AudioStreamBlipKit *>(this)->get_playback();
 }
 
 String AudioStreamBlipKit::_get_stream_name() const {
@@ -56,6 +61,20 @@ void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 	if (playback.is_valid()) {
 		playback->set_clock_rate(clock_rate);
 	}
+}
+
+void AudioStreamBlipKit::attach(BlipKitTrack *p_track) {
+	get_playback()->attach(p_track);
+}
+
+void AudioStreamBlipKit::detach(BlipKitTrack *p_track) {
+	get_playback()->detach(p_track);
+}
+
+void AudioStreamBlipKit::call_synced(Callable p_callable) {
+	ERR_FAIL_COND(!p_callable.is_valid());
+
+	get_playback()->call_synced(p_callable);
 }
 
 int AudioStreamBlipKitPlayback::divider_id = 0;
@@ -86,11 +105,6 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 }
 
 void AudioStreamBlipKitPlayback::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("call_synced", "callback"), &AudioStreamBlipKitPlayback::call_synced);
-	// ClassDB::bind_method(D_METHOD("add_divider", "callable", "tick_interval"), &AudioStreamBlipKitPlayback::add_divider);
-	// ClassDB::bind_method(D_METHOD("remove_divider", "id"), &AudioStreamBlipKitPlayback::remove_divider);
-	// ClassDB::bind_method(D_METHOD("clear_dividers"), &AudioStreamBlipKitPlayback::clear_dividers);
-	// ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &AudioStreamBlipKitPlayback::reset_divider, DEFVAL(0));
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
@@ -117,6 +131,20 @@ void AudioStreamBlipKitPlayback::set_clock_rate(int p_clock_rate) {
 
 int AudioStreamBlipKitPlayback::get_clock_rate() const {
 	return clock_rate;
+}
+
+void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) {
+	ERR_FAIL_COND(!p_callable.is_valid());
+
+	AudioStreamBlipKit::lock();
+
+	if (active) {
+		sync_callables.push_back(p_callable);
+	} else {
+		p_callable.call();
+	}
+
+	AudioStreamBlipKit::unlock();
 }
 
 void AudioStreamBlipKitPlayback::call_synced_callables() {
@@ -158,7 +186,9 @@ bool AudioStreamBlipKitPlayback::_is_playing() const {
 }
 
 int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) {
-	ERR_FAIL_COND_V(!active, 0);
+	if (!active) {
+		return 0;
+	}
 
 	AudioStreamBlipKit::lock();
 	call_synced_callables();
@@ -198,20 +228,6 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	}
 
 	return out_count;
-}
-
-void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) {
-	ERR_FAIL_COND(!p_callable.is_valid());
-
-	AudioStreamBlipKit::lock();
-
-	if (active) {
-		sync_callables.push_back(p_callable);
-	} else {
-		p_callable.call();
-	}
-
-	AudioStreamBlipKit::unlock();
 }
 
 int AudioStreamBlipKitPlayback::add_divider(Callable p_callable, int p_tick_interval) {

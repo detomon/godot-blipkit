@@ -203,7 +203,7 @@ public:
 	Ref<BlipKitWaveform> get_custom_waveform();
 	void set_custom_waveform(Ref<BlipKitWaveform> p_waveform);
 
-	void attach(AudioStreamBlipKitPlayback *p_playback);
+	void attach(AudioStreamBlipKit *p_stream);
 	void detach();
 
 	void release();

@@ -213,8 +213,8 @@ func _on_play_button_button_down() -> void:
 	if not _test_audio.playing:
 		_test_audio.play()
 
-	var playback: AudioStreamBlipKitPlayback = _test_audio.get_stream_playback()
-	_track.attach(playback)
+	var stream: AudioStreamBlipKit = _test_audio.stream
+	_track.attach(stream)
 	_track.instrument = _instrument
 	_track.custom_waveform = waveform
 	_track.note = BlipKitTrack.NOTE_C_2

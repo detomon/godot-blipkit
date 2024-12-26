@@ -674,16 +674,17 @@ void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
 	}
 }
 
-void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
-	ERR_FAIL_NULL(p_playback);
+void BlipKitTrack::attach(AudioStreamBlipKit *p_stream) {
+	ERR_FAIL_NULL(p_stream);
+
+	AudioStreamBlipKitPlayback *stream_playback = p_stream->get_playback().ptr();
+	ERR_FAIL_NULL(stream_playback);
 
 	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
-	BKContext *context = p_playback->get_context();
-
-	ERR_FAIL_COND(playback != nullptr);
+	BKContext *context = stream_playback->get_context();
 
 	BKTrackAttach(&track, context);
-	playback = p_playback;
+	playback = stream_playback;
 	playback->attach(this);
 
 	// Custom waveform needs to be set again after attaching.
@@ -692,7 +693,7 @@ void BlipKitTrack::attach(AudioStreamBlipKitPlayback *p_playback) {
 	}
 
 	for (DividerItem &divider : dividers) {
-		divider.divider.attach(p_playback);
+		divider.divider.attach(playback);
 	}
 
 	lock.unlock();

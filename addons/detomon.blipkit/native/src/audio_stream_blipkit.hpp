@@ -40,8 +40,15 @@ public:
 	double _get_length() const override;
 	bool _is_monophonic() const override;
 
+	Ref<AudioStreamBlipKitPlayback> get_playback();
+
 	int get_clock_rate() const;
 	void set_clock_rate(int p_clock_rate);
+
+	void attach(BlipKitTrack *p_track);
+	void detach(BlipKitTrack *p_track);
+
+	void call_synced(Callable p_callable);
 
 	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
 	_FORCE_INLINE_ static void unlock() { spin_lock.unlock(); }
@@ -60,8 +67,8 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	LocalVector<BKFrame> buffer;
 	LocalVector<BlipKitTrack *> tracks;
 	HashMap<int, Divider *> dividers;
-	static int divider_id;
 	LocalVector<Callable> sync_callables;
+	static int divider_id;
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	bool active = false;
 
@@ -73,6 +80,7 @@ protected:
 	int get_clock_rate() const;
 	void set_clock_rate(int p_clock_rate);
 
+	void call_synced(Callable p_callable);
 	void call_synced_callables();
 
 	void attach(BlipKitTrack *p_track);
@@ -88,8 +96,6 @@ public:
 	void _stop() override;
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
-
-	void call_synced(Callable p_callable);
 
 	int add_divider(Callable p_callable, int p_tick_interval);
 	void remove_divider(int p_id);

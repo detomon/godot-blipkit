@@ -9,6 +9,15 @@
 	<tutorials>
 		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
 	</tutorials>
+	<methods>
+		<method name="call_synced">
+			<return type="void" />
+			<param index="0" name="callback" type="Callable" />
+			<description>
+				Calls the callback synced to the audio thread. This can be used to make modification on the same time.
+			</description>
+		</method>
+	</methods>
 	<members>
 		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
 			Sets the master clock's frequency as number of ticks per second. This influences the speed of effects and instrument envelopes in [BlipKitTrack], and tick functions in [AudioStreamBlipKitPlayback].

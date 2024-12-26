@@ -22,9 +22,9 @@ var lead: BlipKitTrack
 
 
 func _ready() -> void:
-	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+	var stream: AudioStreamBlipKit = _audio_stream_player.stream
 
-	playback.call_synced(func () -> void:
+	stream.call_synced(func () -> void:
 		_init_track()
 	)
 
@@ -83,7 +83,7 @@ func _init_track() -> void:
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
 
-	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
+	var stream: AudioStreamBlipKit = _audio_stream_player.stream
 
 	saw = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
 	#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
@@ -95,7 +95,7 @@ func _init_track() -> void:
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
 	#saw.custom_waveform = waveform
-	saw.attach(playback)
+	saw.attach(stream)
 	saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 
 	print_debug.call_deferred(saw.get_tremolo())
@@ -131,7 +131,7 @@ func _init_track() -> void:
 	bass_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [0, 8], [24, 0], 1, 1)
 	bass.instrument = bass_instr
 
-	bass.attach(playback)
+	bass.attach(stream)
 	bass.add_divider(&"beat", 24, _on_tick_3.bind(bass))
 	#playback.add_divider(_on_tick_3.bind(bass), 24)
 
@@ -193,8 +193,8 @@ func _on_tick_3(track: BlipKitTrack) -> void:
 
 
 func _attach(track: BlipKitTrack) -> void:
-	var playback: AudioStreamBlipKitPlayback = _audio_stream_player.get_stream_playback()
-	track.attach(playback)
+	var stream: AudioStreamBlipKit = _audio_stream_player.stream
+	track.attach(stream)
 
 
 func _on_midi_input_notes_changes(notes: Dictionary) -> void:
