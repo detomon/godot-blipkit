@@ -21,11 +21,14 @@ String AudioStreamBlipKit::_to_string() const {
 }
 
 Ref<AudioStreamPlayback> AudioStreamBlipKit::_instantiate_playback() const {
-	Ref<AudioStreamBlipKitPlayback> playback;
-	playback.instantiate();
+	Ref<AudioStreamBlipKitPlayback> &playback_ref = const_cast<AudioStreamBlipKit *>(this)->playback;
 
-	if (!playback->initialize(Ref<AudioStreamBlipKit>(this))) {
-		return nullptr;
+	if (playback_ref.is_null()) {
+		playback_ref.instantiate();
+
+		if (!playback_ref->initialize(clock_rate)) {
+			return nullptr;
+		}
 	}
 
 	return playback;
@@ -43,12 +46,16 @@ bool AudioStreamBlipKit::_is_monophonic() const {
 	return true;
 }
 
-int AudioStreamBlipKit::get_clock_rate() {
+int AudioStreamBlipKit::get_clock_rate() const {
 	return clock_rate;
 }
 
 void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
 	clock_rate = CLAMP(p_clock_rate, MIN_CLOCK_RATE, MAX_CLOCK_RATE);
+
+	if (playback.is_valid()) {
+		playback->set_clock_rate(clock_rate);
+	}
 }
 
 int AudioStreamBlipKitPlayback::divider_id = 0;
@@ -90,16 +97,26 @@ String AudioStreamBlipKitPlayback::_to_string() const {
 	return "AudioStreamBlipKitPlayback";
 }
 
-bool AudioStreamBlipKitPlayback::initialize(Ref<AudioStreamBlipKit> p_stream) {
-	stream = p_stream;
-
-	const int clock_rate = stream->get_clock_rate();
-	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / double(clock_rate));
-
-	BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
-	ERR_FAIL_COND_V_MSG(result != BK_SUCCESS, false, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
+bool AudioStreamBlipKitPlayback::initialize(int p_clock_rate) {
+	set_clock_rate(p_clock_rate);
 
 	return true;
+}
+
+void AudioStreamBlipKitPlayback::set_clock_rate(int p_clock_rate) {
+	clock_rate = CLAMP(p_clock_rate, AudioStreamBlipKit::MIN_CLOCK_RATE, AudioStreamBlipKit::MAX_CLOCK_RATE);
+
+	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / double(p_clock_rate));
+
+	AudioStreamBlipKit::lock();
+	BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
+	AudioStreamBlipKit::unlock();
+
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
+}
+
+int AudioStreamBlipKitPlayback::get_clock_rate() const {
+	return clock_rate;
 }
 
 void AudioStreamBlipKitPlayback::call_synced_callables() {

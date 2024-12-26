@@ -19,12 +19,14 @@ class BlipKitTrack;
 
 class AudioStreamBlipKit : public AudioStream {
 	GDCLASS(AudioStreamBlipKit, AudioStream);
+	friend class AudioStreamBlipKitPlayback;
 
 private:
 	static const int MIN_CLOCK_RATE = 1;
 	static const int MAX_CLOCK_RATE = 1200;
 
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
+	Ref<AudioStreamBlipKitPlayback> playback;
 	static RecursiveSpinLock spin_lock;
 
 protected:
@@ -38,7 +40,7 @@ public:
 	double _get_length() const override;
 	bool _is_monophonic() const override;
 
-	int get_clock_rate();
+	int get_clock_rate() const;
 	void set_clock_rate(int p_clock_rate);
 
 	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
@@ -55,19 +57,21 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	static const int CHANNEL_SIZE = 1024;
 
 	BKContext context;
-	Ref<AudioStreamBlipKit> stream;
 	LocalVector<BKFrame> buffer;
 	LocalVector<BlipKitTrack *> tracks;
 	HashMap<int, Divider *> dividers;
 	static int divider_id;
 	LocalVector<Callable> sync_callables;
+	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	bool active = false;
 
 protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	bool initialize(Ref<AudioStreamBlipKit> p_stream);
+	bool initialize(int p_clock_rate);
+	int get_clock_rate() const;
+	void set_clock_rate(int p_clock_rate);
 
 	void call_synced_callables();
 
