@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AudioStreamBlipKit" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		An audio stream used to configure a [AudioStreamBlipKitPlayback].
+		An audio stream used to attach and play audio generated from [BlipKitTrack]s.
 	</brief_description>
 	<description>
-		See the description of [AudioStreamBlipKitPlayback] on how to attach [BlipKitTrack]s.
+		[b]Note:[/b] This resource uses the same [AudioStreamBlipKitPlayback] instance between playbacks.
 	</description>
 	<tutorials>
 		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
@@ -14,13 +14,13 @@
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
 			<description>
-				Calls the callback synced to the audio thread. This can be used to make modification on the same time.
+				Calls the callback synced to the audio thread. This can be used to ensure that multiple modifications are executed on the same time.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
-			Sets the master clock's frequency as number of ticks per second. This influences the speed of effects and instrument envelopes in [BlipKitTrack], and tick functions in [AudioStreamBlipKitPlayback].
+			Sets the master clock's frequency as number of [i]ticks[/i] per second. This influences the speed of effects, instrument envelopes, and dividers.
 		</member>
 	</members>
 </class>

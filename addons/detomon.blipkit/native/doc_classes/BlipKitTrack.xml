@@ -5,26 +5,23 @@
 	</brief_description>
 	<description>
 		This class generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe.
-		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKitPlayback] and all dividers are removed.
-		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKitPlayback]:
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKit] and all dividers are removed.
+		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKit]:
 		[codeblocks]
 		[gdscript]
-		# An audio stream player with an [AudioStreamBlipKit] stream resource.
+		# An audio stream player with an [AudioStreamBlipKit] resource.
 		@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
 		# Create a track with the default waveform [BlipKitTrack.WAVEFORM_SQUARE].
-		# Keep this object around.
+		# Keep this variable.
 		var track := BlipKitTrack.new()
 
 		func _ready() -&gt; void:
-		    # Make sure the audio player is playing or has autoplay set before retreiving the playback.
-		    stream_player.play()
+		    # Get the audio stream.
+		    var stream: AudioStreamBlipKit = stream_player.stream
 
-		    # Get the playback instance.
-		    var playback: AudioStreamBlipKitPlayback = stream_player.get_stream_playback()
-
-		    # Attach the track.
-		    track.attach(playback)
+		    # Attach the track to the stream.
+		    track.attach(stream)
 		[/gdscript]
 		[/codeblocks]
 	</description>
@@ -38,7 +35,7 @@
 			<param index="1" name="tick_interval" type="int" />
 			<param index="2" name="callable" type="Callable" />
 			<description>
-				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKitPlayback] (see [method attach]). Callbacks are called in the same order as they are added.
+				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
 				[param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callable] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callable] is called next after the returned number of ticks.
 				Callbacks are called from the audio thread, they should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or not time critical.
 				[b]Note:[/b] [param callback] is called for the first time on the next tick.
@@ -68,7 +65,7 @@
 			<return type="void" />
 			<param index="0" name="playback" type="AudioStreamBlipKit" />
 			<description>
-				Attaches the track to an [AudioStreamBlipKitPlayback] instance and resumes all dividers from their last state.
+				Attaches the track to an [AudioStreamBlipKit] and resumes all dividers from their last state.
 			</description>
 		</method>
 		<method name="clear_dividers">
@@ -87,7 +84,7 @@
 		<method name="detach">
 			<return type="void" />
 			<description>
-				Detaches the track from its [AudioStreamBlipKitPlayback] and pauses all dividers.
+				Detaches the track from its [AudioStreamBlipKit] and pauses all dividers.
 			</description>
 		</method>
 		<method name="get_divider_names" qualifiers="const">
