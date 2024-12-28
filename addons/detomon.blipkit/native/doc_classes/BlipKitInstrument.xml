@@ -31,7 +31,7 @@
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
 			<description>
 				Returns the steps for the envelope with [param type].
-				Returns an empty array if the envelope with [param type] is not set or has no steps.
+				Returns an empty array if the envelope is not set or has no steps.
 			</description>
 		</method>
 		<method name="get_envelope_sustain_length" qualifiers="const">
@@ -55,14 +55,14 @@
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
 			<description>
 				Returns the values for the envelope with [param type].
-				Returns an empty array if the envelope with [param type] is not set.
+				Returns an empty array if the envelope is not set.
 			</description>
 		</method>
 		<method name="has_envelope" qualifiers="const">
 			<return type="bool" />
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />
 			<description>
-				Returns [code]true[/code] if an envelope with [param type] was set.
+				Returns [code]true[/code] if the envelope with [param type] was set.
 			</description>
 		</method>
 		<method name="set_adsr">
@@ -72,11 +72,11 @@
 			<param index="2" name="sustain" type="float" />
 			<param index="3" name="release" type="int" />
 			<description>
-				Initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope. This first raises the volume to [code]1.0[/code] within [param attack] ticks, then lowers it to [param sustain] within [param decay] ticks. This value is kept until the note is released, after which the volume is lowered to [code]0.0[/code] within [param release] ticks.
+				Initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope. This first raises the volume to [code]1.0[/code] within [param attack] [i]ticks[/i], then lowers it to [param sustain] within [param decay] [i]ticks[/i]. This value is kept until the note is released, after which the volume is lowered to [code]0.0[/code] within [param release] [i]ticks[/i].
 				This corresponds to the following call:
 				[codeblocks]
 				[gdscript]
-				instrument.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME,
+				set_envelope(BlipKitInstrument.ENVELOPE_VOLUME,
 				    [attack, decay, 240, release],
 				    [1.0, sustain, sustain, 0.0],
 				    2, 1)
@@ -93,7 +93,7 @@
 			<param index="4" name="sustain_length" type="int" />
 			<description>
 				Sets the envelope with [param type]. [param values] define the individual values for each phase.
-				If [param steps] is not empty, it has to have the same size as [param values]. In this case, [param values] are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in [param steps] as number of ticks. Values in [param steps] are allowed to be [code]0[/code] to instantly change a value.
+				If [param steps] is not empty, it has to have the same size as [param values]. In this case, [param values] are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in [param steps] as number of [i]ticks[/i]. Values in [param steps] are allowed to be [code]0[/code] to instantly change a value.
 				If [param steps] is empty, [param values] is used as a sequence and values are changed instantly. In this case, the duration of each phase is defined by [member BlipKitTrack.instrument_divider].
 				The parameters [param sustain_offset] and [param sustain_length] define the range of the sustain cycle which is repeated while the note is playing.
 			</description>
@@ -112,7 +112,7 @@
 		<constant name="ENVELOPE_DUTY_CYCLE" value="3" enum="EnvelopeType">
 			Changes the output value of [member BlipKitTrack.duty_cycle] by overriding it with values from the envelope.
 			If an envelope value is [code]0[/code], [member BlipKitTrack.duty_cycle] is not changed.
-			[b]Node:[/b] Values are cast to integers and clamped between [code]0[/code] and [code]15[/code].
+			[b]Note:[/b] Values are cast to integers and clamped between [code]0[/code] and [code]15[/code].
 		</constant>
 	</constants>
 </class>

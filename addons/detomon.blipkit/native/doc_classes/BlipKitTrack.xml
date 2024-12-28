@@ -19,7 +19,6 @@
 		func _ready() -&gt; void:
 		    # Get the audio stream.
 		    var stream: AudioStreamBlipKit = stream_player.stream
-
 		    # Attach the track to the stream.
 		    track.attach(stream)
 		[/gdscript]
