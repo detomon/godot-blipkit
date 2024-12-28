@@ -1,4 +1,5 @@
 #include "blipkit_assembler.hpp"
+#include <BlipKit.h>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace detomon::BlipKit;
@@ -42,13 +43,7 @@ void BlipKitAssembler::_bind_methods() {
 }
 
 String BlipKitAssembler::_to_string() const {
-	return "BlipKitAssembler";
-}
-
-BlipKitAssembler::BlipKitAssembler() {
-}
-
-BlipKitAssembler::~BlipKitAssembler() {
+	return vformat("BlipKitAssembler");
 }
 
 int BlipKitAssembler::add_label(const String p_label) {

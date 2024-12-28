@@ -1,6 +1,5 @@
 #pragma once
 
-#include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
@@ -74,8 +73,8 @@ protected:
 	bool expect_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
 
 public:
-	BlipKitAssembler();
-	~BlipKitAssembler();
+	BlipKitAssembler() = default;
+	~BlipKitAssembler() = default;
 
 	void put_0(Instruction p_instr);
 	void put_1(Instruction p_instr, const Variant p_arg_1);
