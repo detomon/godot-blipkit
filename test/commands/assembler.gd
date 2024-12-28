@@ -37,7 +37,7 @@ var _addresses := [] # [(offset: int, label_index: int)]
 var _compile_error := ""
 
 
-func add(instruction: Instruction, args: Array) -> bool:
+func put(instruction: Instruction, args: Array) -> bool:
 	if instruction < 0 or instruction >= Instruction.MAX:
 		printerr(&"Instruction %d is not valid." % instruction)
 		return false
@@ -96,7 +96,7 @@ func add(instruction: Instruction, args: Array) -> bool:
 
 			_bytes.put_u32(int(args[0]))
 			_bytes.put_float(args[1])
-			_bytes.put_u32(int(args[0]))
+			_bytes.put_u32(int(args[2]))
 
 		Instruction.ARPEGGIO:
 			if not expect_args.call([TYPE_PACKED_FLOAT32_ARRAY]):
@@ -130,23 +130,23 @@ func add(instruction: Instruction, args: Array) -> bool:
 
 	return true
 
-func add0(instruction: Instruction) -> bool:
-	return add(instruction, [])
+func put_0(instruction: Instruction) -> bool:
+	return put(instruction, [])
 
 
-func add1(instruction: Instruction, arg: Variant) -> bool:
-	return add(instruction, [arg])
+func put_1(instruction: Instruction, arg: Variant) -> bool:
+	return put(instruction, [arg])
 
 
-func add2(instruction: Instruction, arg1: Variant, arg2: Variant) -> bool:
-	return add(instruction, [arg1, arg2])
+func put_2(instruction: Instruction, arg1: Variant, arg2: Variant) -> bool:
+	return put(instruction, [arg1, arg2])
 
 
-func add3(instruction: Instruction, arg1: Variant, arg2: Variant, arg3: Variant) -> bool:
-	return add(instruction, [arg1, arg2, arg3])
+func put_3(instruction: Instruction, arg1: Variant, arg2: Variant, arg3: Variant) -> bool:
+	return put(instruction, [arg1, arg2, arg3])
 
 
-func add_label(label: String) -> bool:
+func put_label(label: String) -> bool:
 	_add_label(label)
 
 	var label_index: int = _label_index[label]

@@ -1,4 +1,5 @@
 #include "audio_stream_blipkit.hpp"
+#include "blipkit_assembler.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
@@ -17,6 +18,7 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 
 	GDREGISTER_CLASS(AudioStreamBlipKit);
 	GDREGISTER_CLASS(AudioStreamBlipKitPlayback);
+	GDREGISTER_CLASS(BlipKitAssembler);
 	GDREGISTER_CLASS(BlipKitInstrument);
 	GDREGISTER_CLASS(BlipKitTrack);
 	GDREGISTER_CLASS(BlipKitWaveform);
