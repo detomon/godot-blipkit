@@ -14,7 +14,7 @@ void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("put_label", "label"), &BlipKitAssembler::put_label);
 	ClassDB::bind_method(D_METHOD("compile"), &BlipKitAssembler::compile);
 	ClassDB::bind_method(D_METHOD("get_byte_code"), &BlipKitAssembler::get_byte_code);
-	ClassDB::bind_method(D_METHOD("get_error_string"), &BlipKitAssembler::get_error_string);
+	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitAssembler::get_error_message);
 	ClassDB::bind_method(D_METHOD("clear"), &BlipKitAssembler::clear);
 
 	BIND_ENUM_CONSTANT(INSTR_NOTE);
@@ -147,8 +147,8 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		} break;
 		default: {
 			int byte_offset = bytes->get_position();
-			error_string = vformat("Invalid instruction %s at byte offset %d.", p_instr, byte_offset);
-			ERR_FAIL_V_MSG(ERR_INVALID_INSTRUCTION, error_string);
+			error_message = vformat("Invalid instruction %s at byte offset %d.", p_instr, byte_offset);
+			ERR_FAIL_V_MSG(ERR_INVALID_INSTRUCTION, error_message);
 		} break;
 	}
 
@@ -162,8 +162,8 @@ BlipKitAssembler::Error BlipKitAssembler::check_args(const Command &p_cmd, Varia
 		if (p_cmd.args[i].get_type() != types[i]) {
 			const String &type_name = Variant::get_type_name(types[i]);
 			int byte_offset = bytes->get_position();
-			error_string = vformat("Expected argument %d to be type %s at byte offset %d.", i + 1, type_name, byte_offset);
-			ERR_FAIL_V_MSG(ERR_INVALID_ARGUMENT, error_string);
+			error_message = vformat("Expected argument %d to be type %s at byte offset %d.", i + 1, type_name, byte_offset);
+			ERR_FAIL_V_MSG(ERR_INVALID_ARGUMENT, error_message);
 		}
 	}
 
@@ -180,8 +180,8 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 
 	if (label.byte_offset >= 0) {
 		int byte_offset = bytes->get_position();
-		error_string = vformat("Label '%s' is already defined at byte offset %d.", p_label, byte_offset);
-		ERR_FAIL_V_MSG(ERR_DUPLICATE_LABEL, error_string);
+		error_message = vformat("Label '%s' is already defined at byte offset %d.", p_label, byte_offset);
+		ERR_FAIL_V_MSG(ERR_DUPLICATE_LABEL, error_message);
 	}
 
 	label.byte_offset = bytes->get_position();
@@ -200,8 +200,8 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 
 		if (label.byte_offset < 0) {
 			int address_offset = address.byte_offset;
-			error_string = vformat("Label '%s' not defined at byte offset %d.", label.name, address_offset);
-			ERR_FAIL_V_MSG(ERR_UNDEFINED_LABEL, error_string);
+			error_message = vformat("Label '%s' not defined at byte offset %d.", label.name, address_offset);
+			ERR_FAIL_V_MSG(ERR_UNDEFINED_LABEL, error_message);
 		}
 
 		bytes->seek(address.byte_offset);
@@ -225,8 +225,8 @@ PackedByteArray BlipKitAssembler::get_byte_code() const {
 	return bytes->get_data_array();
 }
 
-String BlipKitAssembler::get_error_string() const {
-	return error_string;
+String BlipKitAssembler::get_error_message() const {
+	return error_message;
 }
 
 void BlipKitAssembler::clear() {
@@ -234,6 +234,6 @@ void BlipKitAssembler::clear() {
 	label_indices.clear();
 	labels.clear();
 	addresses.clear();
-	error_string.resize(0);
+	error_message.resize(0);
 	compiled = false;
 }

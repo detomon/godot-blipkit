@@ -21,11 +21,11 @@
 		assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_RELEASE))
 		assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 0)
 		assem.put(BlipKitAssembler.INSTR_VOLUME, 1.0)
-		assem.put(BlipKitAssembler.INSTR_WAIT, 162)
+		assem.put(BlipKitAssembler.INSTR_WAIT, 180)
 		assem.put(BlipKitAssembler.INSTR_JUMP, "start")
 
 		if assem.compile() != BlipKitAssembler.OK:
-		    printerr(assem.get_error_string())
+		    printerr(assem.get_error_messagemessage())
 		    return
 
 		var bytes := assem.get_byte_code()
@@ -55,7 +55,7 @@
 				Returns an empty array if [method compile] was called yet or an error occurred.
 			</description>
 		</method>
-		<method name="get_error_string" qualifiers="const">
+		<method name="get_error_message" qualifiers="const">
 			<return type="String" />
 			<description>
 				Returns the last error as string.

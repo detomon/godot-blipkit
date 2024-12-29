@@ -71,7 +71,7 @@ private:
 	HashMap<String, int> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
-	String error_string;
+	String error_message;
 	bool compiled = false;
 
 protected:
@@ -90,7 +90,7 @@ public:
 	Error put_label(const String p_label);
 	Error compile();
 	PackedByteArray get_byte_code() const;
-	String get_error_string() const;
+	String get_error_message() const;
 	void clear();
 };
 
