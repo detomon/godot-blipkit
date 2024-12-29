@@ -4,6 +4,12 @@
 		An object used to interpret byte code generated with [BlipKitAssembler].
 	</brief_description>
 	<description>
+		Executes instructions to modify the properties of a [BlipKitTrack].
+		[b]Example:[/b] Play instructions:
+		[codeblocks]
+		[gdscript]
+		[/gdscript]
+		[/codeblocks]
 	</description>
 	<tutorials>
 	</tutorials>
@@ -30,7 +36,7 @@
 			<param index="0" name="slot" type="int" />
 			<description>
 				Returns the instrument in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
-				Returns [code]null[/code] if no instrument is set in this slot.
+				Returns [code]null[/code] if no instrument is set in [param slot].
 			</description>
 		</method>
 		<method name="get_status" qualifiers="const">
@@ -44,14 +50,14 @@
 			<param index="0" name="slot" type="int" />
 			<description>
 				Returns the waveform in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
-				Returns [code]null[/code] if no waveform is set in this slot.
+				Returns [code]null[/code] if no waveform is set in [param slot].
 			</description>
 		</method>
 		<method name="reset">
 			<return type="void" />
 			<description>
 				Resets the instruction pointer to the beginning and clears all errors.
-				[b]Note:[/b] This does not reset the [BlipKitTrack]. Call [method BlipKitTrack.reset] to reset the corresponding track.
+				[b]Note:[/b] This does not reset [BlipKitTrack]. Call [method BlipKitTrack.reset] to reset the corresponding track.
 			</description>
 		</method>
 		<method name="set_byte_code">

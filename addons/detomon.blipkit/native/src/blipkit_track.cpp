@@ -616,7 +616,7 @@ Ref<BlipKitInstrument> BlipKitTrack::get_instrument() {
 	return instrument;
 }
 
-void BlipKitTrack::set_instrument(Ref<BlipKitInstrument> p_instrument) {
+void BlipKitTrack::set_instrument(const Ref<BlipKitInstrument> &p_instrument) {
 	AudioStreamBlipKit::lock();
 
 	instrument = p_instrument;
@@ -652,7 +652,7 @@ Ref<BlipKitWaveform> BlipKitTrack::get_custom_waveform() {
 	return custom_waveform;
 }
 
-void BlipKitTrack::set_custom_waveform(Ref<BlipKitWaveform> p_waveform) {
+void BlipKitTrack::set_custom_waveform(const Ref<BlipKitWaveform> &p_waveform) {
 	if (p_waveform.is_null()) {
 		set_waveform(WAVEFORM_SQUARE);
 		return;

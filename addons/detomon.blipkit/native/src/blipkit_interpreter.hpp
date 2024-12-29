@@ -49,13 +49,13 @@ public:
 	BlipKitInterpreter();
 	~BlipKitInterpreter() = default;
 
-	void set_instrument_at(int p_slot, Ref<BlipKitInstrument> p_instrument);
+	void set_instrument_at(int p_slot, const Ref<BlipKitInstrument> &p_instrument);
 	Ref<BlipKitInstrument> get_instrument_at(int p_slot) const;
-	void set_waveform_at(int p_slot, Ref<BlipKitWaveform> p_waveform);
+	void set_waveform_at(int p_slot, const Ref<BlipKitWaveform> &p_waveform);
 	Ref<BlipKitWaveform> get_waveform_at(int p_slot) const;
-	void set_byte_code(PackedByteArray p_byte);
+	void set_byte_code(const PackedByteArray &p_byte);
 
-	int advance(Ref<BlipKitTrack> p_track);
+	int advance(const Ref<BlipKitTrack> &p_track);
 	Status get_status() const;
 	String get_error_message() const;
 

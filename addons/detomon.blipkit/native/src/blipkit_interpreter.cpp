@@ -21,7 +21,7 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_instrument_at", "slot"), &BlipKitInterpreter::get_instrument_at);
 	ClassDB::bind_method(D_METHOD("set_waveform_at", "slot", "waveforms"), &BlipKitInterpreter::set_waveform_at);
 	ClassDB::bind_method(D_METHOD("get_waveform_at", "slot"), &BlipKitInterpreter::get_waveform_at);
-	ClassDB::bind_method(D_METHOD("set_byte_code"), &BlipKitInterpreter::set_byte_code);
+	ClassDB::bind_method(D_METHOD("set_byte_code", "byte_code"), &BlipKitInterpreter::set_byte_code);
 	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
@@ -49,7 +49,7 @@ void BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_
 	byte_code->seek(size);
 }
 
-void BlipKitInterpreter::set_instrument_at(int p_slot, Ref<BlipKitInstrument> p_instrument) {
+void BlipKitInterpreter::set_instrument_at(int p_slot, const Ref<BlipKitInstrument> &p_instrument) {
 	ERR_FAIL_INDEX(p_slot, SLOT_COUNT);
 	instruments[p_slot] = p_instrument;
 }
@@ -59,7 +59,7 @@ Ref<BlipKitInstrument> BlipKitInterpreter::get_instrument_at(int p_slot) const {
 	return instruments[p_slot];
 }
 
-void BlipKitInterpreter::set_waveform_at(int p_slot, Ref<BlipKitWaveform> p_waveform) {
+void BlipKitInterpreter::set_waveform_at(int p_slot, const Ref<BlipKitWaveform> &p_waveform) {
 	ERR_FAIL_INDEX(p_slot, SLOT_COUNT);
 	waveforms[p_slot] = p_waveform;
 }
@@ -69,16 +69,15 @@ Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform_at(int p_slot) const {
 	return waveforms[p_slot];
 }
 
-void BlipKitInterpreter::set_byte_code(PackedByteArray p_byte) {
+void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
 }
 
-int BlipKitInterpreter::advance(Ref<BlipKitTrack> p_track) {
+int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	if (p_track.is_null()) {
-		status = ERR_INVALID_ARGUMENT;
-		error_message = vformat("Track is null.");
-		ERR_FAIL_V_MSG(-1, error_message);
+		fail_with_error(ERR_INVALID_ARGUMENT, "Track is null.");
+		return -1;
 	}
 
 	while (byte_code->get_available_bytes() > 0) {
@@ -86,6 +85,9 @@ int BlipKitInterpreter::advance(Ref<BlipKitTrack> p_track) {
 		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
 
 		switch (instr) {
+			case Instruction::INSTR_NOP: {
+				// Do nothing.
+			} break;
 			case Instruction::INSTR_NOTE: {
 				p_track->set_note(byte_code->get_float());
 			} break;

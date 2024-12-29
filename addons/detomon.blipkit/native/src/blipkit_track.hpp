@@ -196,12 +196,12 @@ public:
 	void set_arpeggio_divider(int p_arpeggio_divider);
 
 	Ref<BlipKitInstrument> get_instrument();
-	void set_instrument(Ref<BlipKitInstrument> p_instrument);
+	void set_instrument(const  Ref<BlipKitInstrument> &p_instrument);
 	int get_instrument_divider() const;
 	void set_instrument_divider(int p_instrument_divider);
 
 	Ref<BlipKitWaveform> get_custom_waveform();
-	void set_custom_waveform(Ref<BlipKitWaveform> p_waveform);
+	void set_custom_waveform(const Ref<BlipKitWaveform> &p_waveform);
 
 	void attach(AudioStreamBlipKit *p_stream);
 	void detach();

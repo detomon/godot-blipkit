@@ -4,7 +4,7 @@
 		An object used for generating byte code which can be interpreted by [BlipKitInterpreter].
 	</brief_description>
 	<description>
-		Provides a set of instructions to modify the properties of a [BlipKitTrack].
+		Provides instructions to modify the properties of a [BlipKitTrack].
 		Named labels can be used to reuse parts (like function calls or loops).
 		[b]Example:[/b] Generate instructions to play an iconic startup sound:
 		[codeblocks]

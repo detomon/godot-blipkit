@@ -70,6 +70,8 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 
 	switch (p_instr) {
 		case INSTR_NOP: {
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+
 			// Do nothing.
 		} break;
 		case INSTR_NOTE:
@@ -79,7 +81,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_PITCH: {
 			ERR_FAIL_COND_V(check_args(p_cmd, Variant::FLOAT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			byte_code->put_8(p_instr);
+			byte_code->put_u8(p_instr);
 			byte_code->put_float(p_cmd.args[0]);
 		} break;
 		case INSTR_WAVEFORM:
@@ -89,7 +91,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_INSTRUMENT: {
 			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			byte_code->put_8(p_instr);
+			byte_code->put_u8(p_instr);
 			byte_code->put_u8(p_cmd.args[0]);
 		} break;
 		case INSTR_EFFECT_DIVIDER:
@@ -101,14 +103,14 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_WAIT: {
 			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			byte_code->put_8(p_instr);
+			byte_code->put_u8(p_instr);
 			byte_code->put_u32(p_cmd.args[0]);
 		} break;
 		case INSTR_TREMOLO:
 		case INSTR_VIBRATO: {
 			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::FLOAT, Variant::INT) != OK, ERR_INVALID_ARGUMENT);
 
-			byte_code->put_8(p_instr);
+			byte_code->put_u8(p_instr);
 			byte_code->put_u32(p_cmd.args[0]);
 			byte_code->put_float(p_cmd.args[1]);
 			byte_code->put_u32(p_cmd.args[2]);
@@ -119,7 +121,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 			const PackedFloat32Array &deltas = p_cmd.args[0];
 			int count = MIN(deltas.size(), 8);
 
-			byte_code->put_8(p_instr);
+			byte_code->put_u8(p_instr);
 			byte_code->put_u8(count);
 			for (int i = 0; i < count; i++) {
 				int delta = deltas[i];
@@ -133,7 +135,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 			const String &label = p_cmd.args[0];
 			int label_index = add_label(label);
 
-			byte_code->put_8(p_instr);
+			byte_code->put_u8(p_instr);
 
 			int byte_offset = byte_code->get_position();
 			addresses.push_back({ .byte_offset = byte_offset, .label_index = label_index });
@@ -142,12 +144,13 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		} break;
 		case INSTR_RETURN:
 		case INSTR_RESET: {
-			// No arguments.
-			byte_code->put_8(p_instr);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+
+			byte_code->put_u8(p_instr);
 		} break;
 		default: {
 			int byte_offset = byte_code->get_position();
-			error_message = vformat("Invalid instruction %s at byte offset %d.", p_instr, byte_offset);
+			error_message = vformat("Invalid instruction %d at byte offset %d.", p_instr, byte_offset);
 			ERR_FAIL_V_MSG(ERR_INVALID_INSTRUCTION, error_message);
 		} break;
 	}
@@ -160,8 +163,8 @@ BlipKitAssembler::Error BlipKitAssembler::check_args(const Command &p_cmd, Varia
 
 	for (int i = 0; i < 3; i++) {
 		if (p_cmd.args[i].get_type() != types[i]) {
-			const String &type_name = Variant::get_type_name(types[i]);
 			int byte_offset = byte_code->get_position();
+			const String &type_name = Variant::get_type_name(types[i]);
 			error_message = vformat("Expected argument %d to be type %s at byte offset %d.", i + 1, type_name, byte_offset);
 			ERR_FAIL_V_MSG(ERR_INVALID_ARGUMENT, error_message);
 		}
