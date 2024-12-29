@@ -27,13 +27,13 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
 
-	BIND_ENUM_CONSTANT(OK_NONE);
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
 	BIND_ENUM_CONSTANT(ERR_INVALID_ARGUMENT);
 	BIND_ENUM_CONSTANT(ERR_INVALID_INSTRUCTION);
 	BIND_ENUM_CONSTANT(ERR_STACK_OVERFLOW);
 	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);
+	BIND_ENUM_CONSTANT(ERR_RECURSION);
 }
 
 String BlipKitInterpreter::_to_string() const {
@@ -200,6 +200,14 @@ int BlipKitInterpreter::advance(Ref<BlipKitTrack> p_track) {
 		}
 	}
 
+	if (status == OK_RUNNING) {
+		status = OK_FINISHED;
+	}
+
+	if (!error_message.is_empty()) {
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -213,6 +221,6 @@ String BlipKitInterpreter::get_error_message() const {
 
 void BlipKitInterpreter::reset() {
 	byte_code->seek(0);
-	status = OK_NONE;
+	status = OK_RUNNING;
 	error_message.resize(0);
 }

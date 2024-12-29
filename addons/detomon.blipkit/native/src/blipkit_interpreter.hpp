@@ -18,13 +18,13 @@ class BlipKitInterpreter : public RefCounted {
 
 public:
 	enum Status {
-		OK_NONE,
 		OK_RUNNING,
 		OK_FINISHED,
 		ERR_INVALID_ARGUMENT,
 		ERR_INVALID_INSTRUCTION,
 		ERR_STACK_OVERFLOW,
 		ERR_STACK_UNDERFLOW,
+		ERR_RECURSION,
 	};
 
 private:
@@ -36,7 +36,7 @@ private:
 	LocalVector<Ref<BlipKitInstrument>> instruments;
 	LocalVector<Ref<BlipKitWaveform>> waveforms;
 	PackedFloat32Array arpeggio;
-	Status status = OK_NONE;
+	Status status = OK_RUNNING;
 	String error_message;
 
 protected:

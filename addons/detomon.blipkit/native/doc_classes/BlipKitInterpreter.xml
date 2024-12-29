@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitInterpreter" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
+		An object used to interpret byte code generated with [BlipKitAssembler].
 	</brief_description>
 	<description>
 	</description>
@@ -11,33 +12,53 @@
 			<return type="int" />
 			<param index="0" name="track" type="BlipKitTrack" />
 			<description>
+				Advances the interpreter until a [constant BlipKitAssembler.INTR_WAIT] instruction is encountered or no more instruction are available.
+				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
+				Returns [code]0[/code] if no more instructions are available.
+				Returns [code]-1[/code] if an error occured. The error message can be get with [method get_error_message].
 			</description>
 		</method>
 		<method name="get_error_message" qualifiers="const">
 			<return type="String" />
 			<description>
+				Returns the last error message.
+				Returns an empty string if no error occurred.
 			</description>
 		</method>
 		<method name="get_instrument_at" qualifiers="const">
 			<return type="BlipKitInstrument" />
 			<param index="0" name="slot" type="int" />
 			<description>
+				Returns the instrument in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+				Returns [code]null[/code] if no instrument is set in this slot.
 			</description>
 		</method>
 		<method name="get_status" qualifiers="const">
 			<return type="int" enum="BlipKitInterpreter.Status" />
 			<description>
+				Returns the current execution status.
 			</description>
 		</method>
 		<method name="get_waveform_at" qualifiers="const">
 			<return type="BlipKitWaveform" />
 			<param index="0" name="slot" type="int" />
 			<description>
+				Returns the waveform in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
+				Returns [code]null[/code] if no waveform is set in this slot.
 			</description>
 		</method>
 		<method name="reset">
 			<return type="void" />
 			<description>
+				Resets the instruction pointer to the beginning and clears all errors.
+				[b]Note:[/b] This does not reset the [BlipKitTrack]. Call [method BlipKitTrack.reset] to reset the corresponding track.
+			</description>
+		</method>
+		<method name="set_byte_code">
+			<return type="void" />
+			<param index="0" name="_unnamed_arg0" type="PackedByteArray" />
+			<description>
+				Sets the byte code to interpret. This also reset the instruction pointer to the beginning and clears all errors.
 			</description>
 		</method>
 		<method name="set_instrument_at">
@@ -45,6 +66,7 @@
 			<param index="0" name="slot" type="int" />
 			<param index="1" name="instruments" type="BlipKitInstrument" />
 			<description>
+				Sets the instrument in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
 			</description>
 		</method>
 		<method name="set_waveform_at">
@@ -52,23 +74,31 @@
 			<param index="0" name="slot" type="int" />
 			<param index="1" name="waveforms" type="BlipKitWaveform" />
 			<description>
+				Sets the waveform in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
 			</description>
 		</method>
 	</methods>
 	<constants>
-		<constant name="OK_NONE" value="0" enum="Status">
+		<constant name="OK_RUNNING" value="0" enum="Status">
+			There are more instructions to execute.
 		</constant>
-		<constant name="OK_RUNNING" value="1" enum="Status">
+		<constant name="OK_FINISHED" value="1" enum="Status">
+			There are no more instruction to execute.
 		</constant>
-		<constant name="OK_FINISHED" value="2" enum="Status">
+		<constant name="ERR_INVALID_ARGUMENT" value="2" enum="Status">
+			An invalid argument was provided.
 		</constant>
-		<constant name="ERR_INVALID_ARGUMENT" value="3" enum="Status">
+		<constant name="ERR_INVALID_INSTRUCTION" value="3" enum="Status">
+			An invalid instruction was found.
 		</constant>
-		<constant name="ERR_INVALID_INSTRUCTION" value="4" enum="Status">
+		<constant name="ERR_STACK_OVERFLOW" value="4" enum="Status">
+			A stack overflow occurred.
 		</constant>
-		<constant name="ERR_STACK_OVERFLOW" value="5" enum="Status">
+		<constant name="ERR_STACK_UNDERFLOW" value="5" enum="Status">
+			A stack underflow occurred.
 		</constant>
-		<constant name="ERR_STACK_UNDERFLOW" value="6" enum="Status">
+		<constant name="ERR_RECURSION" value="6" enum="Status">
+			An infinite recursion was detected.
 		</constant>
 	</constants>
 </class>
