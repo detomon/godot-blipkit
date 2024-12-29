@@ -77,7 +77,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_MASTER_VOLUME:
 		case INSTR_PANNING:
 		case INSTR_PITCH: {
-			ERR_FAIL_COND_V(!expect_args(p_cmd, Variant::FLOAT, Variant::NIL, Variant::NIL), ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::FLOAT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			bytes->put_8(p_instr);
 			bytes->put_float(p_cmd.args[0]);
@@ -87,7 +87,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_DUTY_CYCLE:
 		case INSTR_PHASE_WRAP:
 		case INSTR_INSTRUMENT: {
-			ERR_FAIL_COND_V(!expect_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL), ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			bytes->put_8(p_instr);
 			bytes->put_u8(p_cmd.args[0]);
@@ -99,14 +99,14 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_ARPEGGIO_DIVIDER:
 		case INSTR_INSTRUMENT_DIVIDER:
 		case INSTR_WAIT: {
-			ERR_FAIL_COND_V(!expect_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL), ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			bytes->put_8(p_instr);
 			bytes->put_u32(p_cmd.args[0]);
 		} break;
 		case INSTR_TREMOLO:
 		case INSTR_VIBRATO: {
-			ERR_FAIL_COND_V(!expect_args(p_cmd, Variant::INT, Variant::FLOAT, Variant::INT), ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::FLOAT, Variant::INT) != OK, ERR_INVALID_ARGUMENT);
 
 			bytes->put_8(p_instr);
 			bytes->put_u32(p_cmd.args[0]);
@@ -114,7 +114,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 			bytes->put_u32(p_cmd.args[2]);
 		} break;
 		case INSTR_ARPEGGIO: {
-			ERR_FAIL_COND_V(!expect_args(p_cmd, Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL), ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			const PackedFloat32Array &deltas = p_cmd.args[0];
 			int count = MIN(deltas.size(), 8);
@@ -128,15 +128,16 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		} break;
 		case INSTR_CALL:
 		case INSTR_JUMP: {
-			ERR_FAIL_COND_V(!expect_args(p_cmd, Variant::STRING, Variant::NIL, Variant::NIL), ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_cmd, Variant::STRING, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			const String &label = p_cmd.args[0];
 			int label_index = add_label(label);
-			int byte_offset = bytes->get_position();
-
-			addresses.push_back({ .byte_offset = byte_offset, .label_index = label_index });
 
 			bytes->put_8(p_instr);
+
+			int byte_offset = bytes->get_position();
+			addresses.push_back({ .byte_offset = byte_offset, .label_index = label_index });
+
 			bytes->put_u32(0);
 		} break;
 		case INSTR_RETURN:
@@ -154,7 +155,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 	return OK;
 }
 
-BlipKitAssembler::Error BlipKitAssembler::expect_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3) {
+BlipKitAssembler::Error BlipKitAssembler::check_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3) {
 	const Variant::Type types[3] = { p_type_1, p_type_2, p_type_3 };
 
 	for (int i = 0; i < 3; i++) {
@@ -189,6 +190,9 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 }
 
 BlipKitAssembler::Error BlipKitAssembler::compile() {
+	// Save byte position.
+	int byte_position = bytes->get_position();
+
 	// Resolve label addresses.
 	for (Address &address : addresses) {
 		int label_index = address.label_index;
@@ -205,11 +209,19 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	}
 
 	addresses.clear();
+	compiled = true;
+
+	// Restore byte position.
+	bytes->seek(byte_position);
 
 	return OK;
 }
 
 PackedByteArray BlipKitAssembler::get_byte_code() const {
+	if (!compiled) {
+		return PackedByteArray();
+	}
+
 	return bytes->get_data_array();
 }
 
@@ -223,4 +235,5 @@ void BlipKitAssembler::clear() {
 	labels.clear();
 	addresses.clear();
 	error_string.resize(0);
+	compiled = false;
 }

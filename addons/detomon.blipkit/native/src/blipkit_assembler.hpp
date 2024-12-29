@@ -72,6 +72,7 @@ private:
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
 	String error_string;
+	bool compiled = false;
 
 protected:
 	static void _bind_methods();
@@ -79,7 +80,7 @@ protected:
 
 	Error put_cmd(Instruction p_instr, const Command &p_cmd);
 	int add_label(const String p_label);
-	Error expect_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
+	Error check_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
 
 public:
 	BlipKitAssembler();
