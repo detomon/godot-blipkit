@@ -16,6 +16,7 @@ class BlipKitAssembler : public RefCounted {
 
 public:
 	enum Instruction {
+		INSTR_NOP,
 		INSTR_NOTE,
 		INSTR_WAVEFORM,
 		INSTR_CUSTOM_WAVEFORM,
@@ -58,7 +59,7 @@ private:
 		Variant args[3];
 	};
 
-	StreamPeerBuffer bytes;
+	Ref<StreamPeerBuffer> bytes;
 	HashMap<String, int> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
@@ -68,24 +69,19 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	bool put(Instruction p_instr, const Command &p_cmd);
+	bool put_cmd(Instruction p_instr, const Command &p_cmd);
 	int add_label(const String p_label);
 	bool expect_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
 
 public:
-	BlipKitAssembler() = default;
+	BlipKitAssembler();
 	~BlipKitAssembler() = default;
 
-	void put_0(Instruction p_instr);
-	void put_1(Instruction p_instr, const Variant p_arg_1);
-	void put_2(Instruction p_instr, const Variant p_arg_1, const Variant p_arg_2);
-	void put_3(Instruction p_instr, const Variant p_arg_1, const Variant p_arg_2, const Variant p_arg_3);
-
+	void put(Instruction p_instr, const Variant &p_arg_1 = nullptr, const Variant &p_arg_2 = nullptr, const Variant &p_arg_3 = nullptr);
 	bool put_label(const String p_label);
-	int get_offset() const;
-
 	PackedByteArray compile();
 	String get_compile_error() const;
+	void clear();
 };
 
 } // namespace detomon::BlipKit

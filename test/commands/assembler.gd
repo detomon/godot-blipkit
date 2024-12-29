@@ -2,6 +2,7 @@ class_name BlipKitAssemblerTest
 extends RefCounted
 
 enum Instruction {
+	NOP,
 	NOTE,
 	WAVEFORM,
 	CUSTOM_WAVEFORM,
@@ -57,6 +58,10 @@ func put(instruction: Instruction, args: Array) -> bool:
 	_bytes.put_8(instruction)
 
 	match instruction:
+		Instruction.NOP:
+			# Do nothing.
+			pass
+
 		Instruction.NOTE, \
 		Instruction.VOLUME, \
 		Instruction.MASTER_VOLUME, \
