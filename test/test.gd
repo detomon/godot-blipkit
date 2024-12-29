@@ -20,6 +20,7 @@ var lead: BlipKitTrack
 @onready var _timer: Timer = %Timer
 @onready var _progress: HSlider = %Progress
 
+var intr1 := BlipKitInterpreter.new()
 
 func _ready() -> void:
 	var stream: AudioStreamBlipKit = _audio_stream_player.stream
@@ -79,6 +80,71 @@ func _init_track() -> void:
 		#45, 127, 9, -163, -163, 9, 127, 45,
 	#], true, 0.5)
 
+	var assem := BlipKitAssembler.new()
+
+	assem.put_label("start")
+
+	assem.put(BlipKitAssembler.INSTR_NOTE, 12.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 15.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 19.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+
+	assem.put(BlipKitAssembler.INSTR_NOTE, 12.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 15.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 19.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+
+	assem.put(BlipKitAssembler.INSTR_NOTE, 15.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 19.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 22.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+
+	assem.put(BlipKitAssembler.INSTR_NOTE, 14.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 18.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, 21.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
+	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
+
+	assem.put(BlipKitAssembler.INSTR_JUMP, "start")
+
+	assem.compile()
+
+	var bytes := assem.get_byte_code()
+	intr1.set_byte_code(bytes)
+	print(bytes)
+
+
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
@@ -96,7 +162,10 @@ func _init_track() -> void:
 	saw.instrument = saw_instr
 	#saw.custom_waveform = waveform
 	saw.attach(stream)
-	saw.add_divider(&"beat", 24, _on_tick.bind(saw))
+	#saw.add_divider(&"beat", 24, _on_tick.bind(saw))
+	saw.add_divider(&"beat", 1, func () -> int:
+		return intr1.advance(saw)
+	)
 
 	print_debug.call_deferred(saw.get_tremolo())
 
@@ -138,19 +207,19 @@ func _init_track() -> void:
 	print_debug.call_deferred("dividers: ", bass.get_divider_names())
 
 
-var _index := 0
-var _notes := PackedFloat32Array([
-	12, 12, -1, -1, 15, -1, 19, -1,
-	12, 12, -1, -1, 15, -1, 19, -1,
-	15, 15, -1, -1, 19, -1, 22, -1,
-	14, 14, -1, -1, 18, -1, 21, -1,
-])
+#var _index := 0
+#var _notes := PackedFloat32Array([
+	#12, 12, -1, -1, 15, -1, 19, -1,
+	#12, 12, -1, -1, 15, -1, 19, -1,
+	#15, 15, -1, -1, 19, -1, 22, -1,
+	#14, 14, -1, -1, 18, -1, 21, -1,
+#])
 
-var _index2 := 0
-var _notes2 := PackedFloat32Array([
-	-1, -1, -1, 24, -1, 24, -1, -1, -1, -1, -1, 24, -1, -1, -1, -1,
-	-1, -1, -1, 27, -1, 27, -1, -1, -1, -1, -1, 26, -1, -1, -1, -1,
-])
+#var _index2 := 0
+#var _notes2 := PackedFloat32Array([
+	#-1, -1, -1, 24, -1, 24, -1, -1, -1, -1, -1, 24, -1, -1, -1, -1,
+	#-1, -1, -1, 27, -1, 27, -1, -1, -1, -1, -1, 26, -1, -1, -1, -1,
+#])
 
 var _index3 := 0
 var _notes3 := PackedFloat32Array([
@@ -163,14 +232,14 @@ var _notes3 := PackedFloat32Array([
 	#-1, -1, -1, -1, [27, 31, 34], -1, [27, 31, 34], -1, -1, -1, -1, -1, [26, 31, 33], -1, -1, -1,
 #]
 
-func _on_tick(track: BlipKitTrack) -> void:
-	track.note = _notes[_index]
-	_index = wrapi(_index + 1, 0, len(_notes))
+#func _on_tick(track: BlipKitTrack) -> void:
+	#track.note = _notes[_index]
+	#_index = wrapi(_index + 1, 0, len(_notes))
 
 
-func _on_tick_2(track: BlipKitTrack) -> void:
-	track.note = _notes2[_index2]
-	_index2 = wrapi(_index2 + 1, 0, len(_notes2))
+#func _on_tick_2(track: BlipKitTrack) -> void:
+	#track.note = _notes2[_index2]
+	#_index2 = wrapi(_index2 + 1, 0, len(_notes2))
 
 
 func _on_tick_3(track: BlipKitTrack) -> void:

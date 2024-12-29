@@ -15,6 +15,8 @@ class BlipKitAssembler : public RefCounted {
 	GDCLASS(BlipKitAssembler, RefCounted)
 
 public:
+	static constexpr int REGISTER_COUNT = 16;
+
 	enum Instruction {
 		INSTR_NOP,
 		INSTR_NOTE,
@@ -41,6 +43,7 @@ public:
 		INSTR_RETURN,
 		INSTR_JUMP,
 		INSTR_RESET,
+		INSTR_SET_REGISTER,
 		INSTR_MAX,
 	};
 
@@ -63,7 +66,7 @@ private:
 		int byte_offset = 0;
 	};
 
-	struct Command {
+	struct Args {
 		Variant args[3];
 	};
 
@@ -78,9 +81,9 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	Error put_cmd(Instruction p_instr, const Command &p_cmd);
+	Error put_instruction(Instruction p_instr, const Args &p_args);
 	int add_label(const String p_label);
-	Error check_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
+	Error check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
 
 public:
 	BlipKitAssembler();

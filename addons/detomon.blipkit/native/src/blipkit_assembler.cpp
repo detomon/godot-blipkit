@@ -1,5 +1,6 @@
 #include "blipkit_assembler.hpp"
 #include <BlipKit.h>
+#include <cstdint>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace detomon::BlipKit;
@@ -41,6 +42,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(INSTR_RETURN);
 	BIND_ENUM_CONSTANT(INSTR_JUMP);
 	BIND_ENUM_CONSTANT(INSTR_RESET);
+	BIND_ENUM_CONSTANT(INSTR_SET_REGISTER);
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_INSTRUCTION);
@@ -65,12 +67,12 @@ int BlipKitAssembler::add_label(const String p_label) {
 	return index;
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Command &p_cmd) {
+BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, const Args &p_args) {
 	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTRUCTION);
 
 	switch (p_instr) {
 		case INSTR_NOP: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			// Do nothing.
 		} break;
@@ -79,20 +81,20 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_MASTER_VOLUME:
 		case INSTR_PANNING:
 		case INSTR_PITCH: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::FLOAT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::FLOAT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			byte_code->put_u8(p_instr);
-			byte_code->put_float(p_cmd.args[0]);
+			byte_code->put_float(p_args.args[0]);
 		} break;
 		case INSTR_WAVEFORM:
 		case INSTR_CUSTOM_WAVEFORM:
 		case INSTR_DUTY_CYCLE:
 		case INSTR_PHASE_WRAP:
 		case INSTR_INSTRUMENT: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			byte_code->put_u8(p_instr);
-			byte_code->put_u8(p_cmd.args[0]);
+			byte_code->put_u8(p_args.args[0]);
 		} break;
 		case INSTR_EFFECT_DIVIDER:
 		case INSTR_VOLUME_SLIDE:
@@ -101,38 +103,43 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		case INSTR_ARPEGGIO_DIVIDER:
 		case INSTR_INSTRUMENT_DIVIDER:
 		case INSTR_WAIT: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
+			uint32_t value = CLAMP(int(p_args.args[0]), 0, UINT16_MAX);
 			byte_code->put_u8(p_instr);
-			byte_code->put_u32(p_cmd.args[0]);
+			byte_code->put_u16(value);
 		} break;
 		case INSTR_TREMOLO:
 		case INSTR_VIBRATO: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::INT, Variant::FLOAT, Variant::INT) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::FLOAT, Variant::INT) != OK, ERR_INVALID_ARGUMENT);
+
+			uint32_t ticks = CLAMP(int(p_args.args[0]), 0, UINT16_MAX);
+			uint32_t slide_ticks = CLAMP(int(p_args.args[2]), 0, UINT16_MAX);
 
 			byte_code->put_u8(p_instr);
-			byte_code->put_u32(p_cmd.args[0]);
-			byte_code->put_float(p_cmd.args[1]);
-			byte_code->put_u32(p_cmd.args[2]);
+			byte_code->put_u16(ticks);
+			byte_code->put_float(p_args.args[1]);
+			byte_code->put_u16(slide_ticks);
 		} break;
 		case INSTR_ARPEGGIO: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			const PackedFloat32Array &deltas = p_cmd.args[0];
+			const PackedFloat32Array &deltas = p_args.args[0];
+			const real_t *deltas_ptr = deltas.ptr();
 			int count = MIN(deltas.size(), 8);
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u8(count);
 			for (int i = 0; i < count; i++) {
-				int delta = deltas[i];
+				int delta = deltas_ptr[i];
 				byte_code->put_float(delta);
 			}
 		} break;
 		case INSTR_CALL:
 		case INSTR_JUMP: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::STRING, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::STRING, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			const String &label = p_cmd.args[0];
+			const String &label = p_args.args[0];
 			int label_index = add_label(label);
 
 			byte_code->put_u8(p_instr);
@@ -144,9 +151,18 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 		} break;
 		case INSTR_RETURN:
 		case INSTR_RESET: {
-			ERR_FAIL_COND_V(check_args(p_cmd, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+			ERR_FAIL_COND_V(check_args(p_args, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			byte_code->put_u8(p_instr);
+		} break;
+		case INSTR_SET_REGISTER: {
+			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::INT, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
+
+			int number = CLAMP(uint32_t(p_args.args[0]), 0, REGISTER_COUNT);
+
+			byte_code->put_u8(p_instr);
+			byte_code->put_u8(number);
+			byte_code->put_32(p_args.args[1]);
 		} break;
 		default: {
 			int byte_offset = byte_code->get_position();
@@ -158,11 +174,11 @@ BlipKitAssembler::Error BlipKitAssembler::put_cmd(Instruction p_instr, const Com
 	return OK;
 }
 
-BlipKitAssembler::Error BlipKitAssembler::check_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3) {
+BlipKitAssembler::Error BlipKitAssembler::check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3) {
 	const Variant::Type types[3] = { p_type_1, p_type_2, p_type_3 };
 
 	for (int i = 0; i < 3; i++) {
-		if (p_cmd.args[i].get_type() != types[i]) {
+		if (p_args.args[i].get_type() != types[i]) {
 			int byte_offset = byte_code->get_position();
 			const String &type_name = Variant::get_type_name(types[i]);
 			error_message = vformat("Expected argument %d to be type %s at byte offset %d.", i + 1, type_name, byte_offset);
@@ -174,7 +190,7 @@ BlipKitAssembler::Error BlipKitAssembler::check_args(const Command &p_cmd, Varia
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg_1, const Variant &p_arg_2, const Variant &p_arg_3) {
-	return put_cmd(p_instr, { .args = { p_arg_1, p_arg_2, p_arg_3 } });
+	return put_instruction(p_instr, { .args = { p_arg_1, p_arg_2, p_arg_3 } });
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {

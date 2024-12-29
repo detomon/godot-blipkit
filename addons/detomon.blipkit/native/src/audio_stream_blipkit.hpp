@@ -22,8 +22,8 @@ class AudioStreamBlipKit : public AudioStream {
 	friend class AudioStreamBlipKitPlayback;
 
 private:
-	static const int MIN_CLOCK_RATE = 1;
-	static const int MAX_CLOCK_RATE = 1200;
+	static constexpr int MIN_CLOCK_RATE = 1;
+	static constexpr int MAX_CLOCK_RATE = 1200;
 
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	Ref<AudioStreamBlipKitPlayback> playback;

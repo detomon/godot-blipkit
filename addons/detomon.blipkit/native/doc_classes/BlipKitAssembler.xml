@@ -170,6 +170,9 @@
 		<constant name="INSTR_RESET" value="24" enum="Instruction">
 			Calls [method BlipKitTrack.reset]. Expects no arguments.
 		</constant>
+		<constant name="INSTR_SET_REGISTER" value="25" enum="Instruction">
+			Sets a value in a register. Expects the register numer ([int]) from [code]0[/code] to [code]15[/code] and a value parameter ([int]).
+		</constant>
 		<constant name="OK" value="0" enum="Error">
 			No error.
 		</constant>

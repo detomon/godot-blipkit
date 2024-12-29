@@ -17,6 +17,8 @@ class BlipKitInterpreter : public RefCounted {
 	GDCLASS(BlipKitInterpreter, RefCounted)
 
 public:
+	static constexpr int REGISTER_COUNT = 16;
+
 	enum Status {
 		OK_RUNNING,
 		OK_FINISHED,
@@ -28,11 +30,12 @@ public:
 	};
 
 private:
-	const int STACK_SIZE_MAX = 64;
-	const int SLOT_COUNT = 256;
+	static constexpr int STACK_SIZE_MAX = 64;
+	static constexpr int SLOT_COUNT = 256;
 
 	Ref<StreamPeerBuffer> byte_code;
 	LocalVector<uint32_t> stack;
+	int32_t registers[REGISTER_COUNT] = { 0 };
 	LocalVector<Ref<BlipKitInstrument>> instruments;
 	LocalVector<Ref<BlipKitWaveform>> waveforms;
 	PackedFloat32Array arpeggio;
@@ -60,6 +63,9 @@ public:
 	String get_error_message() const;
 
 	void reset();
+
+	void set_register_value(int p_number, int p_value);
+	int get_register_value(int p_number) const;
 };
 
 } // namespace detomon::BlipKit

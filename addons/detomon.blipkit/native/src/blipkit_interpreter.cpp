@@ -26,6 +26,8 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
+	ClassDB::bind_method(D_METHOD("get_register_value", "number"), &BlipKitInterpreter::get_register_value);
+	ClassDB::bind_method(D_METHOD("set_register_value", "number", "value"), &BlipKitInterpreter::set_register_value);
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
@@ -123,37 +125,37 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->set_instrument(instrument);
 			} break;
 			case Instruction::INSTR_EFFECT_DIVIDER: {
-				p_track->set_effect_divider(byte_code->get_u32());
+				p_track->set_effect_divider(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_VOLUME_SLIDE: {
-				p_track->set_volume_slide(byte_code->get_u32());
+				p_track->set_volume_slide(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_PANNING_SLIDE: {
-				p_track->set_panning_slide(byte_code->get_u32());
+				p_track->set_panning_slide(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_PORTAMENTO: {
-				p_track->set_portamento(byte_code->get_u32());
+				p_track->set_portamento(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_ARPEGGIO_DIVIDER: {
-				p_track->set_arpeggio_divider(byte_code->get_u32());
+				p_track->set_arpeggio_divider(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_INSTRUMENT_DIVIDER: {
-				p_track->set_instrument_divider(byte_code->get_u32());
+				p_track->set_instrument_divider(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_WAIT: {
-				uint32_t wait = byte_code->get_u32();
+				uint32_t wait = byte_code->get_u16();
 				return wait;
 			} break;
 			case Instruction::INSTR_TREMOLO: {
-				int ticks = byte_code->get_u32();
+				int ticks = byte_code->get_u16();
 				real_t delta = byte_code->get_float();
-				int slide_ticks = byte_code->get_u32();
+				int slide_ticks = byte_code->get_u16();
 				p_track->set_tremolo(ticks, delta, slide_ticks);
 			} break;
 			case Instruction::INSTR_VIBRATO: {
-				int ticks = byte_code->get_u32();
+				int ticks = byte_code->get_u16();
 				real_t delta = byte_code->get_float();
-				int slide_ticks = byte_code->get_u32();
+				int slide_ticks = byte_code->get_u16();
 				p_track->set_vibrato(ticks, delta, slide_ticks);
 			} break;
 			case Instruction::INSTR_ARPEGGIO: {
@@ -195,6 +197,11 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_RESET: {
 				p_track->reset();
 			} break;
+			case Instruction::INSTR_SET_REGISTER: {
+				int32_t value = byte_code->get_32();
+				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
+				registers[number] = value;
+			} break;
 			default: {
 				fail_with_error(ERR_INVALID_INSTRUCTION, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
 				return -1;
@@ -202,6 +209,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 		}
 	}
 
+	// At this point there are no more instrutions.
 	if (status == OK_RUNNING) {
 		status = OK_FINISHED;
 	}
@@ -223,6 +231,18 @@ String BlipKitInterpreter::get_error_message() const {
 
 void BlipKitInterpreter::reset() {
 	byte_code->seek(0);
+	stack.clear();
+	memset(registers, 0, sizeof(registers));
 	status = OK_RUNNING;
 	error_message.resize(0);
+}
+
+void BlipKitInterpreter::set_register_value(int p_number, int p_value) {
+	ERR_FAIL_INDEX(p_number, REGISTER_COUNT);
+	registers[p_number] = p_value;
+}
+
+int BlipKitInterpreter::get_register_value(int p_number) const {
+	ERR_FAIL_INDEX_V(p_number, REGISTER_COUNT, 0);
+	return registers[p_number];
 }
