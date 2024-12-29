@@ -71,7 +71,7 @@ func _ready() -> void:
 	assem.put(BlipKitAssembler.INSTR_RETURN)
 
 	if assem.compile() != BlipKitAssembler.OK:
-		printerr(assem.get_error_string())
+		printerr(assem.get_error_message())
 		return
 
 	var bytes := assem.get_byte_code()
