@@ -1,6 +1,7 @@
 #include "audio_stream_blipkit.hpp"
 #include "blipkit_assembler.hpp"
 #include "blipkit_instrument.hpp"
+#include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
 #include <gdextension_interface.h>
@@ -20,6 +21,7 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(AudioStreamBlipKitPlayback);
 	GDREGISTER_CLASS(BlipKitAssembler);
 	GDREGISTER_CLASS(BlipKitInstrument);
+	GDREGISTER_CLASS(BlipKitInterpreter);
 	GDREGISTER_CLASS(BlipKitTrack);
 	GDREGISTER_CLASS(BlipKitWaveform);
 }

@@ -67,7 +67,7 @@ private:
 		Variant args[3];
 	};
 
-	Ref<StreamPeerBuffer> bytes;
+	Ref<StreamPeerBuffer> byte_code;
 	HashMap<String, int> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;

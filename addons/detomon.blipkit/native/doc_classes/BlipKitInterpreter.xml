@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitInterpreter" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="advance">
+			<return type="int" />
+			<param index="0" name="track" type="BlipKitTrack" />
+			<description>
+			</description>
+		</method>
+		<method name="get_error_message" qualifiers="const">
+			<return type="String" />
+			<description>
+			</description>
+		</method>
+		<method name="get_instrument_at" qualifiers="const">
+			<return type="BlipKitInstrument" />
+			<param index="0" name="slot" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_status" qualifiers="const">
+			<return type="int" enum="BlipKitInterpreter.Status" />
+			<description>
+			</description>
+		</method>
+		<method name="get_waveform_at" qualifiers="const">
+			<return type="BlipKitWaveform" />
+			<param index="0" name="slot" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="reset">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="set_instrument_at">
+			<return type="void" />
+			<param index="0" name="slot" type="int" />
+			<param index="1" name="instruments" type="BlipKitInstrument" />
+			<description>
+			</description>
+		</method>
+		<method name="set_waveform_at">
+			<return type="void" />
+			<param index="0" name="slot" type="int" />
+			<param index="1" name="waveforms" type="BlipKitWaveform" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<constants>
+		<constant name="OK_NONE" value="0" enum="Status">
+		</constant>
+		<constant name="OK_RUNNING" value="1" enum="Status">
+		</constant>
+		<constant name="OK_FINISHED" value="2" enum="Status">
+		</constant>
+		<constant name="ERR_INVALID_ARGUMENT" value="3" enum="Status">
+		</constant>
+		<constant name="ERR_INVALID_INSTRUCTION" value="4" enum="Status">
+		</constant>
+		<constant name="ERR_STACK_OVERFLOW" value="5" enum="Status">
+		</constant>
+		<constant name="ERR_STACK_UNDERFLOW" value="6" enum="Status">
+		</constant>
+	</constants>
+</class>

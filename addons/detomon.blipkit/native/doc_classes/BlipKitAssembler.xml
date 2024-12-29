@@ -102,8 +102,8 @@
 			Sets [member BlipKitTrack.waveform]. Expects [enum BlipKitTrack.Waveform] as an [int] argument.
 		</constant>
 		<constant name="INSTR_CUSTOM_WAVEFORM" value="3" enum="Instruction">
-			Sets [member BlipKitTrack.custom_waveform]. Expects a slot index from [code]0[/code] to [code]255[/code] as [int] argument.
-			The [BlipKitWaveform] used is define with [member BlipKitInterpreter.set_waveform_at].
+			Sets [member BlipKitTrack.custom_waveform] from the given slot. Expects a slot index from [code]0[/code] to [code]255[/code] as [int] argument.
+			Which [BlipKitWaveform] is used is define with [member BlipKitInterpreter.set_waveform_at].
 		</constant>
 		<constant name="INSTR_DUTY_CYCLE" value="4" enum="Instruction">
 			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument.
@@ -148,21 +148,21 @@
 			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument.
 		</constant>
 		<constant name="INSTR_INSTRUMENT" value="18" enum="Instruction">
-			Sets [member BlipKitTrack.instrument]. Expects a slot index from [code]0[/code] to [code]255[/code] as [int] argument.
-			The [BlipKitInstrument] used is define with [member BlipKitInterpreter.set_instrument_at].
+			Sets [member BlipKitTrack.instrument] from the given slot. Expects a slot index from [code]0[/code] to [code]255[/code] as [int] argument.
+			Which [BlipKitInstrument] used is define with [member BlipKitInterpreter.set_instrument_at].
 		</constant>
 		<constant name="INSTR_INSTRUMENT_DIVIDER" value="19" enum="Instruction">
-			Sets [member BlipKitTrack.instruent_divider]. Expects an [int] argument.
+			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument.
 		</constant>
 		<constant name="INSTR_WAIT" value="20" enum="Instruction">
 			Waits for a number of [i]ticks[/i]. Expects an [int] argument.
 		</constant>
 		<constant name="INSTR_CALL" value="21" enum="Instruction">
 			Calls a named label like a function. Expects a label name as [String] argument.
-			[b]Note:[/b] The label is not required to be defined at this point and can also be set later with [member put_label].
+			[b]Note:[/b] The label is not required to be defined at this point and can also be set later.
 		</constant>
 		<constant name="INSTR_RETURN" value="22" enum="Instruction">
-			Returns from a function call made with [constant INSTR_CALL].
+			Returns from a function call made with [constant INSTR_CALL]. Expects no arguments.
 		</constant>
 		<constant name="INSTR_JUMP" value="23" enum="Instruction">
 			Jumps to a named label. Expects the label name as [String] argument.
