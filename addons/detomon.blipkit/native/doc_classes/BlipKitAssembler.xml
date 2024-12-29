@@ -43,6 +43,7 @@
 			<param index="0" name="label" type="String" />
 			<description>
 				Adds a named label at the current byte code position which can be used by [enum Instruction.INSTR_CALL] and [enum Instruction.INSTR_JUMP] instrutions.
+				Returns [code]false[/code], if the label is already defined.
 			</description>
 		</method>
 	</methods>

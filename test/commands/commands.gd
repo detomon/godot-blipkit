@@ -45,8 +45,8 @@ func _ready() -> void:
 
 	var assem := BlipKitAssembler.new()
 
-	assem.put_1(BlipKitAssembler.INSTR_WAVEFORM, BlipKitTrack.WAVEFORM_SQUARE)
-	assem.put_1(BlipKitAssembler.INSTR_DUTY_CYCLE, 8)
+	assem.put(BlipKitAssembler.INSTR_WAVEFORM, BlipKitTrack.WAVEFORM_SQUARE)
+	assem.put(BlipKitAssembler.INSTR_DUTY_CYCLE, 8)
 
 	assem.put_label("start")
 	assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_C_5))

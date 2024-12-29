@@ -44,6 +44,14 @@ public:
 		INSTR_MAX,
 	};
 
+	enum Error {
+		OK,
+		ERR_INVALID_INSTRUCTION,
+		ERR_INVALID_ARGUMENT,
+		ERR_DUPLICATE_LABEL,
+		ERR_UNDEFINED_LABEL,
+	};
+
 private:
 	struct Label {
 		String name;
@@ -63,27 +71,29 @@ private:
 	HashMap<String, int> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
-	String compile_error;
+	String error_string;
 
 protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	bool put_cmd(Instruction p_instr, const Command &p_cmd);
+	Error put_cmd(Instruction p_instr, const Command &p_cmd);
 	int add_label(const String p_label);
-	bool expect_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
+	Error expect_args(const Command &p_cmd, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
 
 public:
 	BlipKitAssembler();
 	~BlipKitAssembler() = default;
 
-	void put(Instruction p_instr, const Variant &p_arg_1 = nullptr, const Variant &p_arg_2 = nullptr, const Variant &p_arg_3 = nullptr);
-	bool put_label(const String p_label);
-	PackedByteArray compile();
-	String get_compile_error() const;
+	Error put(Instruction p_instr, const Variant &p_arg_1 = nullptr, const Variant &p_arg_2 = nullptr, const Variant &p_arg_3 = nullptr);
+	Error put_label(const String p_label);
+	Error compile();
+	PackedByteArray get_byte_code() const;
+	String get_error_string() const;
 	void clear();
 };
 
 } // namespace detomon::BlipKit
 
 VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Instruction);
+VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Error);
