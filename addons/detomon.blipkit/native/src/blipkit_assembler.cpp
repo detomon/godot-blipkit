@@ -1,6 +1,5 @@
 #include "blipkit_assembler.hpp"
 #include <BlipKit.h>
-#include <cstdint>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace detomon::BlipKit;
@@ -42,7 +41,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(INSTR_RETURN);
 	BIND_ENUM_CONSTANT(INSTR_JUMP);
 	BIND_ENUM_CONSTANT(INSTR_RESET);
-	BIND_ENUM_CONSTANT(INSTR_SET_REGISTER);
+	BIND_ENUM_CONSTANT(INSTR_SET_REG);
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_INSTRUCTION);
@@ -84,7 +83,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			ERR_FAIL_COND_V(check_args(p_args, Variant::FLOAT, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			byte_code->put_u8(p_instr);
-			byte_code->put_float(p_args.args[0]);
+			put_half(p_args.args[0]);
 		} break;
 		case INSTR_WAVEFORM:
 		case INSTR_CUSTOM_WAVEFORM:
@@ -118,7 +117,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u16(ticks);
-			byte_code->put_float(p_args.args[1]);
+			put_half(p_args.args[1]);
 			byte_code->put_u16(slide_ticks);
 		} break;
 		case INSTR_ARPEGGIO: {
@@ -132,7 +131,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			byte_code->put_u8(count);
 			for (int i = 0; i < count; i++) {
 				int delta = deltas_ptr[i];
-				byte_code->put_float(delta);
+				put_half(delta);
 			}
 		} break;
 		case INSTR_CALL:
@@ -155,7 +154,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 
 			byte_code->put_u8(p_instr);
 		} break;
-		case INSTR_SET_REGISTER: {
+		case INSTR_SET_REG: {
 			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::INT, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			int number = CLAMP(uint32_t(p_args.args[0]), 0, REGISTER_COUNT);

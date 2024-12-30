@@ -42,13 +42,15 @@ String BlipKitInterpreter::_to_string() const {
 	return vformat("BlipKitInterpreter");
 }
 
-void BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_message) {
+int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_message) {
 	status = p_status;
 	error_message = p_error_message;
 
 	// Seek to end.
 	int size = byte_code->get_size();
 	byte_code->seek(size);
+
+	return -1;
 }
 
 void BlipKitInterpreter::set_instrument_at(int p_slot, const Ref<BlipKitInstrument> &p_instrument) {
@@ -78,8 +80,7 @@ void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	if (p_track.is_null()) {
-		fail_with_error(ERR_INVALID_ARGUMENT, "Track is null.");
-		return -1;
+		return fail_with_error(ERR_INVALID_ARGUMENT, "Track is null.");
 	}
 
 	while (byte_code->get_available_bytes() > 0) {
@@ -91,19 +92,19 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				// Do nothing.
 			} break;
 			case Instruction::INSTR_NOTE: {
-				p_track->set_note(byte_code->get_float());
+				p_track->set_note(get_half());
 			} break;
 			case Instruction::INSTR_VOLUME: {
-				p_track->set_volume(byte_code->get_float());
+				p_track->set_volume(get_half());
 			} break;
 			case Instruction::INSTR_MASTER_VOLUME: {
-				p_track->set_master_volume(byte_code->get_float());
+				p_track->set_master_volume(get_half());
 			} break;
 			case Instruction::INSTR_PANNING: {
-				p_track->set_panning(byte_code->get_float());
+				p_track->set_panning(get_half());
 			} break;
 			case Instruction::INSTR_PITCH: {
-				p_track->set_pitch(byte_code->get_float());
+				p_track->set_pitch(get_half());
 			} break;
 			case Instruction::INSTR_WAVEFORM: {
 				p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(byte_code->get_u8()));
@@ -148,13 +149,13 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			} break;
 			case Instruction::INSTR_TREMOLO: {
 				int ticks = byte_code->get_u16();
-				real_t delta = byte_code->get_float();
+				float delta = get_half();
 				int slide_ticks = byte_code->get_u16();
 				p_track->set_tremolo(ticks, delta, slide_ticks);
 			} break;
 			case Instruction::INSTR_VIBRATO: {
 				int ticks = byte_code->get_u16();
-				real_t delta = byte_code->get_float();
+				float delta = get_half();
 				int slide_ticks = byte_code->get_u16();
 				p_track->set_vibrato(ticks, delta, slide_ticks);
 			} break;
@@ -163,7 +164,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				arpeggio.resize(count);
 
 				for (int i = 0; i < count; i++) {
-					arpeggio[i] = byte_code->get_float();
+					arpeggio[i] = get_half();
 				}
 				p_track->set_arpeggio(arpeggio);
 			} break;
@@ -172,8 +173,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				int position = byte_code->get_position();
 
 				if (stack.size() >= STACK_SIZE_MAX) {
-					fail_with_error(ERR_STACK_OVERFLOW, "Stack overflow.");
-					return -1;
+					return fail_with_error(ERR_STACK_OVERFLOW, "Stack overflow.");
 				}
 
 				stack.push_back(position);
@@ -185,8 +185,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			} break;
 			case Instruction::INSTR_RETURN: {
 				if (stack.is_empty()) {
-					fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
-					return -1;
+					return fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
 				}
 
 				int index = stack.size() - 1;
@@ -197,14 +196,13 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_RESET: {
 				p_track->reset();
 			} break;
-			case Instruction::INSTR_SET_REGISTER: {
-				int32_t value = byte_code->get_32();
+			case Instruction::INSTR_SET_REG: {
 				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
+				int32_t value = byte_code->get_32();
 				registers[number] = value;
 			} break;
 			default: {
-				fail_with_error(ERR_INVALID_INSTRUCTION, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
-				return -1;
+				return fail_with_error(ERR_INVALID_INSTRUCTION, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
 			} break;
 		}
 	}

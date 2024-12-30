@@ -84,6 +84,7 @@ func _init_track() -> void:
 
 	assem.put_label("start")
 
+	assem.put(BlipKitAssembler.INSTR_SET_REG, 0, 0)
 	assem.put(BlipKitAssembler.INSTR_NOTE, 12.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
@@ -97,6 +98,7 @@ func _init_track() -> void:
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
 
+	assem.put(BlipKitAssembler.INSTR_SET_REG, 0, 1)
 	assem.put(BlipKitAssembler.INSTR_NOTE, 12.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
@@ -110,6 +112,7 @@ func _init_track() -> void:
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
 
+	assem.put(BlipKitAssembler.INSTR_SET_REG, 0, 2)
 	assem.put(BlipKitAssembler.INSTR_NOTE, 15.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
@@ -123,6 +126,7 @@ func _init_track() -> void:
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 24)
 
+	assem.put(BlipKitAssembler.INSTR_SET_REG, 0, 3)
 	assem.put(BlipKitAssembler.INSTR_NOTE, 14.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 48)
 	assem.put(BlipKitAssembler.INSTR_NOTE, -1.0)
@@ -142,7 +146,7 @@ func _init_track() -> void:
 
 	var bytes := assem.get_byte_code()
 	intr1.set_byte_code(bytes)
-	print(bytes)
+	prints(len(bytes), bytes)
 
 
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)

@@ -6,6 +6,7 @@
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/variant.hpp>
+#include "math.hpp"
 
 using namespace godot;
 
@@ -43,7 +44,7 @@ public:
 		INSTR_RETURN,
 		INSTR_JUMP,
 		INSTR_RESET,
-		INSTR_SET_REGISTER,
+		INSTR_SET_REG,
 		INSTR_MAX,
 	};
 
@@ -84,6 +85,8 @@ protected:
 	Error put_instruction(Instruction p_instr, const Args &p_args);
 	int add_label(const String p_label);
 	Error check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
+
+	_ALWAYS_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
 
 public:
 	BlipKitAssembler();

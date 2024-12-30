@@ -4,7 +4,7 @@
 #include "blipkit_waveform.hpp"
 #include "divider.hpp"
 #include "recursive_spin_lock.hpp"
-#include <BlipKit.h>
+#include <BKBase.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
