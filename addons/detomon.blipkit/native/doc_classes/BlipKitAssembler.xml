@@ -81,8 +81,16 @@
 			<param index="3" name="arg_3" type="Variant" default="null" />
 			<description>
 				Adds an instruction and returns [constant OK] on success. See [enum Instruction] for the required arguments.
-				Returns [constant INVALID_INSTRUCTION] if [param instruction] is not valid.
-				Returns [constant INVALID_ARGUMENT] if the arguments are invalid for [param instruction].
+				Returns [constant ERR_INVALID_INSTRUCTION] if [param instruction] is not valid.
+				Returns [constant ERR_INVALID_ARGUMENT] if the arguments are invalid for [param instruction].
+			</description>
+		</method>
+		<method name="put_code">
+			<return type="int" enum="BlipKitAssembler.Error" />
+			<param index="0" name="code" type="String" />
+			<description>
+				Parses a string containing multiple instructions.
+				Returns [constant ERR_PARSER_ERROR] if a parser error occurred.
 			</description>
 		</method>
 		<method name="put_label">
@@ -90,7 +98,7 @@
 			<param index="0" name="label" type="String" />
 			<description>
 				Adds a named label at the current position which can be referenced by [constant INSTR_CALL] and [constant INSTR_JUMP] instructions.
-				Returns [constant DUPLICATE_LABEL] if a label with the same name is already defined.
+				Returns [constant ERR_DUPLICATE_LABEL] if a label with the same name is already defined.
 			</description>
 		</method>
 	</methods>
@@ -187,6 +195,8 @@
 		</constant>
 		<constant name="ERR_UNDEFINED_LABEL" value="4" enum="Error">
 			A named label was not defined with the given name.
+		</constant>
+		<constant name="ERR_PARSER_ERROR" value="5" enum="Error">
 		</constant>
 	</constants>
 </class>

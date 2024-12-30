@@ -82,6 +82,8 @@ func _init_track() -> void:
 
 	var assem := BlipKitAssembler.new()
 
+	assem.put_code("a:c4;s:2;r")
+
 	assem.put_label("start")
 
 	assem.put(BlipKitAssembler.INSTR_SET_REG, 0, 0)

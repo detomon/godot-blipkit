@@ -54,6 +54,7 @@ public:
 		ERR_INVALID_ARGUMENT,
 		ERR_DUPLICATE_LABEL,
 		ERR_UNDEFINED_LABEL,
+		ERR_PARSER_ERROR,
 	};
 
 private:
@@ -93,6 +94,7 @@ public:
 	~BlipKitAssembler() = default;
 
 	Error put(Instruction p_instr, const Variant &p_arg_1 = nullptr, const Variant &p_arg_2 = nullptr, const Variant &p_arg_3 = nullptr);
+	Error put_code(const String &p_code);
 	Error put_label(const String p_label);
 	Error compile();
 	PackedByteArray get_byte_code() const;

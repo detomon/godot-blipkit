@@ -11,6 +11,7 @@ BlipKitAssembler::BlipKitAssembler() {
 
 void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("put", "instruction", "arg_1", "arg_2", "arg_3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
+	ClassDB::bind_method(D_METHOD("put_code", "code"), &BlipKitAssembler::put_code);
 	ClassDB::bind_method(D_METHOD("put_label", "label"), &BlipKitAssembler::put_label);
 	ClassDB::bind_method(D_METHOD("compile"), &BlipKitAssembler::compile);
 	ClassDB::bind_method(D_METHOD("get_byte_code"), &BlipKitAssembler::get_byte_code);
@@ -48,6 +49,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(ERR_INVALID_ARGUMENT);
 	BIND_ENUM_CONSTANT(ERR_DUPLICATE_LABEL);
 	BIND_ENUM_CONSTANT(ERR_UNDEFINED_LABEL);
+	BIND_ENUM_CONSTANT(ERR_PARSER_ERROR);
 }
 
 String BlipKitAssembler::_to_string() const {
@@ -190,6 +192,10 @@ BlipKitAssembler::Error BlipKitAssembler::check_args(const Args &p_args, Variant
 
 BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg_1, const Variant &p_arg_2, const Variant &p_arg_3) {
 	return put_instruction(p_instr, { .args = { p_arg_1, p_arg_2, p_arg_3 } });
+}
+
+BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
+	return ERR_INVALID_INSTRUCTION;
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
