@@ -1,12 +1,12 @@
 #pragma once
 
+#include "math.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/variant.hpp>
-#include "math.hpp"
 
 using namespace godot;
 

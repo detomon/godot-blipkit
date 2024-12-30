@@ -4,6 +4,7 @@
 
 namespace detomon::BlipKit {
 
+// Copied from: https://github.com/godotengine/godot/blob/master/core/math/math_funcs.h
 static _ALWAYS_INLINE_ float half_to_float(uint16_t h) {
 	union {
 		uint32_t u32;
@@ -46,6 +47,7 @@ static _ALWAYS_INLINE_ float half_to_float(uint16_t h) {
 	return u.f32;
 }
 
+// Copied from: https://github.com/godotengine/godot/blob/master/core/math/math_funcs.h
 static _ALWAYS_INLINE_ uint16_t float_to_half(float f) {
 	union {
 		float fv;
@@ -94,4 +96,4 @@ static _ALWAYS_INLINE_ uint16_t float_to_half(float f) {
 	return hf;
 }
 
-}
+} //namespace detomon::BlipKit

@@ -196,7 +196,7 @@ public:
 	void set_arpeggio_divider(int p_arpeggio_divider);
 
 	Ref<BlipKitInstrument> get_instrument();
-	void set_instrument(const  Ref<BlipKitInstrument> &p_instrument);
+	void set_instrument(const Ref<BlipKitInstrument> &p_instrument);
 	int get_instrument_divider() const;
 	void set_instrument_divider(int p_instrument_divider);
 
