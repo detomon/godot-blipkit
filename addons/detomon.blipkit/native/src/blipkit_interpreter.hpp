@@ -67,8 +67,8 @@ public:
 
 	void reset();
 
-	void set_register_value(int p_number, int p_value);
-	int get_register_value(int p_number) const;
+	void set_register(int p_number, int p_value);
+	int get_register(int p_number) const;
 };
 
 } // namespace detomon::BlipKit

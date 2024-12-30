@@ -39,9 +39,9 @@
 				Returns [code]null[/code] if no instrument is set in [param slot].
 			</description>
 		</method>
-		<method name="get_register_value" qualifiers="const">
+		<method name="get_register" qualifiers="const">
 			<return type="int" />
-			<param index="0" name="number" type="int" />
+			<param index="0" name="register" type="int" />
 			<description>
 				Returns the value in register [param number]. [param number] is a value between [code]0[/code] and [code]15[/code].
 			</description>
@@ -82,12 +82,12 @@
 				Sets the instrument in [param slot]. This is a number between [code]0[/code] and [code]255[/code].
 			</description>
 		</method>
-		<method name="set_register_value">
+		<method name="set_register">
 			<return type="void" />
-			<param index="0" name="number" type="int" />
+			<param index="0" name="register" type="int" />
 			<param index="1" name="value" type="int" />
 			<description>
-				Sets [param value] in register [param number].
+				Stores [param value] in [param register]. [param register] is a number between [code]0[/code] and [code]15[/code].
 			</description>
 		</method>
 		<method name="set_waveform_at">

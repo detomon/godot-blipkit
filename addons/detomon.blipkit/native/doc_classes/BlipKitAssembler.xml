@@ -19,13 +19,13 @@
 		assem.put_label("start")
 
 		# Play notes.
-		assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_C_5))
+		assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_5))
 		assem.put(BlipKitAssembler.INSTR_WAIT, 18)
-		assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_C_6))
+		assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_6))
 		assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 162)
 		assem.put(BlipKitAssembler.INSTR_VOLUME, 0.0)
 		assem.put(BlipKitAssembler.INSTR_WAIT, 162)
-		assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_RELEASE))
+		assem.put(BlipKitAssembler.INSTR_RELEASE)
 		assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 0)
 		assem.put(BlipKitAssembler.INSTR_VOLUME, 1.0)
 		assem.put(BlipKitAssembler.INSTR_WAIT, 180)
@@ -91,6 +91,7 @@
 			<description>
 				Parses a string containing multiple instructions.
 				Returns [constant ERR_PARSER_ERROR] if a parser error occurred.
+				[b]Note:[/b] This method is not implemented yet.
 			</description>
 		</method>
 		<method name="put_label">
@@ -103,83 +104,90 @@
 		</method>
 	</methods>
 	<constants>
-		<constant name="INSTR_NOTE" value="1" enum="Instruction">
+		<constant name="INSTR_ATTACK" value="1" enum="Instruction">
 			Sets [member BlipKitTrack.note]. Expects a [float] argument.
 		</constant>
-		<constant name="INSTR_WAVEFORM" value="2" enum="Instruction">
-			Sets [member BlipKitTrack.waveform]. Expects [enum BlipKitTrack.Waveform] as an [int] argument.
+		<constant name="INSTR_RELEASE" value="2" enum="Instruction">
+			Calls [method BlipKitTrack.release]. Expects no arguments.
 		</constant>
-		<constant name="INSTR_CUSTOM_WAVEFORM" value="3" enum="Instruction">
-			Sets [member BlipKitTrack.custom_waveform] from the given slot. Expects a slot index from [code]0[/code] to [code]255[/code] as [int] argument.
+		<constant name="INSTR_MUTE" value="3" enum="Instruction">
+			Calls [method BlipKitTrack.mute]. Expects no arguments.
+		</constant>
+		<constant name="INSTR_WAVEFORM" value="4" enum="Instruction">
+			Sets [member BlipKitTrack.waveform]. Expects [enum BlipKitTrack.Waveform] as [int] argument.
+		</constant>
+		<constant name="INSTR_CUSTOM_WAVEFORM" value="5" enum="Instruction">
+			Sets [member BlipKitTrack.custom_waveform] from the given slot. Expects a slot index as [int] argument between [code]0[/code] and [code]255[/code].
 			Which [BlipKitWaveform] is used is define with [member BlipKitInterpreter.set_waveform_at].
 		</constant>
-		<constant name="INSTR_DUTY_CYCLE" value="4" enum="Instruction">
-			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument.
+		<constant name="INSTR_DUTY_CYCLE" value="6" enum="Instruction">
+			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument between [code]0[/code] and [code]15[/code]
 		</constant>
-		<constant name="INSTR_EFFECT_DIVIDER" value="5" enum="Instruction">
-			Sets [member BlipKitTrack.effect_divider]. Expects an [int] argument.
+		<constant name="INSTR_EFFECT_DIVIDER" value="7" enum="Instruction">
+			Sets [member BlipKitTrack.effect_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_VOLUME" value="6" enum="Instruction">
-			Sets [member BlipKitTrack.volume]. Expects a [float] argument.
+		<constant name="INSTR_VOLUME" value="8" enum="Instruction">
+			Sets [member BlipKitTrack.volume]. Expects a [float] argument between [code]0.0[/code] and [code]1.0[/code].
 		</constant>
-		<constant name="INSTR_VOLUME_SLIDE" value="7" enum="Instruction">
-			Sets [member BlipKitTrack.volume_slide]. Expects an [int] argument.
+		<constant name="INSTR_VOLUME_SLIDE" value="9" enum="Instruction">
+			Sets [member BlipKitTrack.volume_slide]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_MASTER_VOLUME" value="8" enum="Instruction">
-			Sets [member BlipKitTrack.master_volume]. Expects a [float] argument.
+		<constant name="INSTR_MASTER_VOLUME" value="10" enum="Instruction">
+			Sets [member BlipKitTrack.master_volume]. Expects a [float] argument between [code]0.0[/code] and [code]1.0[/code].
 		</constant>
-		<constant name="INSTR_PANNING" value="9" enum="Instruction">
-			Sets [member BlipKitTrack.panning]. Expects a [float] argument.
+		<constant name="INSTR_PANNING" value="11" enum="Instruction">
+			Sets [member BlipKitTrack.panning]. Expects a [float] argument between [code]-1.0[/code] and [code]+1.0[/code].
 		</constant>
-		<constant name="INSTR_PANNING_SLIDE" value="10" enum="Instruction">
-			Sets [member BlipKitTrack.panning_slide]. Expects an [int] argument.
+		<constant name="INSTR_PANNING_SLIDE" value="12" enum="Instruction">
+			Sets [member BlipKitTrack.panning_slide]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_PITCH" value="11" enum="Instruction">
+		<constant name="INSTR_PITCH" value="13" enum="Instruction">
 			Sets [member BlipKitTrack.pitch]. Expects a [float] argument.
 		</constant>
-		<constant name="INSTR_PHASE_WRAP" value="12" enum="Instruction">
+		<constant name="INSTR_PHASE_WRAP" value="14" enum="Instruction">
 			Sets [member BlipKitTrack.phase_wrap]. Expects an [int] argument.
 		</constant>
-		<constant name="INSTR_PORTAMENTO" value="13" enum="Instruction">
-			Sets [member BlipKitTrack.portamento]. Expects an [int] argument.
+		<constant name="INSTR_PORTAMENTO" value="15" enum="Instruction">
+			Sets [member BlipKitTrack.portamento]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_VIBRATO" value="14" enum="Instruction">
-			Calls [method BlipKitTrack.set_vibrato]. Expects [code]ticks[/code] ([int]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int]).
+		<constant name="INSTR_VIBRATO" value="16" enum="Instruction">
+			Calls [method BlipKitTrack.set_vibrato]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]).
 		</constant>
-		<constant name="INSTR_TREMOLO" value="15" enum="Instruction">
-			Calls [method BlipKitTrack.set_tremolo]. Expects [code]ticks[/code] ([int]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int]).
+		<constant name="INSTR_TREMOLO" value="17" enum="Instruction">
+			Calls [method BlipKitTrack.set_tremolo]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]).
 		</constant>
-		<constant name="INSTR_ARPEGGIO" value="16" enum="Instruction">
+		<constant name="INSTR_ARPEGGIO" value="18" enum="Instruction">
 			Sets [member BlipKitTrack.arpeggio]. Expects a [PackedFloat32Array] argument.
 		</constant>
-		<constant name="INSTR_ARPEGGIO_DIVIDER" value="17" enum="Instruction">
-			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument.
+		<constant name="INSTR_ARPEGGIO_DIVIDER" value="19" enum="Instruction">
+			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_INSTRUMENT" value="18" enum="Instruction">
-			Sets [member BlipKitTrack.instrument] from the given slot. Expects a slot index from [code]0[/code] to [code]255[/code] as [int] argument.
+		<constant name="INSTR_INSTRUMENT" value="20" enum="Instruction">
+			Sets [member BlipKitTrack.instrument] from the given slot. Expects a slot index between [code]0[/code] and [code]255[/code] as [int] argument.
 			Which [BlipKitInstrument] used is define with [member BlipKitInterpreter.set_instrument_at].
 		</constant>
-		<constant name="INSTR_INSTRUMENT_DIVIDER" value="19" enum="Instruction">
-			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument.
+		<constant name="INSTR_INSTRUMENT_DIVIDER" value="21" enum="Instruction">
+			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_WAIT" value="20" enum="Instruction">
-			Waits for a number of [i]ticks[/i]. Expects an [int] argument.
+		<constant name="INSTR_WAIT" value="22" enum="Instruction">
+			Interrupts the execution for a number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="INSTR_CALL" value="21" enum="Instruction">
+		<constant name="INSTR_CALL" value="23" enum="Instruction">
 			Calls a named label like a function. Expects a label name as [String] argument.
 			[b]Note:[/b] The label is not required to be defined at this point and can also be set later.
 		</constant>
-		<constant name="INSTR_RETURN" value="22" enum="Instruction">
+		<constant name="INSTR_RETURN" value="24" enum="Instruction">
 			Returns from a function call made with [constant INSTR_CALL]. Expects no arguments.
 		</constant>
-		<constant name="INSTR_JUMP" value="23" enum="Instruction">
+		<constant name="INSTR_JUMP" value="25" enum="Instruction">
 			Jumps to a named label. Expects the label name as [String] argument.
 		</constant>
-		<constant name="INSTR_RESET" value="24" enum="Instruction">
+		<constant name="INSTR_RESET" value="26" enum="Instruction">
 			Calls [method BlipKitTrack.reset]. Expects no arguments.
 		</constant>
-		<constant name="INSTR_SET_REG" value="25" enum="Instruction">
-			Sets a value in a register. Expects the register number as [int] argument and the value as [int] argument. The register number is a value between [code]0[/code] and [code]15[/code].
+		<constant name="INSTR_STORE" value="27" enum="Instruction">
+			Stores a value in a register. Expects the register number as [int] argument between [code]0[/code] and [code]15[/code], and the value as [int] argument.
+			The value can be read with [method BlipKitInterpreter.get_register].
 		</constant>
 		<constant name="OK" value="0" enum="Error">
 			No error.

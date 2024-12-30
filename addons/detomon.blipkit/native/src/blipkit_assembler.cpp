@@ -18,7 +18,9 @@ void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitAssembler::get_error_message);
 	ClassDB::bind_method(D_METHOD("clear"), &BlipKitAssembler::clear);
 
-	BIND_ENUM_CONSTANT(INSTR_NOTE);
+	BIND_ENUM_CONSTANT(INSTR_ATTACK);
+	BIND_ENUM_CONSTANT(INSTR_RELEASE);
+	BIND_ENUM_CONSTANT(INSTR_MUTE);
 	BIND_ENUM_CONSTANT(INSTR_WAVEFORM);
 	BIND_ENUM_CONSTANT(INSTR_CUSTOM_WAVEFORM);
 	BIND_ENUM_CONSTANT(INSTR_DUTY_CYCLE);
@@ -42,7 +44,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(INSTR_RETURN);
 	BIND_ENUM_CONSTANT(INSTR_JUMP);
 	BIND_ENUM_CONSTANT(INSTR_RESET);
-	BIND_ENUM_CONSTANT(INSTR_SET_REG);
+	BIND_ENUM_CONSTANT(INSTR_STORE);
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_INSTRUCTION);
@@ -77,7 +79,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 
 			// Do nothing.
 		} break;
-		case INSTR_NOTE:
+		case INSTR_ATTACK:
 		case INSTR_VOLUME:
 		case INSTR_MASTER_VOLUME:
 		case INSTR_PANNING:
@@ -150,13 +152,15 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 
 			byte_code->put_u32(0);
 		} break;
+		case INSTR_RELEASE:
+		case INSTR_MUTE:
 		case INSTR_RETURN:
 		case INSTR_RESET: {
 			ERR_FAIL_COND_V(check_args(p_args, Variant::NIL, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			byte_code->put_u8(p_instr);
 		} break;
-		case INSTR_SET_REG: {
+		case INSTR_STORE: {
 			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::INT, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
 			int number = CLAMP(uint32_t(p_args.args[0]), 0, REGISTER_COUNT);
@@ -195,7 +199,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
-	return ERR_INVALID_INSTRUCTION;
+	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {

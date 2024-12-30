@@ -26,8 +26,8 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
-	ClassDB::bind_method(D_METHOD("get_register_value", "number"), &BlipKitInterpreter::get_register_value);
-	ClassDB::bind_method(D_METHOD("set_register_value", "number", "value"), &BlipKitInterpreter::set_register_value);
+	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
+	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
@@ -91,8 +91,14 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_NOP: {
 				// Do nothing.
 			} break;
-			case Instruction::INSTR_NOTE: {
+			case Instruction::INSTR_ATTACK: {
 				p_track->set_note(get_half());
+			} break;
+			case Instruction::INSTR_RELEASE: {
+				p_track->release();
+			} break;
+			case Instruction::INSTR_MUTE: {
+				p_track->mute();
 			} break;
 			case Instruction::INSTR_VOLUME: {
 				p_track->set_volume(get_half());
@@ -196,7 +202,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_RESET: {
 				p_track->reset();
 			} break;
-			case Instruction::INSTR_SET_REG: {
+			case Instruction::INSTR_STORE: {
 				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
 				int32_t value = byte_code->get_32();
 				registers[number] = value;
@@ -235,12 +241,12 @@ void BlipKitInterpreter::reset() {
 	error_message.resize(0);
 }
 
-void BlipKitInterpreter::set_register_value(int p_number, int p_value) {
-	ERR_FAIL_INDEX(p_number, REGISTER_COUNT);
-	registers[p_number] = p_value;
+void BlipKitInterpreter::set_register(int p_register, int p_value) {
+	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
+	registers[p_register] = p_value;
 }
 
-int BlipKitInterpreter::get_register_value(int p_number) const {
-	ERR_FAIL_INDEX_V(p_number, REGISTER_COUNT, 0);
-	return registers[p_number];
+int BlipKitInterpreter::get_register(int p_register) const {
+	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
+	return registers[p_register];
 }

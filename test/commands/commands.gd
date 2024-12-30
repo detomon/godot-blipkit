@@ -49,13 +49,13 @@ func _ready() -> void:
 	assem.put(BlipKitAssembler.INSTR_DUTY_CYCLE, 8)
 
 	assem.put_label("start")
-	assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_C_5))
+	assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_5))
 	assem.put(BlipKitAssembler.INSTR_WAIT, 18)
-	assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_C_6))
+	assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_6))
 	assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 162)
 	assem.put(BlipKitAssembler.INSTR_VOLUME, 0.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 162)
-	assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_RELEASE))
+	assem.put(BlipKitAssembler.INSTR_RELEASE)
 	assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 0)
 	assem.put(BlipKitAssembler.INSTR_VOLUME, 1.0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 180)
@@ -63,11 +63,11 @@ func _ready() -> void:
 	assem.put(BlipKitAssembler.INSTR_JUMP, "start")
 #
 	assem.put_label("tone")
-	assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_C_2))
+	assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_2))
 	assem.put(BlipKitAssembler.INSTR_VIBRATO, 12, 0.3, 0)
 	assem.put(BlipKitAssembler.INSTR_WAIT, 100)
 	assem.put(BlipKitAssembler.INSTR_VIBRATO, 0, 0.0, 0)
-	assem.put(BlipKitAssembler.INSTR_NOTE, float(BlipKitTrack.NOTE_RELEASE))
+	assem.put(BlipKitAssembler.INSTR_RELEASE)
 	assem.put(BlipKitAssembler.INSTR_RETURN)
 
 	if assem.compile() != BlipKitAssembler.OK:
