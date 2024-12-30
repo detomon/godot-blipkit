@@ -20,7 +20,7 @@ var lead: BlipKitTrack
 @onready var _timer: Timer = %Timer
 @onready var _progress: HSlider = %Progress
 
-var intr1 := BlipKitInterpreter.new()
+var interp := BlipKitInterpreter.new()
 
 func _ready() -> void:
 	var stream: AudioStreamBlipKit = _audio_stream_player.stream
@@ -153,7 +153,7 @@ func _init_track() -> void:
 	assem.compile()
 
 	var bytes := assem.get_byte_code()
-	intr1.set_byte_code(bytes)
+	interp.set_byte_code(bytes)
 	prints(len(bytes), bytes)
 
 
@@ -176,7 +176,7 @@ func _init_track() -> void:
 	saw.attach(stream)
 	#saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 	saw.add_divider(&"beat", 1, func () -> int:
-		return intr1.advance(saw)
+		return interp.advance(saw)
 	)
 
 	print_debug.call_deferred(saw.get_tremolo())

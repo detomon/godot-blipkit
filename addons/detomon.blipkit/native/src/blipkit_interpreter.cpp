@@ -17,10 +17,10 @@ BlipKitInterpreter::BlipKitInterpreter() {
 }
 
 void BlipKitInterpreter::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_instrument_at", "slot", "instruments"), &BlipKitInterpreter::set_instrument_at);
-	ClassDB::bind_method(D_METHOD("get_instrument_at", "slot"), &BlipKitInterpreter::get_instrument_at);
-	ClassDB::bind_method(D_METHOD("set_waveform_at", "slot", "waveforms"), &BlipKitInterpreter::set_waveform_at);
-	ClassDB::bind_method(D_METHOD("get_waveform_at", "slot"), &BlipKitInterpreter::get_waveform_at);
+	ClassDB::bind_method(D_METHOD("set_instrument", "slot", "instruments"), &BlipKitInterpreter::set_instrument);
+	ClassDB::bind_method(D_METHOD("get_instrument", "slot"), &BlipKitInterpreter::get_instrument);
+	ClassDB::bind_method(D_METHOD("set_waveform", "slot", "waveforms"), &BlipKitInterpreter::set_waveform);
+	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
 	ClassDB::bind_method(D_METHOD("set_byte_code", "byte_code"), &BlipKitInterpreter::set_byte_code);
 	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
@@ -53,22 +53,22 @@ int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_m
 	return -1;
 }
 
-void BlipKitInterpreter::set_instrument_at(int p_slot, const Ref<BlipKitInstrument> &p_instrument) {
+void BlipKitInterpreter::set_instrument(int p_slot, const Ref<BlipKitInstrument> &p_instrument) {
 	ERR_FAIL_INDEX(p_slot, SLOT_COUNT);
 	instruments[p_slot] = p_instrument;
 }
 
-Ref<BlipKitInstrument> BlipKitInterpreter::get_instrument_at(int p_slot) const {
+Ref<BlipKitInstrument> BlipKitInterpreter::get_instrument(int p_slot) const {
 	ERR_FAIL_INDEX_V(p_slot, SLOT_COUNT, nullptr);
 	return instruments[p_slot];
 }
 
-void BlipKitInterpreter::set_waveform_at(int p_slot, const Ref<BlipKitWaveform> &p_waveform) {
+void BlipKitInterpreter::set_waveform(int p_slot, const Ref<BlipKitWaveform> &p_waveform) {
 	ERR_FAIL_INDEX(p_slot, SLOT_COUNT);
 	waveforms[p_slot] = p_waveform;
 }
 
-Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform_at(int p_slot) const {
+Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
 	ERR_FAIL_INDEX_V(p_slot, SLOT_COUNT, nullptr);
 	return waveforms[p_slot];
 }
