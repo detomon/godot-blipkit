@@ -148,7 +148,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			byte_code->put_u8(p_instr);
 
 			int byte_offset = byte_code->get_position();
-			addresses.push_back({ .byte_offset = byte_offset, .label_index = label_index });
+			addresses.push_back({ .label_index = label_index, .byte_offset = byte_offset });
 
 			byte_code->put_u32(0);
 		} break;
