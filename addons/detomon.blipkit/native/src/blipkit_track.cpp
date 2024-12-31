@@ -217,57 +217,57 @@ String BlipKitTrack::_to_string() const {
 	return vformat("BlipKitTrack: waveform=%d, volume=%f (%f), note=%f", (int)get_waveform(), get_volume(), get_master_volume(), get_note());
 }
 
-real_t BlipKitTrack::get_master_volume() const {
+float BlipKitTrack::get_master_volume() const {
 	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_MASTER_VOLUME, &value);
 	AudioStreamBlipKit::unlock();
 
-	return real_t(value) / real_t(BK_MAX_VOLUME);
+	return float(value) / float(BK_MAX_VOLUME);
 }
 
-void BlipKitTrack::set_master_volume(real_t p_master_volume) {
+void BlipKitTrack::set_master_volume(float p_master_volume) {
 	p_master_volume = CLAMP(p_master_volume, 0.0, 1.0);
-	const BKInt value = BKInt(p_master_volume * real_t(BK_MAX_VOLUME));
+	const BKInt value = BKInt(p_master_volume * float(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_MASTER_VOLUME, value);
 	AudioStreamBlipKit::unlock();
 }
 
-real_t BlipKitTrack::get_volume() const {
+float BlipKitTrack::get_volume() const {
 	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_VOLUME, &value);
 	AudioStreamBlipKit::unlock();
 
-	return real_t(value) / real_t(BK_MAX_VOLUME);
+	return float(value) / float(BK_MAX_VOLUME);
 }
 
-void BlipKitTrack::set_volume(real_t p_volume) {
+void BlipKitTrack::set_volume(float p_volume) {
 	p_volume = CLAMP(p_volume, 0.0, 1.0);
-	const BKInt value = BKInt(p_volume * real_t(BK_MAX_VOLUME));
+	const BKInt value = BKInt(p_volume * float(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_VOLUME, value);
 	AudioStreamBlipKit::unlock();
 }
 
-real_t BlipKitTrack::get_panning() const {
+float BlipKitTrack::get_panning() const {
 	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_PANNING, &value);
 	AudioStreamBlipKit::unlock();
 
-	return real_t(value) / real_t(BK_MAX_VOLUME);
+	return float(value) / float(BK_MAX_VOLUME);
 }
 
-void BlipKitTrack::set_panning(real_t p_panning) {
+void BlipKitTrack::set_panning(float p_panning) {
 	p_panning = CLAMP(p_panning, -1.0, +1.0);
-	BKInt value = BKInt(p_panning * real_t(BK_MAX_VOLUME));
+	BKInt value = BKInt(p_panning * float(BK_MAX_VOLUME));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PANNING, value);
@@ -311,7 +311,7 @@ BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 
 void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 	BKInt waveform = 0;
-	real_t master_volume = 0.0;
+	float master_volume = 0.0;
 
 	switch (p_waveform) {
 		case WAVEFORM_SQUARE: {
@@ -363,7 +363,7 @@ void BlipKitTrack::set_duty_cycle(int p_duty_cycle) {
 	AudioStreamBlipKit::unlock();
 }
 
-real_t BlipKitTrack::get_note() const {
+float BlipKitTrack::get_note() const {
 	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
@@ -372,18 +372,18 @@ real_t BlipKitTrack::get_note() const {
 
 	// No note set.
 	if (value < 0) {
-		return real_t(NOTE_RELEASE);
+		return float(NOTE_RELEASE);
 	}
 
-	return real_t(value) / real_t(BK_FINT20_UNIT);
+	return float(value) / float(BK_FINT20_UNIT);
 }
 
-void BlipKitTrack::set_note(real_t p_note) {
+void BlipKitTrack::set_note(float p_note) {
 	BKInt value;
 
 	if (p_note >= 0.0) {
-		p_note = CLAMP(p_note, real_t(BK_MIN_NOTE), real_t(BK_MAX_NOTE));
-		value = BKInt(p_note * real_t(BK_FINT20_UNIT));
+		p_note = CLAMP(p_note, float(BK_MIN_NOTE), float(BK_MAX_NOTE));
+		value = BKInt(p_note * float(BK_FINT20_UNIT));
 	} else if (p_note <= -2.0) {
 		value = NOTE_MUTE;
 	} else {
@@ -395,19 +395,19 @@ void BlipKitTrack::set_note(real_t p_note) {
 	AudioStreamBlipKit::unlock();
 }
 
-real_t BlipKitTrack::get_pitch() const {
+float BlipKitTrack::get_pitch() const {
 	BKInt value = 0;
 
 	AudioStreamBlipKit::lock();
 	BKGetAttr(&track, BK_PITCH, &value);
 	AudioStreamBlipKit::unlock();
 
-	return real_t(value) / real_t(BK_FINT20_UNIT);
+	return float(value) / float(BK_FINT20_UNIT);
 }
 
-void BlipKitTrack::set_pitch(real_t p_pitch) {
-	p_pitch = CLAMP(p_pitch, -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE));
-	BKInt value = BKInt(p_pitch * real_t(BK_FINT20_UNIT));
+void BlipKitTrack::set_pitch(float p_pitch) {
+	p_pitch = CLAMP(p_pitch, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+	BKInt value = BKInt(p_pitch * float(BK_FINT20_UNIT));
 
 	AudioStreamBlipKit::lock();
 	BKSetAttr(&track, BK_PITCH, value);
@@ -487,7 +487,7 @@ void BlipKitTrack::set_portamento(int p_portamento) {
 void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 	p_delta = CLAMP(p_delta, 0.0, 1.0);
 	p_slide_ticks = MAX(p_slide_ticks, 0);
-	const BKInt delta = BKInt(p_delta * real_t(BK_MAX_VOLUME));
+	const BKInt delta = BKInt(p_delta * float(BK_MAX_VOLUME));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
@@ -503,7 +503,7 @@ Dictionary BlipKitTrack::get_tremolo() const {
 	AudioStreamBlipKit::unlock();
 
 	const int ticks = values[0];
-	const real_t delta = real_t(values[1]) / real_t(BK_MAX_VOLUME);
+	const float delta = float(values[1]) / float(BK_MAX_VOLUME);
 	const int slide_ticks = values[2];
 
 	Dictionary ret;
@@ -522,7 +522,7 @@ Dictionary BlipKitTrack::get_vibrato() const {
 	AudioStreamBlipKit::unlock();
 
 	const int ticks = values[0];
-	const real_t delta = real_t(values[1]) / real_t(BK_FINT20_UNIT);
+	const float delta = float(values[1]) / float(BK_FINT20_UNIT);
 	const int slide_ticks = values[2];
 
 	Dictionary ret;
@@ -534,9 +534,9 @@ Dictionary BlipKitTrack::get_vibrato() const {
 }
 
 void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
-	p_delta = CLAMP(p_delta, -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE));
+	p_delta = CLAMP(p_delta, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 	p_slide_ticks = MAX(p_slide_ticks, 0);
-	const BKInt delta = BKInt(p_delta * real_t(BK_FINT20_UNIT));
+	const BKInt delta = BKInt(p_delta * float(BK_FINT20_UNIT));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
 	AudioStreamBlipKit::lock();
@@ -574,7 +574,7 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 	arpeggio.resize(count);
 
 	for (int i = 0; i < count; i++) {
-		arpeggio[i] = real_t(value[i + 1]) / real_t(BK_FINT20_UNIT);
+		arpeggio[i] = float(value[i + 1]) / float(BK_FINT20_UNIT);
 	}
 
 	return arpeggio;
@@ -586,7 +586,7 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
-		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -real_t(BK_MAX_NOTE), +real_t(BK_MAX_NOTE)) * double(BK_FINT20_UNIT));
+		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * double(BK_FINT20_UNIT));
 	}
 
 	AudioStreamBlipKit::lock();
@@ -718,15 +718,15 @@ void BlipKitTrack::detach() {
 }
 
 void BlipKitTrack::release() {
-	set_note(real_t(NOTE_RELEASE));
+	set_note(float(NOTE_RELEASE));
 }
 
 void BlipKitTrack::mute() {
-	set_note(real_t(NOTE_MUTE));
+	set_note(float(NOTE_MUTE));
 }
 
 void BlipKitTrack::reset() {
-	const real_t master_volume = get_master_volume();
+	const float master_volume = get_master_volume();
 	const Waveform waveform = get_waveform();
 
 	AudioStreamBlipKit::lock();

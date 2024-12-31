@@ -122,17 +122,17 @@ BlipKitInstrument::~BlipKitInstrument() {
 void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length) {
 	ERR_FAIL_INDEX(p_type, ENVELOPE_MAX);
 
-	real_t multiplier = 1.0;
+	float multiplier = 1.0;
 
 	switch (p_type) {
 		case ENVELOPE_VOLUME: {
-			multiplier = real_t(BK_MAX_VOLUME);
+			multiplier = float(BK_MAX_VOLUME);
 		} break;
 		case ENVELOPE_PANNING: {
-			multiplier = real_t(BK_MAX_VOLUME);
+			multiplier = float(BK_MAX_VOLUME);
 		} break;
 		case ENVELOPE_PITCH: {
-			multiplier = real_t(BK_FINT20_UNIT);
+			multiplier = float(BK_FINT20_UNIT);
 		} break;
 		case ENVELOPE_DUTY_CYCLE: {
 			multiplier = 1.0;
@@ -200,8 +200,8 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 	emit_changed();
 }
 
-void BlipKitInstrument::set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release) {
-	BKInt sustain = BKInt(CLAMP(p_sustain, 0.0, 1.0) * real_t(BK_MAX_VOLUME));
+void BlipKitInstrument::set_adsr(int p_attack, int p_decay, float p_sustain, int p_release) {
+	BKInt sustain = BKInt(CLAMP(p_sustain, 0.0, 1.0) * float(BK_MAX_VOLUME));
 	set_envelope(ENVELOPE_VOLUME, { p_attack, p_decay, 240, p_release }, { 1.0, p_sustain, p_sustain, 0.0 }, 2, 1);
 }
 

@@ -60,6 +60,7 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	friend class AudioStreamBlipKit;
 	friend class BlipKitTrack;
 
+private:
 	static const int NUM_CHANNELS = 2;
 	static const int CHANNEL_SIZE = 1024;
 

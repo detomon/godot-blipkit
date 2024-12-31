@@ -117,24 +117,25 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::FLOAT, Variant::INT) != OK, ERR_INVALID_ARGUMENT);
 
 			uint32_t ticks = CLAMP(int(p_args.args[0]), 0, UINT16_MAX);
+			float delta = CLAMP(float(p_args.args[1]), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 			uint32_t slide_ticks = CLAMP(int(p_args.args[2]), 0, UINT16_MAX);
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u16(ticks);
-			put_half(p_args.args[1]);
+			put_half(delta);
 			byte_code->put_u16(slide_ticks);
 		} break;
 		case INSTR_ARPEGGIO: {
 			ERR_FAIL_COND_V(check_args(p_args, Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			const PackedFloat32Array &deltas = p_args.args[0];
-			const real_t *deltas_ptr = deltas.ptr();
-			int count = MIN(deltas.size(), 8);
+			const PackedFloat32Array &values = p_args.args[0];
+			const float *values_ptr = values.ptr();
+			int count = MIN(values.size(), BK_MAX_ARPEGGIO);
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u8(count);
 			for (int i = 0; i < count; i++) {
-				int delta = deltas_ptr[i];
+				int delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 				put_half(delta);
 			}
 		} break;
@@ -163,7 +164,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 		case INSTR_STORE: {
 			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::INT, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			int number = CLAMP(uint32_t(p_args.args[0]), 0, REGISTER_COUNT);
+			int number = CLAMP(int(p_args.args[0]), 0, REGISTER_COUNT);
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u8(number);

@@ -14,7 +14,7 @@ class BlipKitWaveform : public Resource {
 
 private:
 	BKData waveform;
-	LocalVector<real_t> frames;
+	LocalVector<float> frames;
 
 protected:
 	static void _bind_methods();
@@ -23,7 +23,7 @@ protected:
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 
-	void _update_waveform(const LocalVector<real_t> &p_frames);
+	void _update_waveform(const LocalVector<float> &p_frames);
 
 public:
 	BlipKitWaveform();

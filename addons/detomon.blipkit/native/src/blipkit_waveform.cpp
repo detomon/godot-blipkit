@@ -60,12 +60,12 @@ BlipKitWaveform::~BlipKitWaveform() {
 	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitWaveform::_update_waveform(const LocalVector<real_t> &p_frames) {
+void BlipKitWaveform::_update_waveform(const LocalVector<float> &p_frames) {
 	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
-	const real_t *ptr = p_frames.ptr();
+	const float *ptr = p_frames.ptr();
 
 	for (int i = 0; i < p_frames.size(); i++) {
-		wave_frames[i] = BKFrame(ptr[i] * real_t(BK_FRAME_MAX));
+		wave_frames[i] = BKFrame(ptr[i] * float(BK_FRAME_MAX));
 	}
 
 	AudioStreamBlipKit::lock();
@@ -116,18 +116,18 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
-	const real_t *ptr = p_frames.ptr();
-	LocalVector<real_t> frames_copy;
+	const float *ptr = p_frames.ptr();
+	LocalVector<float> frames_copy;
 	frames_copy.resize(p_frames.size());
 
 	if (p_normalize) {
-		real_t max_value = 0.0;
+		float max_value = 0.0;
 		for (int i = 0; i < frames_copy.size(); i++) {
 			frames_copy[i] = ptr[i];
 			max_value = MAX(max_value, ABS(frames_copy[i]));
 		}
 
-		real_t factor = 0.0;
+		float factor = 0.0;
 		if (!Math::is_zero_approx(max_value)) {
 			factor = p_amplitude / max_value;
 		}

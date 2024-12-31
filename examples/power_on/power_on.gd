@@ -1,9 +1,9 @@
 extends Control
 
-@onready var _player: AudioStreamPlayer = %AudioStreamPlayer
-
 var _interp := BlipKitInterpreter.new()
 var _track := BlipKitTrack.new()
+
+@onready var _player: AudioStreamPlayer = %AudioStreamPlayer
 
 
 func _ready() -> void:

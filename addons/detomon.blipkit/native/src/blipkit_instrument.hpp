@@ -47,7 +47,7 @@ public:
 	_FORCE_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
 	void set_envelope(EnvelopeType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length);
-	void set_adsr(int p_attack, int p_decay, real_t p_sustain, int p_release);
+	void set_adsr(int p_attack, int p_decay, float p_sustain, int p_release);
 	bool has_envelope(EnvelopeType p_type) const;
 	PackedInt32Array get_envelope_steps(EnvelopeType p_type) const;
 	PackedFloat32Array get_envelope_values(EnvelopeType p_type) const;
