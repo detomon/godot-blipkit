@@ -25,7 +25,7 @@
 		[/codeblocks]
 	</description>
 	<tutorials>
-		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/power_on.md</link>
 	</tutorials>
 	<methods>
 		<method name="add_divider">
@@ -36,7 +36,7 @@
 			<description>
 				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
 				[param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callable] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callable] is called next after the returned number of ticks.
-				Callbacks are called from the audio thread, they should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or not time critical.
+				[b]Note:[/b] Callbacks are called from the audio thread, they should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or not time critical.
 				[b]Note:[/b] [param callback] is called for the first time on the next tick.
 				[b]Example:[/b] Add a divider and play a higher note on each call:
 				[codeblocks]
@@ -241,7 +241,7 @@
 			Sets the number of [i]ticks[/i] in which [member volume] changes to a new value.
 		</member>
 		<member name="waveform" type="int" setter="set_waveform" getter="get_waveform" enum="BlipKitTrack.Waveform" default="0">
-			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [constant WAVFORM_SQUARE].
+			Sets the waveform and its [member master_volume] accordingly (see [enum Waveform]). The default is [constant WAVEFORM_SQUARE].
 		</member>
 	</members>
 	<constants>

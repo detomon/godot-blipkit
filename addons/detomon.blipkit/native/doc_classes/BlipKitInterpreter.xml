@@ -18,8 +18,8 @@
 		interp.set_byte_code(byte_code)
 
 		# Run the byte code on a track using a divider.
-		track.add_divider(&amp;"run", 1, func () -> int:
-			return interp.advance(track)
+		track.add_divider(&amp;"run", 1, func () -&gt; int:
+		    return interp.advance(track)
 		)
 		[/gdscript]
 		[/codeblocks]

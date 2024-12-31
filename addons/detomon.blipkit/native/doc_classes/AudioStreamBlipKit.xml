@@ -7,7 +7,7 @@
 		[b]Note:[/b] This resource uses the same [AudioStreamBlipKitPlayback] instance between playbacks.
 	</description>
 	<tutorials>
-		<link title="Power On!">https://github.com/detomon/godot-blipkit/examples/power_on/power_on.md</link>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/power_on.md</link>
 	</tutorials>
 	<methods>
 		<method name="call_synced">

@@ -4,7 +4,6 @@ An addon for creating the beautiful sound of old sound chips. This uses the [Bli
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Thread-safety](#thread-safety)
 
 ## Installation
 
@@ -27,6 +26,4 @@ or...
 
 See the [examples](examples) directory on how to use the extension.
 
-## Thread safety
-
-Function calls and property changes for all objects are thread-safe.
+All class descirptions are available in the Editor in the reference documentation. Also see the [doc/classes](doc/classes) directory.

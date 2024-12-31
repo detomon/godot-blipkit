@@ -10,9 +10,7 @@ build:
 	scons platform=macos arch=universal $(TARGET_DEBUG)
 #	scons platform=macos arch=universal $(TARGET_RELEASE)
 
-#	scons platform=ios arch=arm64 $(TARGET_DEBUG)
-#	scons platform=ios arch=arm64 $(TARGET_RELEASE)
-
 .PHONY: doc
 doc:
 	$(GODOT) --headless --gdextension-docs --doctool "$(NATIVE_DIR)"
+	./doc/markdown.py "$(NATIVE_DIR)/doc_classes/*.xml" "doc/classes"
