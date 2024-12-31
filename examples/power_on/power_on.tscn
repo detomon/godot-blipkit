@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://dtyywphgvahso"]
+
+[ext_resource type="Script" uid="uid://c4ynxq2bl3fxx" path="res://examples/power_on/power_on.gd" id="1_x8hlo"]
+[ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://visualizer/oscilloscope/oscilloscope.tscn" id="2_byia3"]
+
+[sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_wdhyx"]
+
+[node name="PowerOn" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x8hlo")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = SubResource("AudioStreamBlipKit_wdhyx")
+autoplay = true
+
+[node name="Oscilloscope" parent="." instance=ExtResource("2_byia3")]
+layout_mode = 1
+bus_name = &"Master"
+
+[node name="CheckButton" type="CheckButton" parent="."]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 26.0
+button_pressed = true
+text = "Power On"
+
+[connection signal="toggled" from="CheckButton" to="." method="_on_check_button_toggled"]

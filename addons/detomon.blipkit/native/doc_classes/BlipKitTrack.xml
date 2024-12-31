@@ -5,7 +5,7 @@
 	</brief_description>
 	<description>
 		This class generates a single waveform and plays a [member note]. Method calls and property changes are thread-safe.
-		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from its [AudioStreamBlipKit] and all dividers are removed.
+		[b]Note:[/b] When a [BlipKitTrack] is freed, it is automatically detached from [AudioStreamBlipKit] and all dividers are removed.
 		[b]Example:[/b] Create a [BlipKitTrack] and attach it to an [AudioStreamBlipKit]:
 		[codeblocks]
 		[gdscript]
