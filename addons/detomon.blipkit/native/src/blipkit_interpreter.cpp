@@ -149,7 +149,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_INSTRUMENT_DIVIDER: {
 				p_track->set_instrument_divider(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_WAIT: {
+			case Instruction::INSTR_TICK: {
 				uint32_t wait = byte_code->get_u16();
 				return wait;
 			} break;

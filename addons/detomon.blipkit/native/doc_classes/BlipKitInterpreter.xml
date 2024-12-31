@@ -31,7 +31,7 @@
 			<return type="int" />
 			<param index="0" name="track" type="BlipKitTrack" />
 			<description>
-				Advances the interpreter until a [constant BlipKitAssembler.INTR_WAIT] instruction is encountered or no more instruction are available.
+				Advances the interpreter until a [constant BlipKitAssembler.INSTR_WAIT] instruction is encountered or no more instruction are available.
 				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
 				Returns [code]0[/code] if no more instructions are available.
 				Returns [code]-1[/code] if an error occured. The status can be get with [method get_status], and the error message can be get with [method get_error_message].

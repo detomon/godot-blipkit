@@ -24,15 +24,15 @@ assem.put_label("start")
 
 # Play notes.
 assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_5))
-assem.put(BlipKitAssembler.INSTR_WAIT, 18)
+assem.put(BlipKitAssembler.INSTR_TICK, 18)
 assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_6))
 assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 162)
 assem.put(BlipKitAssembler.INSTR_VOLUME, 0.0)
-assem.put(BlipKitAssembler.INSTR_WAIT, 162)
+assem.put(BlipKitAssembler.INSTR_TICK, 162)
 assem.put(BlipKitAssembler.INSTR_RELEASE)
 assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 0)
 assem.put(BlipKitAssembler.INSTR_VOLUME, 1.0)
-assem.put(BlipKitAssembler.INSTR_WAIT, 180)
+assem.put(BlipKitAssembler.INSTR_TICK, 180)
 
 # Jump back to label "start".
 assem.put(BlipKitAssembler.INSTR_JUMP, "start")
@@ -70,7 +70,7 @@ var bytes := assem.get_byte_code()
 - `INSTR_CUSTOM_WAVEFORM` = `5`
 	- Sets `BlipKitTrack.custom_waveform` from the given slot. Expects a slot index as `int` argument between `0` and `255`.
 
-Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform_at`.
+Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform`.
 - `INSTR_DUTY_CYCLE` = `6`
 	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`
 - `INSTR_EFFECT_DIVIDER` = `7`
@@ -102,19 +102,21 @@ Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInt
 - `INSTR_INSTRUMENT` = `20`
 	- Sets `BlipKitTrack.instrument` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
-Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument_at`.
+Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument`.
 - `INSTR_INSTRUMENT_DIVIDER` = `21`
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_WAIT` = `22`
+- `INSTR_TICK` = `22`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
 - `INSTR_CALL` = `23`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
-**Note:** The label is not required to be defined at this point and can also be set later.
+**Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
 - `INSTR_RETURN` = `24`
 	- Returns from a function call made with [`INSTR_CALL`](#instr_call). Expects no arguments.
 - `INSTR_JUMP` = `25`
 	- Jumps to a named label. Expects the label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
+
+**Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
 - `INSTR_RESET` = `26`
 	- Calls `BlipKitTrack.reset()`. Expects no arguments.
 - `INSTR_STORE` = `27`

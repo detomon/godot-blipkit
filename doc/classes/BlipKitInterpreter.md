@@ -62,7 +62,7 @@ track.add_divider(&"run", 1, func () -> int:
 
 ### `int advance(track: BlipKitTrack)`
 
-Advances the interpreter until a `BlipKitAssembler.INTR_WAIT` instruction is encountered or no more instruction are available.
+Advances the interpreter until a `BlipKitAssembler.INSTR_WAIT` instruction is encountered or no more instruction are available.
 
 Returns a value greater than `0` indicating the number of *ticks* to wait before [`advance()`](#int-advancetrack-blipkittrack) should be called again.
 
