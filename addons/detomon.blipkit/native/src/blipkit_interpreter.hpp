@@ -61,14 +61,14 @@ public:
 	Ref<BlipKitWaveform> get_waveform(int p_slot) const;
 	void set_byte_code(const PackedByteArray &p_byte);
 
+	void set_register(int p_number, int p_value);
+	int get_register(int p_number) const;
+
 	int advance(const Ref<BlipKitTrack> &p_track);
 	Status get_status() const;
 	String get_error_message() const;
 
 	void reset();
-
-	void set_register(int p_number, int p_value);
-	int get_register(int p_number) const;
 };
 
 } // namespace detomon::BlipKit

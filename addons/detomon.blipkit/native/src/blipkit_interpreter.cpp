@@ -22,12 +22,12 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_waveform", "slot", "waveforms"), &BlipKitInterpreter::set_waveform);
 	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
 	ClassDB::bind_method(D_METHOD("set_byte_code", "byte_code"), &BlipKitInterpreter::set_byte_code);
+	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
+	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
 	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
-	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
-	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
@@ -76,6 +76,16 @@ Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
 void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
+}
+
+void BlipKitInterpreter::set_register(int p_register, int p_value) {
+	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
+	registers[p_register] = p_value;
+}
+
+int BlipKitInterpreter::get_register(int p_register) const {
+	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
+	return registers[p_register];
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
@@ -239,14 +249,4 @@ void BlipKitInterpreter::reset() {
 	memset(registers, 0, sizeof(registers));
 	status = OK_RUNNING;
 	error_message.resize(0);
-}
-
-void BlipKitInterpreter::set_register(int p_register, int p_value) {
-	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
-	registers[p_register] = p_value;
-}
-
-int BlipKitInterpreter::get_register(int p_register) const {
-	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
-	return registers[p_register];
 }

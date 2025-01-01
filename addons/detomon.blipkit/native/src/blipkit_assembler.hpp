@@ -99,8 +99,10 @@ public:
 	Error put_code(const String &p_code);
 	Error put_label(const String p_label);
 	Error compile();
+
 	PackedByteArray get_byte_code() const;
 	String get_error_message() const;
+
 	void clear();
 };
 
