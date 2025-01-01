@@ -34,7 +34,7 @@
 				Advances the interpreter until a [constant BlipKitAssembler.INSTR_WAIT] instruction is encountered or no more instruction are available.
 				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
 				Returns [code]0[/code] if no more instructions are available.
-				Returns [code]-1[/code] if an error occured. The status can be get with [method get_status], and the error message can be get with [method get_error_message].
+				Returns [code]-1[/code] if an error occured. [method get_status] returns the status and [method get_error_message] returns the error message in this case.
 			</description>
 		</method>
 		<method name="get_error_message" qualifiers="const">
@@ -120,7 +120,7 @@
 			There are no more instructions to execute.
 		</constant>
 		<constant name="ERR_INVALID_INSTR" value="2" enum="Status">
-			An invalid instruction was found.
+			An invalid instruction was encountered.
 		</constant>
 		<constant name="ERR_STACK_OVERFLOW" value="3" enum="Status">
 			A stack overflow occurred.

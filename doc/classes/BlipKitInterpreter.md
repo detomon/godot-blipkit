@@ -48,7 +48,7 @@ track.add_divider(&"run", 1, func () -> int:
 - `OK_FINISHED` = `1`
 	- There are no more instructions to execute.
 - `ERR_INVALID_INSTR` = `2`
-	- An invalid instruction was found.
+	- An invalid instruction was encountered.
 - `ERR_STACK_OVERFLOW` = `3`
 	- A stack overflow occurred.
 - `ERR_STACK_UNDERFLOW` = `4`
@@ -66,7 +66,7 @@ Returns a value greater than `0` indicating the number of *ticks* to wait before
 
 Returns `0` if no more instructions are available.
 
-Returns `-1` if an error occured. The status can be get with [`get_status()`](#int-get_status-const), and the error message can be get with [`get_error_message()`](#string-get_error_message-const).
+Returns `-1` if an error occured. [`get_status()`](#int-get_status-const) returns the status and [`get_error_message()`](#string-get_error_message-const) returns the error message in this case.
 
 ### `String get_error_message() const`
 
