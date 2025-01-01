@@ -1,4 +1,8 @@
 #include "blipkit_assembler.hpp"
+#include "blipkit_instrument.hpp"
+#include "blipkit_interpreter.hpp"
+#include "blipkit_track.hpp"
+#include "blipkit_waveform.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
@@ -72,6 +76,12 @@ int BlipKitAssembler::add_label(const String p_label) {
 
 BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, const Args &p_args) {
 	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTRUCTION);
+
+	// Add version.
+	if (!byte_code->get_size()) {
+		byte_code->put_u8(INSTR_INIT);
+		byte_code->put_u8(BlipKitInterpreter::VERSION);
+	}
 
 	switch (p_instr) {
 		case INSTR_NOP: {
@@ -164,7 +174,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 		case INSTR_STORE: {
 			ERR_FAIL_COND_V(check_args(p_args, Variant::INT, Variant::INT, Variant::NIL) != OK, ERR_INVALID_ARGUMENT);
 
-			int number = CLAMP(int(p_args.args[0]), 0, REGISTER_COUNT);
+			int number = CLAMP(int(p_args.args[0]), 0, BlipKitInterpreter::REGISTER_COUNT);
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u8(number);

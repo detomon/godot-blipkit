@@ -217,6 +217,18 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				int32_t value = byte_code->get_32();
 				registers[number] = value;
 			} break;
+			case Instruction::INSTR_INIT: {
+				int32_t version = byte_code->get_u8();
+
+				switch (version) {
+					case 1: {
+						// OK.
+					} break;
+					default: {
+						return fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
+					} break;
+				}
+			} break;
 			default: {
 				return fail_with_error(ERR_INVALID_INSTRUCTION, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
 			} break;

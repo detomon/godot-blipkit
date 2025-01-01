@@ -16,8 +16,6 @@ class BlipKitAssembler : public RefCounted {
 	GDCLASS(BlipKitAssembler, RefCounted)
 
 public:
-	static constexpr int REGISTER_COUNT = 16;
-
 	enum Instruction {
 		INSTR_NOP,
 		INSTR_ATTACK,
@@ -47,6 +45,7 @@ public:
 		INSTR_JUMP,
 		INSTR_RESET,
 		INSTR_STORE,
+		INSTR_INIT,
 		INSTR_MAX,
 	};
 

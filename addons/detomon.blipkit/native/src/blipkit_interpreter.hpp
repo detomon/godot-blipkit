@@ -19,6 +19,7 @@ class BlipKitInterpreter : public RefCounted {
 
 public:
 	static constexpr int REGISTER_COUNT = 16;
+	static constexpr int VERSION = 1;
 
 	enum Status {
 		OK_RUNNING,
@@ -28,6 +29,7 @@ public:
 		ERR_STACK_OVERFLOW,
 		ERR_STACK_UNDERFLOW,
 		ERR_RECURSION,
+		ERR_UNSUPPORTED_VERSION,
 	};
 
 private:
