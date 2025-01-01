@@ -18,6 +18,7 @@ class BlipKitAssembler : public RefCounted {
 public:
 	enum Instruction {
 		INSTR_NOP,
+		INSTR_INIT,
 		INSTR_ATTACK,
 		INSTR_RELEASE,
 		INSTR_MUTE,
@@ -45,12 +46,12 @@ public:
 		INSTR_JUMP,
 		INSTR_RESET,
 		INSTR_STORE,
-		INSTR_INIT,
 		INSTR_MAX,
 	};
 
 	enum Error {
 		OK,
+		ERR_INVALID_STATE,
 		ERR_INVALID_INSTRUCTION,
 		ERR_INVALID_ARGUMENT,
 		ERR_DUPLICATE_LABEL,
@@ -59,6 +60,12 @@ public:
 	};
 
 private:
+	enum State {
+		STATE_ASSEMBLE,
+		STATE_COMPILED,
+		STATE_FAILED,
+	};
+
 	struct Label {
 		String name;
 		int byte_offset = -1;
@@ -78,7 +85,7 @@ private:
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
 	String error_message;
-	bool compiled = false;
+	State state = STATE_ASSEMBLE;
 
 protected:
 	static void _bind_methods();
@@ -86,7 +93,7 @@ protected:
 
 	Error put_instruction(Instruction p_instr, const Args &p_args);
 	int add_label(const String p_label);
-	Error check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
+	bool check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
 
 	_ALWAYS_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
 

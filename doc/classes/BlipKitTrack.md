@@ -8,7 +8,7 @@ Inherits: *RefCounted*
 
 This class generates a single waveform and plays a `note`. Method calls and property changes are thread-safe.
 
-**Note:** When a [`BlipKitTrack`](BlipKitTrack.md) is freed, it is automatically detached from its [`AudioStreamBlipKit`](AudioStreamBlipKit.md) and all dividers are removed.
+**Note:** When a [`BlipKitTrack`](BlipKitTrack.md) is freed, it is automatically detached from [`AudioStreamBlipKit`](AudioStreamBlipKit.md) and all dividers are removed.
 
 **Example:** Create a [`BlipKitTrack`](BlipKitTrack.md) and attach it to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md):
 

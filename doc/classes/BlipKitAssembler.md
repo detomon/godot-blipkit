@@ -59,67 +59,67 @@ var bytes := assem.get_byte_code()
 
 ### enum `Instruction`
 
-- `INSTR_ATTACK` = `1`
+- `INSTR_ATTACK` = `2`
 	- Sets `BlipKitTrack.note`. Expects a `float` argument.
-- `INSTR_RELEASE` = `2`
+- `INSTR_RELEASE` = `3`
 	- Calls `BlipKitTrack.release()`. Expects no arguments.
-- `INSTR_MUTE` = `3`
+- `INSTR_MUTE` = `4`
 	- Calls `BlipKitTrack.mute()`. Expects no arguments.
-- `INSTR_WAVEFORM` = `4`
+- `INSTR_WAVEFORM` = `5`
 	- Sets `BlipKitTrack.waveform`. Expects [`BlipKitTrack.Waveform`](#enum-blipkittrackwaveform) as `int` argument.
-- `INSTR_CUSTOM_WAVEFORM` = `5`
+- `INSTR_CUSTOM_WAVEFORM` = `6`
 	- Sets `BlipKitTrack.custom_waveform` from the given slot. Expects a slot index as `int` argument between `0` and `255`.
 
 Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform`.
-- `INSTR_DUTY_CYCLE` = `6`
+- `INSTR_DUTY_CYCLE` = `7`
 	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`
-- `INSTR_EFFECT_DIVIDER` = `7`
+- `INSTR_EFFECT_DIVIDER` = `8`
 	- Sets `BlipKitTrack.effect_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_VOLUME` = `8`
+- `INSTR_VOLUME` = `9`
 	- Sets `BlipKitTrack.volume`. Expects a `float` argument between `0.0` and `1.0`.
-- `INSTR_VOLUME_SLIDE` = `9`
+- `INSTR_VOLUME_SLIDE` = `10`
 	- Sets `BlipKitTrack.volume_slide`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_MASTER_VOLUME` = `10`
+- `INSTR_MASTER_VOLUME` = `11`
 	- Sets `BlipKitTrack.master_volume`. Expects a `float` argument between `0.0` and `1.0`.
-- `INSTR_PANNING` = `11`
+- `INSTR_PANNING` = `12`
 	- Sets `BlipKitTrack.panning`. Expects a `float` argument between `-1.0` and `+1.0`.
-- `INSTR_PANNING_SLIDE` = `12`
+- `INSTR_PANNING_SLIDE` = `13`
 	- Sets `BlipKitTrack.panning_slide`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_PITCH` = `13`
+- `INSTR_PITCH` = `14`
 	- Sets `BlipKitTrack.pitch`. Expects a `float` argument.
-- `INSTR_PHASE_WRAP` = `14`
+- `INSTR_PHASE_WRAP` = `15`
 	- Sets `BlipKitTrack.phase_wrap`. Expects an `int` argument.
-- `INSTR_PORTAMENTO` = `15`
+- `INSTR_PORTAMENTO` = `16`
 	- Sets `BlipKitTrack.portamento`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_VIBRATO` = `16`
+- `INSTR_VIBRATO` = `17`
 	- Calls `BlipKitTrack.set_vibrato()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
-- `INSTR_TREMOLO` = `17`
+- `INSTR_TREMOLO` = `18`
 	- Calls `BlipKitTrack.set_tremolo()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
-- `INSTR_ARPEGGIO` = `18`
+- `INSTR_ARPEGGIO` = `19`
 	- Sets `BlipKitTrack.arpeggio`. Expects a [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html) argument.
-- `INSTR_ARPEGGIO_DIVIDER` = `19`
+- `INSTR_ARPEGGIO_DIVIDER` = `20`
 	- Sets `BlipKitTrack.arpeggio_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_INSTRUMENT` = `20`
+- `INSTR_INSTRUMENT` = `21`
 	- Sets `BlipKitTrack.instrument` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
 Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument`.
-- `INSTR_INSTRUMENT_DIVIDER` = `21`
+- `INSTR_INSTRUMENT_DIVIDER` = `22`
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_TICK` = `22`
+- `INSTR_TICK` = `23`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
-- `INSTR_CALL` = `23`
+- `INSTR_CALL` = `24`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
-- `INSTR_RETURN` = `24`
+- `INSTR_RETURN` = `25`
 	- Returns from a function call made with [`INSTR_CALL`](#instr_call). Expects no arguments.
-- `INSTR_JUMP` = `25`
+- `INSTR_JUMP` = `26`
 	- Jumps to a named label. Expects the label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
-- `INSTR_RESET` = `26`
+- `INSTR_RESET` = `27`
 	- Calls `BlipKitTrack.reset()`. Expects no arguments.
-- `INSTR_STORE` = `27`
+- `INSTR_STORE` = `28`
 	- Stores a value in a register. Expects the register number as `int` argument between `0` and `15`, and the value as `int` argument.
 
 The value can be read with `BlipKitInterpreter.get_register()`.
@@ -128,15 +128,17 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 
 - `OK` = `0`
 	- No error.
-- `ERR_INVALID_INSTRUCTION` = `1`
+- `ERR_INVALID_STATE` = `1`
+	- The assembler is not in the correct state.
+- `ERR_INVALID_INSTRUCTION` = `2`
 	- An invalid instruction was provided.
-- `ERR_INVALID_ARGUMENT` = `2`
+- `ERR_INVALID_ARGUMENT` = `3`
 	- An invalid argument was provided.
-- `ERR_DUPLICATE_LABEL` = `3`
+- `ERR_DUPLICATE_LABEL` = `4`
 	- A named label already exists with the same name.
-- `ERR_UNDEFINED_LABEL` = `4`
+- `ERR_UNDEFINED_LABEL` = `5`
 	- A named label was not defined with the given name.
-- `ERR_PARSER_ERROR` = `5`
+- `ERR_PARSER_ERROR` = `6`
 	- 
 
 ## Method Descriptions

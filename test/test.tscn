@@ -106,6 +106,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_tbfq4")
 
 [node name="Oscilloscope" parent="MarginContainer2/PanelContainer" instance=ExtResource("5_tbfq4")]
 layout_mode = 2
+bus_name = &"Master"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_vjgep")

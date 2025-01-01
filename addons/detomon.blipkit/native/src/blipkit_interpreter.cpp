@@ -50,7 +50,7 @@ int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_m
 	int size = byte_code->get_size();
 	byte_code->seek(size);
 
-	return -1;
+	ERR_FAIL_V_MSG(-1, error_message);
 }
 
 void BlipKitInterpreter::set_instrument(int p_slot, const Ref<BlipKitInstrument> &p_instrument) {
@@ -76,6 +76,28 @@ Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
 void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
+
+	// Check header if available.
+	if (byte_code->get_size() > 0) {
+		// Check header.
+		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
+		if (unlikely(instr != BlipKitAssembler::INSTR_INIT)) {
+			fail_with_error(ERR_INVALID_INSTRUCTION, "Invalid binary header.");
+			return;
+		}
+
+		// Check version.
+		int32_t version = byte_code->get_u8();
+		switch (version) {
+			case 1: {
+				// OK.
+			} break;
+			default: {
+				fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
+				return;
+			} break;
+		}
+	}
 }
 
 void BlipKitInterpreter::set_register(int p_register, int p_value) {
@@ -89,9 +111,7 @@ int BlipKitInterpreter::get_register(int p_register) const {
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
-	if (p_track.is_null()) {
-		return fail_with_error(ERR_INVALID_ARGUMENT, "Track is null.");
-	}
+	ERR_FAIL_COND_V(p_track.is_null(), 0);
 
 	while (byte_code->get_available_bytes() > 0) {
 		int instr_offset = byte_code->get_position();
@@ -216,18 +236,6 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
 				int32_t value = byte_code->get_32();
 				registers[number] = value;
-			} break;
-			case Instruction::INSTR_INIT: {
-				int32_t version = byte_code->get_u8();
-
-				switch (version) {
-					case 1: {
-						// OK.
-					} break;
-					default: {
-						return fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
-					} break;
-				}
 			} break;
 			default: {
 				return fail_with_error(ERR_INVALID_INSTRUCTION, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));

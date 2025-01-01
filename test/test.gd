@@ -156,7 +156,6 @@ func _init_track() -> void:
 	interp.set_byte_code(bytes)
 	prints(len(bytes), bytes)
 
-
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
 
 	#ResourceSaver.save(_instrument, "res://instrument.tres")
