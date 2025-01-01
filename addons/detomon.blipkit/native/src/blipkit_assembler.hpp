@@ -77,7 +77,11 @@ private:
 	};
 
 	struct Args {
-		Variant args[3];
+		const Variant args[3];
+	};
+
+	struct Types {
+		Variant::Type types[3];
 	};
 
 	Ref<StreamPeerBuffer> byte_code;
@@ -92,9 +96,8 @@ protected:
 	String _to_string() const;
 
 	void initialize();
-	Error put_instruction(Instruction p_instr, const Args &p_args);
+	bool check_args(const Args &p_args, const Types &p_types);
 	int add_label(const String p_label);
-	bool check_args(const Args &p_args, Variant::Type p_type1, Variant::Type p_type2, Variant::Type p_type3);
 
 	_ALWAYS_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
 

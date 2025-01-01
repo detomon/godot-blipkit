@@ -171,7 +171,7 @@ func _init_track() -> void:
 	saw_instr.set_adsr(0, 0, 1.0, 12)
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
-	#saw.custom_waveform = waveform
+	#saw.custom_waveform = preload("res://test/waveforms/aah2.tres")
 	saw.attach(stream)
 	#saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 	saw.add_divider(&"beat", 1, func () -> int:

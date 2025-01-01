@@ -63,18 +63,6 @@ String BlipKitAssembler::_to_string() const {
 	return "BlipKitAssembler";
 }
 
-int BlipKitAssembler::add_label(const String p_label) {
-	if (label_indices.has(p_label)) {
-		return label_indices[p_label];
-	}
-
-	const int index = label_indices.size();
-	label_indices[p_label] = index;
-	labels.push_back({ .name = p_label });
-
-	return index;
-}
-
 void BlipKitAssembler::initialize() {
 	// Add version.
 	if (unlikely(byte_code->get_size() == 0)) {
@@ -83,15 +71,32 @@ void BlipKitAssembler::initialize() {
 	}
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, const Args &p_args) {
+bool BlipKitAssembler::check_args(const Args &p_args, const Types &p_types) {
+	for (int i = 0; i < 3; i++) {
+		if (p_args.args[i].get_type() != p_types.types[i]) {
+			// Fail.
+			state = STATE_FAILED;
+
+			const String &type_name = Variant::get_type_name(p_types.types[i]);
+			error_message = vformat("Expected argument %d to be type %s.", i + 1, type_name);
+			ERR_FAIL_V_MSG(false, error_message);
+		}
+	}
+
+	return true;
+}
+
+BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
 	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTR);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
 	initialize();
 
+	const Args args = { p_arg1, p_arg2, p_arg3 };
+
 	switch (p_instr) {
 		case INSTR_NOP: {
-			if (unlikely(!check_args(p_args, Variant::NIL, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::NIL, Variant::NIL, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
@@ -102,24 +107,24 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 		case INSTR_MASTER_VOLUME:
 		case INSTR_PANNING:
 		case INSTR_PITCH: {
-			if (unlikely(!check_args(p_args, Variant::FLOAT, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::FLOAT, Variant::NIL, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
 			byte_code->put_u8(p_instr);
-			put_half(p_args.args[0]);
+			put_half(p_arg1);
 		} break;
 		case INSTR_WAVEFORM:
 		case INSTR_CUSTOM_WAVEFORM:
 		case INSTR_DUTY_CYCLE:
 		case INSTR_PHASE_WRAP:
 		case INSTR_INSTRUMENT: {
-			if (unlikely(!check_args(p_args, Variant::INT, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
 			byte_code->put_u8(p_instr);
-			byte_code->put_u8(p_args.args[0]);
+			byte_code->put_u8(p_arg1);
 		} break;
 		case INSTR_EFFECT_DIV:
 		case INSTR_VOLUME_SLIDE:
@@ -128,24 +133,24 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 		case INSTR_ARPEGGIO_DIV:
 		case INSTR_INSTRUMENT_DIV:
 		case INSTR_TICK: {
-			if (unlikely(!check_args(p_args, Variant::INT, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
 				state = STATE_FAILED;
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
-			uint32_t value = CLAMP(int(p_args.args[0]), 0, UINT16_MAX);
+			uint32_t value = CLAMP(int(p_arg1), 0, UINT16_MAX);
 			byte_code->put_u8(p_instr);
 			byte_code->put_u16(value);
 		} break;
 		case INSTR_TREMOLO:
 		case INSTR_VIBRATO: {
-			if (unlikely(!check_args(p_args, Variant::INT, Variant::FLOAT, Variant::INT))) {
+			if (unlikely(!check_args(args, { Variant::INT, Variant::FLOAT, Variant::INT }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
-			uint32_t ticks = CLAMP(int(p_args.args[0]), 0, UINT16_MAX);
-			float delta = CLAMP(float(p_args.args[1]), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
-			uint32_t slide_ticks = CLAMP(int(p_args.args[2]), 0, UINT16_MAX);
+			uint32_t ticks = CLAMP(int(p_arg1), 0, UINT16_MAX);
+			float delta = CLAMP(float(p_arg2), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+			uint32_t slide_ticks = CLAMP(int(p_arg3), 0, UINT16_MAX);
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u16(ticks);
@@ -153,11 +158,11 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			byte_code->put_u16(slide_ticks);
 		} break;
 		case INSTR_ARPEGGIO: {
-			if (unlikely(!check_args(p_args, Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
-			const PackedFloat32Array &values = p_args.args[0];
+			const PackedFloat32Array &values = p_arg1;
 			const float *values_ptr = values.ptr();
 			int count = MIN(values.size(), BK_MAX_ARPEGGIO);
 
@@ -170,11 +175,11 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 		} break;
 		case INSTR_CALL:
 		case INSTR_JUMP: {
-			if (unlikely(!check_args(p_args, Variant::STRING, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::STRING, Variant::NIL, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
-			const String &label = p_args.args[0];
+			const String &label = p_arg1;
 			int label_index = add_label(label);
 
 			byte_code->put_u8(p_instr);
@@ -188,19 +193,19 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 		case INSTR_MUTE:
 		case INSTR_RETURN:
 		case INSTR_RESET: {
-			if (unlikely(!check_args(p_args, Variant::NIL, Variant::NIL, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::NIL, Variant::NIL, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
 			byte_code->put_u8(p_instr);
 		} break;
 		case INSTR_STORE: {
-			if (unlikely(!check_args(p_args, Variant::INT, Variant::INT, Variant::NIL))) {
+			if (unlikely(!check_args(args, { Variant::INT, Variant::INT, Variant::NIL }))) {
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
-			int number = CLAMP(int(p_args.args[0]), 0, BlipKitInterpreter::REGISTER_COUNT_AUX);
-			int value = p_args.args[1];
+			int number = CLAMP(int(p_arg1), 0, BlipKitInterpreter::REGISTER_COUNT_AUX);
+			int value = p_arg2;
 
 			byte_code->put_u8(p_instr);
 			byte_code->put_u8(number);
@@ -210,8 +215,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			// Fail.
 			state = STATE_FAILED;
 
-			int byte_offset = byte_code->get_position() - 1;
-			error_message = vformat("Invalid instruction %d at byte offset %d.", p_instr, byte_offset);
+			error_message = vformat("Invalid instruction %d.", p_instr);
 			ERR_FAIL_V_MSG(ERR_INVALID_INSTR, error_message);
 		} break;
 	}
@@ -219,26 +223,16 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 	return OK;
 }
 
-bool BlipKitAssembler::check_args(const Args &p_args, Variant::Type p_type1, Variant::Type p_type2, Variant::Type p_type3) {
-	const Variant::Type types[3] = { p_type1, p_type2, p_type3 };
-
-	for (int i = 0; i < 3; i++) {
-		if (p_args.args[i].get_type() != types[i]) {
-			// Fail.
-			state = STATE_FAILED;
-
-			int byte_offset = byte_code->get_position();
-			const String &type_name = Variant::get_type_name(types[i]);
-			error_message = vformat("Expected argument %d to be type %s at byte offset %d.", i + 1, type_name, byte_offset);
-			ERR_FAIL_V_MSG(false, error_message);
-		}
+int BlipKitAssembler::add_label(const String p_label) {
+	if (label_indices.has(p_label)) {
+		return label_indices[p_label];
 	}
 
-	return true;
-}
+	const int index = label_indices.size();
+	label_indices[p_label] = index;
+	labels.push_back({ .name = p_label });
 
-BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
-	return put_instruction(p_instr, { .args = { p_arg1, p_arg2, p_arg3 } });
+	return index;
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
@@ -254,8 +248,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 	Label &label = labels[label_index];
 
 	if (label.byte_offset >= 0) {
-		int byte_offset = byte_code->get_position();
-		error_message = vformat("Label '%s' is already defined at byte offset %d.", p_label, byte_offset);
+		error_message = vformat("Label '%s' is already defined.", p_label);
 		ERR_FAIL_V_MSG(ERR_DUPLICATE_LABEL, error_message);
 	}
 
@@ -277,7 +270,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 
 		if (label.byte_offset < 0) {
 			int address_offset = address.byte_offset;
-			error_message = vformat("Label '%s' not defined at byte offset %d.", label.name, address_offset);
+			error_message = vformat("Label '%s' not defined at address offset %d.", label.name, address_offset);
 			ERR_FAIL_V_MSG(ERR_UNDEFINED_LABEL, error_message);
 		}
 

@@ -46,7 +46,7 @@ bool BlipKitInterpreter::check_header() {
 	if (byte_code->get_size() > 0) {
 		// Check header.
 		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
-		if (unlikely(instr != BlipKitAssembler::INSTR_INIT)) {
+		if (instr != BlipKitAssembler::INSTR_INIT) {
 			fail_with_error(ERR_INVALID_INSTR, "Invalid binary header.");
 			return false;
 		}
@@ -112,7 +112,7 @@ bool BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
 
-	return check_header();
+	return status == OK_RUNNING;
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
