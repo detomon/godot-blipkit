@@ -41,6 +41,32 @@ String BlipKitInterpreter::_to_string() const {
 	return "BlipKitInterpreter";
 }
 
+bool BlipKitInterpreter::check_header() {
+	// Check header if available.
+	if (byte_code->get_size() > 0) {
+		// Check header.
+		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
+		if (unlikely(instr != BlipKitAssembler::INSTR_INIT)) {
+			fail_with_error(ERR_INVALID_INSTR, "Invalid binary header.");
+			return false;
+		}
+
+		// Check version.
+		int32_t version = byte_code->get_u8();
+		switch (version) {
+			case 1: {
+				// OK.
+			} break;
+			default: {
+				fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
+				return false;
+			} break;
+		}
+	}
+
+	return true;
+}
+
 int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_message) {
 	status = p_status;
 	error_message = p_error_message;
@@ -86,29 +112,7 @@ bool BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
 
-	// Check header if available.
-	if (byte_code->get_size() > 0) {
-		// Check header.
-		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
-		if (unlikely(instr != BlipKitAssembler::INSTR_INIT)) {
-			fail_with_error(ERR_INVALID_INSTR, "Invalid binary header.");
-			return false;
-		}
-
-		// Check version.
-		int32_t version = byte_code->get_u8();
-		switch (version) {
-			case 1: {
-				// OK.
-			} break;
-			default: {
-				fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
-				return false;
-			} break;
-		}
-	}
-
-	return true;
+	return check_header();
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
@@ -270,4 +274,6 @@ void BlipKitInterpreter::reset() {
 	registers = Registers();
 	status = OK_RUNNING;
 	error_message.resize(0);
+
+	check_header();
 }

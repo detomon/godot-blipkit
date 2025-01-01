@@ -52,6 +52,7 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
+	bool check_header();
 	int fail_with_error(Status p_status, const String &error_message);
 
 	_ALWAYS_INLINE_ float get_half() { return half_to_float(byte_code->get_u16()); }
