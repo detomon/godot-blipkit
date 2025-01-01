@@ -38,7 +38,7 @@ void BlipKitInterpreter::_bind_methods() {
 }
 
 String BlipKitInterpreter::_to_string() const {
-	return vformat("BlipKitInterpreter");
+	return "BlipKitInterpreter";
 }
 
 int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_message) {
@@ -73,12 +73,12 @@ Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
 }
 
 void BlipKitInterpreter::set_register(int p_register, int p_value) {
-	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
+	ERR_FAIL_INDEX(p_register, REGISTER_COUNT_AUX);
 	registers.aux[p_register] = p_value;
 }
 
 int BlipKitInterpreter::get_register(int p_register) const {
-	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
+	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT_AUX, 0);
 	return registers.aux[p_register];
 }
 
@@ -234,7 +234,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->reset();
 			} break;
 			case Instruction::INSTR_STORE: {
-				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
+				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT_AUX);
 				int32_t value = byte_code->get_32();
 				registers.aux[number] = value;
 			} break;

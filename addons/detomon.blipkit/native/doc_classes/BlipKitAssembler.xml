@@ -49,7 +49,7 @@
 		<method name="clear">
 			<return type="void" />
 			<description>
-				Clears all instructions and errors.
+				Clears all instructions, labels and errors.
 			</description>
 		</method>
 		<method name="compile">

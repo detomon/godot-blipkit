@@ -60,7 +60,7 @@ void BlipKitAssembler::_bind_methods() {
 }
 
 String BlipKitAssembler::_to_string() const {
-	return vformat("BlipKitAssembler");
+	return "BlipKitAssembler";
 }
 
 int BlipKitAssembler::add_label(const String p_label) {
@@ -199,7 +199,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 				ERR_FAIL_V(ERR_INVALID_ARGUMENT);
 			}
 
-			int number = CLAMP(int(p_args.args[0]), 0, BlipKitInterpreter::REGISTER_COUNT);
+			int number = CLAMP(int(p_args.args[0]), 0, BlipKitInterpreter::REGISTER_COUNT_AUX);
 			int value = p_args.args[1];
 
 			byte_code->put_u8(p_instr);
@@ -210,7 +210,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			// Fail.
 			state = STATE_FAILED;
 
-			int byte_offset = byte_code->get_position();
+			int byte_offset = byte_code->get_position() - 1;
 			error_message = vformat("Invalid instruction %d at byte offset %d.", p_instr, byte_offset);
 			ERR_FAIL_V_MSG(ERR_INVALID_INSTR, error_message);
 		} break;
@@ -295,10 +295,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 }
 
 PackedByteArray BlipKitAssembler::get_byte_code() const {
-	if (state != STATE_COMPILED) {
-		ERR_FAIL_V_MSG(PackedByteArray(), "Byte code is not compiled yet.");
-	}
-
+	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, PackedByteArray(), "Byte code is not compiled.");
 	return byte_code->get_data_array();
 }
 

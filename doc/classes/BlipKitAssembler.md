@@ -145,7 +145,7 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 
 ### `void clear()`
 
-Clears all instructions and errors.
+Clears all instructions, labels and errors.
 
 ### `int compile()`
 
