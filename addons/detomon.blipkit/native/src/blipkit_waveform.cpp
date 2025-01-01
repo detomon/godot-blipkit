@@ -49,39 +49,13 @@ BlipKitWaveform::BlipKitWaveform() {
 	BKInt result = BKDataInit(&waveform);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
 
-	frames.resize(2);
-	frames[0] = 1.0;
-	frames[1] = 0.0;
+	frames = { 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0 };
 }
 
 BlipKitWaveform::~BlipKitWaveform() {
 	AudioStreamBlipKit::lock();
 	BKDispose(&waveform);
 	AudioStreamBlipKit::unlock();
-}
-
-void BlipKitWaveform::_update_waveform(const LocalVector<float> &p_frames) {
-	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
-	const float *ptr = p_frames.ptr();
-
-	for (int i = 0; i < p_frames.size(); i++) {
-		wave_frames[i] = BKFrame(ptr[i] * float(BK_FRAME_MAX));
-	}
-
-	AudioStreamBlipKit::lock();
-
-	BKInt result = BKDataSetFrames(&waveform, wave_frames, p_frames.size(), 1, true);
-	if (result == BK_SUCCESS) {
-		frames = p_frames;
-	}
-
-	AudioStreamBlipKit::unlock();
-
-	if (result != BK_SUCCESS) {
-		ERR_FAIL_MSG(vformat("Failed to update waveform: %s.", BKStatusGetName(result)));
-	}
-
-	emit_changed();
 }
 
 Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
@@ -96,18 +70,7 @@ Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Arra
 }
 
 PackedFloat32Array BlipKitWaveform::get_frames() const {
-	PackedFloat32Array ret;
-
-	AudioStreamBlipKit::lock();
-
-	ret.resize(frames.size());
-	for (int i = 0; i < frames.size(); i++) {
-		ret[i] = frames[i];
-	}
-
-	AudioStreamBlipKit::unlock();
-
-	return ret;
+	return frames;
 }
 
 void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
@@ -117,29 +80,40 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
 	const float *ptr = p_frames.ptr();
-	LocalVector<float> frames_copy;
-	frames_copy.resize(p_frames.size());
+	const int size = MIN(p_frames.size(), BK_WAVE_MAX_LENGTH);
+
+	AudioStreamBlipKit::lock();
+
+	frames.resize(size);
+	float factor = 1.0;
 
 	if (p_normalize) {
 		float max_value = 0.0;
-		for (int i = 0; i < frames_copy.size(); i++) {
-			frames_copy[i] = ptr[i];
-			max_value = MAX(max_value, ABS(frames_copy[i]));
+		for (int i = 0; i < size; i++) {
+			max_value = MAX(max_value, ABS(ptr[i]));
 		}
 
-		float factor = 0.0;
+		factor = 0.0;
 		if (!Math::is_zero_approx(max_value)) {
 			factor = p_amplitude / max_value;
 		}
-
-		for (int i = 0; i < frames_copy.size(); i++) {
-			frames_copy[i] = CLAMP(frames_copy[i] * factor, -1.0, +1.0);
-		}
-	} else {
-		for (int i = 0; i < frames_copy.size(); i++) {
-			frames_copy[i] = CLAMP(ptr[i], -1.0, +1.0);
-		}
 	}
 
-	_update_waveform(frames_copy);
+	float *ptrw = frames.ptrw();
+	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
+
+	for (int i = 0; i < size; i++) {
+		ptrw[i] = CLAMP(ptr[i] * factor, -1.0, +1.0);
+		wave_frames[i] = BKFrame(ptrw[i] * float(BK_FRAME_MAX));
+	}
+
+	BKInt result = BKDataSetFrames(&waveform, wave_frames, size, 1, true);
+
+	AudioStreamBlipKit::unlock();
+
+	if (result != BK_SUCCESS) {
+		ERR_FAIL_MSG(vformat("Failed to update waveform: %s.", BKStatusGetName(result)));
+	}
+
+	emit_changed();
 }
