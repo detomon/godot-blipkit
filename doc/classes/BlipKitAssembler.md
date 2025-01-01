@@ -131,13 +131,13 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 - `ERR_INVALID_STATE` = `1`
 	- The assembler is not in the correct state.
 - `ERR_INVALID_INSTRUCTION` = `2`
-	- An invalid instruction was provided.
+	- The instruction is invalid.
 - `ERR_INVALID_ARGUMENT` = `3`
-	- An invalid argument was provided.
+	- An instruction argument is invalid.
 - `ERR_DUPLICATE_LABEL` = `4`
 	- A named label already exists with the same name.
 - `ERR_UNDEFINED_LABEL` = `5`
-	- A named label was not defined with the given name.
+	- A named label is not defined with the given name.
 - `ERR_PARSER_ERROR` = `6`
 	- 
 

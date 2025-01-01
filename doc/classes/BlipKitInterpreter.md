@@ -44,9 +44,9 @@ track.add_divider(&"run", 1, func () -> int:
 ### enum `Status`
 
 - `OK_RUNNING` = `0`
-	- There are more instructions to execute.
+	- More instructions are available to execute.
 - `OK_FINISHED` = `1`
-	- There are no more instruction to execute.
+	- There are no more instructions to execute.
 - `ERR_INVALID_ARGUMENT` = `2`
 	- An invalid argument was provided.
 - `ERR_INVALID_INSTRUCTION` = `3`

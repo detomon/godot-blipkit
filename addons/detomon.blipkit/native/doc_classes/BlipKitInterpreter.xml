@@ -114,10 +114,10 @@
 	</methods>
 	<constants>
 		<constant name="OK_RUNNING" value="0" enum="Status">
-			There are more instructions to execute.
+			More instructions are available to execute.
 		</constant>
 		<constant name="OK_FINISHED" value="1" enum="Status">
-			There are no more instruction to execute.
+			There are no more instructions to execute.
 		</constant>
 		<constant name="ERR_INVALID_ARGUMENT" value="2" enum="Status">
 			An invalid argument was provided.
