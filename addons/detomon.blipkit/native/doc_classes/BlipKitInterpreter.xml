@@ -119,19 +119,16 @@
 		<constant name="OK_FINISHED" value="1" enum="Status">
 			There are no more instructions to execute.
 		</constant>
-		<constant name="ERR_INVALID_ARGUMENT" value="2" enum="Status">
-			An invalid argument was provided.
-		</constant>
-		<constant name="ERR_INVALID_INSTRUCTION" value="3" enum="Status">
+		<constant name="ERR_INVALID_INSTR" value="2" enum="Status">
 			An invalid instruction was found.
 		</constant>
-		<constant name="ERR_STACK_OVERFLOW" value="4" enum="Status">
+		<constant name="ERR_STACK_OVERFLOW" value="3" enum="Status">
 			A stack overflow occurred.
 		</constant>
-		<constant name="ERR_STACK_UNDERFLOW" value="5" enum="Status">
+		<constant name="ERR_STACK_UNDERFLOW" value="4" enum="Status">
 			A stack underflow occurred.
 		</constant>
-		<constant name="ERR_RECURSION" value="6" enum="Status">
+		<constant name="ERR_RECURSION" value="5" enum="Status">
 			An infinite recursion was detected.
 		</constant>
 	</constants>

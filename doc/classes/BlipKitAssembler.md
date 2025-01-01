@@ -73,7 +73,7 @@ var bytes := assem.get_byte_code()
 Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform`.
 - `INSTR_DUTY_CYCLE` = `7`
 	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`
-- `INSTR_EFFECT_DIVIDER` = `8`
+- `INSTR_EFFECT_DIV` = `8`
 	- Sets `BlipKitTrack.effect_divider`. Expects an `int` argument between `0` and `65536`.
 - `INSTR_VOLUME` = `9`
 	- Sets `BlipKitTrack.volume`. Expects a `float` argument between `0.0` and `1.0`.
@@ -97,13 +97,13 @@ Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInt
 	- Calls `BlipKitTrack.set_tremolo()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
 - `INSTR_ARPEGGIO` = `19`
 	- Sets `BlipKitTrack.arpeggio`. Expects a [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html) argument.
-- `INSTR_ARPEGGIO_DIVIDER` = `20`
+- `INSTR_ARPEGGIO_DIV` = `20`
 	- Sets `BlipKitTrack.arpeggio_divider`. Expects an `int` argument between `0` and `65536`.
 - `INSTR_INSTRUMENT` = `21`
 	- Sets `BlipKitTrack.instrument` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
 Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument`.
-- `INSTR_INSTRUMENT_DIVIDER` = `22`
+- `INSTR_INSTRUMENT_DIV` = `22`
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
 - `INSTR_TICK` = `23`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
@@ -130,7 +130,7 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 	- No error.
 - `ERR_INVALID_STATE` = `1`
 	- The assembler is not in the correct state.
-- `ERR_INVALID_INSTRUCTION` = `2`
+- `ERR_INVALID_INSTR` = `2`
 	- The instruction is invalid.
 - `ERR_INVALID_ARGUMENT` = `3`
 	- An instruction argument is invalid.
@@ -169,7 +169,7 @@ Returns an empty string if no error occurred.
 
 Adds an instruction and returns [`OK`](#ok) on success. See [`Instruction`](#enum-instruction) for the required arguments.
 
-Returns [`ERR_INVALID_INSTRUCTION`](#err_invalid_instruction) if `instruction` is not valid.
+Returns [`ERR_INVALID_INSTR`](#err_invalid_instr) if `instruction` is not valid.
 
 Returns [`ERR_INVALID_ARGUMENT`](#err_invalid_argument) if the arguments are invalid for `instruction`.
 

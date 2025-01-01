@@ -81,7 +81,7 @@
 			<param index="3" name="arg_3" type="Variant" default="null" />
 			<description>
 				Adds an instruction and returns [constant OK] on success. See [enum Instruction] for the required arguments.
-				Returns [constant ERR_INVALID_INSTRUCTION] if [param instruction] is not valid.
+				Returns [constant ERR_INVALID_INSTR] if [param instruction] is not valid.
 				Returns [constant ERR_INVALID_ARGUMENT] if the arguments are invalid for [param instruction].
 			</description>
 		</method>
@@ -123,7 +123,7 @@
 		<constant name="INSTR_DUTY_CYCLE" value="7" enum="Instruction">
 			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument between [code]0[/code] and [code]15[/code]
 		</constant>
-		<constant name="INSTR_EFFECT_DIVIDER" value="8" enum="Instruction">
+		<constant name="INSTR_EFFECT_DIV" value="8" enum="Instruction">
 			Sets [member BlipKitTrack.effect_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
 		<constant name="INSTR_VOLUME" value="9" enum="Instruction">
@@ -159,14 +159,14 @@
 		<constant name="INSTR_ARPEGGIO" value="19" enum="Instruction">
 			Sets [member BlipKitTrack.arpeggio]. Expects a [PackedFloat32Array] argument.
 		</constant>
-		<constant name="INSTR_ARPEGGIO_DIVIDER" value="20" enum="Instruction">
+		<constant name="INSTR_ARPEGGIO_DIV" value="20" enum="Instruction">
 			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
 		<constant name="INSTR_INSTRUMENT" value="21" enum="Instruction">
 			Sets [member BlipKitTrack.instrument] from the given slot. Expects a slot index between [code]0[/code] and [code]255[/code] as [int] argument.
 			Which [BlipKitInstrument] used is define with [member BlipKitInterpreter.set_instrument].
 		</constant>
-		<constant name="INSTR_INSTRUMENT_DIVIDER" value="22" enum="Instruction">
+		<constant name="INSTR_INSTRUMENT_DIV" value="22" enum="Instruction">
 			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
 		<constant name="INSTR_TICK" value="23" enum="Instruction">
@@ -196,7 +196,7 @@
 		<constant name="ERR_INVALID_STATE" value="1" enum="Error">
 			The assembler is not in the correct state.
 		</constant>
-		<constant name="ERR_INVALID_INSTRUCTION" value="2" enum="Error">
+		<constant name="ERR_INVALID_INSTR" value="2" enum="Error">
 			The instruction is invalid.
 		</constant>
 		<constant name="ERR_INVALID_ARGUMENT" value="3" enum="Error">

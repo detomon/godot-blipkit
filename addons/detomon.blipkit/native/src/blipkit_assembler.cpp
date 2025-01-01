@@ -28,7 +28,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(INSTR_WAVEFORM);
 	BIND_ENUM_CONSTANT(INSTR_CUSTOM_WAVEFORM);
 	BIND_ENUM_CONSTANT(INSTR_DUTY_CYCLE);
-	BIND_ENUM_CONSTANT(INSTR_EFFECT_DIVIDER);
+	BIND_ENUM_CONSTANT(INSTR_EFFECT_DIV);
 	BIND_ENUM_CONSTANT(INSTR_VOLUME);
 	BIND_ENUM_CONSTANT(INSTR_VOLUME_SLIDE);
 	BIND_ENUM_CONSTANT(INSTR_MASTER_VOLUME);
@@ -40,9 +40,9 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(INSTR_VIBRATO);
 	BIND_ENUM_CONSTANT(INSTR_TREMOLO);
 	BIND_ENUM_CONSTANT(INSTR_ARPEGGIO);
-	BIND_ENUM_CONSTANT(INSTR_ARPEGGIO_DIVIDER);
+	BIND_ENUM_CONSTANT(INSTR_ARPEGGIO_DIV);
 	BIND_ENUM_CONSTANT(INSTR_INSTRUMENT);
-	BIND_ENUM_CONSTANT(INSTR_INSTRUMENT_DIVIDER);
+	BIND_ENUM_CONSTANT(INSTR_INSTRUMENT_DIV);
 	BIND_ENUM_CONSTANT(INSTR_TICK);
 	BIND_ENUM_CONSTANT(INSTR_CALL);
 	BIND_ENUM_CONSTANT(INSTR_RETURN);
@@ -52,7 +52,7 @@ void BlipKitAssembler::_bind_methods() {
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_STATE);
-	BIND_ENUM_CONSTANT(ERR_INVALID_INSTRUCTION);
+	BIND_ENUM_CONSTANT(ERR_INVALID_INSTR);
 	BIND_ENUM_CONSTANT(ERR_INVALID_ARGUMENT);
 	BIND_ENUM_CONSTANT(ERR_DUPLICATE_LABEL);
 	BIND_ENUM_CONSTANT(ERR_UNDEFINED_LABEL);
@@ -76,7 +76,7 @@ int BlipKitAssembler::add_label(const String p_label) {
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, const Args &p_args) {
-	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTRUCTION);
+	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTR);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
 	// Add version.
@@ -117,12 +117,12 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 			byte_code->put_u8(p_instr);
 			byte_code->put_u8(p_args.args[0]);
 		} break;
-		case INSTR_EFFECT_DIVIDER:
+		case INSTR_EFFECT_DIV:
 		case INSTR_VOLUME_SLIDE:
 		case INSTR_PANNING_SLIDE:
 		case INSTR_PORTAMENTO:
-		case INSTR_ARPEGGIO_DIVIDER:
-		case INSTR_INSTRUMENT_DIVIDER:
+		case INSTR_ARPEGGIO_DIV:
+		case INSTR_INSTRUMENT_DIV:
 		case INSTR_TICK: {
 			if (unlikely(!check_args(p_args, Variant::INT, Variant::NIL, Variant::NIL))) {
 				state = STATE_FAILED;
@@ -208,7 +208,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 
 			int byte_offset = byte_code->get_position();
 			error_message = vformat("Invalid instruction %d at byte offset %d.", p_instr, byte_offset);
-			ERR_FAIL_V_MSG(ERR_INVALID_INSTRUCTION, error_message);
+			ERR_FAIL_V_MSG(ERR_INVALID_INSTR, error_message);
 		} break;
 	}
 

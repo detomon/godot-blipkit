@@ -47,15 +47,13 @@ track.add_divider(&"run", 1, func () -> int:
 	- More instructions are available to execute.
 - `OK_FINISHED` = `1`
 	- There are no more instructions to execute.
-- `ERR_INVALID_ARGUMENT` = `2`
-	- An invalid argument was provided.
-- `ERR_INVALID_INSTRUCTION` = `3`
+- `ERR_INVALID_INSTR` = `2`
 	- An invalid instruction was found.
-- `ERR_STACK_OVERFLOW` = `4`
+- `ERR_STACK_OVERFLOW` = `3`
 	- A stack overflow occurred.
-- `ERR_STACK_UNDERFLOW` = `5`
+- `ERR_STACK_UNDERFLOW` = `4`
 	- A stack underflow occurred.
-- `ERR_RECURSION` = `6`
+- `ERR_RECURSION` = `5`
 	- An infinite recursion was detected.
 
 ## Method Descriptions

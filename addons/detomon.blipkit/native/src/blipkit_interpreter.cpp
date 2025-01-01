@@ -31,8 +31,7 @@ void BlipKitInterpreter::_bind_methods() {
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
-	BIND_ENUM_CONSTANT(ERR_INVALID_ARGUMENT);
-	BIND_ENUM_CONSTANT(ERR_INVALID_INSTRUCTION);
+	BIND_ENUM_CONSTANT(ERR_INVALID_INSTR);
 	BIND_ENUM_CONSTANT(ERR_STACK_OVERFLOW);
 	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);
 	BIND_ENUM_CONSTANT(ERR_RECURSION);
@@ -82,7 +81,7 @@ void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 		// Check header.
 		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
 		if (unlikely(instr != BlipKitAssembler::INSTR_INIT)) {
-			fail_with_error(ERR_INVALID_INSTRUCTION, "Invalid binary header.");
+			fail_with_error(ERR_INVALID_INSTR, "Invalid binary header.");
 			return;
 		}
 
@@ -161,7 +160,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				const Ref<BlipKitInstrument> &instrument = instruments[index];
 				p_track->set_instrument(instrument);
 			} break;
-			case Instruction::INSTR_EFFECT_DIVIDER: {
+			case Instruction::INSTR_EFFECT_DIV: {
 				p_track->set_effect_divider(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_VOLUME_SLIDE: {
@@ -173,10 +172,10 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_PORTAMENTO: {
 				p_track->set_portamento(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_ARPEGGIO_DIVIDER: {
+			case Instruction::INSTR_ARPEGGIO_DIV: {
 				p_track->set_arpeggio_divider(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_INSTRUMENT_DIVIDER: {
+			case Instruction::INSTR_INSTRUMENT_DIV: {
 				p_track->set_instrument_divider(byte_code->get_u16());
 			} break;
 			case Instruction::INSTR_TICK: {
@@ -238,7 +237,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				registers[number] = value;
 			} break;
 			default: {
-				return fail_with_error(ERR_INVALID_INSTRUCTION, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
+				return fail_with_error(ERR_INVALID_INSTR, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
 			} break;
 		}
 	}
