@@ -68,7 +68,7 @@ public:
 	void set_register(int p_number, int p_value);
 	int get_register(int p_number) const;
 
-	bool load_byte_code(const PackedByteArray &p_byte);
+	Status load_byte_code(const PackedByteArray &p_byte);
 
 	int advance(const Ref<BlipKitTrack> &p_track);
 	Status get_status() const;

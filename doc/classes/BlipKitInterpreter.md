@@ -33,7 +33,7 @@ track.add_divider(&"run", 1, func () -> int:
 - *int* [**`get_register`**](#int-get_registerregister-int-const)(register: int) const
 - *int* [**`get_status`**](#int-get_status-const)() const
 - *BlipKitWaveform* [**`get_waveform`**](#blipkitwaveform-get_waveformslot-int-const)(slot: int) const
-- *bool* [**`load_byte_code`**](#bool-load_byte_codebyte_code-packedbytearray)(byte_code: PackedByteArray)
+- *int* [**`load_byte_code`**](#int-load_byte_codebyte_code-packedbytearray)(byte_code: PackedByteArray)
 - *void* [**`reset`**](#void-reset)()
 - *void* [**`set_instrument`**](#void-set_instrumentslot-int-instruments-blipkitinstrument)(slot: int, instruments: BlipKitInstrument)
 - *void* [**`set_register`**](#void-set_registerregister-int-value-int)(register: int, value: int)
@@ -94,11 +94,11 @@ Returns the waveform in `slot`. This is a number between `0` and `255`.
 
 Returns `null` if no waveform is set in `slot`.
 
-### `bool load_byte_code(byte_code: PackedByteArray)`
+### `int load_byte_code(byte_code: PackedByteArray)`
 
 Sets the byte code to interpret and clears all registers and errors.
 
-Returns `false` if the byte code is not valid.
+Returns [`OK_RUNNING`](#ok_running) on success.
 
 ### `void reset()`
 

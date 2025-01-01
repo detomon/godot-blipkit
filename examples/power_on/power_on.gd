@@ -1,7 +1,7 @@
 extends Control
 
-var _interp := BlipKitInterpreter.new()
 var _track := BlipKitTrack.new()
+var _interp := BlipKitInterpreter.new()
 
 @onready var _player: AudioStreamPlayer = %AudioStreamPlayer
 
@@ -33,6 +33,7 @@ func _ready() -> void:
 	_interp.load_byte_code(bytes)
 
 	var stream: AudioStreamBlipKit = _player.stream
+
 	_track.attach(stream)
 	_track.add_divider(&"run", 1, func () -> int:
 		var result := _interp.advance(_track)

@@ -108,11 +108,11 @@ int BlipKitInterpreter::get_register(int p_register) const {
 	return registers.aux[p_register];
 }
 
-bool BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
+BlipKitInterpreter::Status BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
 
-	return status == OK_RUNNING;
+	return status;
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
