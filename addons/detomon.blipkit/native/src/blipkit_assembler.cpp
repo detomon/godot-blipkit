@@ -14,7 +14,7 @@ BlipKitAssembler::BlipKitAssembler() {
 }
 
 void BlipKitAssembler::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("put", "instruction", "arg_1", "arg_2", "arg_3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
+	ClassDB::bind_method(D_METHOD("put", "instruction", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
 	ClassDB::bind_method(D_METHOD("put_code", "code"), &BlipKitAssembler::put_code);
 	ClassDB::bind_method(D_METHOD("put_label", "label"), &BlipKitAssembler::put_label);
 	ClassDB::bind_method(D_METHOD("compile"), &BlipKitAssembler::compile);
@@ -219,8 +219,8 @@ BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, c
 	return OK;
 }
 
-bool BlipKitAssembler::check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3) {
-	const Variant::Type types[3] = { p_type_1, p_type_2, p_type_3 };
+bool BlipKitAssembler::check_args(const Args &p_args, Variant::Type p_type1, Variant::Type p_type2, Variant::Type p_type3) {
+	const Variant::Type types[3] = { p_type1, p_type2, p_type3 };
 
 	for (int i = 0; i < 3; i++) {
 		if (p_args.args[i].get_type() != types[i]) {
@@ -237,8 +237,8 @@ bool BlipKitAssembler::check_args(const Args &p_args, Variant::Type p_type_1, Va
 	return true;
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg_1, const Variant &p_arg_2, const Variant &p_arg_3) {
-	return put_instruction(p_instr, { .args = { p_arg_1, p_arg_2, p_arg_3 } });
+BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
+	return put_instruction(p_instr, { .args = { p_arg1, p_arg2, p_arg3 } });
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {

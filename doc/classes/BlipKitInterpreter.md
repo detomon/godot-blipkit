@@ -2,11 +2,11 @@
 
 Inherits: *RefCounted*
 
-**Interprets and executes byte code.**
+**Executes byte code.**
 
 ## Description
 
-Interprets and executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md) to modify properties of a [`BlipKitTrack`](BlipKitTrack.md).
+Executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md) to modify properties of a [`BlipKitTrack`](BlipKitTrack.md).
 
 **Example:** Play instructions:
 
@@ -17,8 +17,8 @@ var interp := BlipKitInterpreter.new()
 # Get byte from a [BlipKitAssembler].
 var byte_code := assem.get_byte_code()
 
-# Set the byte code.
-interp.set_byte_code(byte_code)
+# Load byte code.
+interp.load_byte_code(byte_code)
 
 # Run the byte code on a track using a divider.
 track.add_divider(&"run", 1, func () -> int:

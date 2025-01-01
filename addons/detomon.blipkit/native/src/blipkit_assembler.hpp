@@ -94,7 +94,7 @@ protected:
 	void initialize();
 	Error put_instruction(Instruction p_instr, const Args &p_args);
 	int add_label(const String p_label);
-	bool check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);
+	bool check_args(const Args &p_args, Variant::Type p_type1, Variant::Type p_type2, Variant::Type p_type3);
 
 	_ALWAYS_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
 
@@ -102,7 +102,7 @@ public:
 	BlipKitAssembler();
 	~BlipKitAssembler() = default;
 
-	Error put(Instruction p_instr, const Variant &p_arg_1 = nullptr, const Variant &p_arg_2 = nullptr, const Variant &p_arg_3 = nullptr);
+	Error put(Instruction p_instr, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);
 	Error put_code(const String &p_code);
 	Error put_label(const String p_label);
 	Error compile();
