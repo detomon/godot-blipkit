@@ -91,11 +91,11 @@ set_envelope(BlipKitInstrument.ENVELOPE_VOLUME,
 ```
 ### `void set_envelope(type: int, steps: PackedInt32Array, values: PackedFloat32Array, sustain_offset: int, sustain_length: int)`
 
-Sets the envelope with `type`. `values` define the individual values for each phase.
+Sets the envelope with `type`. `values` defines the individual values for each phase.
 
 If `steps` is not empty, it has to have the same size as `values`. In this case, `values` are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in `steps` as number of *ticks*. Values in `steps` are allowed to be `0` to instantly change a value.
 
-If `steps` is empty, `values` is used as a sequence and values are changed instantly. In this case, the duration of each phase is defined by `BlipKitTrack.instrument_divider`.
+If `steps` is empty, `values` is used as a sequence and values are changed stepwise. In this case, the duration of each phase is defined by `BlipKitTrack.instrument_divider`.
 
 The parameters `sustain_offset` and `sustain_length` define the range of the sustain cycle which is repeated while the note is playing.
 

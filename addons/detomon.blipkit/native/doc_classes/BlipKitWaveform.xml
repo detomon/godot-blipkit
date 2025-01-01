@@ -38,7 +38,7 @@
 		<method name="is_valid" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the waveform was initialized with amplitudes.
+				Returns [code]true[/code] if the waveform was initialized with frames.
 			</description>
 		</method>
 		<method name="set_frames">
@@ -47,14 +47,14 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Set the waveform's amplitudes. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				Set the waveform amplitudes. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
 				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
 			</description>
 		</method>
 		<method name="size" qualifiers="const">
 			<return type="int" />
 			<description>
-				Returns the number of amplitudes in the waveform.
+				Returns the number of frames in the waveform.
 			</description>
 		</method>
 	</methods>

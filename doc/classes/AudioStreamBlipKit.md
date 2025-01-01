@@ -26,7 +26,7 @@ Inherits: *AudioStream*
 
 *Default*: `240`
 
-Sets the master clock's frequency as number of *ticks* per second. This influences the speed of effects, instrument envelopes, and dividers.
+Sets the frequency of the master clock as number of *ticks* per second. This influences the speed of effects, instrument envelopes, and dividers.
 
 
 ## Method Descriptions

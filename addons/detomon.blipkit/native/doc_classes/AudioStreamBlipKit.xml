@@ -20,7 +20,7 @@
 	</methods>
 	<members>
 		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
-			Sets the master clock's frequency as number of [i]ticks[/i] per second. This influences the speed of effects, instrument envelopes, and dividers.
+			Sets the frequency of the master clock as number of [i]ticks[/i] per second. This influences the speed of effects, instrument envelopes, and dividers.
 		</member>
 	</members>
 </class>

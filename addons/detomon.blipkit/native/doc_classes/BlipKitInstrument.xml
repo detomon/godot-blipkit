@@ -92,9 +92,9 @@
 			<param index="3" name="sustain_offset" type="int" />
 			<param index="4" name="sustain_length" type="int" />
 			<description>
-				Sets the envelope with [param type]. [param values] define the individual values for each phase.
+				Sets the envelope with [param type]. [param values] defines the individual values for each phase.
 				If [param steps] is not empty, it has to have the same size as [param values]. In this case, [param values] are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in [param steps] as number of [i]ticks[/i]. Values in [param steps] are allowed to be [code]0[/code] to instantly change a value.
-				If [param steps] is empty, [param values] is used as a sequence and values are changed instantly. In this case, the duration of each phase is defined by [member BlipKitTrack.instrument_divider].
+				If [param steps] is empty, [param values] is used as a sequence and values are changed stepwise. In this case, the duration of each phase is defined by [member BlipKitTrack.instrument_divider].
 				The parameters [param sustain_offset] and [param sustain_length] define the range of the sustain cycle which is repeated while the note is playing.
 			</description>
 		</method>
