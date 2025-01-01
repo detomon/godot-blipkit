@@ -24,6 +24,8 @@ protected:
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 
 public:
+	static constexpr int WAVE_MAX_LENGTH = BK_WAVE_MAX_LENGTH;
+
 	BlipKitWaveform();
 	~BlipKitWaveform();
 

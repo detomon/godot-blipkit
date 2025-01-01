@@ -60,7 +60,7 @@ BlipKitWaveform::~BlipKitWaveform() {
 
 Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND_V(p_frames.size() < 2, nullptr);
-	ERR_FAIL_COND_V(p_frames.size() > BK_WAVE_MAX_LENGTH, nullptr);
+	ERR_FAIL_COND_V(p_frames.size() > WAVE_MAX_LENGTH, nullptr);
 
 	Ref<BlipKitWaveform> instance;
 	instance.instantiate();
@@ -75,12 +75,12 @@ PackedFloat32Array BlipKitWaveform::get_frames() const {
 
 void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND(p_frames.size() < 2);
-	ERR_FAIL_COND(p_frames.size() > BK_WAVE_MAX_LENGTH);
+	ERR_FAIL_COND(p_frames.size() > WAVE_MAX_LENGTH);
 
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
 	const float *ptr = p_frames.ptr();
-	const int size = MIN(p_frames.size(), BK_WAVE_MAX_LENGTH);
+	const int size = MIN(p_frames.size(), WAVE_MAX_LENGTH);
 
 	AudioStreamBlipKit::lock();
 
@@ -100,7 +100,7 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 	}
 
 	float *ptrw = frames.ptrw();
-	BKFrame wave_frames[BK_WAVE_MAX_LENGTH];
+	BKFrame wave_frames[WAVE_MAX_LENGTH];
 
 	for (int i = 0; i < size; i++) {
 		ptrw[i] = CLAMP(ptr[i] * factor, -1.0, +1.0);

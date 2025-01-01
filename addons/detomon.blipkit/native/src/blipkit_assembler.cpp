@@ -72,7 +72,7 @@ void BlipKitAssembler::initialize() {
 }
 
 bool BlipKitAssembler::check_args(const Args &p_args, const Types &p_types) {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < ARGS_COUNT_MAX; i++) {
 		if (p_args.args[i].get_type() != p_types.types[i]) {
 			// Fail.
 			state = STATE_FAILED;

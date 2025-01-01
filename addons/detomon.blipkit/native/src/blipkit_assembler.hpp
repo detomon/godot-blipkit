@@ -60,6 +60,8 @@ public:
 	};
 
 private:
+	static constexpr int ARGS_COUNT_MAX = 3;
+
 	enum State {
 		STATE_ASSEMBLE,
 		STATE_COMPILED,
@@ -77,11 +79,11 @@ private:
 	};
 
 	struct Args {
-		const Variant args[3];
+		const Variant args[ARGS_COUNT_MAX];
 	};
 
 	struct Types {
-		Variant::Type types[3];
+		Variant::Type types[ARGS_COUNT_MAX];
 	};
 
 	Ref<StreamPeerBuffer> byte_code;
