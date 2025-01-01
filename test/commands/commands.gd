@@ -79,7 +79,7 @@ func _ready() -> void:
 
 	var interpreter := BlipKitInterpreter.new()
 	#interpreter.set_instrument_at(0, _instrument)
-	interpreter.set_byte_code(bytes)
+	interpreter.load_byte_code(bytes)
 
 	var stream: AudioStreamBlipKit = _player.stream
 

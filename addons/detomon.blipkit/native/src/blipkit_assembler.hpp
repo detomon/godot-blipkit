@@ -91,6 +91,7 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
+	void initialize();
 	Error put_instruction(Instruction p_instr, const Args &p_args);
 	int add_label(const String p_label);
 	bool check_args(const Args &p_args, Variant::Type p_type_1, Variant::Type p_type_2, Variant::Type p_type_3);

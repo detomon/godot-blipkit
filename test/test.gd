@@ -153,7 +153,7 @@ func _init_track() -> void:
 	assem.compile()
 
 	var bytes := assem.get_byte_code()
-	interp.set_byte_code(bytes)
+	interp.load_byte_code(bytes)
 	prints(len(bytes), bytes)
 
 	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
@@ -175,7 +175,8 @@ func _init_track() -> void:
 	saw.attach(stream)
 	#saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 	saw.add_divider(&"beat", 1, func () -> int:
-		return interp.advance(saw)
+		var result := interp.advance(saw)
+		return result
 	)
 
 	print_debug.call_deferred(saw.get_tremolo())

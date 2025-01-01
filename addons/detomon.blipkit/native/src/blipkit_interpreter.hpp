@@ -35,9 +35,13 @@ private:
 	static constexpr int STACK_SIZE_MAX = 64;
 	static constexpr int SLOT_COUNT = 256;
 
+	struct Registers {
+		int32_t aux[REGISTER_COUNT] = { 0 };
+	};
+
 	Ref<StreamPeerBuffer> byte_code;
 	LocalVector<uint32_t> stack;
-	int32_t registers[REGISTER_COUNT] = { 0 };
+	Registers registers;
 	LocalVector<Ref<BlipKitInstrument>> instruments;
 	LocalVector<Ref<BlipKitWaveform>> waveforms;
 	PackedFloat32Array arpeggio;

@@ -75,15 +75,19 @@ int BlipKitAssembler::add_label(const String p_label) {
 	return index;
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, const Args &p_args) {
-	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTR);
-	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
-
+void BlipKitAssembler::initialize() {
 	// Add version.
 	if (unlikely(byte_code->get_size() == 0)) {
 		byte_code->put_u8(INSTR_INIT);
 		byte_code->put_u8(BlipKitInterpreter::VERSION);
 	}
+}
+
+BlipKitAssembler::Error BlipKitAssembler::put_instruction(Instruction p_instr, const Args &p_args) {
+	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTR);
+	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+
+	initialize();
 
 	switch (p_instr) {
 		case INSTR_NOP: {
@@ -238,10 +242,14 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
+	initialize();
+
 	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
+	initialize();
+
 	int label_index = add_label(p_label);
 	Label &label = labels[label_index];
 

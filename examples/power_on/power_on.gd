@@ -31,7 +31,7 @@ func _ready() -> void:
 
 	var bytes := assem.get_byte_code()
 
-	_interp.set_byte_code(bytes)
+	_interp.load_byte_code(bytes)
 
 	var stream: AudioStreamBlipKit = _player.stream
 	_track.attach(stream)

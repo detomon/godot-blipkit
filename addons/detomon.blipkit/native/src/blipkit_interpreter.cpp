@@ -53,33 +53,33 @@ int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_m
 }
 
 void BlipKitInterpreter::set_instrument(int p_slot, const Ref<BlipKitInstrument> &p_instrument) {
-	ERR_FAIL_INDEX(p_slot, SLOT_COUNT);
+	ERR_FAIL_INDEX(p_slot, instruments.size());
 	instruments[p_slot] = p_instrument;
 }
 
 Ref<BlipKitInstrument> BlipKitInterpreter::get_instrument(int p_slot) const {
-	ERR_FAIL_INDEX_V(p_slot, SLOT_COUNT, nullptr);
+	ERR_FAIL_INDEX_V(p_slot, instruments.size(), nullptr);
 	return instruments[p_slot];
 }
 
 void BlipKitInterpreter::set_waveform(int p_slot, const Ref<BlipKitWaveform> &p_waveform) {
-	ERR_FAIL_INDEX(p_slot, SLOT_COUNT);
+	ERR_FAIL_INDEX(p_slot, waveforms.size());
 	waveforms[p_slot] = p_waveform;
 }
 
 Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
-	ERR_FAIL_INDEX_V(p_slot, SLOT_COUNT, nullptr);
+	ERR_FAIL_INDEX_V(p_slot, waveforms.size(), nullptr);
 	return waveforms[p_slot];
 }
 
 void BlipKitInterpreter::set_register(int p_register, int p_value) {
 	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
-	registers[p_register] = p_value;
+	registers.aux[p_register] = p_value;
 }
 
 int BlipKitInterpreter::get_register(int p_register) const {
 	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
-	return registers[p_register];
+	return registers.aux[p_register];
 }
 
 bool BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
@@ -236,7 +236,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Instruction::INSTR_STORE: {
 				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
 				int32_t value = byte_code->get_32();
-				registers[number] = value;
+				registers.aux[number] = value;
 			} break;
 			default: {
 				return fail_with_error(ERR_INVALID_INSTR, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
@@ -267,7 +267,7 @@ String BlipKitInterpreter::get_error_message() const {
 void BlipKitInterpreter::reset() {
 	byte_code->seek(0);
 	stack.clear();
-	memset(registers, 0, sizeof(registers));
+	registers = Registers();
 	status = OK_RUNNING;
 	error_message.resize(0);
 }
