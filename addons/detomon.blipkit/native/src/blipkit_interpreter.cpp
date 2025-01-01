@@ -21,9 +21,9 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_instrument", "slot"), &BlipKitInterpreter::get_instrument);
 	ClassDB::bind_method(D_METHOD("set_waveform", "slot", "waveforms"), &BlipKitInterpreter::set_waveform);
 	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
-	ClassDB::bind_method(D_METHOD("set_byte_code", "byte_code"), &BlipKitInterpreter::set_byte_code);
 	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
 	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
+	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code"), &BlipKitInterpreter::load_byte_code);
 	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
@@ -72,7 +72,17 @@ Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
 	return waveforms[p_slot];
 }
 
-void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
+void BlipKitInterpreter::set_register(int p_register, int p_value) {
+	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
+	registers[p_register] = p_value;
+}
+
+int BlipKitInterpreter::get_register(int p_register) const {
+	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
+	return registers[p_register];
+}
+
+bool BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
 	byte_code->set_data_array(p_byte);
 	reset();
 
@@ -82,7 +92,7 @@ void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
 		if (unlikely(instr != BlipKitAssembler::INSTR_INIT)) {
 			fail_with_error(ERR_INVALID_INSTR, "Invalid binary header.");
-			return;
+			return false;
 		}
 
 		// Check version.
@@ -93,20 +103,12 @@ void BlipKitInterpreter::set_byte_code(const PackedByteArray &p_byte) {
 			} break;
 			default: {
 				fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
-				return;
+				return false;
 			} break;
 		}
 	}
-}
 
-void BlipKitInterpreter::set_register(int p_register, int p_value) {
-	ERR_FAIL_INDEX(p_register, REGISTER_COUNT);
-	registers[p_register] = p_value;
-}
-
-int BlipKitInterpreter::get_register(int p_register) const {
-	ERR_FAIL_INDEX_V(p_register, REGISTER_COUNT, 0);
-	return registers[p_register];
+	return true;
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {

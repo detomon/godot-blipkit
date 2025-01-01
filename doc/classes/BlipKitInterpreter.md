@@ -33,8 +33,8 @@ track.add_divider(&"run", 1, func () -> int:
 - *int* [**`get_register`**](#int-get_registerregister-int-const)(register: int) const
 - *int* [**`get_status`**](#int-get_status-const)() const
 - *BlipKitWaveform* [**`get_waveform`**](#blipkitwaveform-get_waveformslot-int-const)(slot: int) const
+- *bool* [**`load_byte_code`**](#bool-load_byte_codebyte_code-packedbytearray)(byte_code: PackedByteArray)
 - *void* [**`reset`**](#void-reset)()
-- *void* [**`set_byte_code`**](#void-set_byte_codebyte_code-packedbytearray)(byte_code: PackedByteArray)
 - *void* [**`set_instrument`**](#void-set_instrumentslot-int-instruments-blipkitinstrument)(slot: int, instruments: BlipKitInstrument)
 - *void* [**`set_register`**](#void-set_registerregister-int-value-int)(register: int, value: int)
 - *void* [**`set_waveform`**](#void-set_waveformslot-int-waveforms-blipkitwaveform)(slot: int, waveforms: BlipKitWaveform)
@@ -60,7 +60,7 @@ track.add_divider(&"run", 1, func () -> int:
 
 ### `int advance(track: BlipKitTrack)`
 
-Advances the interpreter until a `BlipKitAssembler.INSTR_WAIT` instruction is encountered or no more instruction are available.
+Advances the interpreter until a `BlipKitAssembler.INSTR_TICK` instruction is encountered or no more instructions are available.
 
 Returns a value greater than `0` indicating the number of *ticks* to wait before [`advance()`](#int-advancetrack-blipkittrack) should be called again.
 
@@ -94,15 +94,17 @@ Returns the waveform in `slot`. This is a number between `0` and `255`.
 
 Returns `null` if no waveform is set in `slot`.
 
+### `bool load_byte_code(byte_code: PackedByteArray)`
+
+Sets the byte code to interpret and clears all registers and errors.
+
+Returns `false` if the byte code is not valid.
+
 ### `void reset()`
 
-Resets the instruction pointer to the beginning of the byte code, and clears all registers and errors.
+Resets the instruction pointer to the beginning of the byte code, and clears all registers and errors. This does not clear instrument and waveform slots.
 
 **Note:** This does not reset [`BlipKitTrack`](BlipKitTrack.md). Call `BlipKitTrack.reset()` to reset the corresponding track.
-
-### `void set_byte_code(byte_code: PackedByteArray)`
-
-Sets the byte code to interpret and calls [`reset()`](#void-reset).
 
 ### `void set_instrument(slot: int, instruments: BlipKitInstrument)`
 
