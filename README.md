@@ -20,12 +20,12 @@ This uses the [BlipKit](https://github.com/detomon/BlipKit) library to generate 
 - Change properties to play notes, change the volume, and more
 
 The `AudioStreamBlipKit` audio stream resource is used to generate audio.
-It can be used on a `AudioStreamPlayer`, `AudioStreamPlayer2D` or `AudioStreamPlayer3D` node.
+It can be used on `AudioStreamPlayer`, `AudioStreamPlayer2D` or `AudioStreamPlayer3D` nodes.
 
 The `BlipKitTrack` object generates a single waveform.
 It has various properties to change the note, waveform, volume, effects and more.
 
-See the [examples](examples) directory for more some examples.
+See the [examples](examples) directory for some examples.
 
 Class descriptions are available in the Editor via the reference documentation after the extension is loaded,
 or in the [doc/classes](doc/classes) directory.
@@ -58,7 +58,7 @@ func ready() -> void:
 
 Byte code allows to execute commands on `BlipKitTrack`s and change the properties over time.
 
-`BlipKitAssembler` generate byte code from instructions or code which is executed by `BlipKitInterpreter`.
+`BlipKitAssembler` generate byte code from instructions which is executed by `BlipKitInterpreter`.
 Parts can be reused using function calls. The jump instruction allows to create loops.
 
 **Example**: Loop two notes:
@@ -76,10 +76,10 @@ var _interp := BlipKitInterpreter.new()
 
 
 func _ready() -> void:
-	# Create an assembler.
+	# Create assembler.
 	var assem := BlipKitAssembler.new()
 
-	# Set duty cycle of the square wave.
+	# Set the duty cycle of the square wave.
 	assem.put(BlipKitAssembler.INSTR_DUTY_CYCLE, 2)
 
 	# Add a label "start" to loop back.

@@ -179,14 +179,14 @@ func _init_track() -> void:
 		return result
 	)
 
-	print_debug.call_deferred(saw.get_tremolo())
+	#print_debug.call_deferred(saw.get_tremolo())
 
-	prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
-	prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))
-	prints("sustain",
-		saw_instr.get_envelope_sustain_offset(BlipKitInstrument.ENVELOPE_PITCH),
-		saw_instr.get_envelope_sustain_length(BlipKitInstrument.ENVELOPE_PITCH)
-	)
+	#prints("has_sequence", saw_instr.has_envelope(BlipKitInstrument.ENVELOPE_PITCH))
+	#prints("values", saw_instr.get_envelope_values(BlipKitInstrument.ENVELOPE_PITCH))
+	#prints("sustain",
+		#saw_instr.get_envelope_sustain_offset(BlipKitInstrument.ENVELOPE_PITCH),
+		#saw_instr.get_envelope_sustain_length(BlipKitInstrument.ENVELOPE_PITCH)
+	#)
 
 	lead = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
 	##lead.waveform = BlipKitTrack.WAVEFORM_SQUARE
@@ -216,7 +216,7 @@ func _init_track() -> void:
 	bass.add_divider(&"beat", 24, _on_tick_3.bind(bass))
 	#playback.add_divider(_on_tick_3.bind(bass), 24)
 
-	print_debug.call_deferred("dividers: ", bass.get_divider_names())
+	#print_debug.call_deferred("dividers: ", bass.get_divider_names())
 
 
 #var _index := 0

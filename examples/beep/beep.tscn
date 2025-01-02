@@ -20,4 +20,3 @@ autoplay = true
 
 [node name="Oscilloscope" parent="." instance=ExtResource("2_ulipp")]
 layout_mode = 1
-bus_name = &"Master"

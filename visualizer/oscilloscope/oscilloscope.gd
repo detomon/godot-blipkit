@@ -32,7 +32,7 @@ func _process(_delta: float) -> void:
 	for i in frame_count:
 		var f := frames[_buffer_index]
 		var y := (f.x + f.y) * fy
-		var point := Vector2(dx * float(i), y)
+		var point := Vector2(dx * float(i), -y)
 		_line.set_point_position(_buffer_index, point)
 		_buffer_index = wrapi(_buffer_index + 1, 0, POINT_COUNT)
 

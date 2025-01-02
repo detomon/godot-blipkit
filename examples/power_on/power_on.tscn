@@ -20,4 +20,3 @@ autoplay = true
 
 [node name="Oscilloscope" parent="." instance=ExtResource("2_byia3")]
 layout_mode = 1
-bus_name = &"Master"
