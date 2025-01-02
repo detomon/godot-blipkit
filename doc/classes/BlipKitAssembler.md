@@ -16,26 +16,26 @@ Named labels can be used to create function calls and loops.
 var assem := BlipKitAssembler.new()
 
 # Initialize track.
-assem.put(BlipKitAssembler.INSTR_WAVEFORM, BlipKitTrack.WAVEFORM_SQUARE)
-assem.put(BlipKitAssembler.INSTR_DUTY_CYCLE, 8)
+assem.put(BlipKitAssembler.OP_WAVEFORM, BlipKitTrack.WAVEFORM_SQUARE)
+assem.put(BlipKitAssembler.OP_DUTY_CYCLE, 8)
 
 # Define a label "start" to loop back.
 assem.put_label("start")
 
 # Play notes.
-assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_5))
-assem.put(BlipKitAssembler.INSTR_TICK, 18)
-assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_6))
-assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 162)
-assem.put(BlipKitAssembler.INSTR_VOLUME, 0.0)
-assem.put(BlipKitAssembler.INSTR_TICK, 162)
-assem.put(BlipKitAssembler.INSTR_RELEASE)
-assem.put(BlipKitAssembler.INSTR_VOLUME_SLIDE, 0)
-assem.put(BlipKitAssembler.INSTR_VOLUME, 1.0)
-assem.put(BlipKitAssembler.INSTR_TICK, 180)
+assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_5))
+assem.put(BlipKitAssembler.OP_TICK, 18)
+assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_6))
+assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 162)
+assem.put(BlipKitAssembler.OP_VOLUME, 0.0)
+assem.put(BlipKitAssembler.OP_TICK, 162)
+assem.put(BlipKitAssembler.OP_RELEASE)
+assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 0)
+assem.put(BlipKitAssembler.OP_VOLUME, 1.0)
+assem.put(BlipKitAssembler.OP_TICK, 180)
 
 # Jump back to label "start".
-assem.put(BlipKitAssembler.INSTR_JUMP, "start")
+assem.put(BlipKitAssembler.OP_JUMP, "start")
 
 # Compile byte code and check for errors.
 if assem.compile() != BlipKitAssembler.OK:
@@ -51,75 +51,75 @@ var bytes := assem.get_byte_code()
 - *int* [**`compile`**](#int-compile)()
 - *PackedByteArray* [**`get_byte_code`**](#packedbytearray-get_byte_code-const)() const
 - *String* [**`get_error_message`**](#string-get_error_message-const)() const
-- *int* [**`put`**](#int-putinstruction-int-arg1-variant--null-arg2-variant--null-arg3-variant--null)(instruction: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)
+- *int* [**`put`**](#int-putopcode-int-arg1-variant--null-arg2-variant--null-arg3-variant--null)(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)
 - *int* [**`put_code`**](#int-put_codecode-string)(code: String)
 - *int* [**`put_label`**](#int-put_labellabel-string)(label: String)
 
 ## Enumerations
 
-### enum `Instruction`
+### enum `Opcode`
 
-- `INSTR_ATTACK` = `2`
+- `OP_ATTACK` = `2`
 	- Sets `BlipKitTrack.note`. Expects a `float` argument.
-- `INSTR_RELEASE` = `3`
+- `OP_RELEASE` = `3`
 	- Calls `BlipKitTrack.release()`. Expects no arguments.
-- `INSTR_MUTE` = `4`
+- `OP_MUTE` = `4`
 	- Calls `BlipKitTrack.mute()`. Expects no arguments.
-- `INSTR_WAVEFORM` = `5`
+- `OP_WAVEFORM` = `5`
 	- Sets `BlipKitTrack.waveform`. Expects [`BlipKitTrack.Waveform`](#enum-blipkittrackwaveform) as `int` argument.
-- `INSTR_CUSTOM_WAVEFORM` = `6`
+- `OP_CUSTOM_WAVEFORM` = `6`
 	- Sets `BlipKitTrack.custom_waveform` from the given slot. Expects a slot index as `int` argument between `0` and `255`.
 
 Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform`.
-- `INSTR_DUTY_CYCLE` = `7`
+- `OP_DUTY_CYCLE` = `7`
 	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`
-- `INSTR_EFFECT_DIV` = `8`
+- `OP_EFFECT_DIV` = `8`
 	- Sets `BlipKitTrack.effect_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_VOLUME` = `9`
+- `OP_VOLUME` = `9`
 	- Sets `BlipKitTrack.volume`. Expects a `float` argument between `0.0` and `1.0`.
-- `INSTR_VOLUME_SLIDE` = `10`
+- `OP_VOLUME_SLIDE` = `10`
 	- Sets `BlipKitTrack.volume_slide`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_MASTER_VOLUME` = `11`
+- `OP_MASTER_VOLUME` = `11`
 	- Sets `BlipKitTrack.master_volume`. Expects a `float` argument between `0.0` and `1.0`.
-- `INSTR_PANNING` = `12`
+- `OP_PANNING` = `12`
 	- Sets `BlipKitTrack.panning`. Expects a `float` argument between `-1.0` and `+1.0`.
-- `INSTR_PANNING_SLIDE` = `13`
+- `OP_PANNING_SLIDE` = `13`
 	- Sets `BlipKitTrack.panning_slide`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_PITCH` = `14`
+- `OP_PITCH` = `14`
 	- Sets `BlipKitTrack.pitch`. Expects a `float` argument.
-- `INSTR_PHASE_WRAP` = `15`
+- `OP_PHASE_WRAP` = `15`
 	- Sets `BlipKitTrack.phase_wrap`. Expects an `int` argument.
-- `INSTR_PORTAMENTO` = `16`
+- `OP_PORTAMENTO` = `16`
 	- Sets `BlipKitTrack.portamento`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_VIBRATO` = `17`
+- `OP_VIBRATO` = `17`
 	- Calls `BlipKitTrack.set_vibrato()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
-- `INSTR_TREMOLO` = `18`
+- `OP_TREMOLO` = `18`
 	- Calls `BlipKitTrack.set_tremolo()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
-- `INSTR_ARPEGGIO` = `19`
+- `OP_ARPEGGIO` = `19`
 	- Sets `BlipKitTrack.arpeggio`. Expects a [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html) argument.
-- `INSTR_ARPEGGIO_DIV` = `20`
+- `OP_ARPEGGIO_DIV` = `20`
 	- Sets `BlipKitTrack.arpeggio_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_INSTRUMENT` = `21`
+- `OP_INSTRUMENT` = `21`
 	- Sets `BlipKitTrack.instrument` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
 Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument`.
-- `INSTR_INSTRUMENT_DIV` = `22`
+- `OP_INSTRUMENT_DIV` = `22`
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
-- `INSTR_TICK` = `23`
+- `OP_TICK` = `23`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
-- `INSTR_CALL` = `24`
+- `OP_CALL` = `24`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
-- `INSTR_RETURN` = `25`
-	- Returns from a function call made with [`INSTR_CALL`](#instr_call). Expects no arguments.
-- `INSTR_JUMP` = `26`
+- `OP_RETURN` = `25`
+	- Returns from a function call made with [`OP_CALL`](#op_call). Expects no arguments.
+- `OP_JUMP` = `26`
 	- Jumps to a named label. Expects the label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
-- `INSTR_RESET` = `27`
+- `OP_RESET` = `27`
 	- Calls `BlipKitTrack.reset()`. Expects no arguments.
-- `INSTR_STORE` = `28`
+- `OP_STORE` = `28`
 	- Stores a value in a register. Expects the register number as `int` argument between `0` and `15`, and the value as `int` argument.
 
 The value can be read with `BlipKitInterpreter.get_register()`.
@@ -130,7 +130,7 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 	- No error.
 - `ERR_INVALID_STATE` = `1`
 	- The assembler is not in the correct state.
-- `ERR_INVALID_INSTR` = `2`
+- `ERR_INVALID_OPCODE` = `2`
 	- The instruction is invalid.
 - `ERR_INVALID_ARGUMENT` = `3`
 	- An instruction argument is invalid.
@@ -165,13 +165,13 @@ Returns the last error as string.
 
 Returns an empty string if no error occurred.
 
-### `int put(instruction: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)`
+### `int put(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)`
 
-Adds an instruction and returns [`OK`](#ok) on success. See [`Instruction`](#enum-instruction) for the required arguments.
+Adds an instruction and returns [`OK`](#ok) on success. See [`Opcode`](#enum-opcode) for the required arguments.
 
-Returns [`ERR_INVALID_INSTR`](#err_invalid_instr) if `instruction` is not valid.
+Returns [`ERR_INVALID_OPCODE`](#err_invalid_opcode) if `opcode` is not valid.
 
-Returns [`ERR_INVALID_ARGUMENT`](#err_invalid_argument) if the arguments are invalid for `instruction`.
+Returns [`ERR_INVALID_ARGUMENT`](#err_invalid_argument) if the arguments are invalid for `opcode`.
 
 ### `int put_code(code: String)`
 
@@ -183,7 +183,7 @@ Returns [`ERR_PARSER_ERROR`](#err_parser_error) if a parser error occurred.
 
 ### `int put_label(label: String)`
 
-Adds a named label at the current position which can be referenced by [`INSTR_CALL`](#instr_call) and [`INSTR_JUMP`](#instr_jump) instructions.
+Adds a named label at the current position which can be referenced by [`OP_CALL`](#op_call) and [`OP_JUMP`](#op_jump) instructions.
 
 Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label with the same name is already defined.
 

@@ -24,7 +24,7 @@ BlipKitAssembler::BlipKitAssembler() {
 }
 
 void BlipKitAssembler::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("put", "instruction", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
+	ClassDB::bind_method(D_METHOD("put", "opcode", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
 	ClassDB::bind_method(D_METHOD("put_code", "code"), &BlipKitAssembler::put_code);
 	ClassDB::bind_method(D_METHOD("put_label", "label"), &BlipKitAssembler::put_label);
 	ClassDB::bind_method(D_METHOD("compile"), &BlipKitAssembler::compile);
@@ -32,37 +32,37 @@ void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitAssembler::get_error_message);
 	ClassDB::bind_method(D_METHOD("clear"), &BlipKitAssembler::clear);
 
-	BIND_ENUM_CONSTANT(INSTR_ATTACK);
-	BIND_ENUM_CONSTANT(INSTR_RELEASE);
-	BIND_ENUM_CONSTANT(INSTR_MUTE);
-	BIND_ENUM_CONSTANT(INSTR_WAVEFORM);
-	BIND_ENUM_CONSTANT(INSTR_CUSTOM_WAVEFORM);
-	BIND_ENUM_CONSTANT(INSTR_DUTY_CYCLE);
-	BIND_ENUM_CONSTANT(INSTR_EFFECT_DIV);
-	BIND_ENUM_CONSTANT(INSTR_VOLUME);
-	BIND_ENUM_CONSTANT(INSTR_VOLUME_SLIDE);
-	BIND_ENUM_CONSTANT(INSTR_MASTER_VOLUME);
-	BIND_ENUM_CONSTANT(INSTR_PANNING);
-	BIND_ENUM_CONSTANT(INSTR_PANNING_SLIDE);
-	BIND_ENUM_CONSTANT(INSTR_PITCH);
-	BIND_ENUM_CONSTANT(INSTR_PHASE_WRAP);
-	BIND_ENUM_CONSTANT(INSTR_PORTAMENTO);
-	BIND_ENUM_CONSTANT(INSTR_VIBRATO);
-	BIND_ENUM_CONSTANT(INSTR_TREMOLO);
-	BIND_ENUM_CONSTANT(INSTR_ARPEGGIO);
-	BIND_ENUM_CONSTANT(INSTR_ARPEGGIO_DIV);
-	BIND_ENUM_CONSTANT(INSTR_INSTRUMENT);
-	BIND_ENUM_CONSTANT(INSTR_INSTRUMENT_DIV);
-	BIND_ENUM_CONSTANT(INSTR_TICK);
-	BIND_ENUM_CONSTANT(INSTR_CALL);
-	BIND_ENUM_CONSTANT(INSTR_RETURN);
-	BIND_ENUM_CONSTANT(INSTR_JUMP);
-	BIND_ENUM_CONSTANT(INSTR_RESET);
-	BIND_ENUM_CONSTANT(INSTR_STORE);
+	BIND_ENUM_CONSTANT(OP_ATTACK);
+	BIND_ENUM_CONSTANT(OP_RELEASE);
+	BIND_ENUM_CONSTANT(OP_MUTE);
+	BIND_ENUM_CONSTANT(OP_WAVEFORM);
+	BIND_ENUM_CONSTANT(OP_CUSTOM_WAVEFORM);
+	BIND_ENUM_CONSTANT(OP_DUTY_CYCLE);
+	BIND_ENUM_CONSTANT(OP_EFFECT_DIV);
+	BIND_ENUM_CONSTANT(OP_VOLUME);
+	BIND_ENUM_CONSTANT(OP_VOLUME_SLIDE);
+	BIND_ENUM_CONSTANT(OP_MASTER_VOLUME);
+	BIND_ENUM_CONSTANT(OP_PANNING);
+	BIND_ENUM_CONSTANT(OP_PANNING_SLIDE);
+	BIND_ENUM_CONSTANT(OP_PITCH);
+	BIND_ENUM_CONSTANT(OP_PHASE_WRAP);
+	BIND_ENUM_CONSTANT(OP_PORTAMENTO);
+	BIND_ENUM_CONSTANT(OP_VIBRATO);
+	BIND_ENUM_CONSTANT(OP_TREMOLO);
+	BIND_ENUM_CONSTANT(OP_ARPEGGIO);
+	BIND_ENUM_CONSTANT(OP_ARPEGGIO_DIV);
+	BIND_ENUM_CONSTANT(OP_INSTRUMENT);
+	BIND_ENUM_CONSTANT(OP_INSTRUMENT_DIV);
+	BIND_ENUM_CONSTANT(OP_TICK);
+	BIND_ENUM_CONSTANT(OP_CALL);
+	BIND_ENUM_CONSTANT(OP_RETURN);
+	BIND_ENUM_CONSTANT(OP_JUMP);
+	BIND_ENUM_CONSTANT(OP_RESET);
+	BIND_ENUM_CONSTANT(OP_STORE);
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_STATE);
-	BIND_ENUM_CONSTANT(ERR_INVALID_INSTR);
+	BIND_ENUM_CONSTANT(ERR_INVALID_OPCODE);
 	BIND_ENUM_CONSTANT(ERR_INVALID_ARGUMENT);
 	BIND_ENUM_CONSTANT(ERR_DUPLICATE_LABEL);
 	BIND_ENUM_CONSTANT(ERR_UNDEFINED_LABEL);
@@ -79,7 +79,7 @@ void BlipKitAssembler::init_byte_code() {
 	}
 
 	// Add version.
-	byte_code->put_u8(INSTR_INIT);
+	byte_code->put_u8(OP_INIT);
 	byte_code->put_u8(BlipKitInterpreter::VERSION);
 }
 
@@ -94,8 +94,8 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 	return true;
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
-	ERR_FAIL_INDEX_V(p_instr, INSTR_MAX, ERR_INVALID_INSTR);
+BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
+	ERR_FAIL_INDEX_V(p_opcode, OP_MAX, ERR_INVALID_OPCODE);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
 	init_byte_code();
@@ -104,48 +104,40 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 	const Args args = { p_arg1, p_arg2, p_arg3 };
 	int failed_arg_index = 0;
 
-	switch (p_instr) {
-		case INSTR_NOP: {
-			types = { Variant::NIL, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
-			}
-
-			// Do nothing.
-		} break;
-		case INSTR_ATTACK:
-		case INSTR_VOLUME:
-		case INSTR_MASTER_VOLUME:
-		case INSTR_PANNING:
-		case INSTR_PITCH: {
+	switch (p_opcode) {
+		case OP_ATTACK:
+		case OP_VOLUME:
+		case OP_MASTER_VOLUME:
+		case OP_PANNING:
+		case OP_PITCH: {
 			types = { Variant::FLOAT, Variant::NIL, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
 			}
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 			put_half(p_arg1);
 		} break;
-		case INSTR_WAVEFORM:
-		case INSTR_CUSTOM_WAVEFORM:
-		case INSTR_DUTY_CYCLE:
-		case INSTR_PHASE_WRAP:
-		case INSTR_INSTRUMENT: {
+		case OP_WAVEFORM:
+		case OP_CUSTOM_WAVEFORM:
+		case OP_DUTY_CYCLE:
+		case OP_PHASE_WRAP:
+		case OP_INSTRUMENT: {
 			types = { Variant::INT, Variant::NIL, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
 			}
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 			byte_code->put_u8(p_arg1);
 		} break;
-		case INSTR_EFFECT_DIV:
-		case INSTR_VOLUME_SLIDE:
-		case INSTR_PANNING_SLIDE:
-		case INSTR_PORTAMENTO:
-		case INSTR_ARPEGGIO_DIV:
-		case INSTR_INSTRUMENT_DIV:
-		case INSTR_TICK: {
+		case OP_EFFECT_DIV:
+		case OP_VOLUME_SLIDE:
+		case OP_PANNING_SLIDE:
+		case OP_PORTAMENTO:
+		case OP_ARPEGGIO_DIV:
+		case OP_INSTRUMENT_DIV:
+		case OP_TICK: {
 			types = { Variant::INT, Variant::NIL, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				state = STATE_FAILED;
@@ -153,11 +145,11 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 			}
 
 			uint32_t value = CLAMP(int(p_arg1), 0, UINT16_MAX);
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 			byte_code->put_u16(value);
 		} break;
-		case INSTR_TREMOLO:
-		case INSTR_VIBRATO: {
+		case OP_TREMOLO:
+		case OP_VIBRATO: {
 			types = { Variant::INT, Variant::FLOAT, Variant::INT };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
@@ -167,12 +159,12 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 			float delta = CLAMP(float(p_arg2), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 			uint32_t slide_ticks = CLAMP(int(p_arg3), 0, UINT16_MAX);
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 			byte_code->put_u16(ticks);
 			put_half(delta);
 			byte_code->put_u16(slide_ticks);
 		} break;
-		case INSTR_ARPEGGIO: {
+		case OP_ARPEGGIO: {
 			types = { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
@@ -182,15 +174,15 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 			const float *values_ptr = values.ptr();
 			int count = MIN(values.size(), BK_MAX_ARPEGGIO);
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 			byte_code->put_u8(count);
 			for (int i = 0; i < count; i++) {
 				int delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 				put_half(delta);
 			}
 		} break;
-		case INSTR_CALL:
-		case INSTR_JUMP: {
+		case OP_CALL:
+		case OP_JUMP: {
 			types = { Variant::STRING, Variant::NIL, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
@@ -199,25 +191,25 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 			const String &label = p_arg1;
 			int label_index = add_label(label);
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 
 			int byte_offset = byte_code->get_position();
 			addresses.push_back({ .label_index = label_index, .byte_offset = byte_offset });
 
 			byte_code->put_u32(0);
 		} break;
-		case INSTR_RELEASE:
-		case INSTR_MUTE:
-		case INSTR_RETURN:
-		case INSTR_RESET: {
+		case OP_RELEASE:
+		case OP_MUTE:
+		case OP_RETURN:
+		case OP_RESET: {
 			types = { Variant::NIL, Variant::NIL, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
 			}
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 		} break;
-		case INSTR_STORE: {
+		case OP_STORE: {
 			types = { Variant::INT, Variant::INT, Variant::NIL };
 			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
 				goto invalid_argument;
@@ -226,15 +218,15 @@ BlipKitAssembler::Error BlipKitAssembler::put(Instruction p_instr, const Variant
 			int number = CLAMP(int(p_arg1), 0, BlipKitInterpreter::REGISTER_COUNT_AUX);
 			int value = p_arg2;
 
-			byte_code->put_u8(p_instr);
+			byte_code->put_u8(p_opcode);
 			byte_code->put_u8(number);
 			byte_code->put_32(value);
 		} break;
 		default: {
 			state = STATE_FAILED; // Fail.
 
-			error_message = vformat("Invalid instruction %d.", p_instr);
-			ERR_FAIL_V_MSG(ERR_INVALID_INSTR, error_message);
+			error_message = vformat("Invalid opcode %d.", p_opcode);
+			ERR_FAIL_V_MSG(ERR_INVALID_OPCODE, error_message);
 		} break;
 	}
 

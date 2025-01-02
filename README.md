@@ -80,23 +80,23 @@ func _ready() -> void:
 	var assem := BlipKitAssembler.new()
 
 	# Set the duty cycle of the square wave.
-	assem.put(BlipKitAssembler.INSTR_DUTY_CYCLE, 2)
+	assem.put(BlipKitAssembler.OP_DUTY_CYCLE, 2)
 
 	# Add a label "start" to loop back.
 	assem.put_label("start")
 
 	# Play two notes.
-	assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_1))
-	assem.put(BlipKitAssembler.INSTR_TICK, 48)
-	assem.put(BlipKitAssembler.INSTR_RELEASE)
-	assem.put(BlipKitAssembler.INSTR_TICK, 48)
-	assem.put(BlipKitAssembler.INSTR_ATTACK, float(BlipKitTrack.NOTE_C_2))
-	assem.put(BlipKitAssembler.INSTR_TICK, 48)
-	assem.put(BlipKitAssembler.INSTR_RELEASE)
-	assem.put(BlipKitAssembler.INSTR_TICK, 48)
+	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_1))
+	assem.put(BlipKitAssembler.OP_TICK, 48)
+	assem.put(BlipKitAssembler.OP_RELEASE)
+	assem.put(BlipKitAssembler.OP_TICK, 48)
+	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_2))
+	assem.put(BlipKitAssembler.OP_TICK, 48)
+	assem.put(BlipKitAssembler.OP_RELEASE)
+	assem.put(BlipKitAssembler.OP_TICK, 48)
 
 	# Loop back to "start".
-	assem.put(BlipKitAssembler.INSTR_JUMP, "start")
+	assem.put(BlipKitAssembler.OP_JUMP, "start")
 
 	# Compile and check for errors.
 	if assem.compile() != BlipKitAssembler.OK:

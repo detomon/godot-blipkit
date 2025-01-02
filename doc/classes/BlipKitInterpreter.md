@@ -47,20 +47,18 @@ track.add_divider(&"run", 1, func () -> int:
 	- More instructions are available to execute.
 - `OK_FINISHED` = `1`
 	- There are no more instructions to execute.
-- `ERR_INVALID_INSTR` = `2`
-	- An invalid instruction was encountered.
-- `ERR_STACK_OVERFLOW` = `3`
+- `ERR_INVALID_OPCODE` = `3`
+	- An invalid opcode was encountered.
+- `ERR_STACK_OVERFLOW` = `4`
 	- A stack overflow occurred.
-- `ERR_STACK_UNDERFLOW` = `4`
+- `ERR_STACK_UNDERFLOW` = `5`
 	- A stack underflow occurred.
-- `ERR_RECURSION` = `5`
-	- An infinite recursion was detected.
 
 ## Method Descriptions
 
 ### `int advance(track: BlipKitTrack)`
 
-Advances the interpreter until a `BlipKitAssembler.INSTR_TICK` instruction is encountered or no more instructions are available.
+Advances the interpreter until a `BlipKitAssembler.OP_TICK` instruction is encountered or no more instructions are available.
 
 Returns a value greater than `0` indicating the number of *ticks* to wait before [`advance()`](#int-advancetrack-blipkittrack) should be called again.
 

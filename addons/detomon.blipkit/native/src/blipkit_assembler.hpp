@@ -16,43 +16,43 @@ class BlipKitAssembler : public RefCounted {
 	GDCLASS(BlipKitAssembler, RefCounted)
 
 public:
-	enum Instruction {
-		INSTR_NOP,
-		INSTR_INIT,
-		INSTR_ATTACK,
-		INSTR_RELEASE,
-		INSTR_MUTE,
-		INSTR_WAVEFORM,
-		INSTR_CUSTOM_WAVEFORM,
-		INSTR_DUTY_CYCLE,
-		INSTR_EFFECT_DIV,
-		INSTR_VOLUME,
-		INSTR_VOLUME_SLIDE,
-		INSTR_MASTER_VOLUME,
-		INSTR_PANNING,
-		INSTR_PANNING_SLIDE,
-		INSTR_PITCH,
-		INSTR_PHASE_WRAP,
-		INSTR_PORTAMENTO,
-		INSTR_VIBRATO,
-		INSTR_TREMOLO,
-		INSTR_ARPEGGIO,
-		INSTR_ARPEGGIO_DIV,
-		INSTR_INSTRUMENT,
-		INSTR_INSTRUMENT_DIV,
-		INSTR_TICK,
-		INSTR_CALL,
-		INSTR_RETURN,
-		INSTR_JUMP,
-		INSTR_RESET,
-		INSTR_STORE,
-		INSTR_MAX,
+	enum Opcode {
+		OP_NOP,
+		OP_INIT,
+		OP_ATTACK,
+		OP_RELEASE,
+		OP_MUTE,
+		OP_WAVEFORM,
+		OP_CUSTOM_WAVEFORM,
+		OP_DUTY_CYCLE,
+		OP_EFFECT_DIV,
+		OP_VOLUME,
+		OP_VOLUME_SLIDE,
+		OP_MASTER_VOLUME,
+		OP_PANNING,
+		OP_PANNING_SLIDE,
+		OP_PITCH,
+		OP_PHASE_WRAP,
+		OP_PORTAMENTO,
+		OP_VIBRATO,
+		OP_TREMOLO,
+		OP_ARPEGGIO,
+		OP_ARPEGGIO_DIV,
+		OP_INSTRUMENT,
+		OP_INSTRUMENT_DIV,
+		OP_TICK,
+		OP_CALL,
+		OP_RETURN,
+		OP_JUMP,
+		OP_RESET,
+		OP_STORE,
+		OP_MAX,
 	};
 
 	enum Error {
 		OK,
 		ERR_INVALID_STATE,
-		ERR_INVALID_INSTR,
+		ERR_INVALID_OPCODE,
 		ERR_INVALID_ARGUMENT,
 		ERR_DUPLICATE_LABEL,
 		ERR_UNDEFINED_LABEL,
@@ -96,7 +96,7 @@ public:
 	BlipKitAssembler();
 	~BlipKitAssembler() = default;
 
-	Error put(Instruction p_instr, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);
+	Error put(Opcode p_opcode, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);
 	Error put_code(const String &p_code);
 	Error put_label(const String p_label);
 	Error compile();
@@ -109,5 +109,5 @@ public:
 
 } // namespace detomon::BlipKit
 
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Instruction);
+VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Opcode);
 VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Error);

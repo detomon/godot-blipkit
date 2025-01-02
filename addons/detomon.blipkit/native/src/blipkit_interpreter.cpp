@@ -7,7 +7,8 @@
 
 using namespace detomon::BlipKit;
 using namespace godot;
-typedef BlipKitAssembler::Instruction Instruction;
+
+typedef BlipKitAssembler::Opcode Opcode;
 
 BlipKitInterpreter::BlipKitInterpreter() {
 	byte_code.instantiate();
@@ -31,10 +32,10 @@ void BlipKitInterpreter::_bind_methods() {
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
-	BIND_ENUM_CONSTANT(ERR_INVALID_INSTR);
+	BIND_ENUM_CONSTANT(ERR_INVALID_OPCODE);
 	BIND_ENUM_CONSTANT(ERR_STACK_OVERFLOW);
 	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);
-	BIND_ENUM_CONSTANT(ERR_RECURSION);
+	// BIND_ENUM_CONSTANT(ERR_RECURSION);
 }
 
 String BlipKitInterpreter::_to_string() const {
@@ -45,9 +46,9 @@ bool BlipKitInterpreter::check_header() {
 	// Check header if available.
 	if (byte_code->get_size() > 0) {
 		// Check header.
-		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
-		if (instr != BlipKitAssembler::INSTR_INIT) {
-			fail_with_error(ERR_INVALID_INSTR, "Invalid binary header.");
+		Opcode opcode = static_cast<Opcode>(byte_code->get_u8());
+		if (opcode != BlipKitAssembler::OP_INIT) {
+			fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");
 			return false;
 		}
 
@@ -119,88 +120,88 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	ERR_FAIL_COND_V(p_track.is_null(), 0);
 
 	while (byte_code->get_available_bytes() > 0) {
-		int instr_offset = byte_code->get_position();
-		Instruction instr = static_cast<Instruction>(byte_code->get_u8());
+		int ip_offset = byte_code->get_position();
+		Opcode opcode = static_cast<Opcode>(byte_code->get_u8());
 
-		switch (instr) {
-			case Instruction::INSTR_NOP: {
+		switch (opcode) {
+			case Opcode::OP_NOP: {
 				// Do nothing.
 			} break;
-			case Instruction::INSTR_ATTACK: {
+			case Opcode::OP_ATTACK: {
 				p_track->set_note(get_half());
 			} break;
-			case Instruction::INSTR_RELEASE: {
+			case Opcode::OP_RELEASE: {
 				p_track->release();
 			} break;
-			case Instruction::INSTR_MUTE: {
+			case Opcode::OP_MUTE: {
 				p_track->mute();
 			} break;
-			case Instruction::INSTR_VOLUME: {
+			case Opcode::OP_VOLUME: {
 				p_track->set_volume(get_half());
 			} break;
-			case Instruction::INSTR_MASTER_VOLUME: {
+			case Opcode::OP_MASTER_VOLUME: {
 				p_track->set_master_volume(get_half());
 			} break;
-			case Instruction::INSTR_PANNING: {
+			case Opcode::OP_PANNING: {
 				p_track->set_panning(get_half());
 			} break;
-			case Instruction::INSTR_PITCH: {
+			case Opcode::OP_PITCH: {
 				p_track->set_pitch(get_half());
 			} break;
-			case Instruction::INSTR_WAVEFORM: {
+			case Opcode::OP_WAVEFORM: {
 				p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(byte_code->get_u8()));
 			} break;
-			case Instruction::INSTR_CUSTOM_WAVEFORM: {
+			case Opcode::OP_CUSTOM_WAVEFORM: {
 				int index = byte_code->get_u8();
 				const Ref<BlipKitWaveform> &waveform = waveforms[index];
 				p_track->set_custom_waveform(waveform);
 			} break;
-			case Instruction::INSTR_DUTY_CYCLE: {
+			case Opcode::OP_DUTY_CYCLE: {
 				p_track->set_duty_cycle(byte_code->get_u8());
 			} break;
-			case Instruction::INSTR_PHASE_WRAP: {
+			case Opcode::OP_PHASE_WRAP: {
 				p_track->set_duty_cycle(byte_code->get_u8());
 			} break;
-			case Instruction::INSTR_INSTRUMENT: {
+			case Opcode::OP_INSTRUMENT: {
 				int index = byte_code->get_u8();
 				const Ref<BlipKitInstrument> &instrument = instruments[index];
 				p_track->set_instrument(instrument);
 			} break;
-			case Instruction::INSTR_EFFECT_DIV: {
+			case Opcode::OP_EFFECT_DIV: {
 				p_track->set_effect_divider(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_VOLUME_SLIDE: {
+			case Opcode::OP_VOLUME_SLIDE: {
 				p_track->set_volume_slide(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_PANNING_SLIDE: {
+			case Opcode::OP_PANNING_SLIDE: {
 				p_track->set_panning_slide(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_PORTAMENTO: {
+			case Opcode::OP_PORTAMENTO: {
 				p_track->set_portamento(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_ARPEGGIO_DIV: {
+			case Opcode::OP_ARPEGGIO_DIV: {
 				p_track->set_arpeggio_divider(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_INSTRUMENT_DIV: {
+			case Opcode::OP_INSTRUMENT_DIV: {
 				p_track->set_instrument_divider(byte_code->get_u16());
 			} break;
-			case Instruction::INSTR_TICK: {
+			case Opcode::OP_TICK: {
 				uint32_t wait = byte_code->get_u16();
 				return wait;
 			} break;
-			case Instruction::INSTR_TREMOLO: {
+			case Opcode::OP_TREMOLO: {
 				int ticks = byte_code->get_u16();
 				float delta = get_half();
 				int slide_ticks = byte_code->get_u16();
 				p_track->set_tremolo(ticks, delta, slide_ticks);
 			} break;
-			case Instruction::INSTR_VIBRATO: {
+			case Opcode::OP_VIBRATO: {
 				int ticks = byte_code->get_u16();
 				float delta = get_half();
 				int slide_ticks = byte_code->get_u16();
 				p_track->set_vibrato(ticks, delta, slide_ticks);
 			} break;
-			case Instruction::INSTR_ARPEGGIO: {
+			case Opcode::OP_ARPEGGIO: {
 				int count = byte_code->get_u8();
 				arpeggio.resize(count);
 
@@ -209,7 +210,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				}
 				p_track->set_arpeggio(arpeggio);
 			} break;
-			case Instruction::INSTR_CALL: {
+			case Opcode::OP_CALL: {
 				int offset = byte_code->get_u32();
 				int position = byte_code->get_position();
 
@@ -220,11 +221,11 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				stack.push_back(position);
 				byte_code->seek(offset);
 			} break;
-			case Instruction::INSTR_JUMP: {
+			case Opcode::OP_JUMP: {
 				int offset = byte_code->get_u32();
 				byte_code->seek(offset);
 			} break;
-			case Instruction::INSTR_RETURN: {
+			case Opcode::OP_RETURN: {
 				if (stack.is_empty()) {
 					return fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
 				}
@@ -234,16 +235,16 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				stack.remove_at(index);
 				byte_code->seek(offset);
 			} break;
-			case Instruction::INSTR_RESET: {
+			case Opcode::OP_RESET: {
 				p_track->reset();
 			} break;
-			case Instruction::INSTR_STORE: {
+			case Opcode::OP_STORE: {
 				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT_AUX);
 				int32_t value = byte_code->get_32();
 				registers.aux[number] = value;
 			} break;
 			default: {
-				return fail_with_error(ERR_INVALID_INSTR, vformat("Invalid instruction %d at offset %d.", instr, instr_offset));
+				return fail_with_error(ERR_INVALID_OPCODE, vformat("Invalid opcode %d at offset %d.", opcode, ip_offset));
 			} break;
 		}
 	}

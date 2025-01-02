@@ -31,7 +31,7 @@
 			<return type="int" />
 			<param index="0" name="track" type="BlipKitTrack" />
 			<description>
-				Advances the interpreter until a [constant BlipKitAssembler.INSTR_TICK] instruction is encountered or no more instructions are available.
+				Advances the interpreter until a [constant BlipKitAssembler.OP_TICK] instruction is encountered or no more instructions are available.
 				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
 				Returns [code]0[/code] if no more instructions are available.
 				Returns [code]-1[/code] if an error occured. [method get_status] returns the status and [method get_error_message] returns the error message in this case.
@@ -120,17 +120,14 @@
 		<constant name="OK_FINISHED" value="1" enum="Status">
 			There are no more instructions to execute.
 		</constant>
-		<constant name="ERR_INVALID_INSTR" value="2" enum="Status">
-			An invalid instruction was encountered.
+		<constant name="ERR_INVALID_OPCODE" value="3" enum="Status">
+			An invalid opcode was encountered.
 		</constant>
-		<constant name="ERR_STACK_OVERFLOW" value="3" enum="Status">
+		<constant name="ERR_STACK_OVERFLOW" value="4" enum="Status">
 			A stack overflow occurred.
 		</constant>
-		<constant name="ERR_STACK_UNDERFLOW" value="4" enum="Status">
+		<constant name="ERR_STACK_UNDERFLOW" value="5" enum="Status">
 			A stack underflow occurred.
-		</constant>
-		<constant name="ERR_RECURSION" value="5" enum="Status">
-			An infinite recursion was detected.
 		</constant>
 	</constants>
 </class>
