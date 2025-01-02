@@ -11,16 +11,16 @@ Executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md) to m
 **Example:** Play instructions:
 
 ```gdscript
-# Create interpreter.
+# Create the interpreter.
 var interp := BlipKitInterpreter.new()
 
-# Get byte from a [BlipKitAssembler].
+# Get the byte from a [BlipKitAssembler].
 var byte_code := assem.get_byte_code()
 
-# Load byte code.
+# Load the byte code.
 interp.load_byte_code(byte_code)
 
-# Run the byte code on a track using a divider.
+# Add a divider and run the interpreter on the track.
 track.add_divider(&"run", 1, func () -> int:
     return interp.advance(track)
 )

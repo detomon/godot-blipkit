@@ -13,18 +13,21 @@ This class generates a single waveform and plays a `note`. Method calls and prop
 **Example:** Create a [`BlipKitTrack`](BlipKitTrack.md) and attach it to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md):
 
 ```gdscript
-# An audio stream player with an [AudioStreamBlipKit] resource.
-@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
-
 # Create a track with the default waveform [BlipKitTrack.WAVEFORM_SQUARE].
-# Keep this variable.
-var track := BlipKitTrack.new()
+# Ensure it is playing or has `autoplay` enabled.
+var _track := BlipKitTrack.new()
+
+# An audio stream player with an [AudioStreamBlipKit] resource and `autoplay` enabled.
+@onready var stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
 func _ready() -> void:
     # Get the audio stream.
     var stream: AudioStreamBlipKit = stream_player.stream
-    # Attach the track to the stream.
-    track.attach(stream)
+
+    # Attach the track to the audio stream.
+    _track.attach(stream)
+    # Play a note.
+_track.note = BlipKitTrack.NOTE_A_3
 ```
 ## Online Tutorials
 

@@ -3,7 +3,7 @@ extends Control
 var _track := BlipKitTrack.new()
 var _interp := BlipKitInterpreter.new()
 
-@onready var _player: AudioStreamPlayer = %AudioStreamPlayer
+@onready var _player: AudioStreamPlayer = $AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -24,7 +24,7 @@ func _ready() -> void:
 	assem.put(BlipKitAssembler.INSTR_VOLUME, 1.0)
 	assem.put(BlipKitAssembler.INSTR_TICK, 180)
 	assem.put(BlipKitAssembler.INSTR_JUMP, "start")
-#
+
 	if assem.compile() != BlipKitAssembler.OK:
 		printerr(assem.get_error_message())
 		return
@@ -38,17 +38,4 @@ func _ready() -> void:
 	_track.add_divider(&"run", 1, func () -> int:
 		var result := _interp.advance(_track)
 		return result
-	)
-
-
-func _on_check_button_toggled(toggled_on: bool) -> void:
-	if not toggled_on:
-		return
-
-	var stream: AudioStreamBlipKit = _player.stream
-
-	stream.call_synced(func () -> void:
-		_interp.reset()
-		_track.reset_divider(&"run")
-		_track.reset()
 	)

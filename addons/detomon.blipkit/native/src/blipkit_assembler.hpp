@@ -60,8 +60,6 @@ public:
 	};
 
 private:
-	static constexpr int ARGS_COUNT_MAX = 3;
-
 	enum State {
 		STATE_ASSEMBLE,
 		STATE_COMPILED,
@@ -78,14 +76,6 @@ private:
 		int byte_offset = 0;
 	};
 
-	struct Args {
-		const Variant args[ARGS_COUNT_MAX];
-	};
-
-	struct Types {
-		Variant::Type types[ARGS_COUNT_MAX];
-	};
-
 	Ref<StreamPeerBuffer> byte_code;
 	HashMap<String, int> label_indices;
 	LocalVector<Label> labels;
@@ -97,8 +87,7 @@ protected:
 	static void _bind_methods();
 	String _to_string() const;
 
-	void initialize();
-	bool check_args(const Args &p_args, const Types &p_types);
+	void init_byte_code();
 	int add_label(const String p_label);
 
 	_ALWAYS_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
