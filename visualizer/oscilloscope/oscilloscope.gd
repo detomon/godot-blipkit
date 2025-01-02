@@ -26,13 +26,13 @@ func _process(_delta: float) -> void:
 
 	var frame_count := mini(_effect_capture.get_frames_available(), POINT_COUNT)
 	var frames := _effect_capture.get_buffer(frame_count)
-	var dx := size.x / float(POINT_COUNT - 1)
-	var fy := size.y * 0.25
+	var x := size.x / float(POINT_COUNT - 1)
+	var sy := size.y * 0.25
 
 	for i in frame_count:
 		var f := frames[_buffer_index]
-		var y := (f.x + f.y) * fy
-		var point := Vector2(dx * float(i), -y)
+		var y := (f.x + f.y) * sy
+		var point := Vector2(x * float(i), -y)
 		_line.set_point_position(_buffer_index, point)
 		_buffer_index = wrapi(_buffer_index + 1, 0, POINT_COUNT)
 

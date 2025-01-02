@@ -55,7 +55,7 @@ _track.note = BlipKitTrack.NOTE_A_3
 
 ## Methods
 
-- *void* [**`add_divider`**](#void-add_dividername-stringname-tick_interval-int-callable-callable)(name: StringName, tick_interval: int, callable: Callable)
+- *void* [**`add_divider`**](#void-add_dividername-string-tick_interval-int-callable-callable)(name: String, tick_interval: int, callable: Callable)
 - *void* [**`attach`**](#void-attachplayback-audiostreamblipkit)(playback: AudioStreamBlipKit)
 - *void* [**`clear_dividers`**](#void-clear_dividers)()
 - *BlipKitTrack* [**`create_with_waveform`**](#blipkittrack-create_with_waveformwaveform-int-static)(waveform: int) static
@@ -65,9 +65,9 @@ _track.note = BlipKitTrack.NOTE_A_3
 - *Dictionary* [**`get_vibrato`**](#dictionary-get_vibrato-const)() const
 - *void* [**`mute`**](#void-mute)()
 - *void* [**`release`**](#void-release)()
-- *void* [**`remove_divider`**](#void-remove_dividername-stringname)(name: StringName)
+- *void* [**`remove_divider`**](#void-remove_dividername-string)(name: String)
 - *void* [**`reset`**](#void-reset)()
-- *void* [**`reset_divider`**](#void-reset_dividername-stringname-tick_interval-int--0)(name: StringName, tick_interval: int = 0)
+- *void* [**`reset_divider`**](#void-reset_dividername-string-tick_interval-int--0)(name: String, tick_interval: int = 0)
 - *void* [**`set_tremolo`**](#void-set_tremoloticks-int-delta-float-slide_ticks-int--0)(ticks: int, delta: float, slide_ticks: int = 0)
 - *void* [**`set_vibrato`**](#void-set_vibratoticks-int-delta-float-slide_ticks-int--0)(ticks: int, delta: float, slide_ticks: int = 0)
 
@@ -342,13 +342,15 @@ Sets the number of *ticks* each instrument envelope value is played when no step
 
 Sets the mix volume. This is multiplied with `volume` to be used as the output volume.
 
+**Note:** This is also changed when setting the waveform (see [`Waveform`](#enum-waveform) for the default values).
+
 ### `float note`
 
 *Default*: `-1.0`
 
 Sets the note to play between `0.0` (note C on octave `0`) and `96.0` (note C on octave `8`) (see [`Note`](#enum-note)).
 
-Setting [`NOTE_RELEASE`](#note_release) releases the note (see [`release()`](#void-release)). Setting [`NOTE_MUTE`](#note_mute) mutes the note (see [`mute()`](#void-mute)).
+Setting [`NOTE_RELEASE`](#note_release) releases the note (see also [`release()`](#void-release)). Setting [`NOTE_MUTE`](#note_mute) mutes the note (see also [`mute()`](#void-mute)).
 
 If `instrument` is set, setting a note plays the attack and sustain part of the envelopes, whereas releasing the note plays the release part of the envelopes.
 
@@ -418,9 +420,9 @@ Sets the waveform and its `master_volume` accordingly (see [`Waveform`](#enum-wa
 
 ## Method Descriptions
 
-### `void add_divider(name: StringName, tick_interval: int, callable: Callable)`
+### `void add_divider(name: String, tick_interval: int, callable: Callable)`
 
-Adds a callback with `name` which is called every multiple number of *ticks*. For callbacks to be called, [`BlipKitTrack`](BlipKitTrack.md) has to be attached to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md) (see [`attach()`](#void-attachplayback-audiostreamblipkit)). Callbacks are called in the same order as they are added.
+Adds a divider with `name` which is called every multiple number of *ticks*. For callbacks to be called, [`BlipKitTrack`](BlipKitTrack.md) has to be attached to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md) (see [`attach()`](#void-attachplayback-audiostreamblipkit)). Callbacks are called in the same order as they are added.
 
 `callable` does not receive any arguments and should return an `int` indicating whether to change the tick interval. If `callback` returns `0`, the tick interval is not changed and `callable` is called again after the same number of ticks. If `callback` returns a value greater than `0`, the tick interval is permanently changed and `callable` is called next after the returned number of ticks.
 
@@ -431,20 +433,20 @@ Adds a callback with `name` which is called every multiple number of *ticks*. Fo
 **Example:** Add a divider and play a higher note on each call:
 
 ```gdscript
-track.add_divider(func () -> int:
+track.add_divider("run", 60, func () -> int:
     track.note += 1.0
     # Keep tick interval.
     return 0
-, 60)
+)
 ```
 **Example:** Add a divider and change the tick interval to `90` after the first call:
 
 ```gdscript
-track.add_divider(func () -> int:
+track.add_divider("run", 180, func () -> int:
     track.note += 1.0
     # Change tick interval to 90.
     return 90
-, 180)
+)
 ```
 ### `void attach(playback: AudioStreamBlipKit)`
 
@@ -488,7 +490,7 @@ Mutes `note` immediately without playing the release part of `instrument` envelo
 
 Releases `note`. When `instrument` is set, plays the release part of `instrument` envelopes. Has the same effect as setting `note` to [`NOTE_RELEASE`](#note_release).
 
-### `void remove_divider(name: StringName)`
+### `void remove_divider(name: String)`
 
 Removes the divider with `name`.
 
@@ -496,7 +498,7 @@ Removes the divider with `name`.
 
 Resets the track properties to the initial values (except `waveform` and `master_volume`) and mutes `note`.
 
-### `void reset_divider(name: StringName, tick_interval: int = 0)`
+### `void reset_divider(name: String, tick_interval: int = 0)`
 
 Resets the counter of a divider with `name`. If `tick_interval` is greater than `0`, the tick interval is changed to that value.
 

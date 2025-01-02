@@ -18,7 +18,7 @@
 		interp.load_byte_code(byte_code)
 
 		# Add a divider and run the interpreter on the track.
-		track.add_divider(&amp;"run", 1, func () -&gt; int:
+		track.add_divider("run", 1, func () -&gt; int:
 		    return interp.advance(track)
 		)
 		[/gdscript]

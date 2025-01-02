@@ -33,32 +33,32 @@
 	<methods>
 		<method name="add_divider">
 			<return type="void" />
-			<param index="0" name="name" type="StringName" />
+			<param index="0" name="name" type="String" />
 			<param index="1" name="tick_interval" type="int" />
 			<param index="2" name="callable" type="Callable" />
 			<description>
-				Adds a callback with [param name] which is called every multiple number of [i]ticks[/i]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
+				Adds a divider with [param name] which is called every multiple number of [i]ticks[/i]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
 				[param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callable] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callable] is called next after the returned number of ticks.
 				[b]Note:[/b] Callbacks are called from the audio thread, they should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or not time critical.
 				[b]Note:[/b] [param callback] is called for the first time on the next tick.
 				[b]Example:[/b] Add a divider and play a higher note on each call:
 				[codeblocks]
 				[gdscript]
-				track.add_divider(func () -&gt; int:
+				track.add_divider("run", 60, func () -&gt; int:
 				    track.note += 1.0
 				    # Keep tick interval.
 				    return 0
-				, 60)
+				)
 				[/gdscript]
 				[/codeblocks]
 				[b]Example:[/b] Add a divider and change the tick interval to [code]90[/code] after the first call:
 				[codeblocks]
 				[gdscript]
-				track.add_divider(func () -&gt; int:
+				track.add_divider("run", 180, func () -&gt; int:
 				    track.note += 1.0
 				    # Change tick interval to 90.
 				    return 90
-				, 180)
+				)
 				[/gdscript]
 				[/codeblocks]
 			</description>
@@ -127,7 +127,7 @@
 		</method>
 		<method name="remove_divider">
 			<return type="void" />
-			<param index="0" name="name" type="StringName" />
+			<param index="0" name="name" type="String" />
 			<description>
 				Removes the divider with [param name].
 			</description>
@@ -140,7 +140,7 @@
 		</method>
 		<method name="reset_divider">
 			<return type="void" />
-			<param index="0" name="name" type="StringName" />
+			<param index="0" name="name" type="String" />
 			<param index="1" name="tick_interval" type="int" default="0" />
 			<description>
 				Resets the counter of a divider with [param name]. If [param tick_interval] is greater than [code]0[/code], the tick interval is changed to that value.
@@ -201,10 +201,11 @@
 		</member>
 		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
 			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
+			[b]Note:[/b] This is also changed when setting the waveform (see [enum Waveform] for the default values).
 		</member>
 		<member name="note" type="float" setter="set_note" getter="get_note" default="-1.0">
 			Sets the note to play between [code]0.0[/code] (note C on octave [code]0[/code]) and [code]96.0[/code] (note C on octave [code]8[/code]) (see [enum Note]).
-			Setting [constant NOTE_RELEASE] releases the note (see [method release]). Setting [constant NOTE_MUTE] mutes the note (see [method mute]).
+			Setting [constant NOTE_RELEASE] releases the note (see also [method release]). Setting [constant NOTE_MUTE] mutes the note (see also [method mute]).
 			If [member instrument] is set, setting a note plays the attack and sustain part of the envelopes, whereas releasing the note plays the release part of the envelopes.
 		</member>
 		<member name="panning" type="float" setter="set_panning" getter="get_panning" default="0.0">

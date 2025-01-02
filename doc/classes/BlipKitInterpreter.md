@@ -21,7 +21,7 @@ var byte_code := assem.get_byte_code()
 interp.load_byte_code(byte_code)
 
 # Add a divider and run the interpreter on the track.
-track.add_divider(&"run", 1, func () -> int:
+track.add_divider("run", 1, func () -> int:
     return interp.advance(track)
 )
 ```
