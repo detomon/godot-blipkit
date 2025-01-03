@@ -5,7 +5,7 @@
 #include "blipkit_waveform.hpp"
 #include <BlipKit.h>
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 typedef BlipKitAssembler::Opcode Opcode;

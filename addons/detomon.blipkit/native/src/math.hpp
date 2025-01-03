@@ -26,7 +26,7 @@
 
 #include <godot_cpp/core/defs.hpp>
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 static _ALWAYS_INLINE_ float half_to_float(uint16_t h) {
 	union {
@@ -118,4 +118,4 @@ static _ALWAYS_INLINE_ uint16_t float_to_half(float f) {
 	return hf;
 }
 
-} //namespace detomon::BlipKit
+} //namespace BlipKit

@@ -6,7 +6,7 @@
 #include <BlipKit.h>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 static constexpr int ARGS_COUNT_MAX = 3;

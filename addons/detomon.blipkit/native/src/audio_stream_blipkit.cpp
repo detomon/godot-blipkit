@@ -4,7 +4,7 @@
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/memory.hpp>
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 RecursiveSpinLock AudioStreamBlipKit::spin_lock;

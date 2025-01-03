@@ -8,7 +8,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class BlipKitInstrument;
 class BlipKitTrack;
@@ -77,6 +77,6 @@ public:
 	void reset();
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit
 
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitInterpreter::Status);
+VARIANT_ENUM_CAST(BlipKit::BlipKitInterpreter::Status);

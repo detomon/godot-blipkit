@@ -1,6 +1,6 @@
 #include "recursive_spin_lock.hpp"
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 
 static thread_local int lock_thread_id;
 static std::atomic<int> lock_thread_id_inc = 0;

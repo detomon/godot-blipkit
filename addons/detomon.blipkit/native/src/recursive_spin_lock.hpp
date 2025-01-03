@@ -3,7 +3,7 @@
 #include <atomic>
 #include <godot_cpp/core/defs.hpp>
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 struct RecursiveSpinLock {
 private:
@@ -30,4 +30,4 @@ public:
 	_FORCE_INLINE_ Autolock autolock() { return Autolock(*this); }
 };
 
-} //namespace detomon::BlipKit
+} //namespace BlipKit

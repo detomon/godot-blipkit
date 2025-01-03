@@ -8,7 +8,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class BlipKitInstrument : public Resource {
 	GDCLASS(BlipKitInstrument, Resource)
@@ -56,6 +56,6 @@ public:
 	void clear_envelope(EnvelopeType p_type);
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit
 
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitInstrument::EnvelopeType);
+VARIANT_ENUM_CAST(BlipKit::BlipKitInstrument::EnvelopeType);

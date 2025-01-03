@@ -13,7 +13,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class BlipKitTrack;
 
@@ -105,4 +105,4 @@ public:
 	void enable_divider(int p_id, bool p_enable);
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit

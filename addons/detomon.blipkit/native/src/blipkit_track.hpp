@@ -12,7 +12,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class AudioStreamBlipKitPlayback;
 
@@ -219,7 +219,7 @@ public:
 	void clear_dividers();
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit
 
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitTrack::Waveform);
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitTrack::Note);
+VARIANT_ENUM_CAST(BlipKit::BlipKitTrack::Waveform);
+VARIANT_ENUM_CAST(BlipKit::BlipKitTrack::Note);

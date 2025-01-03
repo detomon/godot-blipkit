@@ -6,7 +6,7 @@
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/variant/variant.hpp>
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 void BlipKitTrack::_bind_methods() {

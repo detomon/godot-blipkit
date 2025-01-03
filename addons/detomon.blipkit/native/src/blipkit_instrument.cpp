@@ -5,7 +5,7 @@
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/array.hpp>
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 void BlipKitInstrument::_bind_methods() {

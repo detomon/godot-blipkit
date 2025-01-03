@@ -7,7 +7,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class BlipKitWaveform : public Resource {
 	GDCLASS(BlipKitWaveform, Resource)
@@ -39,4 +39,4 @@ public:
 	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit

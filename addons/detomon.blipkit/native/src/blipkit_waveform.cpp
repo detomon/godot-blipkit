@@ -3,7 +3,7 @@
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 void BlipKitWaveform::_bind_methods() {

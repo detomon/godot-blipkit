@@ -10,7 +10,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class BlipKitAssembler : public RefCounted {
 	GDCLASS(BlipKitAssembler, RefCounted)
@@ -107,7 +107,7 @@ public:
 	void clear();
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit
 
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Opcode);
-VARIANT_ENUM_CAST(detomon::BlipKit::BlipKitAssembler::Error);
+VARIANT_ENUM_CAST(BlipKit::BlipKitAssembler::Opcode);
+VARIANT_ENUM_CAST(BlipKit::BlipKitAssembler::Error);

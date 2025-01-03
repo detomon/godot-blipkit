@@ -1,7 +1,7 @@
 #include "divider.hpp"
 #include "audio_stream_blipkit.hpp"
 
-using namespace detomon::BlipKit;
+using namespace BlipKit;
 using namespace godot;
 
 Divider::~Divider() {

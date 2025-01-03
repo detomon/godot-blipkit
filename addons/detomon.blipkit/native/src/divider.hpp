@@ -5,7 +5,7 @@
 
 using namespace godot;
 
-namespace detomon::BlipKit {
+namespace BlipKit {
 
 class AudioStreamBlipKitPlayback;
 
@@ -26,4 +26,4 @@ public:
 	void reset(int p_ticks = 0);
 };
 
-} // namespace detomon::BlipKit
+} // namespace BlipKit
