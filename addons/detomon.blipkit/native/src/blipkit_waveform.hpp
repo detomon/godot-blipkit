@@ -12,9 +12,13 @@ namespace BlipKit {
 class BlipKitWaveform : public Resource {
 	GDCLASS(BlipKitWaveform, Resource)
 
+public:
+	static constexpr int WAVE_MAX_LENGTH = BK_WAVE_MAX_LENGTH;
+
 private:
+	int frames_size;
+	BKFrame frames[WAVE_MAX_LENGTH];
 	BKData waveform;
-	PackedFloat32Array frames;
 
 protected:
 	static void _bind_methods();
@@ -24,16 +28,14 @@ protected:
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 
 public:
-	static constexpr int WAVE_MAX_LENGTH = BK_WAVE_MAX_LENGTH;
-
 	BlipKitWaveform();
 	~BlipKitWaveform();
 
 	static Ref<BlipKitWaveform> create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 
 	_FORCE_INLINE_ BKData *get_waveform() { return &waveform; };
-	_FORCE_INLINE_ int size() const { return frames.size(); };
-	_FORCE_INLINE_ bool is_valid() const { return !frames.is_empty(); };
+	_FORCE_INLINE_ int size() const { return frames_size; };
+	_FORCE_INLINE_ bool is_valid() const { return frames_size > 0; };
 
 	PackedFloat32Array get_frames() const;
 	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);

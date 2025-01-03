@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://r7w22shy5vla"]
 
-[ext_resource type="Script" uid="uid://bthdr7kccf7tj" path="res://visualizer/oscilloscope/oscilloscope.gd" id="1_jnpyg"]
+[ext_resource type="Script" uid="uid://t4c7ki5y36fu" path="res://visualizer/oscilloscope/oscilloscope.gd" id="1_jnpyg"]
 
 [node name="Oscilloscope" type="Control"]
 layout_mode = 3
