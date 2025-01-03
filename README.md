@@ -3,7 +3,7 @@
 A GDExtension for creating the beautiful sound of old sound chips.
 
 - Provides an [`AudioStream`](doc/classes/AudioStreamBlipKit.md) to generate waveforms: square, triangle, noise, sawtooth, sine, and [custom ones](doc/classes/BlipKitWaveform.md)
-- Allows to add multiple [`BlipKitTrack`](doc/classes/BlipKitTrack.md) objects to a stream to generate multiple waveforms in parallel
+- Allows to add multiple [`BlipKitTrack`](doc/classes/BlipKitTrack.md) objects to a stream to generate waveforms in parallel
 - [Instruments](doc/classes/BlipKitInstrument.md) allow to change track properties when a note is playing, e.g., to create ADSR envelopes
 - Provides a basic [byte code interpreter](#byte_code_interpreter) to generate more complex melodies
 

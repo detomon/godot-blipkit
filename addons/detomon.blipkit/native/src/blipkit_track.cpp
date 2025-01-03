@@ -678,10 +678,11 @@ void BlipKitTrack::attach(AudioStreamBlipKit *p_stream) {
 	ERR_FAIL_NULL(p_stream);
 
 	AudioStreamBlipKitPlayback *stream_playback = p_stream->get_playback().ptr();
+	BKContext *context = stream_playback->get_context();
+
 	ERR_FAIL_NULL(stream_playback);
 
 	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
-	BKContext *context = stream_playback->get_context();
 
 	BKTrackAttach(&track, context);
 	playback = stream_playback;
@@ -700,11 +701,11 @@ void BlipKitTrack::attach(AudioStreamBlipKit *p_stream) {
 }
 
 void BlipKitTrack::detach() {
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
-
 	if (!playback) {
 		return;
 	}
+
+	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 
 	for (DividerItem &divider : dividers) {
 		divider.divider.detach();
@@ -797,7 +798,7 @@ void BlipKitTrack::remove_divider(const String &p_name) {
 	for (int i = 0; i < count; i++) {
 		if (dividers[i].name == p_name) {
 			dividers.remove_at(i);
-			break;
+			return;
 		}
 	}
 

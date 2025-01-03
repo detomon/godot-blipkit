@@ -142,7 +142,7 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 		} break;
 	}
 
-	const bool is_envelope = p_steps.size() > 0;
+	const bool has_steps = p_steps.size() > 0;
 
 	p_sustain_offset = CLAMP(p_sustain_offset, 0, p_values.size());
 	p_sustain_length = CLAMP(p_sustain_length, 0, p_values.size() - p_sustain_offset);
@@ -162,18 +162,18 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
 	BKInt result = 0;
 
-	if (is_envelope) {
-		LocalVector<BKSequencePhase> phases;
+	if (has_steps) {
+		thread_local LocalVector<BKSequencePhase> phases;
 		phases.resize(p_values.size());
 
 		for (int i = 0; i < p_values.size(); i++) {
-			phases[i].steps = BKUInt(is_envelope ? p_steps[i] : 0);
+			phases[i].steps = BKUInt(has_steps ? p_steps[i] : 0);
 			phases[i].value = BKInt(p_values[i] * multiplier);
 		}
 
 		result = BKInstrumentSetEnvelope(&instrument, p_type, phases.ptr(), phases.size(), p_sustain_offset, p_sustain_length);
 	} else {
-		LocalVector<BKInt> phases;
+		thread_local LocalVector<BKInt> phases;
 		phases.resize(p_values.size());
 
 		for (int i = 0; i < p_values.size(); i++) {
@@ -223,7 +223,7 @@ PackedInt32Array BlipKitInstrument::get_envelope_steps(EnvelopeType p_type) cons
 }
 
 PackedFloat32Array BlipKitInstrument::get_envelope_values(EnvelopeType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, Variant());
+	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, PackedFloat32Array());
 
 	Sequence &sequence = const_cast<BlipKitInstrument *>(this)->sequences[p_type];
 
