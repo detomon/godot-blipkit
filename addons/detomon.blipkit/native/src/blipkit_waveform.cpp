@@ -49,7 +49,8 @@ BlipKitWaveform::BlipKitWaveform() {
 	BKInt result = BKDataInit(&waveform);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
 
-	frames_size = 8;
+	frames.reserve(WAVE_MAX_LENGTH);
+	frames.resize(8);
 	frames[0] = BK_FRAME_MAX;
 	frames[1] = BK_FRAME_MAX;
 	frames[2] = BK_FRAME_MAX;
@@ -80,11 +81,11 @@ Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Arra
 PackedFloat32Array BlipKitWaveform::get_frames() const {
 	PackedFloat32Array ret;
 
-	ret.resize(frames_size);
+	ret.resize(frames.size());
 	float *ptrw = ret.ptrw();
 	float scale = 1.0 / float(BK_FRAME_MAX);
 
-	for (int i = 0; i < frames_size; i++) {
+	for (int i = 0; i < frames.size(); i++) {
 		ptrw[i] = float(frames[i]) * scale;
 	}
 
@@ -115,14 +116,14 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 
 	AudioStreamBlipKit::lock();
 
-	frames_size = size;
+	frames.resize(size);
 
 	for (int i = 0; i < size; i++) {
 		float value = CLAMP(ptr[i] * factor, -1.0, +1.0);
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
 
-	BKInt result = BKDataSetFrames(&waveform, frames, size, 1, false);
+	BKInt result = BKDataSetFrames(&waveform, frames.ptr(), frames.size(), 1, false);
 
 	AudioStreamBlipKit::unlock();
 

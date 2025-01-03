@@ -16,8 +16,7 @@ public:
 	static constexpr int WAVE_MAX_LENGTH = BK_WAVE_MAX_LENGTH;
 
 private:
-	int frames_size;
-	BKFrame frames[WAVE_MAX_LENGTH];
+	LocalVector<BKFrame> frames;
 	BKData waveform;
 
 protected:
@@ -34,8 +33,8 @@ public:
 	static Ref<BlipKitWaveform> create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 
 	_FORCE_INLINE_ BKData *get_waveform() { return &waveform; };
-	_FORCE_INLINE_ int size() const { return frames_size; };
-	_FORCE_INLINE_ bool is_valid() const { return frames_size > 0; };
+	_FORCE_INLINE_ int size() const { return frames.size(); };
+	_FORCE_INLINE_ bool is_valid() const { return !frames.is_empty(); };
 
 	PackedFloat32Array get_frames() const;
 	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
