@@ -56,16 +56,16 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 			return false;
 		}
 
-		Array data = p_value;
+		const Array &data = p_value;
 
-		if (data.size() == 4) {
-			PackedInt32Array steps = data[0];
-			PackedFloat32Array values = data[1];
-			int sustain_offset = data[2];
-			int sustain_length = data[3];
+		ERR_FAIL_COND_V(data.size() != 4, false);
 
-			set_envelope(type, steps, values, sustain_offset, sustain_length);
-		}
+		const PackedInt32Array &steps = data[0];
+		const PackedFloat32Array &values = data[1];
+		int sustain_offset = data[2];
+		int sustain_length = data[3];
+
+		set_envelope(type, steps, values, sustain_offset, sustain_length);
 
 		return true;
 	}

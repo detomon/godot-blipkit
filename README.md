@@ -1,11 +1,22 @@
 # BlipKit for Godot Engine 4.3
 
 A GDExtension for creating the beautiful sound of old sound chips.
-This uses the [BlipKit](https://github.com/detomon/BlipKit) library to generate audio.
+
+- Provides an [`AudioStream`](doc/classes/AudioStreamBlipKit.md) to generate waveforms: square, triangle, noise, sawtooth, sine, and [custom ones](doc/classes/BlipKitWaveform.md)
+- Allows to add multiple [`BlipKitTrack`](doc/classes/BlipKitTrack.md) objects to a stream to generate multiple waveforms in parallel
+- [Instruments](doc/classes/BlipKitInstrument.md) allow to change track properties when a note is playing, e.g., to create ADSR envelopes
+- Provides a basic [byte code interpreter](#byte_code_interpreter) to generate more complex melodies
+
+The [`BlipKitTrack`](doc/classes/BlipKitTrack.md) object generates the waveform. The [`AudioStreamBlipKit`](doc/classes/AudioStreamBlipKit.md) audio stream resource mixes the audio from multiple [`BlipKitTrack`](doc/classes/BlipKitTrack.md)s.
+It can be used on `AudioStreamPlayer`, `AudioStreamPlayer2D` or `AudioStreamPlayer3D` nodes.
+
+Time is measured in *ticks*. Every *tick* allows properties of the waveform to be updated.
 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Byte code interpreter](#byte_code_interpreter)
+
+*Uses the [BlipKit](https://github.com/detomon/BlipKit) library to generate audio.*
 
 ## Installation
 
@@ -15,19 +26,14 @@ This uses the [BlipKit](https://github.com/detomon/BlipKit) library to generate 
 
 ## Usage
 
-- Create an `AudioStreamPlayer` node and add an `AudioStreamBlipKit` resource
-- Attach `BlipKitTrack` objects to the stream resource
-- Change properties to play notes, change the volume, and more
+- Create an `AudioStreamPlayer` node and add an [`AudioStreamBlipKit`](doc/classes/AudioStreamBlipKit.md) resource
+- Attach [`BlipKitTrack`](doc/classes/BlipKitTrack.md) objects to the stream resource
+- Change properties of the [`BlipKitTrack`](doc/classes/BlipKitTrack.md) to play notes, change the volume etc.
 
-The `AudioStreamBlipKit` audio stream resource is used to generate audio.
-It can be used on `AudioStreamPlayer`, `AudioStreamPlayer2D` or `AudioStreamPlayer3D` nodes.
-
-The `BlipKitTrack` object generates a single waveform.
-It has various properties to change the note, waveform, volume, effects and more.
-
-See the [examples](examples) directory for some examples.
-
-Class descriptions are available in the Editor via the reference documentation after the extension is loaded,
+> [!TIP]
+> See the [examples](examples) directory for some examples.
+>
+> Class descriptions are available in the Editor via the reference documentation after the extension is loaded,
 or in the [doc/classes](doc/classes) directory.
 
 **Example**: Play a note:
@@ -56,9 +62,9 @@ func ready() -> void:
 
 ## Byte code interpreter
 
-Byte code allows to execute commands on `BlipKitTrack`s and change the properties over time.
+`BlipKitInterpreter` allows to execute commands on a `BlipKitTrack` and change its properties over time.
 
-`BlipKitAssembler` generate byte code from instructions which is executed by `BlipKitInterpreter`.
+`BlipKitAssembler` generate byte code from instructions which is executed by a `BlipKitInterpreter`.
 Parts can be reused using function calls. The jump instruction allows to create loops.
 
 **Example**: Loop two notes:
