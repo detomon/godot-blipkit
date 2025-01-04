@@ -1,4 +1,4 @@
-@icon("../icons/midi_input.svg")
+@icon("midi_input.svg")
 class_name BlipKitMidiInput
 extends Node
 

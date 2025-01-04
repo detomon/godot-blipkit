@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c57neri0443oh"
-path="res://.godot/imported/waveform.svg-71676283c3c3ef7bd3cf03c22833c46a.ctex"
+uid="uid://c12degty5fe7l"
+path="res://.godot/imported/midi_input.svg-e34ac4a23e5308f99050081a482881d1.ctex"
 metadata={
 "has_editor_variant": true,
 "vram_texture": false
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/detomon.blipkit/icons/waveform.svg"
-dest_files=["res://.godot/imported/waveform.svg-71676283c3c3ef7bd3cf03c22833c46a.ctex"]
+source_file="res://helpers/midi_input.svg"
+dest_files=["res://.godot/imported/midi_input.svg-e34ac4a23e5308f99050081a482881d1.ctex"]
 
 [params]
 

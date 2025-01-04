@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dt5v1c03xagbb" path="res://test/test.gd" id="1_c5qdp"]
 [ext_resource type="PackedScene" uid="uid://ds37q704hu4oh" path="res://visualizer/ring/ring.tscn" id="2_r32xf"]
 [ext_resource type="PackedScene" uid="uid://c4xwfm0ygatv7" path="res://visualizer/rings/rings.tscn" id="3_vfjjs"]
-[ext_resource type="Script" uid="uid://0fgb5wdim45h" path="res://addons/detomon.blipkit/classes/midi_input.gd" id="3_y6xj0"]
+[ext_resource type="Script" uid="uid://0fgb5wdim45h" path="res://helpers/midi_input.gd" id="3_y6xj0"]
 [ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://visualizer/oscilloscope/oscilloscope.tscn" id="5_tbfq4"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
