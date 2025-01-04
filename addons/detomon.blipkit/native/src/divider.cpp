@@ -25,9 +25,10 @@ BKEnum Divider::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
 void Divider::initialize(int p_ticks, const Callable &p_callable) {
 	callable = p_callable;
 
-	BKCallback callback = { 0 };
-	callback.func = divider_callback;
-	callback.userInfo = (void *)this;
+	BKCallback callback = {
+		.func = divider_callback,
+		.userInfo = (void *)this,
+	};
 	BKDividerInit(&divider, p_ticks, &callback);
 }
 

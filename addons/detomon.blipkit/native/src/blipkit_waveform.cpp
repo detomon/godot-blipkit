@@ -46,7 +46,7 @@ bool BlipKitWaveform::_get(const StringName &p_name, Variant &r_ret) const {
 }
 
 BlipKitWaveform::BlipKitWaveform() {
-	BKInt result = BKDataInit(&waveform);
+	BKInt result = BKDataInit(&data);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
 
 	frames.reserve(WAVE_MAX_LENGTH);
@@ -63,7 +63,7 @@ BlipKitWaveform::BlipKitWaveform() {
 
 BlipKitWaveform::~BlipKitWaveform() {
 	AudioStreamBlipKit::lock();
-	BKDispose(&waveform);
+	BKDispose(&data);
 	AudioStreamBlipKit::unlock();
 }
 
@@ -123,12 +123,12 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
 
-	BKInt result = BKDataSetFrames(&waveform, frames.ptr(), frames.size(), 1, false);
+	BKInt result = BKDataSetFrames(&data, frames.ptr(), frames.size(), 1, false);
 
 	AudioStreamBlipKit::unlock();
 
 	if (result != BK_SUCCESS) {
-		ERR_FAIL_MSG(vformat("Failed to update waveform: %s.", BKStatusGetName(result)));
+		ERR_FAIL_MSG(vformat("Failed to update BKData: %s.", BKStatusGetName(result)));
 	}
 
 	emit_changed();

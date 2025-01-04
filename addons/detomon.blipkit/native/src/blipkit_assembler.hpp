@@ -90,7 +90,7 @@ protected:
 	void init_byte_code();
 	int add_label(const String p_label);
 
-	_ALWAYS_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
+	_FORCE_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
 
 public:
 	BlipKitAssembler();

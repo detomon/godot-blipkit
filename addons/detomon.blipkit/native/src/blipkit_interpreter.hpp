@@ -55,7 +55,7 @@ protected:
 	bool check_header();
 	int fail_with_error(Status p_status, const String &error_message);
 
-	_ALWAYS_INLINE_ float get_half() { return half_to_float(byte_code->get_u16()); }
+	_FORCE_INLINE_ float get_half() { return half_to_float(byte_code->get_u16()); }
 
 public:
 	BlipKitInterpreter();

@@ -61,8 +61,8 @@ class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
 	friend class BlipKitTrack;
 
 private:
-	static const int NUM_CHANNELS = 2;
-	static const int CHANNEL_SIZE = 1024;
+	static constexpr int NUM_CHANNELS = 2;
+	static constexpr int CHANNEL_SIZE = 1024;
 
 	BKContext context;
 	LocalVector<BKFrame> buffer;

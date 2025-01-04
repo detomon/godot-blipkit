@@ -1,6 +1,6 @@
-#include "blipkit_interpreter.hpp"
 #include "blipkit_assembler.hpp"
 #include "blipkit_instrument.hpp"
+#include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
 #include <BlipKit.h>

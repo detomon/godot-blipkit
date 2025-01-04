@@ -660,7 +660,7 @@ void BlipKitTrack::set_custom_waveform(const Ref<BlipKitWaveform> &p_waveform) {
 
 	ERR_FAIL_COND(!p_waveform->is_valid());
 
-	BKData *data = p_waveform->get_waveform();
+	BKData *data = p_waveform->get_data();
 
 	AudioStreamBlipKit::lock();
 	custom_waveform = p_waveform;
