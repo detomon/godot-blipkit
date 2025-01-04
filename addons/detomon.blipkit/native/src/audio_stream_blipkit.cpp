@@ -195,9 +195,9 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	AudioStreamBlipKit::unlock();
 
 	int out_count = 0;
-
 	AudioFrame *out_buffer = p_buffer;
 	BKFrame *chunk_buffer = buffer.ptr();
+	const float frame_scale = 1.0 / float(BK_FRAME_MAX);
 
 	while (out_count < p_frames) {
 		BKInt chunk_size = MIN(p_frames - out_count, CHANNEL_SIZE);
@@ -216,8 +216,8 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 
 		// Fill output buffer.
 		for (int i = 0; i < chunk_size; i++) {
-			float left = float(buffer[i * NUM_CHANNELS + 0]) / float(BK_FRAME_MAX);
-			float right = float(buffer[i * NUM_CHANNELS + 1]) / float(BK_FRAME_MAX);
+			float left = float(buffer[i * NUM_CHANNELS + 0]) * frame_scale;
+			float right = float(buffer[i * NUM_CHANNELS + 1]) * frame_scale;
 			*out_buffer++ = { left, right };
 		}
 	}
@@ -231,6 +231,7 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 }
 
 int AudioStreamBlipKitPlayback::add_divider(Callable p_callable, int p_tick_interval) {
+	ERR_FAIL_COND_V(p_callable.is_null(), -1);
 	ERR_FAIL_COND_V(p_tick_interval <= 0, -1);
 
 	AudioStreamBlipKit::lock();

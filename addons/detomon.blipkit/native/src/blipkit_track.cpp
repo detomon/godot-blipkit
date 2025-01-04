@@ -214,7 +214,7 @@ Ref<BlipKitTrack> BlipKitTrack::create_with_waveform(BlipKitTrack::Waveform p_wa
 }
 
 String BlipKitTrack::_to_string() const {
-	return vformat("BlipKitTrack: waveform=%d, volume=%f (%f), note=%f", (int)get_waveform(), get_volume(), get_master_volume(), get_note());
+	return vformat("BlipKitTrack: waveform=%d", int(get_waveform()));
 }
 
 float BlipKitTrack::get_master_volume() const {
@@ -735,13 +735,13 @@ void BlipKitTrack::reset() {
 	BKTrackReset(&track);
 	instrument.unref();
 
-	AudioStreamBlipKit::unlock();
-
 	set_waveform(waveform);
 	set_master_volume(master_volume);
 	if (custom_waveform.is_valid()) {
 		set_custom_waveform(custom_waveform);
 	}
+
+	AudioStreamBlipKit::unlock();
 }
 
 BlipKitTrack::DividerItem *BlipKitTrack::find_divider(const String &p_name) {
@@ -774,6 +774,8 @@ PackedStringArray BlipKitTrack::get_divider_names() const {
 
 void BlipKitTrack::add_divider(const String &p_name, int p_tick_interval, Callable p_callable) {
 	ERR_FAIL_COND(has_divider(p_name));
+	ERR_FAIL_COND(p_tick_interval <= 0);
+	ERR_FAIL_COND(p_callable.is_null());
 
 	AudioStreamBlipKit::lock();
 
