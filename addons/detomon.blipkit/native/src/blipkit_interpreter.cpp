@@ -47,7 +47,7 @@ bool BlipKitInterpreter::check_header() {
 	if (byte_code->get_size() > 0) {
 		// Check header.
 		Opcode opcode = static_cast<Opcode>(byte_code->get_u8());
-		if (opcode != BlipKitAssembler::OP_INIT) {
+		if (opcode != Opcode::OP_INIT) {
 			fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");
 			return false;
 		}
