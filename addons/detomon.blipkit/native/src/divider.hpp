@@ -11,8 +11,8 @@ class AudioStreamBlipKitPlayback;
 
 class Divider {
 private:
-	BKDivider divider = { 0 };
 	Callable callable;
+	BKDivider divider = { 0 };
 
 	static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
 

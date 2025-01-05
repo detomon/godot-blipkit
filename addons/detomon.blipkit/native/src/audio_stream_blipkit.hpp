@@ -102,7 +102,6 @@ public:
 	void remove_divider(int p_id);
 	void clear_dividers();
 	void reset_divider(int p_id, int p_tick_interval = 0);
-	void enable_divider(int p_id, bool p_enable);
 };
 
 } // namespace BlipKit
