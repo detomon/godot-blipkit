@@ -17,7 +17,7 @@ class BlipKitAssembler : public RefCounted {
 
 public:
 	enum Opcode {
-		OP_NOP,
+		OP_NOOP,
 		OP_INIT,
 		OP_ATTACK,
 		OP_RELEASE,

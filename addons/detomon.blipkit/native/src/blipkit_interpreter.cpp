@@ -124,7 +124,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 		Opcode opcode = static_cast<Opcode>(byte_code->get_u8());
 
 		switch (opcode) {
-			case Opcode::OP_NOP: {
+			case Opcode::OP_NOOP: {
 				// Do nothing.
 			} break;
 			case Opcode::OP_ATTACK: {
