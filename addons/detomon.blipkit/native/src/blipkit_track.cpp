@@ -9,6 +9,9 @@
 using namespace BlipKit;
 using namespace godot;
 
+static constexpr float MASTER_VOLUME_DEFAULT = 0.15;
+static constexpr float MASTER_VOLUME_BASS = 0.3;
+
 void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_static_method("BlipKitTrack", D_METHOD("create_with_waveform", "waveform"), &BlipKitTrack::create_with_waveform);
 
@@ -310,6 +313,8 @@ BlipKitTrack::Waveform BlipKitTrack::get_waveform() const {
 }
 
 void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
+	ERR_FAIL_INDEX(p_waveform, WAVEFORM_MAX);
+
 	BKInt waveform = 0;
 	float master_volume = 0.0;
 
@@ -320,7 +325,7 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 		} break;
 		case WAVEFORM_TRIANGLE: {
 			waveform = BK_TRIANGLE;
-			master_volume = MASTER_VOLUME_DEFAULT_2;
+			master_volume = MASTER_VOLUME_BASS;
 		} break;
 		case WAVEFORM_NOISE: {
 			waveform = BK_NOISE;
@@ -332,7 +337,7 @@ void BlipKitTrack::set_waveform(BlipKitTrack::Waveform p_waveform) {
 		} break;
 		case WAVEFORM_SINE: {
 			waveform = BK_SINE;
-			master_volume = MASTER_VOLUME_DEFAULT_2;
+			master_volume = MASTER_VOLUME_BASS;
 		} break;
 		default: {
 			ERR_FAIL_MSG(vformat("Cannot set waveform %d directly.", p_waveform));
@@ -484,17 +489,6 @@ void BlipKitTrack::set_portamento(int p_portamento) {
 	AudioStreamBlipKit::unlock();
 }
 
-void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
-	p_delta = CLAMP(p_delta, 0.0, 1.0);
-	p_slide_ticks = MAX(p_slide_ticks, 0);
-	const BKInt delta = BKInt(p_delta * float(BK_MAX_VOLUME));
-	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
-
-	AudioStreamBlipKit::lock();
-	BKSetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
-	AudioStreamBlipKit::unlock();
-}
-
 Dictionary BlipKitTrack::get_tremolo() const {
 	BKInt values[3] = { 0 };
 
@@ -512,6 +506,17 @@ Dictionary BlipKitTrack::get_tremolo() const {
 	ret[StringName("slide_ticks")] = slide_ticks;
 
 	return ret;
+}
+
+void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
+	p_delta = CLAMP(p_delta, 0.0, 1.0);
+	p_slide_ticks = MAX(p_slide_ticks, 0);
+	const BKInt delta = BKInt(p_delta * float(BK_MAX_VOLUME));
+	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
+
+	AudioStreamBlipKit::lock();
+	BKSetPtr(&track, BK_EFFECT_TREMOLO, values, sizeof(values));
+	AudioStreamBlipKit::unlock();
 }
 
 Dictionary BlipKitTrack::get_vibrato() const {
@@ -586,7 +591,7 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
-		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * double(BK_FINT20_UNIT));
+		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
 	}
 
 	AudioStreamBlipKit::lock();
@@ -682,7 +687,7 @@ void BlipKitTrack::attach(AudioStreamBlipKit *p_stream) {
 
 	ERR_FAIL_NULL(stream_playback);
 
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+	AudioStreamBlipKit::lock();
 
 	BKTrackAttach(&track, context);
 	playback = stream_playback;
@@ -697,7 +702,7 @@ void BlipKitTrack::attach(AudioStreamBlipKit *p_stream) {
 		divider.divider.attach(playback);
 	}
 
-	lock.unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::detach() {
@@ -705,7 +710,7 @@ void BlipKitTrack::detach() {
 		return;
 	}
 
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+	AudioStreamBlipKit::lock();
 
 	for (DividerItem &divider : dividers) {
 		divider.divider.detach();
@@ -715,7 +720,7 @@ void BlipKitTrack::detach() {
 	playback->detach(this);
 	playback = nullptr;
 
-	lock.unlock();
+	AudioStreamBlipKit::unlock();
 }
 
 void BlipKitTrack::release() {
@@ -794,19 +799,24 @@ void BlipKitTrack::add_divider(const String &p_name, int p_tick_interval, Callab
 }
 
 void BlipKitTrack::remove_divider(const String &p_name) {
+	bool found = false;
+
 	AudioStreamBlipKit::lock();
 
 	const int count = dividers.size();
 	for (int i = 0; i < count; i++) {
 		if (dividers[i].name == p_name) {
 			dividers.remove_at(i);
-			return;
+			found = true;
+			break;
 		}
 	}
 
 	AudioStreamBlipKit::unlock();
 
-	ERR_FAIL_MSG(vformat("Divider '%s' is not defined.", p_name));
+	if (!found) {
+		ERR_FAIL_MSG(vformat("Divider '%s' is not defined.", p_name));
+	}
 }
 
 void BlipKitTrack::reset_divider(const String &p_name, int p_tick_interval) {

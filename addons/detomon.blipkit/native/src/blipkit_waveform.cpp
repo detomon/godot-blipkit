@@ -16,7 +16,7 @@ void BlipKitWaveform::_bind_methods() {
 }
 
 String BlipKitWaveform::_to_string() const {
-	return vformat("BlipKitWaveform: frames=%s", get_frames());
+	return vformat("BlipKitWaveform: size=%s", size());
 }
 
 void BlipKitWaveform::_get_property_list(List<PropertyInfo> *p_list) const {

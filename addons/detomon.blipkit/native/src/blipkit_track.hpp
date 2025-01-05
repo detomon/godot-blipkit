@@ -28,6 +28,7 @@ public:
 		WAVEFORM_SINE,
 		WAVEFORM_CUSTOM,
 		WAVEFORM_SAMPLE,
+		WAVEFORM_MAX,
 	};
 
 	enum Note {
@@ -137,9 +138,6 @@ private:
 		String name;
 		Divider divider;
 	};
-
-	static constexpr float MASTER_VOLUME_DEFAULT = 0.15;
-	static constexpr float MASTER_VOLUME_DEFAULT_2 = 0.3;
 
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;

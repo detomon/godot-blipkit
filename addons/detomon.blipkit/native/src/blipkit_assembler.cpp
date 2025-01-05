@@ -74,7 +74,7 @@ String BlipKitAssembler::_to_string() const {
 }
 
 void BlipKitAssembler::init_byte_code() {
-	if (byte_code->get_size() > 0) {
+	if (likely(byte_code->get_size() > 0)) {
 		return;
 	}
 

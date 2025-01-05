@@ -35,11 +35,10 @@ void Divider::initialize(int p_ticks, const Callable &p_callable) {
 void Divider::attach(AudioStreamBlipKitPlayback *p_playback) {
 	ERR_FAIL_NULL(p_playback);
 
-	AudioStreamBlipKit::lock();
-
 	BKContext *context = p_playback->get_context();
-	BKContextAttachDivider(context, &divider, BK_CLOCK_TYPE_BEAT);
 
+	AudioStreamBlipKit::lock();
+	BKContextAttachDivider(context, &divider, BK_CLOCK_TYPE_BEAT);
 	AudioStreamBlipKit::unlock();
 }
 
@@ -54,7 +53,7 @@ void Divider::reset(int p_ticks) {
 
 	BKDividerReset(&divider);
 	if (p_ticks > 0) {
-		// FIXME: There is not function for that.
+		// FIXME: There is no function for that.
 		divider.divider = p_ticks;
 	}
 

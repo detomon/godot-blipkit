@@ -14,11 +14,6 @@ var saw: BlipKitTrack
 var lead: BlipKitTrack
 
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
-@onready var _visualizer: Node2D = %Visualizer
-#@onready var _visualizer2: Node2D = %Visualizer2
-
-@onready var _timer: Timer = %Timer
-@onready var _progress: HSlider = %Progress
 
 var interp := BlipKitInterpreter.new()
 
@@ -40,36 +35,6 @@ func _ready() -> void:
 
 	#prints(INSTRUMENT)
 	#prints(AAH)
-
-
-func _process(_delta: float) -> void:
-	_progress.value = 1.0 - (_timer.time_left / _timer.wait_time)
-
-	if _playing:
-		if _play_index >= len(_roll):
-			return
-
-		var time := _timer.wait_time - _timer.time_left
-		var item := _roll[_play_index]
-
-		while time >= item.time:
-			var notes: Dictionary = item.notes
-			_on_midi_input_notes_changes(notes)
-
-			_play_index += 1
-			if _play_index >= len(_roll):
-				break
-
-			item = _roll[_play_index]
-
-
-#func _input(event: InputEvent) -> void:
-	#if event.is_action_pressed(&"ui_accept"):
-		#for note in _active_tracks:
-			#var track: BlipKitTrack = _active_tracks[note]
-			#track.set_tremolo(5, 0.75, 0)
-			#track.set_tremolo(40, 0.75, 240)
-			#track.set_vibrato(30, 0.1)
 
 
 func _init_track() -> void:
@@ -310,9 +275,6 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 
 	#_visualizer2.notes = PackedInt32Array(notes.keys())
 
-	var values := PackedInt32Array(notes.keys())
-	_visualizer.set_deferred(&"notes", values)
-
 	#var time := _timer.wait_time - _timer.time_left
 
 	#if not _playing:
@@ -333,23 +295,3 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 			#time = time,
 			#notes = notes.duplicate(),
 		#})
-
-
-func _on_record_button_pressed() -> void:
-	_roll.clear()
-	_playing = false
-	_timer.start()
-
-	_on_midi_input_notes_changes({})
-
-
-func _on_play_button_pressed() -> void:
-	_playing = true
-	_play_index = 0
-	_timer.start()
-
-	print(_roll)
-
-
-func _on_timer_timeout() -> void:
-	_play_index = 0

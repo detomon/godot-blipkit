@@ -15,7 +15,7 @@ func _ready() -> void:
 	# Attach the track to the stream.
 	_track.attach(stream)
 
-	# Play a note.
+	# Reduce volume.
 	_track.volume = 0.5
 
 
