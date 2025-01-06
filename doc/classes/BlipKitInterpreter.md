@@ -54,6 +54,13 @@ track.add_divider("run", 1, func () -> int:
 - `ERR_STACK_UNDERFLOW` = `5`
 	- A stack underflow occurred.
 
+### enum ``
+
+- `REGISTER_COUNT` = `16`
+	- The number of usable registers.
+- `SLOT_COUNT` = `256`
+	- The number of slots for instruments and waveforms.
+
 ## Method Descriptions
 
 ### `int advance(track: BlipKitTrack)`

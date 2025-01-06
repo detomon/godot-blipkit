@@ -23,6 +23,13 @@ aah.set_frames_normalized([
 - *void* [**`set_frames`**](#void-set_framesframes-packedfloat32array-normalize-bool--false-amplitude-float--10)(frames: PackedFloat32Array, normalize: bool = false, amplitude: float = 1.0)
 - *int* [**`size`**](#int-size-const)() const
 
+## Enumerations
+
+### enum ``
+
+- `WAVE_SIZE_MAX` = `64`
+	- The maximum number of frames.
+
 ## Method Descriptions
 
 ### `BlipKitWaveform create_with_frames(frames: PackedFloat32Array, normalize: bool = false, amplitude: float = 1.0) static`

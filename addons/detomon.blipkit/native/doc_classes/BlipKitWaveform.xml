@@ -58,4 +58,9 @@
 			</description>
 		</method>
 	</methods>
+	<constants>
+		<constant name="WAVE_SIZE_MAX" value="64">
+			The maximum number of frames.
+		</constant>
+	</constants>
 </class>

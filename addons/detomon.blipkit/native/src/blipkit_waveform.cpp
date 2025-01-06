@@ -13,6 +13,8 @@ void BlipKitWaveform::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
 	ClassDB::bind_method(D_METHOD("set_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::set_frames, DEFVAL(false), DEFVAL(1.0));
+
+	BIND_CONSTANT(WAVE_SIZE_MAX);
 }
 
 String BlipKitWaveform::_to_string() const {
@@ -49,7 +51,7 @@ BlipKitWaveform::BlipKitWaveform() {
 	BKInt result = BKDataInit(&data);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
 
-	frames.reserve(WAVE_MAX_LENGTH);
+	frames.reserve(WAVE_SIZE_MAX);
 	frames.resize(8);
 	frames[0] = BK_FRAME_MAX;
 	frames[1] = BK_FRAME_MAX;
@@ -69,7 +71,7 @@ BlipKitWaveform::~BlipKitWaveform() {
 
 Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND_V(p_frames.size() < 2, nullptr);
-	ERR_FAIL_COND_V(p_frames.size() > WAVE_MAX_LENGTH, nullptr);
+	ERR_FAIL_COND_V(p_frames.size() > WAVE_SIZE_MAX, nullptr);
 
 	Ref<BlipKitWaveform> instance;
 	instance.instantiate();
@@ -94,12 +96,12 @@ PackedFloat32Array BlipKitWaveform::get_frames() const {
 
 void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND(p_frames.size() < 2);
-	ERR_FAIL_COND(p_frames.size() > WAVE_MAX_LENGTH);
+	ERR_FAIL_COND(p_frames.size() > WAVE_SIZE_MAX);
 
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
 	const float *ptr = p_frames.ptr();
-	const int size = MIN(p_frames.size(), WAVE_MAX_LENGTH);
+	const int size = MIN(p_frames.size(), WAVE_SIZE_MAX);
 	float factor = 1.0;
 
 	if (p_normalize) {

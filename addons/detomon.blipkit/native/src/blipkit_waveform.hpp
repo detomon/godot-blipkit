@@ -13,7 +13,7 @@ class BlipKitWaveform : public Resource {
 	GDCLASS(BlipKitWaveform, Resource)
 
 public:
-	static constexpr int WAVE_MAX_LENGTH = BK_WAVE_MAX_LENGTH;
+	static constexpr int WAVE_SIZE_MAX = BK_WAVE_MAX_LENGTH;
 
 private:
 	LocalVector<BKFrame> frames;

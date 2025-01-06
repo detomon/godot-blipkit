@@ -18,7 +18,7 @@ class BlipKitInterpreter : public RefCounted {
 	GDCLASS(BlipKitInterpreter, RefCounted)
 
 public:
-	static constexpr int REGISTER_COUNT_AUX = 16;
+	static constexpr int REGISTER_COUNT = 16;
 	static constexpr int VERSION = 1;
 
 	enum Status {
@@ -36,7 +36,7 @@ private:
 	static constexpr int SLOT_COUNT = 256;
 
 	struct Registers {
-		int32_t aux[REGISTER_COUNT_AUX] = { 0 };
+		int32_t aux[REGISTER_COUNT] = { 0 };
 	};
 
 	Ref<StreamPeerBuffer> byte_code;

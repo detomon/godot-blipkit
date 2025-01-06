@@ -215,7 +215,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				goto invalid_argument;
 			}
 
-			int number = CLAMP(int(p_arg1), 0, BlipKitInterpreter::REGISTER_COUNT_AUX);
+			int number = CLAMP(int(p_arg1), 0, BlipKitInterpreter::REGISTER_COUNT);
 			int value = p_arg2;
 
 			byte_code->put_u8(p_opcode);

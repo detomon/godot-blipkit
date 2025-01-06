@@ -129,5 +129,11 @@
 		<constant name="ERR_STACK_UNDERFLOW" value="5" enum="Status">
 			A stack underflow occurred.
 		</constant>
+		<constant name="REGISTER_COUNT" value="16">
+			The number of usable registers.
+		</constant>
+		<constant name="SLOT_COUNT" value="256">
+			The number of slots for instruments and waveforms.
+		</constant>
 	</constants>
 </class>
