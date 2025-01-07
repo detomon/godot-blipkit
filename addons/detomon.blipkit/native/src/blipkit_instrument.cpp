@@ -9,6 +9,8 @@ using namespace BlipKit;
 using namespace godot;
 
 void BlipKitInstrument::_bind_methods() {
+	ClassDB::bind_static_method("BlipKitInstrument", D_METHOD("create_with_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::create_with_adsr);
+
 	ClassDB::bind_method(D_METHOD("set_envelope", "type", "steps", "values", "sustain_offset", "sustain_length"), &BlipKitInstrument::set_envelope);
 	ClassDB::bind_method(D_METHOD("set_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::set_adsr);
 	ClassDB::bind_method(D_METHOD("has_envelope", "type"), &BlipKitInstrument::has_envelope);
@@ -117,6 +119,14 @@ BlipKitInstrument::~BlipKitInstrument() {
 	AudioStreamBlipKit::lock();
 	BKDispose(&instrument);
 	AudioStreamBlipKit::unlock();
+}
+
+Ref<BlipKitInstrument> BlipKitInstrument::create_with_adsr(int p_attack, int p_decay, float p_sustain, int p_release) {
+	Ref<BlipKitInstrument> instance;
+	instance.instantiate();
+	instance->set_adsr(p_attack, p_decay, p_sustain, p_release);
+
+	return instance;
 }
 
 void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length) {

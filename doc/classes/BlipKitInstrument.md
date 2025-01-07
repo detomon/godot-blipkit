@@ -18,6 +18,7 @@ track.note = BlipKitTrack.NOTE_A_2
 ## Methods
 
 - *void* [**`clear_envelope`**](#void-clear_envelopetype-int)(type: int)
+- *BlipKitInstrument* [**`create_with_adsr`**](#blipkitinstrument-create_with_adsrattack-int-decay-int-sustain-float-release-int-static)(attack: int, decay: int, sustain: float, release: int) static
 - *PackedInt32Array* [**`get_envelope_steps`**](#packedint32array-get_envelope_stepstype-int-const)(type: int) const
 - *int* [**`get_envelope_sustain_length`**](#int-get_envelope_sustain_lengthtype-int-const)(type: int) const
 - *int* [**`get_envelope_sustain_offset`**](#int-get_envelope_sustain_offsettype-int-const)(type: int) const
@@ -48,6 +49,10 @@ If an envelope value is `0`, `BlipKitTrack.duty_cycle` is not changed.
 ### `void clear_envelope(type: int)`
 
 Removes the envelope with `type`.
+
+### `BlipKitInstrument create_with_adsr(attack: int, decay: int, sustain: float, release: int) static`
+
+Creates an instrument and initializes the [`ENVELOPE_VOLUME`](#envelope_volume) envelope with an ADSR envelope (see [`set_adsr()`](#void-set_adsrattack-int-decay-int-sustain-float-release-int)).
 
 ### `PackedInt32Array get_envelope_steps(type: int) const`
 

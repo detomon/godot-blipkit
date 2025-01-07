@@ -26,6 +26,16 @@
 				Removes the envelope with [param type].
 			</description>
 		</method>
+		<method name="create_with_adsr" qualifiers="static">
+			<return type="BlipKitInstrument" />
+			<param index="0" name="attack" type="int" />
+			<param index="1" name="decay" type="int" />
+			<param index="2" name="sustain" type="float" />
+			<param index="3" name="release" type="int" />
+			<description>
+				Creates an instrument and initializes the [constant ENVELOPE_VOLUME] envelope with an ADSR envelope (see [method set_adsr]).
+			</description>
+		</method>
 		<method name="get_envelope_steps" qualifiers="const">
 			<return type="PackedInt32Array" />
 			<param index="0" name="type" type="int" enum="BlipKitInstrument.EnvelopeType" />

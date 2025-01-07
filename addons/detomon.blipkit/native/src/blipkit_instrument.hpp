@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BlipKit.h>
+#include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
@@ -43,6 +44,8 @@ protected:
 public:
 	BlipKitInstrument();
 	~BlipKitInstrument();
+
+	static Ref<BlipKitInstrument> create_with_adsr(int p_attack, int p_decay, float p_sustain, int p_release);
 
 	_FORCE_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
