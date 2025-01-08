@@ -123,8 +123,7 @@ func _init_track() -> void:
 	#track.master_volume = 0.15
 	saw.portamento = 8
 
-	var saw_instr := BlipKitInstrument.new()
-	saw_instr.set_adsr(0, 0, 1.0, 12)
+	var saw_instr := BlipKitInstrument.create_with_adsr(0, 0, 1.0, 12)
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
 	#saw.custom_waveform = preload("res://test/waveforms/aah2.tres")
