@@ -28,7 +28,6 @@ public:
 		ERR_INVALID_OPCODE,
 		ERR_STACK_OVERFLOW,
 		ERR_STACK_UNDERFLOW,
-		// ERR_RECURSION,
 	};
 
 private:
