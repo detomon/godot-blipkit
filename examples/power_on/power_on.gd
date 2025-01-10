@@ -34,8 +34,8 @@ func _ready() -> void:
 
 	var stream: AudioStreamBlipKit = _player.stream
 
-	_track.attach(stream)
 	_track.add_divider("run", 1, func () -> int:
 		var result := _interp.advance(_track)
 		return result
 	)
+	_track.attach(stream)

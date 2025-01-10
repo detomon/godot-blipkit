@@ -53,6 +53,7 @@ func ready() -> void:
 
 	# Attach the track to the stream.
 	_track.attach(stream)
+
 	# Play a note.
 	_track.note = BlipKitTrack.NOTE_A_3
 
@@ -116,11 +117,11 @@ func _ready() -> void:
 	# Get the audio stream.
 	var stream: AudioStreamBlipKit = _player.stream
 
-	# Attach the track to the audio stream.
-	_track.attach(stream
-
 	# Add a divider and run the interpreter on the track.
 	_track.add_divider(&"run", 1, func () -> int:
 		return _interp.advance(_track)
 	)
+
+	# Attach the track to the audio stream.
+	_track.attach(stream
 ```

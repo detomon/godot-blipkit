@@ -12,11 +12,11 @@ func _ready() -> void:
 	# Get the audio stream.
 	var stream: AudioStreamBlipKit = stream_player.stream
 
-	# Attach the track to the stream.
-	_track.attach(stream)
-
 	# Reduce volume.
 	_track.volume = 0.5
+
+	# Attach the track to the stream.
+	_track.attach(stream)
 
 
 func _on_button_button_down() -> void:

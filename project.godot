@@ -27,8 +27,14 @@ gdscript/warnings/unsafe_call_argument=1
 
 [display]
 
-window/size/viewport_width=1200
-window/size/viewport_height=768
+window/size/viewport_width=480
+window/size/viewport_height=320
+
+[editor]
+
+movie_writer/mix_rate=44100
+movie_writer/mjpeg_quality=1.0
+movie_writer/movie_file="/Users/simon/Downloads/Godot/Addons/godot-blipkit/movie/output.avi"
 
 [editor_plugins]
 

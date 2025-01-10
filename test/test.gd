@@ -127,15 +127,15 @@ func _init_track() -> void:
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
 	#saw.custom_waveform = preload("res://test/waveforms/aah2.tres")
-	saw.attach(stream)
-	#saw.add_divider(&"beat", 24, _on_tick.bind(saw))
-	saw.add_divider(&"beat", 1, func () -> int:
+
+	saw.add_divider("run", 1, func () -> int:
 		var result := interp.advance(saw)
 		# Remove divider when finished.
 		if result == 0:
 			return -1
 		return result
 	)
+	saw.attach(stream)
 
 	#print_debug.call_deferred(saw.get_tremolo())
 
@@ -170,8 +170,8 @@ func _init_track() -> void:
 	bass_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [0, 8], [24, 0], 1, 1)
 	bass.instrument = bass_instr
 
-	bass.attach(stream)
 	bass.add_divider(&"beat", 24, _on_tick_3.bind(bass))
+	bass.attach(stream)
 	#playback.add_divider(_on_tick_3.bind(bass), 24)
 
 	#print_debug.call_deferred("dividers: ", bass.get_divider_names())

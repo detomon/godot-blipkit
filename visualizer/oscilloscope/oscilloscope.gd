@@ -3,7 +3,7 @@ extends Control
 
 const POINT_COUNT := 512
 
-@export var bus_name := &"Music": set = set_bus_name
+@export var bus_name := &"Master": set = set_bus_name
 @export var effect_index := 0: set = set_effect_index
 
 var _effect_capture: AudioEffectCapture
