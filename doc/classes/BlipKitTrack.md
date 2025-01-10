@@ -63,6 +63,7 @@ _track.note = BlipKitTrack.NOTE_A_3
 - *PackedStringArray* [**`get_divider_names`**](#packedstringarray-get_divider_names-const)() const
 - *Dictionary* [**`get_tremolo`**](#dictionary-get_tremolo-const)() const
 - *Dictionary* [**`get_vibrato`**](#dictionary-get_vibrato-const)() const
+- *bool* [**`has_divider`**](#bool-has_dividername-string)(name: String)
 - *void* [**`mute`**](#void-mute)()
 - *void* [**`release`**](#void-release)()
 - *void* [**`remove_divider`**](#void-remove_dividername-string)(name: String)
@@ -422,11 +423,11 @@ Sets the waveform and its `master_volume` accordingly (see [`Waveform`](#enum-wa
 
 ### `void add_divider(name: String, tick_interval: int, callable: Callable)`
 
-Adds a divider with `name` which is called every multiple number of *ticks*. For callbacks to be called, [`BlipKitTrack`](BlipKitTrack.md) has to be attached to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md) (see [`attach()`](#void-attachplayback-audiostreamblipkit)). Callbacks are called in the same order as they are added.
+Adds a divider with `name` which calls `callable` every multiple number of *ticks* given by `tick_interval`. For callbacks to be called, [`BlipKitTrack`](BlipKitTrack.md) has to be attached to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md) (see [`attach()`](#void-attachplayback-audiostreamblipkit)). Callbacks are called in the same order as they are added.
 
-`callable` does not receive any arguments and should return an `int` indicating whether to change the tick interval. If `callback` returns `0`, the tick interval is not changed and `callable` is called again after the same number of ticks. If `callback` returns a value greater than `0`, the tick interval is permanently changed and `callable` is called next after the returned number of ticks.
+`callable` does not receive any arguments and should return an `int` indicating whether to change the tick interval. If `callback` returns `0`, the tick interval is not changed and `callable` is called again after the same number of ticks. If `callback` returns a value greater than `0`, the tick interval is permanently changed and `callable` is called next after the returned number of ticks. If `callback` returns a value less than `0`, the divider is removed.
 
-**Note:** Callbacks are called from the audio thread, they should run as fast as possible to prevent distorted audio. Consider using `Object.call_deferred()` for functions which are expensive to run or not time critical.
+**Note:** Callbacks are called from the audio thread and should run as fast as possible to prevent distorted audio. Consider using `Object.call_deferred()` for functions which are expensive to run or should run on the main thread.
 
 **Note:** `callback` is called for the first time on the next tick.
 
@@ -482,6 +483,10 @@ Returns the vibrato values as [`Dictionary`](https://docs.godotengine.org/en/sta
 ```gdscript
 { ticks = 0, delta = 0.0, slide_ticks = 0 }
 ```
+### `bool has_divider(name: String)`
+
+Checks if a divider with `name` exists.
+
 ### `void mute()`
 
 Mutes `note` immediately without playing the release part of `instrument` envelopes. Has the same effect as setting `note` to [`NOTE_MUTE`](#note_mute).

@@ -134,20 +134,12 @@ public:
 	};
 
 private:
-	struct DividerItem {
-		String name;
-		Divider divider;
-	};
-
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
 	AudioStreamBlipKitPlayback *playback = nullptr;
 	LocalVector<int> divider_ids;
-	LocalVector<DividerItem> dividers;
-
-	DividerItem *find_divider(const String &p_name);
-	bool has_divider(const String &p_name);
+	DividerGroup dividers;
 
 protected:
 	static void _bind_methods();
@@ -211,6 +203,7 @@ public:
 	void reset();
 
 	PackedStringArray get_divider_names() const;
+	bool has_divider(const String &p_name);
 	void add_divider(const String &p_name, int p_tick_interval, Callable p_callable);
 	void remove_divider(const String &p_name);
 	void reset_divider(const String &p_name, int p_tick_interval = 0);

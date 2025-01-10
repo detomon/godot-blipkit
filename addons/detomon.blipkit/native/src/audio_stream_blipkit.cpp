@@ -77,8 +77,6 @@ void AudioStreamBlipKit::call_synced(Callable p_callable) {
 	get_playback()->call_synced(p_callable);
 }
 
-int AudioStreamBlipKitPlayback::divider_id = 0;
-
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
 	const int sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
 	const BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
@@ -94,7 +92,6 @@ AudioStreamBlipKitPlayback::~AudioStreamBlipKitPlayback() {
 
 	AudioStreamBlipKit::lock();
 
-	clear_dividers(); // Explicitly clear functions to free memory.
 	BKDispose(&context);
 
 	for (BlipKitTrack *track : tracks) {
@@ -228,52 +225,4 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	}
 
 	return out_count;
-}
-
-int AudioStreamBlipKitPlayback::add_divider(Callable p_callable, int p_tick_interval) {
-	ERR_FAIL_COND_V(p_callable.is_null(), -1);
-	ERR_FAIL_COND_V(p_tick_interval <= 0, -1);
-
-	AudioStreamBlipKit::lock();
-
-	Divider *divider = memnew(Divider);
-	divider->initialize(p_tick_interval, p_callable);
-	divider->attach(this);
-
-	divider_id++;
-	dividers[divider_id] = divider;
-
-	AudioStreamBlipKit::unlock();
-
-	return divider_id;
-}
-
-void AudioStreamBlipKitPlayback::remove_divider(int p_id) {
-	ERR_FAIL_COND(!dividers.has(p_id));
-
-	AudioStreamBlipKit::lock();
-
-	memdelete(dividers[p_id]);
-	dividers.erase(p_id);
-
-	AudioStreamBlipKit::unlock();
-}
-
-void AudioStreamBlipKitPlayback::clear_dividers() {
-	AudioStreamBlipKit::lock();
-
-	for (KeyValue<int, Divider *> &E : dividers) {
-		memdelete(E.value);
-	}
-	dividers.clear();
-
-	AudioStreamBlipKit::unlock();
-}
-
-void AudioStreamBlipKitPlayback::reset_divider(int p_id, int p_tick_interval) {
-	ERR_FAIL_COND(!dividers.has(p_id));
-
-	AudioStreamBlipKit::lock();
-	dividers[p_id]->reset(p_tick_interval);
-	AudioStreamBlipKit::unlock();
 }

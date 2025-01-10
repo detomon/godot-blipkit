@@ -2,7 +2,6 @@
 
 #include "blipkit_instrument.hpp"
 #include "blipkit_waveform.hpp"
-#include "divider.hpp"
 #include "recursive_spin_lock.hpp"
 #include <BKBase.h>
 #include <godot_cpp/classes/audio_stream.hpp>
@@ -15,6 +14,7 @@ using namespace godot;
 
 namespace BlipKit {
 
+class AudioStreamBlipKitPlayback;
 class BlipKitTrack;
 
 class AudioStreamBlipKit : public AudioStream {
@@ -67,9 +67,7 @@ private:
 	BKContext context;
 	LocalVector<BKFrame> buffer;
 	LocalVector<BlipKitTrack *> tracks;
-	HashMap<int, Divider *> dividers;
 	LocalVector<Callable> sync_callables;
-	static int divider_id;
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	bool active = false;
 
@@ -97,11 +95,6 @@ public:
 	void _stop() override;
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
-
-	int add_divider(Callable p_callable, int p_tick_interval);
-	void remove_divider(int p_id);
-	void clear_dividers();
-	void reset_divider(int p_id, int p_tick_interval = 0);
 };
 
 } // namespace BlipKit

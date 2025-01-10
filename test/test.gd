@@ -131,6 +131,9 @@ func _init_track() -> void:
 	#saw.add_divider(&"beat", 24, _on_tick.bind(saw))
 	saw.add_divider(&"beat", 1, func () -> int:
 		var result := interp.advance(saw)
+		# Remove divider when finished.
+		if result == 0:
+			return -1
 		return result
 	)
 
