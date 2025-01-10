@@ -4,38 +4,10 @@
 using namespace BlipKit;
 using namespace godot;
 
-void Divider::initialize(const Callable &p_callable, int p_tick_interval) {
-	callable = p_callable;
-	divider = p_tick_interval;
-}
-
-int Divider::tick() {
-	int ticks = 0;
-
-	counter--;
-	if (counter <= 0) {
-		ticks = callable.call();
-		// Set new divider value.
-		if (ticks > 0) {
-			divider = ticks;
-		}
-		counter = divider;
-	}
-
-	return ticks;
-}
-
-void Divider::reset(int p_tick_interval) {
-	counter = 0;
-	if (p_tick_interval > 0) {
-		divider = p_tick_interval;
-	}
-}
-
 BKEnum DividerGroup::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
 	DividerGroup *group = static_cast<DividerGroup *>(p_user_info);
 	HashMap<String, Divider> &dividers = group->dividers;
-	LocalVector<String> remove_dividers;
+	LocalVector<String> removed_dividers;
 
 	for (KeyValue<String, Divider> &E : dividers) {
 		Divider &divider = E.value;
@@ -43,11 +15,11 @@ BKEnum DividerGroup::divider_callback(BKCallbackInfo *p_info, void *p_user_info)
 
 		// Remove divider.
 		if (ticks < 0) {
-			remove_dividers.push_back(E.key);
+			removed_dividers.push_back(E.key);
 		}
 	}
 
-	for (const String &name : remove_dividers) {
+	for (const String &name : removed_dividers) {
 		dividers.erase(name);
 	}
 
