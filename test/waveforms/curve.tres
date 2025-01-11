@@ -1,7 +1,0 @@
-[gd_resource type="BlipKitWaveform" format=3 uid="uid://cve2kh1rql0p8"]
-
-[resource]
-frames = PackedFloat32Array(0.107273, 0.364788, 0.65331, 0.819697, 0.964385, 1, 0.955535, 0.857723, 0.768853, 0.622303, 0.519944, 0.390515, 0.261788, 0.164434, 0.0643025, 0.0222175)
-metadata/locked = true
-metadata/snap_enabled = false
-metadata/snap_steps = 8

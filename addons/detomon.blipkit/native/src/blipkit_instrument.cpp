@@ -159,6 +159,10 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 
 	const bool has_steps = p_steps.size() > 0;
 
+	if (has_steps) {
+		ERR_FAIL_COND(p_steps.size() != p_values.size());
+	}
+
 	p_sustain_offset = CLAMP(p_sustain_offset, 0, p_values.size());
 	p_sustain_length = CLAMP(p_sustain_length, 0, p_values.size() - p_sustain_offset);
 
