@@ -261,12 +261,16 @@ int BlipKitAssembler::get_or_add_label(const String p_label) {
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
+	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+
 	init_byte_code();
 
 	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
+	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+
 	init_byte_code();
 
 	int label_index = get_or_add_label(p_label);
