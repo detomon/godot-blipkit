@@ -569,33 +569,21 @@ void BlipKitTrack::set_effect_divider(int p_effect_divider) {
 }
 
 PackedFloat32Array BlipKitTrack::get_arpeggio() const {
-	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
-
-	AudioStreamBlipKit::lock();
-	BKGetPtr(&track, BK_ARPEGGIO, value, (BK_MAX_ARPEGGIO + 1) * sizeof(BKInt));
-	AudioStreamBlipKit::unlock();
-
-	BKInt count = value[0];
-	PackedFloat32Array arpeggio;
-	arpeggio.resize(count);
-
-	for (int i = 0; i < count; i++) {
-		arpeggio[i] = float(value[i + 1]) / float(BK_FINT20_UNIT);
-	}
-
 	return arpeggio;
 }
 
 void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
 	const int count = MIN(p_arpeggio.size(), BK_MAX_ARPEGGIO);
+	const float *ptr = p_arpeggio.ptr();
 
 	value[0] = count;
 	for (int i = 0; i < count; i++) {
-		value[i + 1] = BKInt(CLAMP(p_arpeggio[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
+		value[i + 1] = BKInt(CLAMP(ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
 	}
 
 	AudioStreamBlipKit::lock();
+	arpeggio = p_arpeggio;
 	BKSetPtr(&track, BK_ARPEGGIO, value, (count + 1) * sizeof(BKInt));
 	AudioStreamBlipKit::unlock();
 }
@@ -736,6 +724,7 @@ void BlipKitTrack::reset() {
 
 	BKTrackReset(&track);
 	instrument.unref();
+	arpeggio.clear();
 
 	set_waveform(waveform);
 	set_master_volume(master_volume);

@@ -193,8 +193,8 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->set_instrument_divider(byte_code->get_u16());
 			} break;
 			case Opcode::OP_TICK: {
-				uint32_t wait = byte_code->get_u16();
-				return wait;
+				uint32_t ticks = byte_code->get_u16();
+				return ticks;
 			} break;
 			case Opcode::OP_TREMOLO: {
 				int ticks = byte_code->get_u16();

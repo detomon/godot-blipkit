@@ -137,8 +137,8 @@ private:
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
+	PackedFloat32Array arpeggio;
 	AudioStreamBlipKitPlayback *playback = nullptr;
-	LocalVector<int> divider_ids;
 	DividerGroup dividers;
 
 protected:
