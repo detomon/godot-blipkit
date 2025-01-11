@@ -1,27 +1,29 @@
 extends Control
 
 const AAH2: BlipKitWaveform = preload("waveforms/aah.tres")
-const INSTRUMENT: BlipKitInstrument = preload("instruments/simple.tres")
 
 var _active_tracks := {}
 var _inactive_tracks: Array[BlipKitTrack] = []
 
 var bass: BlipKitTrack
 var saw: BlipKitTrack
-var lead: BlipKitTrack
+var noise: BlipKitTrack
 
 @onready var _audio_stream_player: AudioStreamPlayer = %AudioStreamPlayer
 
-var interp := BlipKitInterpreter.new()
+var saw_interp := BlipKitInterpreter.new()
+var noise_interp := BlipKitInterpreter.new()
 
 func _ready() -> void:
 	var stream: AudioStreamBlipKit = _audio_stream_player.stream
 
 	_init_track()
 
+	# Ensure tracks are added the same time.
 	stream.call_synced(func () -> void:
 		saw.attach(stream)
 		bass.attach(stream)
+		noise.attach(stream)
 	)
 
 
@@ -89,30 +91,19 @@ func _init_track() -> void:
 	assem.compile()
 
 	var bytes := assem.get_byte_code()
-	interp.load_byte_code(bytes)
+	saw_interp.load_byte_code(bytes)
 	prints(len(bytes), bytes)
 
-	INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 0, 2], 1, 1)
-
-	var stream: AudioStreamBlipKit = _audio_stream_player.stream
-
 	saw = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SAWTOOTH)
-	saw.portamento = 8
 
-	var saw_instr := BlipKitInstrument.create_with_adsr(0, 0, 1.0, 12)
+	var saw_instr := BlipKitInstrument.create_with_adsr(0, 0, 1.0, 36)
 	saw_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [24, 0, 12], 1, 1)
 	saw.instrument = saw_instr
-	#saw.custom_waveform = preload("res://test/waveforms/aah2.tres")
 
 	saw.add_divider("run", 1, func () -> int:
-		var result := interp.advance(saw)
-		# Remove divider when finished.
-		if result == 0:
-			return -1
+		var result := saw_interp.advance(saw)
 		return result
 	)
-
-	lead = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_SQUARE)
 
 	bass = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_TRIANGLE)
 	bass.portamento = 4
@@ -122,7 +113,51 @@ func _init_track() -> void:
 	bass_instr.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [0, 8], [24, 0], 1, 1)
 	bass.instrument = bass_instr
 
-	bass.add_divider(&"beat", 24, _on_tick_3.bind(bass))
+	bass.add_divider("run", 24, _on_tick_3.bind(bass))
+
+	noise = BlipKitTrack.create_with_waveform(BlipKitTrack.WAVEFORM_NOISE)
+	var snare := BlipKitInstrument.create_with_adsr(0, 24, 0.5, 12)
+	var hihat := BlipKitInstrument.create_with_adsr(0, 12, 0.0, 0)
+
+	assem.clear()
+
+	assem.put(BlipKitAssembler.OP_JUMP, "start")
+
+	assem.put_label("snare")
+	assem.put(BlipKitAssembler.OP_INSTRUMENT, 0)
+	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_G_5))
+	assem.put(BlipKitAssembler.OP_TICK, 36)
+	assem.put(BlipKitAssembler.OP_RELEASE)
+	assem.put(BlipKitAssembler.OP_TICK, 12)
+	assem.put(BlipKitAssembler.OP_RETURN)
+
+	assem.put_label("hihat")
+	assem.put(BlipKitAssembler.OP_INSTRUMENT, 1)
+	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_G_4))
+	assem.put(BlipKitAssembler.OP_TICK, 48)
+	assem.put(BlipKitAssembler.OP_RELEASE)
+	assem.put(BlipKitAssembler.OP_RETURN)
+
+	assem.put_label("start")
+	assem.put(BlipKitAssembler.OP_PHASE_WRAP, 32)
+	assem.put(BlipKitAssembler.OP_VOLUME, 0.75)
+	assem.put(BlipKitAssembler.OP_CALL, "hihat")
+	assem.put(BlipKitAssembler.OP_CALL, "hihat")
+	assem.put(BlipKitAssembler.OP_CALL, "snare")
+	assem.put(BlipKitAssembler.OP_CALL, "hihat")
+	assem.put(BlipKitAssembler.OP_JUMP, "start")
+
+	assem.compile()
+
+	bytes = assem.get_byte_code()
+	noise_interp.load_byte_code(bytes)
+	noise_interp.set_instrument(0, snare)
+	noise_interp.set_instrument(1, hihat)
+
+	noise.add_divider("run", 1, func () -> int:
+		var result := noise_interp.advance(noise)
+		return result
+	)
 
 
 var _index3 := 0
@@ -150,7 +185,6 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 				_attach(track)
 			track.duty_cycle = 4
 			track.set_vibrato(12, 0.1)
-			track.instrument = INSTRUMENT
 			track.custom_waveform = AAH2
 
 			_active_tracks[note] = track

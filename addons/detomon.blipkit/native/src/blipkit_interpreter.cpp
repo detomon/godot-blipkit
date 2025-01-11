@@ -167,7 +167,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->set_duty_cycle(byte_code->get_u8());
 			} break;
 			case Opcode::OP_PHASE_WRAP: {
-				p_track->set_duty_cycle(byte_code->get_u8());
+				p_track->set_phase_wrap(byte_code->get_u8());
 			} break;
 			case Opcode::OP_INSTRUMENT: {
 				int index = byte_code->get_u8();

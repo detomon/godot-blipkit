@@ -154,17 +154,6 @@ void AudioStreamBlipKitPlayback::call_synced(const Callable &p_callable) {
 	AudioStreamBlipKit::unlock();
 }
 
-void AudioStreamBlipKitPlayback::call_synced_callables() {
-	is_calling_callbacks = true;
-
-	for (const Callable &callable : sync_callables) {
-		callable.call();
-	}
-
-	is_calling_callbacks = false;
-	sync_callables.clear();
-}
-
 void AudioStreamBlipKitPlayback::attach(BlipKitTrack *p_track) {
 	if (!tracks.has(p_track)) {
 		tracks.push_back(p_track);
@@ -200,8 +189,18 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 		return 0;
 	}
 
+	// Call callbacks.
 	AudioStreamBlipKit::lock();
-	call_synced_callables();
+	{
+		is_calling_callbacks = true;
+
+		for (const Callable &callable : sync_callables) {
+			callable.call();
+		}
+
+		is_calling_callbacks = false;
+		sync_callables.clear();
+	}
 	AudioStreamBlipKit::unlock();
 
 	int out_count = 0;

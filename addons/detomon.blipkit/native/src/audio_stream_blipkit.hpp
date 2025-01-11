@@ -81,7 +81,6 @@ protected:
 	void set_clock_rate(int p_clock_rate);
 
 	void call_synced(const Callable &p_callable);
-	void call_synced_callables();
 
 	void attach(BlipKitTrack *p_track);
 	void detach(BlipKitTrack *p_track);
