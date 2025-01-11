@@ -133,19 +133,24 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 	ERR_FAIL_INDEX(p_type, ENVELOPE_MAX);
 
 	float multiplier = 1.0;
+	BKEnum sequence = 0;
 
 	switch (p_type) {
 		case ENVELOPE_VOLUME: {
 			multiplier = float(BK_MAX_VOLUME);
+			sequence = BK_SEQUENCE_VOLUME;
 		} break;
 		case ENVELOPE_PANNING: {
 			multiplier = float(BK_MAX_VOLUME);
+			sequence = BK_SEQUENCE_PANNING;
 		} break;
 		case ENVELOPE_PITCH: {
 			multiplier = float(BK_FINT20_UNIT);
+			sequence = BK_SEQUENCE_PITCH;
 		} break;
 		case ENVELOPE_DUTY_CYCLE: {
 			multiplier = 1.0;
+			sequence = BK_SEQUENCE_DUTY_CYCLE;
 		} break;
 		default: {
 			ERR_FAIL_MSG(vformat("Invalid instrument sequence: %d.", p_type));
@@ -181,7 +186,7 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 			phases[i].value = BKInt(p_values[i] * multiplier);
 		}
 
-		result = BKInstrumentSetEnvelope(&instrument, p_type, phases.ptr(), phases.size(), p_sustain_offset, p_sustain_length);
+		result = BKInstrumentSetEnvelope(&instrument, sequence, phases.ptr(), phases.size(), p_sustain_offset, p_sustain_length);
 	} else {
 		thread_local LocalVector<BKInt> phases;
 		phases.resize(p_values.size());
@@ -190,7 +195,7 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 			phases[i] = BKInt(p_values[i] * multiplier);
 		}
 
-		result = BKInstrumentSetSequence(&instrument, p_type, phases.ptr(), phases.size(), p_sustain_offset, p_sustain_length);
+		result = BKInstrumentSetSequence(&instrument, sequence, phases.ptr(), phases.size(), p_sustain_offset, p_sustain_length);
 	}
 
 	if (result == BK_INVALID_ATTRIBUTE) {

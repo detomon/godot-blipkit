@@ -3,6 +3,7 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include "math.hpp"
 #include <BlipKit.h>
 
 using namespace BlipKit;
@@ -118,6 +119,10 @@ BlipKitInterpreter::Status BlipKitInterpreter::load_byte_code(const PackedByteAr
 	return status;
 }
 
+_FORCE_INLINE_ static float get_half(Ref<StreamPeerBuffer> &p_buffer) {
+	return half_to_float(p_buffer->get_u16());
+}
+
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	ERR_FAIL_COND_V(p_track.is_null(), 0);
 
@@ -130,7 +135,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				// Do nothing.
 			} break;
 			case Opcode::OP_ATTACK: {
-				p_track->set_note(get_half());
+				p_track->set_note(get_half(byte_code));
 			} break;
 			case Opcode::OP_RELEASE: {
 				p_track->release();
@@ -139,16 +144,16 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->mute();
 			} break;
 			case Opcode::OP_VOLUME: {
-				p_track->set_volume(get_half());
+				p_track->set_volume(get_half(byte_code));
 			} break;
 			case Opcode::OP_MASTER_VOLUME: {
-				p_track->set_master_volume(get_half());
+				p_track->set_master_volume(get_half(byte_code));
 			} break;
 			case Opcode::OP_PANNING: {
-				p_track->set_panning(get_half());
+				p_track->set_panning(get_half(byte_code));
 			} break;
 			case Opcode::OP_PITCH: {
-				p_track->set_pitch(get_half());
+				p_track->set_pitch(get_half(byte_code));
 			} break;
 			case Opcode::OP_WAVEFORM: {
 				p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(byte_code->get_u8()));
@@ -193,13 +198,13 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			} break;
 			case Opcode::OP_TREMOLO: {
 				int ticks = byte_code->get_u16();
-				float delta = get_half();
+				float delta = get_half(byte_code);
 				int slide_ticks = byte_code->get_u16();
 				p_track->set_tremolo(ticks, delta, slide_ticks);
 			} break;
 			case Opcode::OP_VIBRATO: {
 				int ticks = byte_code->get_u16();
-				float delta = get_half();
+				float delta = get_half(byte_code);
 				int slide_ticks = byte_code->get_u16();
 				p_track->set_vibrato(ticks, delta, slide_ticks);
 			} break;
@@ -208,7 +213,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				arpeggio.resize(count);
 
 				for (int i = 0; i < count; i++) {
-					arpeggio[i] = get_half();
+					arpeggio[i] = get_half(byte_code);
 				}
 				p_track->set_arpeggio(arpeggio);
 			} break;

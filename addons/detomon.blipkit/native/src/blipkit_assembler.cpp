@@ -3,7 +3,9 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include "math.hpp"
 #include <BlipKit.h>
+#include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 
 using namespace BlipKit;
@@ -94,6 +96,10 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 	return true;
 }
 
+_FORCE_INLINE_ static void put_half(Ref<StreamPeerBuffer> &p_buffer, float p_value) {
+	p_buffer->put_u16(float_to_half(p_value));
+}
+
 BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
 	ERR_FAIL_INDEX_V(p_opcode, OP_MAX, ERR_INVALID_OPCODE);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
@@ -116,7 +122,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			}
 
 			byte_code->put_u8(p_opcode);
-			put_half(p_arg1);
+			put_half(byte_code, p_arg1);
 		} break;
 		case OP_WAVEFORM:
 		case OP_CUSTOM_WAVEFORM:
@@ -161,7 +167,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 
 			byte_code->put_u8(p_opcode);
 			byte_code->put_u16(ticks);
-			put_half(delta);
+			put_half(byte_code, delta);
 			byte_code->put_u16(slide_ticks);
 		} break;
 		case OP_ARPEGGIO: {
@@ -178,7 +184,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code->put_u8(count);
 			for (int i = 0; i < count; i++) {
 				int delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
-				put_half(delta);
+				put_half(byte_code, delta);
 			}
 		} break;
 		case OP_CALL:
@@ -189,7 +195,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			}
 
 			const String &label = p_arg1;
-			int label_index = add_label(label);
+			int label_index = get_or_add_label(label);
 
 			byte_code->put_u8(p_opcode);
 
@@ -242,7 +248,7 @@ invalid_argument:
 	ERR_FAIL_V_MSG(ERR_INVALID_ARGUMENT, error_message);
 }
 
-int BlipKitAssembler::add_label(const String p_label) {
+int BlipKitAssembler::get_or_add_label(const String p_label) {
 	if (label_indices.has(p_label)) {
 		return label_indices[p_label];
 	}
@@ -263,7 +269,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 	init_byte_code();
 
-	int label_index = add_label(p_label);
+	int label_index = get_or_add_label(p_label);
 	Label &label = labels[label_index];
 
 	if (label.byte_offset >= 0) {

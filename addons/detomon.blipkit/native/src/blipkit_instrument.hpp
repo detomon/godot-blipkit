@@ -16,11 +16,11 @@ class BlipKitInstrument : public Resource {
 
 public:
 	enum EnvelopeType {
-		ENVELOPE_VOLUME = BK_SEQUENCE_VOLUME,
-		ENVELOPE_PANNING = BK_SEQUENCE_PANNING,
-		ENVELOPE_PITCH = BK_SEQUENCE_PITCH,
-		ENVELOPE_DUTY_CYCLE = BK_SEQUENCE_DUTY_CYCLE,
-		ENVELOPE_MAX = BK_MAX_SEQUENCES,
+		ENVELOPE_VOLUME,
+		ENVELOPE_PANNING,
+		ENVELOPE_PITCH,
+		ENVELOPE_DUTY_CYCLE,
+		ENVELOPE_MAX,
 	};
 
 private:
@@ -32,7 +32,7 @@ private:
 	};
 
 	BKInstrument instrument;
-	Sequence sequences[BK_MAX_SEQUENCES];
+	Sequence sequences[ENVELOPE_MAX];
 
 protected:
 	static void _bind_methods();

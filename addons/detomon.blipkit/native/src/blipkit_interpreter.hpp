@@ -1,6 +1,5 @@
 #pragma once
 
-#include "math.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
@@ -18,6 +17,8 @@ class BlipKitInterpreter : public RefCounted {
 	GDCLASS(BlipKitInterpreter, RefCounted)
 
 public:
+	static constexpr int SLOT_COUNT = 256;
+	static constexpr int STACK_SIZE_MAX = 64;
 	static constexpr int REGISTER_COUNT = 16;
 	static constexpr int VERSION = 1;
 
@@ -31,9 +32,6 @@ public:
 	};
 
 private:
-	static constexpr int STACK_SIZE_MAX = 64;
-	static constexpr int SLOT_COUNT = 256;
-
 	struct Registers {
 		int32_t aux[REGISTER_COUNT] = { 0 };
 	};
@@ -53,8 +51,6 @@ protected:
 
 	bool check_header();
 	int fail_with_error(Status p_status, const String &error_message);
-
-	_FORCE_INLINE_ float get_half() { return half_to_float(byte_code->get_u16()); }
 
 public:
 	BlipKitInterpreter();

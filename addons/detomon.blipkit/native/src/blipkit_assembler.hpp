@@ -1,14 +1,16 @@
 #pragma once
 
-#include "math.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
-#include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
+
+namespace godot {
+	class StreamPeerBuffer;
+}
 
 namespace BlipKit {
 
@@ -88,9 +90,7 @@ protected:
 	String _to_string() const;
 
 	void init_byte_code();
-	int add_label(const String p_label);
-
-	_FORCE_INLINE_ void put_half(float p_value) { byte_code->put_u16(float_to_half(p_value)); }
+	int get_or_add_label(const String p_label);
 
 public:
 	BlipKitAssembler();
