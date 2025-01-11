@@ -227,26 +227,14 @@ bool BlipKitInstrument::has_envelope(EnvelopeType p_type) const {
 
 PackedInt32Array BlipKitInstrument::get_envelope_steps(EnvelopeType p_type) const {
 	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, PackedInt32Array());
-
 	Sequence &sequence = const_cast<BlipKitInstrument *>(this)->sequences[p_type];
-
-	AudioStreamBlipKit::lock();
-	PackedInt32Array steps = sequence.steps.duplicate();
-	AudioStreamBlipKit::unlock();
-
-	return steps;
+	return sequence.steps;
 }
 
 PackedFloat32Array BlipKitInstrument::get_envelope_values(EnvelopeType p_type) const {
 	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, PackedFloat32Array());
-
 	Sequence &sequence = const_cast<BlipKitInstrument *>(this)->sequences[p_type];
-
-	AudioStreamBlipKit::lock();
-	PackedFloat32Array values = sequence.values.duplicate();
-	AudioStreamBlipKit::unlock();
-
-	return values;
+	return sequence.values;
 }
 
 int BlipKitInstrument::get_envelope_sustain_offset(EnvelopeType p_type) const {
@@ -260,5 +248,5 @@ int BlipKitInstrument::get_envelope_sustain_length(EnvelopeType p_type) const {
 }
 
 void BlipKitInstrument::clear_envelope(EnvelopeType p_type) {
-	set_envelope(p_type, PackedInt32Array(), PackedFloat32Array(), 0, 0);
+	set_envelope(p_type, {}, {}, 0, 0);
 }
