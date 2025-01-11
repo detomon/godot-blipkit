@@ -43,4 +43,3 @@ enabled=PackedStringArray("res://addons/detomon.blipkit/plugin.cfg")
 [rendering]
 
 environment/defaults/default_clear_color=Color(0.0941176, 0.0941176, 0.0941176, 1)
-viewport/hdr_2d=true

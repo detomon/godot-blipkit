@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dtyywphgvahso"]
 
 [ext_resource type="Script" uid="uid://dyvvop06b4la4" path="res://examples/power_on/power_on.gd" id="1_x8hlo"]
-[ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://visualizer/oscilloscope/oscilloscope.tscn" id="2_byia3"]
+[ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://examples/shared/oscilloscope/oscilloscope.tscn" id="2_byia3"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_wdhyx"]
 

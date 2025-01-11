@@ -4,9 +4,6 @@ const AAH2: BlipKitWaveform = preload("waveforms/aah.tres")
 const INSTRUMENT: BlipKitInstrument = preload("instruments/simple.tres")
 
 var _active_tracks := {}
-var _roll: Array[Dictionary] = []
-var _playing := false
-var _play_index := 0
 var _inactive_tracks: Array[BlipKitTrack] = []
 
 var bass: BlipKitTrack
@@ -24,27 +21,8 @@ func _ready() -> void:
 		_init_track()
 	)
 
-	#ResourceSaver.save(_waveform, "res://aah.tres")
-
-	#INSTRUMENT.set_adsr(0, 12, 0.5, 24)
-	#INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME, [4, 12, 24], [1.0, 0.5, 0.0], 1, 1)
-	#INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [], [12, 0, -0.2], 1, 1)
-	#INSTRUMENT.set_envelope(BlipKitInstrument.ENVELOPE_DUTY_CYCLE, [], [8, 8, 0, 2], 2, 1)
-	#INSTRUMENT.set_meta(&"name", "MIDI")
-	#ResourceSaver.save(INSTRUMENT)
-
-	#prints(INSTRUMENT)
-	#prints(AAH)
-
 
 func _init_track() -> void:
-	#var waveform := BlipKitWaveform.create_with_frames([
-		#-255, -163, -154, -100, 45, 127, 9, -163,
-		#-163, -27, 63, 72, 63, 9, -100, -154,
-		#-127, -91, -91, -91, -91, -127, -154, -100,
-		#45, 127, 9, -163, -163, 9, 127, 45,
-	#], true, 0.5)
-
 	var assem := BlipKitAssembler.new()
 
 	#assem.put_code("a:c1;s:2;r;s:2;a:d#1;s:1;r;s:1;a:g1;s:2;r;s:1")
@@ -244,10 +222,7 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 				track = BlipKitTrack.new()
 				_attach(track)
 			track.duty_cycle = 4
-			#track.set_tremolo(24, 0.2)
 			track.set_vibrato(12, 0.1)
-			#track.arpeggio = [0, 3, 7]
-			#track.arpeggio_divider = 8
 			track.instrument = INSTRUMENT
 			track.custom_waveform = AAH2
 
@@ -257,43 +232,9 @@ func _on_midi_input_notes_changes(notes: Dictionary) -> void:
 		if note not in notes:
 			var track: BlipKitTrack = _active_tracks[note]
 			track.release()
-			#track.detach()
 			_inactive_tracks.append(track)
 			_active_tracks.erase(note)
 
 	for note: int in _active_tracks:
 		var track: BlipKitTrack = _active_tracks[note]
-
 		track.note = note
-		#if note >= 12 and note < 24:
-			#track.master_volume = 0.2
-			#track.waveform = BlipKitTrack.WAVEFORM_TRIANGLE
-			#track.note = note
-#
-		#else:
-			#track.master_volume = 0.1
-			#track.waveform = BlipKitTrack.WAVEFORM_SAWTOOTH
-			#track.note = note
-
-	#_visualizer2.notes = PackedInt32Array(notes.keys())
-
-	#var time := _timer.wait_time - _timer.time_left
-
-	#if not _playing:
-		#_roll.append({
-			#time = time,
-			#notes = notes.duplicate(),
-		#})
-
-	#var last := {}
-	#if _roll:
-		#last = _roll.back()
-#
-	#if last and last.time == time:
-		#last.notes.merge(notes)
-#
-	#else:
-		#_roll.append({
-			#time = time,
-			#notes = notes.duplicate(),
-		#})

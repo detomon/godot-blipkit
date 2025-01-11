@@ -1,4 +1,4 @@
-extends Control
+extends Node
 
 var _track := BlipKitTrack.new()
 var _interp := BlipKitInterpreter.new()

@@ -1,4 +1,4 @@
-extends Control
+extends Node
 
 # Create a track with the default waveform [BlipKitTrack.WAVEFORM_SQUARE].
 var _track := BlipKitTrack.new()
