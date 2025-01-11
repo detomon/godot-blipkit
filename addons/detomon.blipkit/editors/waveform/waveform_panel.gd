@@ -13,6 +13,7 @@ enum PresetsMenuItem {
 }
 
 const SNAP_STEPS_DEFAULT := 8
+const DISPLAY_SCALE := 100.0
 
 const WaveformEditor := preload("waveform_editor.gd")
 
@@ -181,7 +182,7 @@ func _update_waveform() -> void:
 	var values := PackedStringArray()
 	values.resize(len(frames))
 	for i in len(frames):
-		values[i] = str(roundi(frames[i] * 255.0))
+		values[i] = str(roundi(frames[i] * DISPLAY_SCALE))
 	_frame_values.text = ", ".join(values)
 
 
@@ -279,7 +280,7 @@ func _on_frame_values_text_submitted(new_text: String) -> void:
 	new_frames.resize(len(floats))
 
 	for i in len(floats):
-		new_frames[i] = clampf(floats[i] / 255.0, -1.0, +1.0)
+		new_frames[i] = clampf(floats[i] / DISPLAY_SCALE, -1.0, +1.0)
 
 	_waveform_set_frames_undo(waveform, new_frames, tr(&"Set Waveform Frames", &"DMBK"))
 

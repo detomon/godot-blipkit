@@ -27,8 +27,8 @@ gdscript/warnings/unsafe_call_argument=1
 
 [display]
 
-window/size/viewport_width=480
-window/size/viewport_height=320
+window/size/viewport_width=720
+window/size/viewport_height=480
 
 [editor]
 

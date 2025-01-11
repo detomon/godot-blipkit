@@ -13,7 +13,7 @@ var undo_redo: EditorUndoRedoManager
 @export var frames: PackedFloat32Array: set = set_frames
 @export var snap_steps := 0
 @export var locked := false
-@export var display_range := 255
+@export var display_range := 100
 
 var _frames_edit := PackedFloat32Array()
 var _is_transform_dirty := false
@@ -201,30 +201,32 @@ func _draw_grid(rect: Rect2i) -> void:
 
 	draw_rect(rect, grid_color, false, line_width)
 
-	if frames:
-		var transform := _get_frames_to_local_transform()
-		var frame_width := 1.0 / len(frames)
-		const grid_steps := 8.0
-		var grid_height := 1.0 / grid_steps
+	if not frames:
+		return
 
-		for i in len(frames) - 1:
-			var from_line := transform * Vector2(frame_width * float(i + 1), +1.0)
-			var to_line := transform * Vector2(frame_width * float(i + 1), -1.0)
-			draw_line(from_line, to_line, grid_color_light, line_width)
+	var transform := _get_frames_to_local_transform()
+	var frame_width := 1.0 / len(frames)
+	const grid_steps := 8.0
+	var grid_height := 1.0 / grid_steps
 
-		for i in grid_steps - 1:
-			var from_line := transform * Vector2(0.0, grid_height * float(i + 1))
-			var to_line := transform * Vector2(1.0, grid_height * float(i + 1))
-			draw_line(from_line, to_line, grid_color_light, line_width)
+	for i in len(frames) - 1:
+		var from_line := transform * Vector2(frame_width * float(i + 1), +1.0)
+		var to_line := transform * Vector2(frame_width * float(i + 1), -1.0)
+		draw_line(from_line, to_line, grid_color_light, line_width)
 
-		var from_line2 := transform * Vector2(0.0, 0.0)
-		var to_line2 := transform * Vector2(1.0, 0.0)
-		draw_line(from_line2, to_line2, grid_color, line_width)
+	for i in grid_steps - 1:
+		var from_line := transform * Vector2(0.0, grid_height * float(i + 1))
+		var to_line := transform * Vector2(1.0, grid_height * float(i + 1))
+		draw_line(from_line, to_line, grid_color_light, line_width)
 
-		for i in grid_steps - 1:
-			var from_line := transform * Vector2(0.0, -grid_height * float(i + 1))
-			var to_line := transform * Vector2(1.0, -grid_height * float(i + 1))
-			draw_line(from_line, to_line, grid_color_light, line_width)
+	var from_line2 := transform * Vector2(0.0, 0.0)
+	var to_line2 := transform * Vector2(1.0, 0.0)
+	draw_line(from_line2, to_line2, grid_color, line_width)
+
+	for i in grid_steps - 1:
+		var from_line := transform * Vector2(0.0, -grid_height * float(i + 1))
+		var to_line := transform * Vector2(1.0, -grid_height * float(i + 1))
+		draw_line(from_line, to_line, grid_color_light, line_width)
 
 
 func _draw_text(rect: Rect2i) -> void:
