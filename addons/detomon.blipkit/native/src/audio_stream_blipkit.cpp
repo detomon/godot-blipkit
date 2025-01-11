@@ -72,7 +72,7 @@ void AudioStreamBlipKit::detach(BlipKitTrack *p_track) {
 	get_playback()->detach(p_track);
 }
 
-void AudioStreamBlipKit::call_synced(Callable p_callable) {
+void AudioStreamBlipKit::call_synced(const Callable &p_callable) {
 	ERR_FAIL_COND(!p_callable.is_valid());
 
 	get_playback()->call_synced(p_callable);
@@ -140,12 +140,12 @@ int AudioStreamBlipKitPlayback::get_clock_rate() const {
 	return clock_rate;
 }
 
-void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) {
+void AudioStreamBlipKitPlayback::call_synced(const Callable &p_callable) {
 	ERR_FAIL_COND(!p_callable.is_valid());
 
 	AudioStreamBlipKit::lock();
 
-	if (active) {
+	if (active && !is_calling_callbacks) {
 		sync_callables.push_back(p_callable);
 	} else {
 		p_callable.call();
@@ -155,10 +155,13 @@ void AudioStreamBlipKitPlayback::call_synced(Callable p_callable) {
 }
 
 void AudioStreamBlipKitPlayback::call_synced_callables() {
-	for (Callable &callable : sync_callables) {
+	is_calling_callbacks = true;
+
+	for (const Callable &callable : sync_callables) {
 		callable.call();
 	}
 
+	is_calling_callbacks = false;
 	sync_callables.clear();
 }
 

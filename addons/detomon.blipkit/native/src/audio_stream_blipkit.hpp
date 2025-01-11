@@ -48,7 +48,7 @@ public:
 	void attach(BlipKitTrack *p_track);
 	void detach(BlipKitTrack *p_track);
 
-	void call_synced(Callable p_callable);
+	void call_synced(const Callable &p_callable);
 
 	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
 	_FORCE_INLINE_ static void unlock() { spin_lock.unlock(); }
@@ -70,6 +70,7 @@ private:
 	LocalVector<Callable> sync_callables;
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	bool active = false;
+	bool is_calling_callbacks = false;
 
 protected:
 	static void _bind_methods();
@@ -79,7 +80,7 @@ protected:
 	int get_clock_rate() const;
 	void set_clock_rate(int p_clock_rate);
 
-	void call_synced(Callable p_callable);
+	void call_synced(const Callable &p_callable);
 	void call_synced_callables();
 
 	void attach(BlipKitTrack *p_track);
