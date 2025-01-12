@@ -11,6 +11,7 @@
 using namespace BlipKit;
 using namespace godot;
 
+static constexpr int INITIAL_SPACE = 256;
 static constexpr int ARGS_COUNT_MAX = 3;
 
 struct Args {
@@ -20,10 +21,6 @@ struct Args {
 struct Types {
 	Variant::Type types[ARGS_COUNT_MAX];
 };
-
-BlipKitAssembler::BlipKitAssembler() {
-	byte_code.instantiate();
-}
 
 void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("put", "opcode", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
@@ -76,13 +73,16 @@ String BlipKitAssembler::_to_string() const {
 }
 
 void BlipKitAssembler::init_byte_code() {
-	if (likely(byte_code->get_size() > 0)) {
+	if (likely(byte_code.size() > 0)) {
 		return;
 	}
 
-	// Add version.
-	byte_code->put_u8(OP_INIT);
-	byte_code->put_u8(BlipKitInterpreter::VERSION);
+	// Reserve some space.
+	byte_code.reserve(INITIAL_SPACE);
+
+	// Add header.
+	const void *header_ptr = &BlipKitInterpreter::binary_header;
+	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitInterpreter::binary_header));
 }
 
 static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
@@ -94,10 +94,6 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 	}
 
 	return true;
-}
-
-_FORCE_INLINE_ static void put_half(Ref<StreamPeerBuffer> &p_buffer, float p_value) {
-	p_buffer->put_u16(float_to_half(p_value));
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
@@ -121,8 +117,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				goto invalid_argument;
 			}
 
-			byte_code->put_u8(p_opcode);
-			put_half(byte_code, p_arg1);
+			byte_code.put_u8(p_opcode);
+			byte_code.put_f16(p_arg1);
 		} break;
 		case OP_WAVEFORM:
 		case OP_CUSTOM_WAVEFORM:
@@ -134,8 +130,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				goto invalid_argument;
 			}
 
-			byte_code->put_u8(p_opcode);
-			byte_code->put_u8(p_arg1);
+			byte_code.put_u8(p_opcode);
+			byte_code.put_u8(p_arg1);
 		} break;
 		case OP_EFFECT_DIV:
 		case OP_VOLUME_SLIDE:
@@ -150,9 +146,9 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				goto invalid_argument;
 			}
 
-			uint32_t value = CLAMP(int(p_arg1), 0, UINT16_MAX);
-			byte_code->put_u8(p_opcode);
-			byte_code->put_u16(value);
+			int value = CLAMP(int(p_arg1), 0, UINT16_MAX);
+			byte_code.put_u8(p_opcode);
+			byte_code.put_u16(value);
 		} break;
 		case OP_TREMOLO:
 		case OP_VIBRATO: {
@@ -161,14 +157,14 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				goto invalid_argument;
 			}
 
-			uint32_t ticks = CLAMP(int(p_arg1), 0, UINT16_MAX);
+			int ticks = CLAMP(int(p_arg1), 0, UINT16_MAX);
 			float delta = CLAMP(float(p_arg2), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
-			uint32_t slide_ticks = CLAMP(int(p_arg3), 0, UINT16_MAX);
+			int slide_ticks = CLAMP(int(p_arg3), 0, UINT16_MAX);
 
-			byte_code->put_u8(p_opcode);
-			byte_code->put_u16(ticks);
-			put_half(byte_code, delta);
-			byte_code->put_u16(slide_ticks);
+			byte_code.put_u8(p_opcode);
+			byte_code.put_u16(ticks);
+			byte_code.put_f16(delta);
+			byte_code.put_u16(slide_ticks);
 		} break;
 		case OP_ARPEGGIO: {
 			types = { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL };
@@ -180,11 +176,11 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			const float *values_ptr = values.ptr();
 			int count = MIN(values.size(), BK_MAX_ARPEGGIO);
 
-			byte_code->put_u8(p_opcode);
-			byte_code->put_u8(count);
+			byte_code.put_u8(p_opcode);
+			byte_code.put_u8(count);
 			for (int i = 0; i < count; i++) {
-				int delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
-				put_half(byte_code, delta);
+				float delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+				byte_code.put_f16(delta);
 			}
 		} break;
 		case OP_CALL:
@@ -197,12 +193,12 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			const String &label = p_arg1;
 			int label_index = get_or_add_label(label);
 
-			byte_code->put_u8(p_opcode);
+			byte_code.put_u8(p_opcode);
 
-			int byte_offset = byte_code->get_position();
+			int byte_offset = byte_code.get_position();
 			addresses.push_back({ .label_index = label_index, .byte_offset = byte_offset });
 
-			byte_code->put_u32(0);
+			byte_code.put_u32(0);
 		} break;
 		case OP_RELEASE:
 		case OP_MUTE:
@@ -213,7 +209,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				goto invalid_argument;
 			}
 
-			byte_code->put_u8(p_opcode);
+			byte_code.put_u8(p_opcode);
 		} break;
 		case OP_STORE: {
 			types = { Variant::INT, Variant::INT, Variant::NIL };
@@ -224,9 +220,9 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			int number = CLAMP(int(p_arg1), 0, BlipKitInterpreter::REGISTER_COUNT);
 			int value = p_arg2;
 
-			byte_code->put_u8(p_opcode);
-			byte_code->put_u8(number);
-			byte_code->put_32(value);
+			byte_code.put_u8(p_opcode);
+			byte_code.put_u8(number);
+			byte_code.put_s32(value);
 		} break;
 		default: {
 			state = STATE_FAILED; // Fail.
@@ -281,7 +277,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 		ERR_FAIL_V_MSG(ERR_DUPLICATE_LABEL, error_message);
 	}
 
-	label.byte_offset = byte_code->get_position();
+	label.byte_offset = byte_code.get_position();
 
 	return OK;
 }
@@ -289,36 +285,50 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 BlipKitAssembler::Error BlipKitAssembler::compile() {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
+	init_byte_code();
+
+	// Terminate.
+	byte_code.put_u8(OP_HALT);
+
 	// Save byte position.
-	int byte_position = byte_code->get_position();
+	int byte_position = byte_code.get_position();
+
+	// Write size of code segment.
+	byte_code.seek(offsetof(BlipKitInterpreter::Header, footer_offset));
+	byte_code.put_u32(byte_position);
+
+	// Restore byte position.
+	byte_code.seek(byte_position);
 
 	// Resolve label addresses.
 	for (Address &address : addresses) {
 		int label_index = address.label_index;
 		const Label &label = labels[label_index];
+		int address_offset = address.byte_offset;
 
 		if (label.byte_offset < 0) {
-			int address_offset = address.byte_offset;
 			error_message = vformat("Label '%s' not defined at address offset %d.", label.name, address_offset);
 			ERR_FAIL_V_MSG(ERR_UNDEFINED_LABEL, error_message);
 		}
 
-		byte_code->seek(address.byte_offset);
-		byte_code->put_32(label.byte_offset);
+		int jump_offset = label.byte_offset - address_offset; // Jump relative to byte code position.
+		byte_code.seek(address_offset);
+		byte_code.put_s32(jump_offset);
 	}
+
+	// Restore byte position.
+	byte_code.seek(byte_position);
 
 	addresses.clear();
 	state = STATE_COMPILED;
-
-	// Restore byte position.
-	byte_code->seek(byte_position);
 
 	return OK;
 }
 
 PackedByteArray BlipKitAssembler::get_byte_code() const {
 	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, PackedByteArray(), "Byte code is not compiled.");
-	return byte_code->get_data_array();
+
+	return byte_code.get_byte_array();
 }
 
 String BlipKitAssembler::get_error_message() const {
@@ -326,7 +336,7 @@ String BlipKitAssembler::get_error_message() const {
 }
 
 void BlipKitAssembler::clear() {
-	byte_code->clear();
+	byte_code.clear();
 	label_indices.clear();
 	labels.clear();
 	addresses.clear();

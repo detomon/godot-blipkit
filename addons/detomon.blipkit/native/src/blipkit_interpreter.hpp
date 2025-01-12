@@ -1,7 +1,7 @@
 #pragma once
 
+#include "byte_stream.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
-#include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 
@@ -36,7 +36,7 @@ private:
 		int32_t aux[REGISTER_COUNT] = { 0 };
 	};
 
-	Ref<StreamPeerBuffer> byte_code;
+	ByteStream byte_code;
 	LocalVector<uint32_t> stack;
 	Registers registers;
 	LocalVector<Ref<BlipKitInstrument>> instruments;
@@ -53,6 +53,14 @@ protected:
 	int fail_with_error(Status p_status, const String &error_message);
 
 public:
+	struct Header {
+		char name[3] = { 0 };
+		uint8_t version = 0;
+		uint32_t footer_offset = 0;
+	};
+
+	static const Header binary_header;
+
 	BlipKitInterpreter();
 	~BlipKitInterpreter() = default;
 

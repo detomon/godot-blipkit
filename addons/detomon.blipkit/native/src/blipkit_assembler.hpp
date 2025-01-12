@@ -1,5 +1,6 @@
 #pragma once
 
+#include "byte_stream.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
@@ -7,10 +8,6 @@
 #include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
-
-namespace godot {
-	class StreamPeerBuffer;
-}
 
 namespace BlipKit {
 
@@ -20,7 +17,6 @@ class BlipKitAssembler : public RefCounted {
 public:
 	enum Opcode {
 		OP_NOOP,
-		OP_INIT,
 		OP_ATTACK,
 		OP_RELEASE,
 		OP_MUTE,
@@ -48,6 +44,7 @@ public:
 		OP_JUMP,
 		OP_RESET,
 		OP_STORE,
+		OP_HALT,
 		OP_MAX,
 	};
 
@@ -78,7 +75,7 @@ private:
 		int byte_offset = 0;
 	};
 
-	Ref<StreamPeerBuffer> byte_code;
+	ByteStream byte_code;
 	HashMap<String, int> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
@@ -93,9 +90,6 @@ protected:
 	int get_or_add_label(const String p_label);
 
 public:
-	BlipKitAssembler();
-	~BlipKitAssembler() = default;
-
 	Error put(Opcode p_opcode, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);
 	Error put_code(const String &p_code);
 	Error put_label(const String p_label);

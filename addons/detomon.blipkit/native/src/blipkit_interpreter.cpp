@@ -11,8 +11,12 @@ using namespace godot;
 
 typedef BlipKitAssembler::Opcode Opcode;
 
+const BlipKitInterpreter::Header BlipKitInterpreter::binary_header = {
+	.name = { 'B', 'L', 'P' },
+	.version = BlipKitInterpreter::VERSION,
+};
+
 BlipKitInterpreter::BlipKitInterpreter() {
-	byte_code.instantiate();
 	stack.reserve(STACK_SIZE_MAX);
 	instruments.resize(SLOT_COUNT);
 	waveforms.resize(SLOT_COUNT);
@@ -47,16 +51,23 @@ String BlipKitInterpreter::_to_string() const {
 
 bool BlipKitInterpreter::check_header() {
 	// Check header if available.
-	if (byte_code->get_size() > 0) {
-		// Check header.
-		Opcode opcode = static_cast<Opcode>(byte_code->get_u8());
-		if (opcode != Opcode::OP_INIT) {
+	if (byte_code.size() > 0) {
+		Header header_check;
+		void *header_ptr = &header_check;
+		uint32_t headers_size = byte_code.get_bytes(static_cast<uint8_t *>(header_ptr), sizeof(header_check));
+
+		if (headers_size != sizeof(header_check)) {
+			fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");
+			return false;
+		}
+
+		if (memcmp(header_check.name, binary_header.name, sizeof(binary_header.name)) != 0) {
 			fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");
 			return false;
 		}
 
 		// Check version.
-		int32_t version = byte_code->get_u8();
+		int version = header_check.version;
 		switch (version) {
 			case 1: {
 				// OK.
@@ -76,8 +87,8 @@ int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_m
 	error_message = p_error_message;
 
 	// Seek to end.
-	int size = byte_code->get_size();
-	byte_code->seek(size);
+	int size = byte_code.size();
+	byte_code.seek(size);
 
 	ERR_FAIL_V_MSG(-1, error_message);
 }
@@ -112,30 +123,26 @@ int BlipKitInterpreter::get_register(int p_register) const {
 	return registers.aux[p_register];
 }
 
-BlipKitInterpreter::Status BlipKitInterpreter::load_byte_code(const PackedByteArray &p_byte) {
-	byte_code->set_data_array(p_byte);
+BlipKitInterpreter::Status BlipKitInterpreter::load_byte_code(const PackedByteArray &p_bytes) {
+	byte_code.set_byte_array(p_bytes);
 	reset();
 
 	return status;
 }
 
-_FORCE_INLINE_ static float get_half(Ref<StreamPeerBuffer> &p_buffer) {
-	return half_to_float(p_buffer->get_u16());
-}
-
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	ERR_FAIL_COND_V(p_track.is_null(), 0);
 
-	while (byte_code->get_available_bytes() > 0) {
-		int ip_offset = byte_code->get_position();
-		Opcode opcode = static_cast<Opcode>(byte_code->get_u8());
+	while (byte_code.get_available_bytes() > 0) {
+		int code_offset = byte_code.get_position();
+		Opcode opcode = static_cast<Opcode>(byte_code.get_u8());
 
 		switch (opcode) {
 			case Opcode::OP_NOOP: {
 				// Do nothing.
 			} break;
 			case Opcode::OP_ATTACK: {
-				p_track->set_note(get_half(byte_code));
+				p_track->set_note(byte_code.get_f16());
 			} break;
 			case Opcode::OP_RELEASE: {
 				p_track->release();
@@ -144,93 +151,96 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->mute();
 			} break;
 			case Opcode::OP_VOLUME: {
-				p_track->set_volume(get_half(byte_code));
+				p_track->set_volume(byte_code.get_f16());
 			} break;
 			case Opcode::OP_MASTER_VOLUME: {
-				p_track->set_master_volume(get_half(byte_code));
+				p_track->set_master_volume(byte_code.get_f16());
 			} break;
 			case Opcode::OP_PANNING: {
-				p_track->set_panning(get_half(byte_code));
+				p_track->set_panning(byte_code.get_f16());
 			} break;
 			case Opcode::OP_PITCH: {
-				p_track->set_pitch(get_half(byte_code));
+				p_track->set_pitch(byte_code.get_f16());
 			} break;
 			case Opcode::OP_WAVEFORM: {
-				p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(byte_code->get_u8()));
+				p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(byte_code.get_u8()));
 			} break;
 			case Opcode::OP_CUSTOM_WAVEFORM: {
-				int index = byte_code->get_u8();
+				int index = byte_code.get_u8();
 				const Ref<BlipKitWaveform> &waveform = waveforms[index];
 				p_track->set_custom_waveform(waveform);
 			} break;
 			case Opcode::OP_DUTY_CYCLE: {
-				p_track->set_duty_cycle(byte_code->get_u8());
+				p_track->set_duty_cycle(byte_code.get_u8());
 			} break;
 			case Opcode::OP_PHASE_WRAP: {
-				p_track->set_phase_wrap(byte_code->get_u8());
+				p_track->set_phase_wrap(byte_code.get_u8());
 			} break;
 			case Opcode::OP_INSTRUMENT: {
-				int index = byte_code->get_u8();
+				int index = byte_code.get_u8();
 				const Ref<BlipKitInstrument> &instrument = instruments[index];
 				p_track->set_instrument(instrument);
 			} break;
 			case Opcode::OP_EFFECT_DIV: {
-				p_track->set_effect_divider(byte_code->get_u16());
+				p_track->set_effect_divider(byte_code.get_u16());
 			} break;
 			case Opcode::OP_VOLUME_SLIDE: {
-				p_track->set_volume_slide(byte_code->get_u16());
+				p_track->set_volume_slide(byte_code.get_u16());
 			} break;
 			case Opcode::OP_PANNING_SLIDE: {
-				p_track->set_panning_slide(byte_code->get_u16());
+				p_track->set_panning_slide(byte_code.get_u16());
 			} break;
 			case Opcode::OP_PORTAMENTO: {
-				p_track->set_portamento(byte_code->get_u16());
+				p_track->set_portamento(byte_code.get_u16());
 			} break;
 			case Opcode::OP_ARPEGGIO_DIV: {
-				p_track->set_arpeggio_divider(byte_code->get_u16());
+				p_track->set_arpeggio_divider(byte_code.get_u16());
 			} break;
 			case Opcode::OP_INSTRUMENT_DIV: {
-				p_track->set_instrument_divider(byte_code->get_u16());
+				p_track->set_instrument_divider(byte_code.get_u16());
 			} break;
 			case Opcode::OP_TICK: {
-				uint32_t ticks = byte_code->get_u16();
+				int ticks = byte_code.get_u16();
 				return ticks;
 			} break;
 			case Opcode::OP_TREMOLO: {
-				int ticks = byte_code->get_u16();
-				float delta = get_half(byte_code);
-				int slide_ticks = byte_code->get_u16();
+				int ticks = byte_code.get_u16();
+				float delta = byte_code.get_f16();
+				int slide_ticks = byte_code.get_u16();
 				p_track->set_tremolo(ticks, delta, slide_ticks);
 			} break;
 			case Opcode::OP_VIBRATO: {
-				int ticks = byte_code->get_u16();
-				float delta = get_half(byte_code);
-				int slide_ticks = byte_code->get_u16();
+				int ticks = byte_code.get_u16();
+				float delta = byte_code.get_f16();
+				int slide_ticks = byte_code.get_u16();
 				p_track->set_vibrato(ticks, delta, slide_ticks);
 			} break;
 			case Opcode::OP_ARPEGGIO: {
-				int count = byte_code->get_u8();
+				int count = byte_code.get_u8();
 				arpeggio.resize(count);
 
 				for (int i = 0; i < count; i++) {
-					arpeggio[i] = get_half(byte_code);
+					arpeggio[i] = byte_code.get_f16();
 				}
 				p_track->set_arpeggio(arpeggio);
 			} break;
 			case Opcode::OP_CALL: {
-				int offset = byte_code->get_u32();
-				int position = byte_code->get_position();
+				int offset = byte_code.get_s32();
+				int position = byte_code.get_position();
 
 				if (stack.size() >= STACK_SIZE_MAX) {
 					return fail_with_error(ERR_STACK_OVERFLOW, "Stack overflow.");
 				}
 
 				stack.push_back(position);
-				byte_code->seek(offset);
+				int jump_offset = position + offset - 4; // Subtract size of address.
+				byte_code.seek(jump_offset);
 			} break;
 			case Opcode::OP_JUMP: {
-				int offset = byte_code->get_u32();
-				byte_code->seek(offset);
+				int offset = byte_code.get_s32();
+				int position = byte_code.get_position();
+				int jump_offset = position + offset - 4; // Subtract size of address.
+				byte_code.seek(jump_offset);
 			} break;
 			case Opcode::OP_RETURN: {
 				if (stack.is_empty()) {
@@ -240,18 +250,22 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				int index = stack.size() - 1;
 				int offset = stack[index];
 				stack.remove_at(index);
-				byte_code->seek(offset);
+				byte_code.seek(offset);
 			} break;
 			case Opcode::OP_RESET: {
 				p_track->reset();
 			} break;
 			case Opcode::OP_STORE: {
-				int32_t number = CLAMP(byte_code->get_u8(), 0, REGISTER_COUNT);
-				int32_t value = byte_code->get_32();
+				int number = CLAMP(byte_code.get_u8(), 0, REGISTER_COUNT);
+				int value = byte_code.get_s32();
 				registers.aux[number] = value;
 			} break;
+			case Opcode::OP_HALT: {
+				// Seek to end.
+				byte_code.seek(byte_code.size());
+			} break;
 			default: {
-				return fail_with_error(ERR_INVALID_OPCODE, vformat("Invalid opcode %d at offset %d.", opcode, ip_offset));
+				return fail_with_error(ERR_INVALID_OPCODE, vformat("Invalid opcode %d at offset %d.", opcode, code_offset));
 			} break;
 		}
 	}
@@ -277,7 +291,7 @@ String BlipKitInterpreter::get_error_message() const {
 }
 
 void BlipKitInterpreter::reset() {
-	byte_code->seek(0);
+	byte_code.seek(0);
 	stack.clear();
 	registers = Registers();
 	status = OK_RUNNING;
