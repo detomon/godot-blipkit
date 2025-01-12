@@ -7,8 +7,8 @@ namespace BlipKit {
 
 struct RecursiveSpinLock {
 private:
-	std::atomic<int> lock_owner = 0;
-	int lock_count = 0;
+	std::atomic<uint32_t> lock_owner = 0;
+	uint32_t lock_count = 0;
 
 public:
 	struct Autolock {

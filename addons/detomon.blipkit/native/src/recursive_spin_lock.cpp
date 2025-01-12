@@ -2,11 +2,11 @@
 
 using namespace BlipKit;
 
-static thread_local int lock_thread_id;
-static std::atomic<int> lock_thread_id_inc = 0;
+static thread_local uint32_t lock_thread_id;
+static std::atomic<uint32_t> lock_thread_id_inc = 0;
 
 void RecursiveSpinLock::lock() {
-	int thread_id = lock_thread_id;
+	uint32_t thread_id = lock_thread_id;
 
 	// Create new ID for current thread.
 	if (unlikely(thread_id == 0)) {
@@ -18,7 +18,7 @@ void RecursiveSpinLock::lock() {
 	if (lock_owner.load() != thread_id) {
 		// Wait for lock to be released.
 		while (true) {
-			int expect = 0;
+			uint32_t expect = 0;
 			if (lock_owner.compare_exchange_weak(expect, thread_id, std::memory_order_acquire, std::memory_order_relaxed)) {
 				break;
 			}

@@ -42,10 +42,10 @@ private:
 		}
 
 		_FORCE_INLINE_ void reset(int p_tick_interval = 0) {
-			counter = 0;
 			if (p_tick_interval > 0) {
 				divider = p_tick_interval;
 			}
+			counter = 0;
 		}
 	};
 
