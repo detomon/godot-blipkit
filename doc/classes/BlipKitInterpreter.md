@@ -54,7 +54,7 @@ track.add_divider("run", 1, func () -> int:
 - `ERR_STACK_UNDERFLOW` = `5`
 	- A stack underflow occurred.
 
-### enum ``
+## Constants
 
 - `REGISTER_COUNT` = `16`
 	- The number of usable registers.

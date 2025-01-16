@@ -340,14 +340,27 @@ Inherits: *{inherits}*\n\
         output += "\n"
 
     if constant_groups:
-        output += f"## Enumerations\n\n"
-        for enum in constant_groups:
-            output += f"### enum `{enum.name}`\n\n"
-            for item in enum.values.values():
-                description = bbcode_to_markdown(item.description).strip()
-                output += f"- `{item.name}` = `{item.value}`\n"
-                output += f"\t- {description}\n"
-            output += "\n"
+        enum_groups = list(filter(lambda enum : enum.name != "", constant_groups))
+        const_groups = list(filter(lambda enum : enum.name == "", constant_groups))
+
+        if len(enum_groups):
+            output += f"## Enumerations\n\n"
+            for enum in enum_groups:
+                output += f"### enum `{enum.name}`\n\n"
+                for item in enum.values.values():
+                    description = bbcode_to_markdown(item.description).strip()
+                    output += f"- `{item.name}` = `{item.value}`\n"
+                    output += f"\t- {description}\n"
+                output += "\n"
+
+        if len(const_groups):
+            output += f"## Constants\n\n"
+            for enum in const_groups:
+                for item in enum.values.values():
+                    description = bbcode_to_markdown(item.description).strip()
+                    output += f"- `{item.name}` = `{item.value}`\n"
+                    output += f"\t- {description}\n"
+                output += "\n"
 
     if members:
         output += f"## Property Descriptions\n\n"

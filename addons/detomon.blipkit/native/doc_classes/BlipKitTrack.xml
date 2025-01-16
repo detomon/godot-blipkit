@@ -571,5 +571,8 @@
 		<constant name="NOTE_MUTE" value="-2" enum="Note">
 			Mutes [member note] immediately. Has the same effect as calling [method mute].
 		</constant>
+		<constant name="ARPEGGIO_MAX" value="8">
+			Maximum number of arpeggio notes.
+		</constant>
 	</constants>
 </class>

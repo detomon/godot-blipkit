@@ -133,6 +133,8 @@ public:
 		NOTE_MUTE = BK_NOTE_MUTE,
 	};
 
+	static constexpr int ARPEGGIO_MAX = BK_MAX_ARPEGGIO;
+
 private:
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;

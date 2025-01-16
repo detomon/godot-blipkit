@@ -216,7 +216,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				p_track->set_vibrato(ticks, delta, slide_ticks);
 			} break;
 			case Opcode::OP_ARPEGGIO: {
-				int count = byte_code.get_u8();
+				int count = MIN(byte_code.get_u8(), BlipKitTrack::ARPEGGIO_MAX);
 				arpeggio.resize(count);
 
 				for (int i = 0; i < count; i++) {
@@ -294,6 +294,7 @@ void BlipKitInterpreter::reset() {
 	byte_code.seek(0);
 	stack.clear();
 	registers = Registers();
+	arpeggio.clear();
 	status = OK_RUNNING;
 	error_message.resize(0);
 

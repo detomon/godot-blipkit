@@ -290,6 +290,11 @@ _track.note = BlipKitTrack.NOTE_A_3
 - `NOTE_MUTE` = `-2`
 	- Mutes `note` immediately. Has the same effect as calling [`mute()`](#void-mute).
 
+## Constants
+
+- `ARPEGGIO_MAX` = `8`
+	- Maximum number of arpeggio notes.
+
 ## Property Descriptions
 
 ### `PackedFloat32Array arpeggio`

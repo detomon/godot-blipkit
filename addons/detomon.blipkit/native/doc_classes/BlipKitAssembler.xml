@@ -108,89 +108,89 @@
 		</method>
 	</methods>
 	<constants>
-		<constant name="OP_ATTACK" value="2" enum="Opcode">
+		<constant name="OP_ATTACK" value="1" enum="Opcode">
 			Sets [member BlipKitTrack.note]. Expects a [float] argument.
 		</constant>
-		<constant name="OP_RELEASE" value="3" enum="Opcode">
+		<constant name="OP_RELEASE" value="2" enum="Opcode">
 			Calls [method BlipKitTrack.release]. Expects no arguments.
 		</constant>
-		<constant name="OP_MUTE" value="4" enum="Opcode">
+		<constant name="OP_MUTE" value="3" enum="Opcode">
 			Calls [method BlipKitTrack.mute]. Expects no arguments.
 		</constant>
-		<constant name="OP_WAVEFORM" value="5" enum="Opcode">
+		<constant name="OP_WAVEFORM" value="4" enum="Opcode">
 			Sets [member BlipKitTrack.waveform]. Expects [enum BlipKitTrack.Waveform] as [int] argument.
 		</constant>
-		<constant name="OP_CUSTOM_WAVEFORM" value="6" enum="Opcode">
+		<constant name="OP_CUSTOM_WAVEFORM" value="5" enum="Opcode">
 			Sets [member BlipKitTrack.custom_waveform] from the given slot. Expects a slot index as [int] argument between [code]0[/code] and [code]255[/code].
 			Which [BlipKitWaveform] is used is define with [member BlipKitInterpreter.set_waveform].
 		</constant>
-		<constant name="OP_DUTY_CYCLE" value="7" enum="Opcode">
+		<constant name="OP_DUTY_CYCLE" value="6" enum="Opcode">
 			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument between [code]0[/code] and [code]15[/code]
 		</constant>
-		<constant name="OP_EFFECT_DIV" value="8" enum="Opcode">
+		<constant name="OP_EFFECT_DIV" value="7" enum="Opcode">
 			Sets [member BlipKitTrack.effect_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_VOLUME" value="9" enum="Opcode">
+		<constant name="OP_VOLUME" value="8" enum="Opcode">
 			Sets [member BlipKitTrack.volume]. Expects a [float] argument between [code]0.0[/code] and [code]1.0[/code].
 		</constant>
-		<constant name="OP_VOLUME_SLIDE" value="10" enum="Opcode">
+		<constant name="OP_VOLUME_SLIDE" value="9" enum="Opcode">
 			Sets [member BlipKitTrack.volume_slide]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_MASTER_VOLUME" value="11" enum="Opcode">
+		<constant name="OP_MASTER_VOLUME" value="10" enum="Opcode">
 			Sets [member BlipKitTrack.master_volume]. Expects a [float] argument between [code]0.0[/code] and [code]1.0[/code].
 		</constant>
-		<constant name="OP_PANNING" value="12" enum="Opcode">
+		<constant name="OP_PANNING" value="11" enum="Opcode">
 			Sets [member BlipKitTrack.panning]. Expects a [float] argument between [code]-1.0[/code] and [code]+1.0[/code].
 		</constant>
-		<constant name="OP_PANNING_SLIDE" value="13" enum="Opcode">
+		<constant name="OP_PANNING_SLIDE" value="12" enum="Opcode">
 			Sets [member BlipKitTrack.panning_slide]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_PITCH" value="14" enum="Opcode">
+		<constant name="OP_PITCH" value="13" enum="Opcode">
 			Sets [member BlipKitTrack.pitch]. Expects a [float] argument.
 		</constant>
-		<constant name="OP_PHASE_WRAP" value="15" enum="Opcode">
+		<constant name="OP_PHASE_WRAP" value="14" enum="Opcode">
 			Sets [member BlipKitTrack.phase_wrap]. Expects an [int] argument.
 		</constant>
-		<constant name="OP_PORTAMENTO" value="16" enum="Opcode">
+		<constant name="OP_PORTAMENTO" value="15" enum="Opcode">
 			Sets [member BlipKitTrack.portamento]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_VIBRATO" value="17" enum="Opcode">
+		<constant name="OP_VIBRATO" value="16" enum="Opcode">
 			Calls [method BlipKitTrack.set_vibrato]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]).
 		</constant>
-		<constant name="OP_TREMOLO" value="18" enum="Opcode">
+		<constant name="OP_TREMOLO" value="17" enum="Opcode">
 			Calls [method BlipKitTrack.set_tremolo]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]).
 		</constant>
-		<constant name="OP_ARPEGGIO" value="19" enum="Opcode">
+		<constant name="OP_ARPEGGIO" value="18" enum="Opcode">
 			Sets [member BlipKitTrack.arpeggio]. Expects a [PackedFloat32Array] argument.
 		</constant>
-		<constant name="OP_ARPEGGIO_DIV" value="20" enum="Opcode">
+		<constant name="OP_ARPEGGIO_DIV" value="19" enum="Opcode">
 			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_INSTRUMENT" value="21" enum="Opcode">
+		<constant name="OP_INSTRUMENT" value="20" enum="Opcode">
 			Sets [member BlipKitTrack.instrument] from the given slot. Expects a slot index between [code]0[/code] and [code]255[/code] as [int] argument.
 			Which [BlipKitInstrument] used is define with [member BlipKitInterpreter.set_instrument].
 		</constant>
-		<constant name="OP_INSTRUMENT_DIV" value="22" enum="Opcode">
+		<constant name="OP_INSTRUMENT_DIV" value="21" enum="Opcode">
 			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_TICK" value="23" enum="Opcode">
+		<constant name="OP_TICK" value="22" enum="Opcode">
 			Interrupts the execution for a number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_CALL" value="24" enum="Opcode">
+		<constant name="OP_CALL" value="23" enum="Opcode">
 			Calls a named label like a function. Expects a label name as [String] argument.
 			[b]Note:[/b] The label is not required to be defined at this point and can also be set later with [method put_label].
 		</constant>
-		<constant name="OP_RETURN" value="25" enum="Opcode">
+		<constant name="OP_RETURN" value="24" enum="Opcode">
 			Returns from a function call made with [constant OP_CALL]. Expects no arguments.
 		</constant>
-		<constant name="OP_JUMP" value="26" enum="Opcode">
+		<constant name="OP_JUMP" value="25" enum="Opcode">
 			Jumps to a named label. Expects the label name as [String] argument.
 			[b]Note:[/b] The label is not required to be defined at this point and can also be set later with [method put_label].
 		</constant>
-		<constant name="OP_RESET" value="27" enum="Opcode">
+		<constant name="OP_RESET" value="26" enum="Opcode">
 			Calls [method BlipKitTrack.reset]. Expects no arguments.
 		</constant>
-		<constant name="OP_STORE" value="28" enum="Opcode">
+		<constant name="OP_STORE" value="27" enum="Opcode">
 			Stores a value in a register. Expects the register number as [int] argument between [code]0[/code] and [code]15[/code], and the value as [int] argument.
 			The value can be read with [method BlipKitInterpreter.get_register].
 		</constant>
@@ -213,6 +213,7 @@
 			A named label is not defined with the given name.
 		</constant>
 		<constant name="ERR_PARSER_ERROR" value="6" enum="Error">
+			An error occurred when parsing code.
 		</constant>
 	</constants>
 </class>

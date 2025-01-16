@@ -59,67 +59,67 @@ var bytes := assem.get_byte_code()
 
 ### enum `Opcode`
 
-- `OP_ATTACK` = `2`
+- `OP_ATTACK` = `1`
 	- Sets `BlipKitTrack.note`. Expects a `float` argument.
-- `OP_RELEASE` = `3`
+- `OP_RELEASE` = `2`
 	- Calls `BlipKitTrack.release()`. Expects no arguments.
-- `OP_MUTE` = `4`
+- `OP_MUTE` = `3`
 	- Calls `BlipKitTrack.mute()`. Expects no arguments.
-- `OP_WAVEFORM` = `5`
+- `OP_WAVEFORM` = `4`
 	- Sets `BlipKitTrack.waveform`. Expects [`BlipKitTrack.Waveform`](#enum-blipkittrackwaveform) as `int` argument.
-- `OP_CUSTOM_WAVEFORM` = `6`
+- `OP_CUSTOM_WAVEFORM` = `5`
 	- Sets `BlipKitTrack.custom_waveform` from the given slot. Expects a slot index as `int` argument between `0` and `255`.
 
 Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform`.
-- `OP_DUTY_CYCLE` = `7`
+- `OP_DUTY_CYCLE` = `6`
 	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`
-- `OP_EFFECT_DIV` = `8`
+- `OP_EFFECT_DIV` = `7`
 	- Sets `BlipKitTrack.effect_divider`. Expects an `int` argument between `0` and `65536`.
-- `OP_VOLUME` = `9`
+- `OP_VOLUME` = `8`
 	- Sets `BlipKitTrack.volume`. Expects a `float` argument between `0.0` and `1.0`.
-- `OP_VOLUME_SLIDE` = `10`
+- `OP_VOLUME_SLIDE` = `9`
 	- Sets `BlipKitTrack.volume_slide`. Expects an `int` argument between `0` and `65536`.
-- `OP_MASTER_VOLUME` = `11`
+- `OP_MASTER_VOLUME` = `10`
 	- Sets `BlipKitTrack.master_volume`. Expects a `float` argument between `0.0` and `1.0`.
-- `OP_PANNING` = `12`
+- `OP_PANNING` = `11`
 	- Sets `BlipKitTrack.panning`. Expects a `float` argument between `-1.0` and `+1.0`.
-- `OP_PANNING_SLIDE` = `13`
+- `OP_PANNING_SLIDE` = `12`
 	- Sets `BlipKitTrack.panning_slide`. Expects an `int` argument between `0` and `65536`.
-- `OP_PITCH` = `14`
+- `OP_PITCH` = `13`
 	- Sets `BlipKitTrack.pitch`. Expects a `float` argument.
-- `OP_PHASE_WRAP` = `15`
+- `OP_PHASE_WRAP` = `14`
 	- Sets `BlipKitTrack.phase_wrap`. Expects an `int` argument.
-- `OP_PORTAMENTO` = `16`
+- `OP_PORTAMENTO` = `15`
 	- Sets `BlipKitTrack.portamento`. Expects an `int` argument between `0` and `65536`.
-- `OP_VIBRATO` = `17`
+- `OP_VIBRATO` = `16`
 	- Calls `BlipKitTrack.set_vibrato()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
-- `OP_TREMOLO` = `18`
+- `OP_TREMOLO` = `17`
 	- Calls `BlipKitTrack.set_tremolo()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
-- `OP_ARPEGGIO` = `19`
+- `OP_ARPEGGIO` = `18`
 	- Sets `BlipKitTrack.arpeggio`. Expects a [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html) argument.
-- `OP_ARPEGGIO_DIV` = `20`
+- `OP_ARPEGGIO_DIV` = `19`
 	- Sets `BlipKitTrack.arpeggio_divider`. Expects an `int` argument between `0` and `65536`.
-- `OP_INSTRUMENT` = `21`
+- `OP_INSTRUMENT` = `20`
 	- Sets `BlipKitTrack.instrument` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
 Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument`.
-- `OP_INSTRUMENT_DIV` = `22`
+- `OP_INSTRUMENT_DIV` = `21`
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
-- `OP_TICK` = `23`
+- `OP_TICK` = `22`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
-- `OP_CALL` = `24`
+- `OP_CALL` = `23`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
-- `OP_RETURN` = `25`
+- `OP_RETURN` = `24`
 	- Returns from a function call made with [`OP_CALL`](#op_call). Expects no arguments.
-- `OP_JUMP` = `26`
+- `OP_JUMP` = `25`
 	- Jumps to a named label. Expects the label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
-- `OP_RESET` = `27`
+- `OP_RESET` = `26`
 	- Calls `BlipKitTrack.reset()`. Expects no arguments.
-- `OP_STORE` = `28`
+- `OP_STORE` = `27`
 	- Stores a value in a register. Expects the register number as `int` argument between `0` and `15`, and the value as `int` argument.
 
 The value can be read with `BlipKitInterpreter.get_register()`.
@@ -139,7 +139,7 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 - `ERR_UNDEFINED_LABEL` = `5`
 	- A named label is not defined with the given name.
 - `ERR_PARSER_ERROR` = `6`
-	- 
+	- An error occurred when parsing code.
 
 ## Method Descriptions
 
