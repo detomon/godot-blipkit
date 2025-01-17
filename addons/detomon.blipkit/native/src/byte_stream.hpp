@@ -17,11 +17,12 @@ private:
 	_FORCE_INLINE_ T read() {
 		constexpr uint32_t byte_count = sizeof(T);
 
+		// Nothing more to read.
 		if (unlikely(pointer + byte_count > count)) {
 			return T(0);
 		}
 
-		const uint8_t *ptr = bytes.ptr() + pointer;
+		const uint8_t *ptr = &bytes.ptr()[pointer];
 		T value = 0;
 		pointer += byte_count;
 
@@ -37,11 +38,12 @@ private:
 		constexpr uint32_t byte_count = sizeof(T);
 		const uint32_t capacity = bytes.size();
 
+		// Not enough space to write.
 		if (unlikely(pointer + byte_count > capacity)) {
 			reserve(capacity + byte_count);
 		}
 
-		uint8_t *ptrw = bytes.ptrw() + pointer;
+		uint8_t *ptrw = &bytes.ptrw()[pointer];
 		pointer += byte_count;
 		count = MAX(count, pointer);
 
@@ -59,7 +61,6 @@ public:
 	void put_u32(uint32_t p_value);
 	void put_s32(int32_t p_value);
 	void put_f32(float p_value);
-
 	void put_bytes(const uint8_t *p_bytes, uint32_t p_count);
 
 	uint8_t get_u8();
