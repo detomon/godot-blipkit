@@ -247,6 +247,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 					return fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
 				}
 
+				// Pop last value.
 				int index = stack.size() - 1;
 				int offset = stack[index];
 				stack.remove_at(index);

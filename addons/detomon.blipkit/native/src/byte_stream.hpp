@@ -17,7 +17,7 @@ private:
 	_FORCE_INLINE_ T read() {
 		constexpr uint32_t byte_count = sizeof(T);
 
-		// Nothing more to read.
+		// Not enough bytes left to read.
 		if (unlikely(pointer + byte_count > count)) {
 			return T(0);
 		}
@@ -38,9 +38,9 @@ private:
 		constexpr uint32_t byte_count = sizeof(T);
 		const uint32_t capacity = bytes.size();
 
-		// Not enough space to write.
+		// Not enough space left to write.
 		if (unlikely(pointer + byte_count > capacity)) {
-			reserve(capacity + byte_count);
+			reserve(pointer + byte_count);
 		}
 
 		uint8_t *ptrw = &bytes.ptrw()[pointer];
@@ -76,7 +76,7 @@ public:
 	_FORCE_INLINE_ uint32_t size() const { return count; };
 	_FORCE_INLINE_ uint32_t get_position() const { return pointer; }
 	_FORCE_INLINE_ uint32_t get_available_bytes() const { return count - pointer; }
-	_FORCE_INLINE_ void seek(uint32_t p_offset) { pointer = CLAMP(p_offset, 0, size()); }
+	_FORCE_INLINE_ void seek(uint32_t p_offset) { pointer = MIN(p_offset, size()); }
 
 	_FORCE_INLINE_ const uint8_t *ptr() const { return bytes.ptr(); }
 	PackedByteArray get_byte_array() const;

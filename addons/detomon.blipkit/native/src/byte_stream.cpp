@@ -48,10 +48,10 @@ void ByteStream::put_bytes(const uint8_t *p_bytes, uint32_t p_count) {
 	const uint32_t capacity = bytes.size();
 
 	if (unlikely(pointer + p_count > capacity)) {
-		reserve(capacity + p_count);
+		reserve(pointer + p_count);
 	}
 
-	uint8_t *ptr = bytes.ptrw() + pointer;
+	uint8_t *ptr = &bytes.ptrw()[pointer];
 
 	memcpy(ptr, p_bytes, p_count);
 	pointer += p_count;
@@ -95,7 +95,7 @@ float ByteStream::get_f32() {
 uint32_t ByteStream::get_bytes(uint8_t *r_bytes, uint32_t p_count) {
 	p_count = MIN(p_count, get_available_bytes());
 
-	const uint8_t *ptr = bytes.ptr();
+	const uint8_t *ptr = &bytes.ptr()[pointer];
 	memcpy(r_bytes, ptr, p_count);
 	pointer += p_count;
 
