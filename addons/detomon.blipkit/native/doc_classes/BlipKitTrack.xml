@@ -28,7 +28,7 @@
 		[/codeblocks]
 	</description>
 	<tutorials>
-		<link title="Power On!">https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/power_on.md</link>
+		<link title="Power On!">https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/README.md</link>
 	</tutorials>
 	<methods>
 		<method name="add_divider">
@@ -129,7 +129,7 @@
 		<method name="release">
 			<return type="void" />
 			<description>
-				Releases [member note]. When [member instrument] is set, plays the release part of [member instrument] envelopes. Has the same effect as setting [member note] to [constant NOTE_RELEASE].
+				Releases [member note]. When [member instrument] is set, plays the release part of the [member instrument] envelopes. Has the same effect as setting [member note] to [constant NOTE_RELEASE].
 			</description>
 		</method>
 		<method name="remove_divider">

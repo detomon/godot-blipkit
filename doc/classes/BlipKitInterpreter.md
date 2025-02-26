@@ -65,13 +65,13 @@ track.add_divider("run", 1, func () -> int:
 
 ### `int advance(track: BlipKitTrack)`
 
-Advances the interpreter until a `BlipKitAssembler.OP_TICK` instruction is encountered or no more instructions are available.
+Advances the interpreter until a `BlipKitAssembler.OP_TICK` instruction is encountered, or no more instructions are available.
 
 Returns a value greater than `0` indicating the number of *ticks* to wait before [`advance()`](#int-advancetrack-blipkittrack) should be called again.
 
 Returns `0` if no more instructions are available.
 
-Returns `-1` if an error occured. [`get_status()`](#int-get_status-const) returns the status and [`get_error_message()`](#string-get_error_message-const) returns the error message in this case.
+Returns `-1` if an error occured. In this case, [`get_status()`](#int-get_status-const) returns the status and [`get_error_message()`](#string-get_error_message-const) returns the error message.
 
 ### `String get_error_message() const`
 
@@ -87,7 +87,7 @@ Returns `null` if no instrument is set in `slot`.
 
 ### `int get_register(register: int) const`
 
-Returns the value in register `number`. `number` is a value between `0` and `15`.
+Returns the value in register `number`. This is a value between `0` and `15`.
 
 ### `int get_status() const`
 

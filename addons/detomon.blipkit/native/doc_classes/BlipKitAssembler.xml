@@ -55,8 +55,8 @@
 		<method name="compile">
 			<return type="int" enum="BlipKitAssembler.Error" />
 			<description>
-				Resolves label addresses and generated the byte code. Call [method get_byte_code] to get the byte code.
-				Call [method clear] to generate new byte code.
+				Resolves label addresses and generates the byte code.
+				Call [method get_byte_code] to get the byte code. Call [method clear] to generate new byte code.
 				Returns [constant ERR_INVALID_STATE] if the byte code is already compiled.
 			</description>
 		</method>

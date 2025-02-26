@@ -31,10 +31,10 @@
 			<return type="int" />
 			<param index="0" name="track" type="BlipKitTrack" />
 			<description>
-				Advances the interpreter until a [constant BlipKitAssembler.OP_TICK] instruction is encountered or no more instructions are available.
+				Advances the interpreter until a [constant BlipKitAssembler.OP_TICK] instruction is encountered, or no more instructions are available.
 				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
 				Returns [code]0[/code] if no more instructions are available.
-				Returns [code]-1[/code] if an error occured. [method get_status] returns the status and [method get_error_message] returns the error message in this case.
+				Returns [code]-1[/code] if an error occured. In this case, [method get_status] returns the status and [method get_error_message] returns the error message.
 			</description>
 		</method>
 		<method name="get_error_message" qualifiers="const">
@@ -56,7 +56,7 @@
 			<return type="int" />
 			<param index="0" name="register" type="int" />
 			<description>
-				Returns the value in register [param number]. [param number] is a value between [code]0[/code] and [code]15[/code].
+				Returns the value in register [param number]. This is a value between [code]0[/code] and [code]15[/code].
 			</description>
 		</method>
 		<method name="get_status" qualifiers="const">

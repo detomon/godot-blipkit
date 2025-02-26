@@ -149,9 +149,9 @@ Clears all instructions, labels and errors.
 
 ### `int compile()`
 
-Resolves label addresses and generated the byte code. Call [`get_byte_code()`](#packedbytearray-get_byte_code-const) to get the byte code.
+Resolves label addresses and generates the byte code.
 
-Call [`clear()`](#void-clear) to generate new byte code.
+Call [`get_byte_code()`](#packedbytearray-get_byte_code-const) to get the byte code. Call [`clear()`](#void-clear) to generate new byte code.
 
 Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already compiled.
 

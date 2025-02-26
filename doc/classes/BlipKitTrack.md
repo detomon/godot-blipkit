@@ -31,7 +31,7 @@ _track.note = BlipKitTrack.NOTE_A_3
 ```
 ## Online Tutorials
 
-- [Power On!](https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/power_on.md)
+- [Power On!](https://github.com/detomon/godot-blipkit/blob/master/examples/power_on/README.md)
 
 ## Properties
 
@@ -498,7 +498,7 @@ Mutes `note` immediately without playing the release part of `instrument` envelo
 
 ### `void release()`
 
-Releases `note`. When `instrument` is set, plays the release part of `instrument` envelopes. Has the same effect as setting `note` to [`NOTE_RELEASE`](#note_release).
+Releases `note`. When `instrument` is set, plays the release part of the `instrument` envelopes. Has the same effect as setting `note` to [`NOTE_RELEASE`](#note_release).
 
 ### `void remove_divider(name: String)`
 
