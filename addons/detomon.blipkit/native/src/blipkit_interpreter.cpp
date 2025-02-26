@@ -22,33 +22,6 @@ BlipKitInterpreter::BlipKitInterpreter() {
 	waveforms.resize(SLOT_COUNT);
 }
 
-void BlipKitInterpreter::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_instrument", "slot", "instruments"), &BlipKitInterpreter::set_instrument);
-	ClassDB::bind_method(D_METHOD("get_instrument", "slot"), &BlipKitInterpreter::get_instrument);
-	ClassDB::bind_method(D_METHOD("set_waveform", "slot", "waveforms"), &BlipKitInterpreter::set_waveform);
-	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
-	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
-	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
-	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code"), &BlipKitInterpreter::load_byte_code);
-	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
-	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
-	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
-	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
-
-	BIND_ENUM_CONSTANT(OK_RUNNING);
-	BIND_ENUM_CONSTANT(OK_FINISHED);
-	BIND_ENUM_CONSTANT(ERR_INVALID_OPCODE);
-	BIND_ENUM_CONSTANT(ERR_STACK_OVERFLOW);
-	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);
-
-	BIND_CONSTANT(REGISTER_COUNT);
-	BIND_CONSTANT(SLOT_COUNT);
-}
-
-String BlipKitInterpreter::_to_string() const {
-	return "BlipKitInterpreter";
-}
-
 bool BlipKitInterpreter::check_header() {
 	// Check header if available.
 	if (byte_code.size() > 0) {
@@ -300,4 +273,31 @@ void BlipKitInterpreter::reset() {
 	error_message.resize(0);
 
 	check_header();
+}
+
+void BlipKitInterpreter::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_instrument", "slot", "instruments"), &BlipKitInterpreter::set_instrument);
+	ClassDB::bind_method(D_METHOD("get_instrument", "slot"), &BlipKitInterpreter::get_instrument);
+	ClassDB::bind_method(D_METHOD("set_waveform", "slot", "waveforms"), &BlipKitInterpreter::set_waveform);
+	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
+	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
+	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
+	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code"), &BlipKitInterpreter::load_byte_code);
+	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
+	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
+	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
+	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
+
+	BIND_ENUM_CONSTANT(OK_RUNNING);
+	BIND_ENUM_CONSTANT(OK_FINISHED);
+	BIND_ENUM_CONSTANT(ERR_INVALID_OPCODE);
+	BIND_ENUM_CONSTANT(ERR_STACK_OVERFLOW);
+	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);
+
+	BIND_CONSTANT(REGISTER_COUNT);
+	BIND_CONSTANT(SLOT_COUNT);
+}
+
+String BlipKitInterpreter::_to_string() const {
+	return "BlipKitInterpreter";
 }

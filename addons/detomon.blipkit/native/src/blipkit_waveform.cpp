@@ -6,47 +6,6 @@
 using namespace BlipKit;
 using namespace godot;
 
-void BlipKitWaveform::_bind_methods() {
-	ClassDB::bind_static_method("BlipKitWaveform", D_METHOD("create_with_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::create_with_frames, DEFVAL(false), DEFVAL(1.0));
-
-	ClassDB::bind_method(D_METHOD("size"), &BlipKitWaveform::size);
-	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
-	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
-	ClassDB::bind_method(D_METHOD("set_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::set_frames, DEFVAL(false), DEFVAL(1.0));
-
-	BIND_CONSTANT(WAVE_SIZE_MAX);
-}
-
-String BlipKitWaveform::_to_string() const {
-	return vformat("BlipKitWaveform: size=%s", size());
-}
-
-void BlipKitWaveform::_get_property_list(List<PropertyInfo> *p_list) const {
-	p_list->push_back(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "frames", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
-}
-
-bool BlipKitWaveform::_set(const StringName &p_name, const Variant &p_value) {
-	const String name = p_name;
-
-	if (name == "frames") {
-		set_frames(p_value);
-		return true;
-	}
-
-	return false;
-}
-
-bool BlipKitWaveform::_get(const StringName &p_name, Variant &r_ret) const {
-	const String name = p_name;
-
-	if (name == "frames") {
-		r_ret = get_frames();
-		return true;
-	}
-
-	return false;
-}
-
 BlipKitWaveform::BlipKitWaveform() {
 	BKInt result = BKDataInit(&data);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
@@ -134,4 +93,45 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 	}
 
 	emit_changed();
+}
+
+void BlipKitWaveform::_bind_methods() {
+	ClassDB::bind_static_method("BlipKitWaveform", D_METHOD("create_with_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::create_with_frames, DEFVAL(false), DEFVAL(1.0));
+
+	ClassDB::bind_method(D_METHOD("size"), &BlipKitWaveform::size);
+	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
+	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
+	ClassDB::bind_method(D_METHOD("set_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::set_frames, DEFVAL(false), DEFVAL(1.0));
+
+	BIND_CONSTANT(WAVE_SIZE_MAX);
+}
+
+String BlipKitWaveform::_to_string() const {
+	return vformat("BlipKitWaveform: size=%s", size());
+}
+
+void BlipKitWaveform::_get_property_list(List<PropertyInfo> *p_list) const {
+	p_list->push_back(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "frames", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
+}
+
+bool BlipKitWaveform::_set(const StringName &p_name, const Variant &p_value) {
+	const String name = p_name;
+
+	if (name == "frames") {
+		set_frames(p_value);
+		return true;
+	}
+
+	return false;
+}
+
+bool BlipKitWaveform::_get(const StringName &p_name, Variant &r_ret) const {
+	const String name = p_name;
+
+	if (name == "frames") {
+		r_ret = get_frames();
+		return true;
+	}
+
+	return false;
 }

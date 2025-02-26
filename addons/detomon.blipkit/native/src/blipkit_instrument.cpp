@@ -8,108 +8,6 @@
 using namespace BlipKit;
 using namespace godot;
 
-void BlipKitInstrument::_bind_methods() {
-	ClassDB::bind_static_method("BlipKitInstrument", D_METHOD("create_with_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::create_with_adsr);
-
-	ClassDB::bind_method(D_METHOD("set_envelope", "type", "steps", "values", "sustain_offset", "sustain_length"), &BlipKitInstrument::set_envelope);
-	ClassDB::bind_method(D_METHOD("set_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::set_adsr);
-	ClassDB::bind_method(D_METHOD("has_envelope", "type"), &BlipKitInstrument::has_envelope);
-	ClassDB::bind_method(D_METHOD("get_envelope_steps", "type"), &BlipKitInstrument::get_envelope_steps);
-	ClassDB::bind_method(D_METHOD("get_envelope_values", "type"), &BlipKitInstrument::get_envelope_values);
-	ClassDB::bind_method(D_METHOD("get_envelope_sustain_offset", "type"), &BlipKitInstrument::get_envelope_sustain_offset);
-	ClassDB::bind_method(D_METHOD("get_envelope_sustain_length", "type"), &BlipKitInstrument::get_envelope_sustain_length);
-	ClassDB::bind_method(D_METHOD("clear_envelope", "type"), &BlipKitInstrument::clear_envelope);
-
-	BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
-	BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
-	BIND_ENUM_CONSTANT(ENVELOPE_PITCH);
-	BIND_ENUM_CONSTANT(ENVELOPE_DUTY_CYCLE);
-}
-
-String BlipKitInstrument::_to_string() const {
-	return vformat("BlipKitInstrument: volume=%s, panning=%s, pitch=%s, duty_cycle=%s",
-			get("envelope/volume"),
-			get("envelope/panning"),
-			get("envelope/pitch"),
-			get("envelope/duty_cycle"));
-}
-
-void BlipKitInstrument::_get_property_list(List<PropertyInfo> *p_list) const {
-	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/volume", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
-	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/panning", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
-	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/pitch", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
-	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/duty_cycle", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
-}
-
-bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name.begins_with("envelope/")) {
-		const String name = p_name;
-		EnvelopeType type;
-
-		if (name == "envelope/volume") {
-			type = ENVELOPE_VOLUME;
-		} else if (name == "envelope/panning") {
-			type = ENVELOPE_PANNING;
-		} else if (name == "envelope/pitch") {
-			type = ENVELOPE_PITCH;
-		} else if (name == "envelope/duty_cycle") {
-			type = ENVELOPE_DUTY_CYCLE;
-		} else {
-			return false;
-		}
-
-		const Array &data = p_value;
-
-		ERR_FAIL_COND_V(data.size() != 4, false);
-
-		const PackedInt32Array &steps = data[0];
-		const PackedFloat32Array &values = data[1];
-		int sustain_offset = data[2];
-		int sustain_length = data[3];
-
-		set_envelope(type, steps, values, sustain_offset, sustain_length);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
-	if (p_name.begins_with("envelope/")) {
-		const String name = p_name;
-		EnvelopeType type;
-
-		if (name == "envelope/volume") {
-			type = ENVELOPE_VOLUME;
-		} else if (name == "envelope/panning") {
-			type = ENVELOPE_PANNING;
-		} else if (name == "envelope/pitch") {
-			type = ENVELOPE_PITCH;
-		} else if (name == "envelope/duty_cycle") {
-			type = ENVELOPE_DUTY_CYCLE;
-		} else {
-			return false;
-		}
-
-		Array data;
-		const Sequence &seq = sequences[type];
-
-		if (!seq.values.is_empty()) {
-			data.append(seq.steps);
-			data.append(seq.values);
-			data.append(seq.sustain_offset);
-			data.append(seq.sustain_length);
-		}
-
-		r_ret = data;
-
-		return true;
-	}
-
-	return false;
-}
-
 BlipKitInstrument::BlipKitInstrument() {
 	const BKInt result = BKInstrumentInit(&instrument);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKInstrument: %s.", BKStatusGetName(result)));
@@ -253,4 +151,106 @@ int BlipKitInstrument::get_envelope_sustain_length(EnvelopeType p_type) const {
 
 void BlipKitInstrument::clear_envelope(EnvelopeType p_type) {
 	set_envelope(p_type, {}, {}, 0, 0);
+}
+
+void BlipKitInstrument::_bind_methods() {
+	ClassDB::bind_static_method("BlipKitInstrument", D_METHOD("create_with_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::create_with_adsr);
+
+	ClassDB::bind_method(D_METHOD("set_envelope", "type", "steps", "values", "sustain_offset", "sustain_length"), &BlipKitInstrument::set_envelope);
+	ClassDB::bind_method(D_METHOD("set_adsr", "attack", "decay", "sustain", "release"), &BlipKitInstrument::set_adsr);
+	ClassDB::bind_method(D_METHOD("has_envelope", "type"), &BlipKitInstrument::has_envelope);
+	ClassDB::bind_method(D_METHOD("get_envelope_steps", "type"), &BlipKitInstrument::get_envelope_steps);
+	ClassDB::bind_method(D_METHOD("get_envelope_values", "type"), &BlipKitInstrument::get_envelope_values);
+	ClassDB::bind_method(D_METHOD("get_envelope_sustain_offset", "type"), &BlipKitInstrument::get_envelope_sustain_offset);
+	ClassDB::bind_method(D_METHOD("get_envelope_sustain_length", "type"), &BlipKitInstrument::get_envelope_sustain_length);
+	ClassDB::bind_method(D_METHOD("clear_envelope", "type"), &BlipKitInstrument::clear_envelope);
+
+	BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
+	BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
+	BIND_ENUM_CONSTANT(ENVELOPE_PITCH);
+	BIND_ENUM_CONSTANT(ENVELOPE_DUTY_CYCLE);
+}
+
+String BlipKitInstrument::_to_string() const {
+	return vformat("BlipKitInstrument: volume=%s, panning=%s, pitch=%s, duty_cycle=%s",
+			get("envelope/volume"),
+			get("envelope/panning"),
+			get("envelope/pitch"),
+			get("envelope/duty_cycle"));
+}
+
+void BlipKitInstrument::_get_property_list(List<PropertyInfo> *p_list) const {
+	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/volume", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
+	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/panning", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
+	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/pitch", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
+	p_list->push_back(PropertyInfo(Variant::ARRAY, "envelope/duty_cycle", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE));
+}
+
+bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
+	if (p_name.begins_with("envelope/")) {
+		const String name = p_name;
+		EnvelopeType type;
+
+		if (name == "envelope/volume") {
+			type = ENVELOPE_VOLUME;
+		} else if (name == "envelope/panning") {
+			type = ENVELOPE_PANNING;
+		} else if (name == "envelope/pitch") {
+			type = ENVELOPE_PITCH;
+		} else if (name == "envelope/duty_cycle") {
+			type = ENVELOPE_DUTY_CYCLE;
+		} else {
+			return false;
+		}
+
+		const Array &data = p_value;
+
+		ERR_FAIL_COND_V(data.size() != 4, false);
+
+		const PackedInt32Array &steps = data[0];
+		const PackedFloat32Array &values = data[1];
+		int sustain_offset = data[2];
+		int sustain_length = data[3];
+
+		set_envelope(type, steps, values, sustain_offset, sustain_length);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
+	if (p_name.begins_with("envelope/")) {
+		const String name = p_name;
+		EnvelopeType type;
+
+		if (name == "envelope/volume") {
+			type = ENVELOPE_VOLUME;
+		} else if (name == "envelope/panning") {
+			type = ENVELOPE_PANNING;
+		} else if (name == "envelope/pitch") {
+			type = ENVELOPE_PITCH;
+		} else if (name == "envelope/duty_cycle") {
+			type = ENVELOPE_DUTY_CYCLE;
+		} else {
+			return false;
+		}
+
+		Array data;
+		const Sequence &seq = sequences[type];
+
+		if (!seq.values.is_empty()) {
+			data.append(seq.steps);
+			data.append(seq.values);
+			data.append(seq.sustain_offset);
+			data.append(seq.sustain_length);
+		}
+
+		r_ret = data;
+
+		return true;
+	}
+
+	return false;
 }

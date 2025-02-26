@@ -113,7 +113,8 @@ func _init_saw(track: BlipKitTrack, interp: BlipKitInterpreter) -> void:
 func _init_bass(track: BlipKitTrack, interp: BlipKitInterpreter) -> void:
 	var assem := BlipKitAssembler.new()
 
-	assem.put(BlipKitAssembler.OP_PITCH, 0.07) # Slightly detune bass to reduce clash with same notes on other tracks.
+	# Slightly detune bass to reduce clash with same notes on other tracks.
+	assem.put(BlipKitAssembler.OP_PITCH, 0.07)
 
 	assem.put_label("start")
 
