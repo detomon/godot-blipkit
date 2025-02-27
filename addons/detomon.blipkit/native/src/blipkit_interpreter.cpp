@@ -299,5 +299,5 @@ void BlipKitInterpreter::_bind_methods() {
 }
 
 String BlipKitInterpreter::_to_string() const {
-	return "BlipKitInterpreter";
+	return vformat("<BlipKitInterpreter:#%d>", int64_t(this));
 }

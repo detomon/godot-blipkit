@@ -22,10 +22,6 @@ struct Types {
 	Variant::Type types[ARGS_COUNT_MAX];
 };
 
-String BlipKitAssembler::_to_string() const {
-	return "BlipKitAssembler";
-}
-
 void BlipKitAssembler::init_byte_code() {
 	if (likely(byte_code.size() > 0)) {
 		return;
@@ -342,4 +338,8 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(ERR_DUPLICATE_LABEL);
 	BIND_ENUM_CONSTANT(ERR_UNDEFINED_LABEL);
 	BIND_ENUM_CONSTANT(ERR_PARSER_ERROR);
+}
+
+String BlipKitAssembler::_to_string() const {
+	return vformat("<BlipKitAssembler:#%d>", int64_t(this));
 }

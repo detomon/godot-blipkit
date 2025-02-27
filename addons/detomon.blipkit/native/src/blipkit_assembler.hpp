@@ -83,9 +83,6 @@ private:
 	State state = STATE_ASSEMBLE;
 
 protected:
-	static void _bind_methods();
-	String _to_string() const;
-
 	void init_byte_code();
 	int get_or_add_label(const String p_label);
 
@@ -99,6 +96,10 @@ public:
 	String get_error_message() const;
 
 	void clear();
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
 };
 
 } // namespace BlipKit

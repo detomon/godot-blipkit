@@ -10,18 +10,6 @@ using namespace godot;
 
 RecursiveSpinLock AudioStreamBlipKit::spin_lock;
 
-void AudioStreamBlipKit::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
-	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
-	ClassDB::bind_method(D_METHOD("call_synced", "callback"), &AudioStreamBlipKit::call_synced);
-
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", PROPERTY_HINT_RANGE, vformat("%d,%d,1", MIN_CLOCK_RATE, MAX_CLOCK_RATE)), "set_clock_rate", "get_clock_rate");
-}
-
-String AudioStreamBlipKit::_to_string() const {
-	return vformat("AudioStreamBlipKit: clock_rate=%d", clock_rate);
-}
-
 Ref<AudioStreamBlipKitPlayback> AudioStreamBlipKit::get_playback() {
 	if (playback.is_valid()) {
 		return playback;
@@ -115,7 +103,7 @@ void AudioStreamBlipKitPlayback::_bind_methods() {
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
-	return "AudioStreamBlipKitPlayback";
+	return vformat("<AudioStreamBlipKitPlayback:#%d>", int64_t(this));
 }
 
 bool AudioStreamBlipKitPlayback::initialize(int p_clock_rate) {
@@ -237,4 +225,16 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 	}
 
 	return out_count;
+}
+
+void AudioStreamBlipKit::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
+	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
+	ClassDB::bind_method(D_METHOD("call_synced", "callback"), &AudioStreamBlipKit::call_synced);
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", PROPERTY_HINT_RANGE, vformat("%d,%d,1", MIN_CLOCK_RATE, MAX_CLOCK_RATE)), "set_clock_rate", "get_clock_rate");
+}
+
+String AudioStreamBlipKit::_to_string() const {
+	return vformat("<AudioStreamBlipKit:#%d>", int64_t(this));
 }

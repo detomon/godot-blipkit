@@ -140,12 +140,8 @@ private:
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
 	PackedFloat32Array arpeggio;
-	AudioStreamBlipKitPlayback *playback = nullptr;
 	DividerGroup dividers;
-
-protected:
-	static void _bind_methods();
-	String _to_string() const;
+	AudioStreamBlipKitPlayback *playback = nullptr;
 
 public:
 	BlipKitTrack();
@@ -210,6 +206,10 @@ public:
 	void remove_divider(const String &p_name);
 	void reset_divider(const String &p_name, int p_tick_interval = 0);
 	void clear_dividers();
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
 };
 
 } // namespace BlipKit

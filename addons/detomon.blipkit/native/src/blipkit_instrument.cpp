@@ -172,11 +172,7 @@ void BlipKitInstrument::_bind_methods() {
 }
 
 String BlipKitInstrument::_to_string() const {
-	return vformat("BlipKitInstrument: volume=%s, panning=%s, pitch=%s, duty_cycle=%s",
-			get("envelope/volume"),
-			get("envelope/panning"),
-			get("envelope/pitch"),
-			get("envelope/duty_cycle"));
+	return vformat("<BlipKitInstrument:#%d>", int64_t(this));
 }
 
 void BlipKitInstrument::_get_property_list(List<PropertyInfo> *p_list) const {

@@ -29,10 +29,6 @@ private:
 	Ref<AudioStreamBlipKitPlayback> playback;
 	static RecursiveSpinLock spin_lock;
 
-protected:
-	static void _bind_methods();
-	String _to_string() const;
-
 public:
 	Ref<AudioStreamPlayback> _instantiate_playback() const override;
 	String _get_stream_name() const override;
@@ -53,6 +49,10 @@ public:
 	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
 	_FORCE_INLINE_ static void unlock() { spin_lock.unlock(); }
 	_FORCE_INLINE_ static RecursiveSpinLock::Autolock autolock() { return spin_lock.autolock(); }
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
 };
 
 class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
@@ -73,9 +73,6 @@ private:
 	bool is_calling_callbacks = false;
 
 protected:
-	static void _bind_methods();
-	String _to_string() const;
-
 	bool initialize(int p_clock_rate);
 	int get_clock_rate() const;
 	void set_clock_rate(int p_clock_rate);
@@ -95,6 +92,10 @@ public:
 	void _stop() override;
 	bool _is_playing() const override;
 	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
 };
 
 } // namespace BlipKit

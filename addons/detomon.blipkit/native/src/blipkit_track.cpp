@@ -38,10 +38,6 @@ Ref<BlipKitTrack> BlipKitTrack::create_with_waveform(BlipKitTrack::Waveform p_wa
 	return instance;
 }
 
-String BlipKitTrack::_to_string() const {
-	return vformat("BlipKitTrack: waveform=%d", int(get_waveform()));
-}
-
 float BlipKitTrack::get_master_volume() const {
 	BKInt value = 0;
 
@@ -765,4 +761,8 @@ void BlipKitTrack::_bind_methods() {
 	BIND_ENUM_CONSTANT(NOTE_MUTE);
 
 	BIND_CONSTANT(ARPEGGIO_MAX);
+}
+
+String BlipKitTrack::_to_string() const {
+	return vformat("<BlipKitTrack:#%d>", int64_t(this));
 }

@@ -46,9 +46,6 @@ private:
 	String error_message;
 
 protected:
-	static void _bind_methods();
-	String _to_string() const;
-
 	bool check_header();
 	int fail_with_error(Status p_status, const String &error_message);
 
@@ -78,6 +75,10 @@ public:
 	String get_error_message() const;
 
 	void reset();
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
 };
 
 } // namespace BlipKit

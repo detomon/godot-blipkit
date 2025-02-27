@@ -34,13 +34,6 @@ private:
 	BKInstrument instrument;
 	Sequence sequences[ENVELOPE_MAX];
 
-protected:
-	static void _bind_methods();
-	String _to_string() const;
-	void _get_property_list(List<PropertyInfo> *p_list) const;
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_ret) const;
-
 public:
 	BlipKitInstrument();
 	~BlipKitInstrument();
@@ -57,6 +50,13 @@ public:
 	int get_envelope_sustain_offset(EnvelopeType p_type) const;
 	int get_envelope_sustain_length(EnvelopeType p_type) const;
 	void clear_envelope(EnvelopeType p_type);
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
+	void _get_property_list(List<PropertyInfo> *p_list) const;
+	bool _set(const StringName &p_name, const Variant &p_value);
+	bool _get(const StringName &p_name, Variant &r_ret) const;
 };
 
 } // namespace BlipKit
