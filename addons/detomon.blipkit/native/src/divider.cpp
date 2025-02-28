@@ -44,8 +44,7 @@ PackedStringArray DividerGroup::get_divider_names() const {
 	uint32_t i = 0;
 
 	for (const KeyValue<String, Divider> &E : dividers) {
-		names[i] = E.key;
-		i++;
+		names[i++] = E.key;
 	}
 
 	return names;

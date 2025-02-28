@@ -1,6 +1,6 @@
 #include "blipkit_bytecode.hpp"
-#include "blipkit_interpreter.hpp"
 #include "blipkit_instrument.hpp"
+#include "blipkit_interpreter.hpp"
 #include "blipkit_waveform.hpp"
 #include "godot_cpp/core/error_macros.hpp"
 #include "godot_cpp/templates/pair.hpp"
@@ -10,25 +10,29 @@
 using namespace BlipKit;
 using namespace godot;
 
-const BlipKitInterpreter::Header BlipKitBytecode::binary_header = {
-	.version = VERSION,
-};
+const BlipKitBytecode::Header BlipKitBytecode::binary_header;
 
-void BlipKitBytecode::initialize(const PackedByteArray &p_byte_code) {
-	byte_code.set_byte_array(p_byte_code);
+void BlipKitBytecode::initialize(const ByteStream &p_bytes) {
+	byte_code = p_bytes;
 
+	valid = read_header();
+
+	if (valid) {
+		valid = read_footer();
+	}
+}
+
+bool BlipKitBytecode::read_header() {
 	const uint32_t headers_size = byte_code.get_bytes(reinterpret_cast<uint8_t *>(&header), sizeof(header));
 
 	if (headers_size != sizeof(header)) {
 		// fail_with_error(ERR_INVALID_OPCODE, "Truncated binary header.");
-		valid = false;
-		return;
+		return false;
 	}
 
 	if (memcmp(header.name, binary_header.name, sizeof(binary_header.name)) != 0) {
 		// fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");
-		valid = false;
-		return;
+		return false;
 	}
 
 	// Check version.
@@ -38,29 +42,26 @@ void BlipKitBytecode::initialize(const PackedByteArray &p_byte_code) {
 		} break;
 		default: {
 			// fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
-			valid = false;
-			return;
+			return false;
 		} break;
 	}
 
-	read_labels();
-
-	// return true;
+	return true;
 }
 
-void BlipKitBytecode::read_labels() {
+bool BlipKitBytecode::read_footer() {
 	const uint32_t max_size = byte_code.size();
-	uint32_t position = byte_code.get_position();
+	const uint32_t position = byte_code.get_position();
 
 	byte_code.seek(header.footer_offset);
 
-	uint32_t label_count = MIN(byte_code.get_u32(), max_size);
+	const uint32_t label_count = MIN(byte_code.get_u32(), max_size);
 	labels.reserve(label_count);
 	PackedByteArray label_bytes;
 
 	for (uint32_t i = 0; i < label_count; i++) {
-		uint32_t label_address = byte_code.get_u32();
-		uint32_t label_size = byte_code.get_u8();
+		const uint32_t label_address = byte_code.get_u32();
+		const uint32_t label_size = byte_code.get_u8();
 
 		if (label_size > label_bytes.size()) {
 			label_bytes.resize(label_size);
@@ -68,20 +69,22 @@ void BlipKitBytecode::read_labels() {
 
 		const uint32_t read_size = byte_code.get_bytes(label_bytes.ptrw(), label_size);
 
-		ERR_FAIL_COND(read_size < label_size);
+		ERR_FAIL_COND_V(read_size < label_size, false);
 
 		const String label = label_bytes.get_string_from_utf8();
 		labels[label] = label_address;
 	}
 
 	byte_code.seek(position);
+
+	return true;
 }
 
-Ref<BlipKitBytecode> BlipKitBytecode::create_with_byte_code(const PackedByteArray &p_byte_code) {
+Ref<BlipKitBytecode> BlipKitBytecode::create_with_byte_stream(const ByteStream &p_bytes) {
 	Ref<BlipKitBytecode> instance;
 
 	instance.instantiate();
-	instance->initialize(p_byte_code);
+	instance->initialize(p_bytes);
 
 	return instance;
 }
@@ -90,8 +93,23 @@ bool BlipKitBytecode::is_valid() const {
 	return valid;
 }
 
+void BlipKitBytecode::set_bytes(const Vector<uint8_t> &p_bytes) {
+	byte_code.set_bytes(p_bytes);
+}
+
+Vector<uint8_t> BlipKitBytecode::get_bytes() const {
+	return byte_code.get_bytes();
+}
+
 PackedByteArray BlipKitBytecode::get_byte_array() const {
-	return byte_code.get_byte_array();
+	const uint32_t bytes_size = byte_code.size();
+	PackedByteArray bytes;
+	bytes.resize(bytes_size);
+	uint8_t *ptrw = bytes.ptrw();
+
+	memcpy(ptrw, byte_code.ptr(), bytes_size);
+
+	return bytes;
 }
 
 PackedStringArray BlipKitBytecode::get_labels() const {

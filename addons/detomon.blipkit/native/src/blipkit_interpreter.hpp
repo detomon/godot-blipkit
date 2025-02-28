@@ -1,5 +1,6 @@
 #pragma once
 
+#include "blipkit_bytecode.hpp"
 #include "byte_stream.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
@@ -47,19 +48,9 @@ private:
 	uint32_t version = 0;
 
 protected:
-	bool check_header();
 	int fail_with_error(Status p_status, const String &error_message);
 
 public:
-	struct Header {
-		char name[4] = { 'B', 'L', 'I', 'P' };
-		uint8_t version = 0;
-		uint8_t flags[3] = { 0 };
-		uint32_t footer_offset = 0;
-	};
-
-	static const Header binary_header;
-
 	BlipKitInterpreter();
 	~BlipKitInterpreter() = default;
 
@@ -70,7 +61,7 @@ public:
 	void set_register(int p_number, int p_value);
 	int get_register(int p_number) const;
 
-	Status load_byte_code(const PackedByteArray &p_byte);
+	bool load_byte_code(const Ref<BlipKitBytecode> &p_byte_code);
 
 	int advance(const Ref<BlipKitTrack> &p_track);
 	Status get_status() const;

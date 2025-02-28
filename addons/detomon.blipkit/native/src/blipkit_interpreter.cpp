@@ -1,8 +1,10 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_assembler.hpp"
+#include "blipkit_bytecode.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include "godot_cpp/core/error_macros.hpp"
 #include <BlipKit.h>
 
 using namespace BlipKit;
@@ -10,49 +12,10 @@ using namespace godot;
 
 typedef BlipKitAssembler::Opcode Opcode;
 
-const BlipKitInterpreter::Header BlipKitInterpreter::binary_header = {
-	.version = BlipKitInterpreter::VERSION,
-};
-
 BlipKitInterpreter::BlipKitInterpreter() {
 	stack.reserve(STACK_SIZE_MAX);
 	instruments.resize(SLOT_COUNT);
 	waveforms.resize(SLOT_COUNT);
-}
-
-bool BlipKitInterpreter::check_header() {
-	// Allow empty header.
-	if (byte_code.size() == 0) {
-		return true;
-	}
-
-	Header header_check;
-	void *header_ptr = &header_check;
-	const uint32_t headers_size = byte_code.get_bytes(reinterpret_cast<uint8_t *>(header_ptr), sizeof(header_check));
-
-	if (headers_size != sizeof(header_check)) {
-		fail_with_error(ERR_INVALID_OPCODE, "Truncated binary header.");
-		return false;
-	}
-
-	if (memcmp(header_check.name, binary_header.name, sizeof(binary_header.name)) != 0) {
-		fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");
-		return false;
-	}
-
-	// Check version.
-	version = header_check.version;
-	switch (version) {
-		case 1: {
-			// OK.
-		} break;
-		default: {
-			fail_with_error(ERR_UNSUPPORTED_VERSION, vformat("Unsuported binary version %d.", version));
-			return false;
-		} break;
-	}
-
-	return true;
 }
 
 int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_message) {
@@ -96,11 +59,13 @@ int BlipKitInterpreter::get_register(int p_register) const {
 	return registers.aux[p_register];
 }
 
-BlipKitInterpreter::Status BlipKitInterpreter::load_byte_code(const PackedByteArray &p_bytes) {
-	byte_code.set_byte_array(p_bytes);
+bool BlipKitInterpreter::load_byte_code(const Ref<BlipKitBytecode> &p_byte_code) {
+	ERR_FAIL_COND_V(!p_byte_code.is_valid(), false);
+
+	byte_code.set_bytes(p_byte_code->get_bytes());
 	reset();
 
-	return status;
+	return true;
 }
 
 int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
@@ -272,7 +237,7 @@ void BlipKitInterpreter::reset() {
 	status = OK_RUNNING;
 	error_message.resize(0);
 
-	check_header();
+	byte_code.seek(sizeof(BlipKitBytecode::Header));
 }
 
 void BlipKitInterpreter::_bind_methods() {

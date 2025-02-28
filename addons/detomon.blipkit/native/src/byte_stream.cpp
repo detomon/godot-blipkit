@@ -57,9 +57,9 @@ void ByteStream::put_bytes(const uint8_t *p_bytes, uint32_t p_count) {
 		reserve(pointer + p_count);
 	}
 
-	uint8_t *ptr = &bytes.ptrw()[pointer];
+	uint8_t *ptrw = &bytes.ptrw()[pointer];
 
-	memcpy(ptr, p_bytes, p_count);
+	memcpy(ptrw, p_bytes, p_count);
 	pointer += p_count;
 	count = MAX(count, pointer);
 }
@@ -110,14 +110,14 @@ uint32_t ByteStream::get_bytes(uint8_t *r_bytes, uint32_t p_count) {
 	return p_count;
 }
 
-PackedByteArray ByteStream::get_byte_array() const {
-	PackedByteArray ret = bytes;
+Vector<uint8_t> ByteStream::get_bytes() const {
+	Vector<uint8_t> ret = bytes;
 	ret.resize(count);
 
 	return ret;
 }
 
-void ByteStream::set_byte_array(const PackedByteArray &p_bytes) {
+void ByteStream::set_bytes(const Vector<uint8_t> &p_bytes) {
 	bytes = p_bytes;
 	count = bytes.size();
 	pointer = 0;

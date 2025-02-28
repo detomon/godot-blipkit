@@ -1,4 +1,5 @@
 #include "blipkit_assembler.hpp"
+#include "blipkit_bytecode.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
@@ -33,8 +34,8 @@ void BlipKitAssembler::init_byte_code() {
 	byte_code.reserve(INITIAL_SPACE);
 
 	// Add header.
-	const void *header_ptr = &BlipKitInterpreter::binary_header;
-	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitInterpreter::binary_header));
+	const void *header_ptr = &BlipKitBytecode::binary_header;
+	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitBytecode::binary_header));
 }
 
 static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
@@ -255,7 +256,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	const int32_t byte_position = byte_code.get_position();
 
 	// Write size of code segment.
-	byte_code.seek(offsetof(BlipKitInterpreter::Header, footer_offset));
+	byte_code.seek(offsetof(BlipKitBytecode::Header, footer_offset));
 	byte_code.put_u32(byte_position);
 
 	// Restore byte position.
@@ -297,10 +298,14 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	return OK;
 }
 
-PackedByteArray BlipKitAssembler::get_byte_code() const {
-	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, PackedByteArray(), "Byte code is not compiled.");
+Ref<BlipKitBytecode> BlipKitAssembler::get_byte_code() {
+	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, nullptr, "Byte code is not compiled.");
 
-	return byte_code.get_byte_array();
+	if (bytecode.is_null()) {
+		bytecode = BlipKitBytecode::create_with_byte_stream(byte_code);
+	}
+
+	return bytecode;
 }
 
 String BlipKitAssembler::get_error_message() const {
@@ -312,6 +317,7 @@ void BlipKitAssembler::clear() {
 	label_indices.clear();
 	labels.clear();
 	addresses.clear();
+	bytecode.unref();
 	error_message.resize(0);
 	state = STATE_ASSEMBLE;
 }

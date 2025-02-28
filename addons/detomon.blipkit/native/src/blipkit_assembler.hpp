@@ -1,5 +1,6 @@
 #pragma once
 
+#include "blipkit_bytecode.hpp"
 #include "byte_stream.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
@@ -81,6 +82,7 @@ private:
 	HashMap<String, uint32_t> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
+	Ref<BlipKitBytecode> bytecode;
 	String error_message;
 	State state = STATE_ASSEMBLE;
 
@@ -94,7 +96,7 @@ public:
 	Error put_label(const String p_label);
 	Error compile();
 
-	PackedByteArray get_byte_code() const;
+	Ref<BlipKitBytecode> get_byte_code();
 	String get_error_message() const;
 
 	void clear();

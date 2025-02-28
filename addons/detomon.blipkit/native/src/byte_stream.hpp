@@ -1,7 +1,7 @@
 #pragma once
 
 #include <godot_cpp/core/math.hpp>
-#include <godot_cpp/variant/packed_byte_array.hpp>
+#include <godot_cpp/templates/vector.hpp>
 
 using namespace godot;
 
@@ -9,9 +9,9 @@ namespace BlipKit {
 
 class ByteStream {
 private:
+	Vector<uint8_t> bytes;
 	uint32_t count = 0;
 	uint32_t pointer = 0;
-	PackedByteArray bytes;
 
 	template <typename T>
 	_FORCE_INLINE_ T read() {
@@ -53,6 +53,14 @@ private:
 	}
 
 public:
+	ByteStream &operator=(const ByteStream &p_other) {
+		bytes = p_other.bytes;
+		count = p_other.count;
+		pointer = 0;
+
+		return *this;
+	}
+
 	void put_u8(uint8_t p_value);
 	void put_s8(int8_t p_value);
 	void put_u16(uint16_t p_value);
@@ -79,8 +87,8 @@ public:
 	_FORCE_INLINE_ void seek(uint32_t p_offset) { pointer = MIN(p_offset, size()); }
 
 	_FORCE_INLINE_ const uint8_t *ptr() const { return bytes.ptr(); }
-	PackedByteArray get_byte_array() const;
-	void set_byte_array(const PackedByteArray &p_bytes);
+	Vector<uint8_t> get_bytes() const;
+	void set_bytes(const Vector<uint8_t> &p_bytes);
 
 	void reserve(uint32_t p_size);
 	void clear();
