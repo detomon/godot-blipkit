@@ -1,6 +1,5 @@
 #include "byte_stream.hpp"
-#include "math.hpp"
-#include <godot_cpp/core/math.hpp>
+#include "float16.hpp"
 
 using namespace BlipKit;
 using namespace godot;
@@ -125,7 +124,7 @@ void ByteStream::set_byte_array(const PackedByteArray &p_bytes) {
 }
 
 void ByteStream::reserve(uint32_t p_size) {
-	p_size = MAX(64, p_size);
+	p_size = MAX(128, next_power_of_2(p_size));
 
 	if (p_size > bytes.size()) {
 		bytes.resize(p_size);

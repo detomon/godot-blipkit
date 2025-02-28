@@ -3,7 +3,6 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "math.hpp"
 #include <BlipKit.h>
 
 using namespace BlipKit;

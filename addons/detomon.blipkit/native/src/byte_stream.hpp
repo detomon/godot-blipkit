@@ -1,6 +1,6 @@
 #pragma once
 
-#include <godot_cpp/templates/local_vector.hpp>
+#include <godot_cpp/core/math.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 
 using namespace godot;

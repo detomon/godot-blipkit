@@ -3,7 +3,6 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "math.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
