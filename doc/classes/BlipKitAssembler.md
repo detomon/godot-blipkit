@@ -135,11 +135,11 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 - `ERR_INVALID_ARGUMENT` = `3`
 	- An instruction argument is invalid.
 - `ERR_DUPLICATE_LABEL` = `4`
-	- A named label already exists with the same name.
+	- The label already exists with the same name.
 - `ERR_UNDEFINED_LABEL` = `5`
-	- A named label is not defined with the given name.
+	- A label is not defined with the given name.
 - `ERR_INVALID_LABEL` = `6`
-	- A named label has an invalid name.
+	- The label has an invalid name.
 - `ERR_PARSER_ERROR` = `7`
 	- An error occurred when parsing code.
 
@@ -195,8 +195,8 @@ Adds a named label at the current position which can be referenced by [`OP_CALL`
 
 Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label with the same name is already defined.
 
-Returns [`ERR_INVALID_LABEL`](#err_invalid_label) if the label is larger than 255 bytes.
-
 Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already compiled.
+
+**Note:**The name is limited to `255` bytes. If the name is longer when converted to UTF-8, [`ERR_INVALID_LABEL`](#err_invalid_label) is returned.
 
 

@@ -44,7 +44,7 @@ PackedFloat32Array BlipKitWaveform::get_frames() const {
 
 	ret.resize(frames.size());
 	float *ptrw = ret.ptrw();
-	float scale = 1.0 / float(BK_FRAME_MAX);
+	const float scale = 1.0 / float(BK_FRAME_MAX);
 
 	for (int i = 0; i < frames.size(); i++) {
 		ptrw[i] = float(frames[i]) * scale;
@@ -80,7 +80,7 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 	frames.resize(size);
 
 	for (int i = 0; i < size; i++) {
-		float value = CLAMP(ptr[i] * factor, -1.0, +1.0);
+		const float value = CLAMP(ptr[i] * factor, -1.0, +1.0);
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
 

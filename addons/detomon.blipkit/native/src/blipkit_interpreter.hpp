@@ -44,6 +44,7 @@ private:
 	PackedFloat32Array arpeggio;
 	Status status = OK_RUNNING;
 	String error_message;
+	int version = 0;
 
 protected:
 	bool check_header();
