@@ -103,6 +103,7 @@
 			<description>
 				Adds a named label at the current position which can be referenced by [constant OP_CALL] and [constant OP_JUMP] instructions.
 				Returns [constant ERR_DUPLICATE_LABEL] if a label with the same name is already defined.
+				Returns [constant ERR_INVALID_LABEL] if the label is larger than 255 bytes.
 				Returns [constant ERR_INVALID_STATE] if the byte code is already compiled.
 			</description>
 		</method>
@@ -212,7 +213,10 @@
 		<constant name="ERR_UNDEFINED_LABEL" value="5" enum="Error">
 			A named label is not defined with the given name.
 		</constant>
-		<constant name="ERR_PARSER_ERROR" value="6" enum="Error">
+		<constant name="ERR_INVALID_LABEL" value="6" enum="Error">
+			A named label has an invalid name.
+		</constant>
+		<constant name="ERR_PARSER_ERROR" value="7" enum="Error">
 			An error occurred when parsing code.
 		</constant>
 	</constants>

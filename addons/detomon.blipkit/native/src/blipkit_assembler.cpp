@@ -3,6 +3,8 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include "godot_cpp/templates/pair.hpp"
+#include "godot_cpp/variant/char_string.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/stream_peer_buffer.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
@@ -31,7 +33,7 @@ void BlipKitAssembler::init_byte_code() {
 
 	// Add header.
 	const void *header_ptr = &BlipKitInterpreter::binary_header;
-	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitInterpreter::binary_header));
+	byte_code.put_bytes(static_cast<const int8_t *>(header_ptr), sizeof(BlipKitInterpreter::binary_header));
 }
 
 static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
@@ -210,11 +212,19 @@ BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 
 	init_byte_code();
 
+	// a:c#4; t:16; r; e:vb:16:0.5; t:24; r;
+
 	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+
+	const CharString &chars = p_label.utf8();
+	if (chars.size() > 255) {
+		error_message = vformat("Label '%s' is longer than 255 bytes.", p_label);
+		ERR_FAIL_V_MSG(ERR_INVALID_LABEL, error_message);
+	}
 
 	init_byte_code();
 
@@ -336,6 +346,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(ERR_INVALID_ARGUMENT);
 	BIND_ENUM_CONSTANT(ERR_DUPLICATE_LABEL);
 	BIND_ENUM_CONSTANT(ERR_UNDEFINED_LABEL);
+	BIND_ENUM_CONSTANT(ERR_INVALID_LABEL);
 	BIND_ENUM_CONSTANT(ERR_PARSER_ERROR);
 }
 

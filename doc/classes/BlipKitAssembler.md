@@ -138,7 +138,9 @@ The value can be read with `BlipKitInterpreter.get_register()`.
 	- A named label already exists with the same name.
 - `ERR_UNDEFINED_LABEL` = `5`
 	- A named label is not defined with the given name.
-- `ERR_PARSER_ERROR` = `6`
+- `ERR_INVALID_LABEL` = `6`
+	- A named label has an invalid name.
+- `ERR_PARSER_ERROR` = `7`
 	- An error occurred when parsing code.
 
 ## Method Descriptions
@@ -192,6 +194,8 @@ Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already co
 Adds a named label at the current position which can be referenced by [`OP_CALL`](#op_call) and [`OP_JUMP`](#op_jump) instructions.
 
 Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label with the same name is already defined.
+
+Returns [`ERR_INVALID_LABEL`](#err_invalid_label) if the label is larger than 255 bytes.
 
 Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already compiled.
 

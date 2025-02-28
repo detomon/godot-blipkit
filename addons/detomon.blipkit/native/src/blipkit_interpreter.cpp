@@ -11,7 +11,6 @@ using namespace godot;
 typedef BlipKitAssembler::Opcode Opcode;
 
 const BlipKitInterpreter::Header BlipKitInterpreter::binary_header = {
-	.name = { 'B', 'L', 'P' },
 	.version = BlipKitInterpreter::VERSION,
 };
 
@@ -26,7 +25,7 @@ bool BlipKitInterpreter::check_header() {
 	if (byte_code.size() > 0) {
 		Header header_check;
 		void *header_ptr = &header_check;
-		uint32_t headers_size = byte_code.get_bytes(static_cast<uint8_t *>(header_ptr), sizeof(header_check));
+		uint32_t headers_size = byte_code.get_bytes(static_cast<int8_t *>(header_ptr), sizeof(header_check));
 
 		if (headers_size != sizeof(header_check)) {
 			fail_with_error(ERR_INVALID_OPCODE, "Invalid binary header.");

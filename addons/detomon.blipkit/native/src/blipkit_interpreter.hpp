@@ -51,8 +51,9 @@ protected:
 
 public:
 	struct Header {
-		char name[3] = { 0 };
+		char name[4] = { 'B', 'L', 'I', 'P' };
 		uint8_t version = 0;
+		uint8_t flags[3] = { 0 };
 		uint32_t footer_offset = 0;
 	};
 
