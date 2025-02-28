@@ -488,15 +488,16 @@ void BlipKitTrack::set_custom_waveform(const Ref<BlipKitWaveform> &p_waveform) {
 void BlipKitTrack::attach(AudioStreamBlipKit *p_stream) {
 	ERR_FAIL_NULL(p_stream);
 
-	AudioStreamBlipKitPlayback *stream_playback = p_stream->get_playback().ptr();
-	BKContext *context = stream_playback->get_context();
+	Ref<AudioStreamBlipKitPlayback> stream_playback = p_stream->get_playback();
 
-	ERR_FAIL_NULL(stream_playback);
+	ERR_FAIL_COND(stream_playback.is_null());
+
+	BKContext *context = stream_playback->get_context();
 
 	AudioStreamBlipKit::lock();
 
 	BKTrackAttach(&track, context);
-	playback = stream_playback;
+	playback = stream_playback.ptr();
 	playback->attach(this);
 
 	// Custom waveform needs to be set again after attaching.

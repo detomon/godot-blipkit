@@ -175,7 +175,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code.put_s32(value);
 		} break;
 		default: {
-			state = STATE_FAILED; // Fail.
+			state = STATE_FAILED;
 
 			error_message = vformat("Invalid opcode %d.", p_opcode);
 			ERR_FAIL_V_MSG(ERR_INVALID_OPCODE, error_message);

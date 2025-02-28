@@ -5,7 +5,12 @@
 using namespace BlipKit;
 using namespace godot;
 
-struct FInt32 {
+union FInt16 {
+	uint16_t u;
+	float16 f;
+};
+
+union FInt32 {
 	uint32_t u;
 	float f;
 };
@@ -27,7 +32,9 @@ void ByteStream::put_s16(int16_t p_value) {
 }
 
 void ByteStream::put_f16(float p_value) {
-	write(float_to_half(p_value));
+	FInt16 d;
+	d.f = p_value;
+	write(d.u);
 }
 
 void ByteStream::put_u32(uint32_t p_value) {
@@ -75,7 +82,9 @@ int16_t ByteStream::get_s16() {
 }
 
 float ByteStream::get_f16() {
-	return half_to_float(read<uint16_t>());
+	FInt16 d;
+	d.u = read<uint16_t>();
+	return d.f;
 }
 
 uint32_t ByteStream::get_u32() {

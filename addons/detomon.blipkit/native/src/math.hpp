@@ -118,4 +118,26 @@ static _ALWAYS_INLINE_ uint16_t float_to_half(float f) {
 	return hf;
 }
 
+struct float16 {
+	uint16_t uf;
+
+	_ALWAYS_INLINE_ operator uint16_t() const {
+		return uf;
+	}
+
+	_ALWAYS_INLINE_ operator float() const {
+		return half_to_float(uf);
+	}
+
+	_ALWAYS_INLINE_ float16 operator=(uint16_t u) {
+		uf = u;
+		return *this;
+	}
+
+	_ALWAYS_INLINE_ float16 operator=(float f) {
+		uf = float_to_half(f);
+		return *this;
+	}
+};
+
 } //namespace BlipKit
