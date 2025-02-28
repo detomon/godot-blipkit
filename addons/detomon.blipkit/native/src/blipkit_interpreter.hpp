@@ -17,10 +17,10 @@ class BlipKitInterpreter : public RefCounted {
 	GDCLASS(BlipKitInterpreter, RefCounted)
 
 public:
+	static constexpr int VERSION = 1;
 	static constexpr int SLOT_COUNT = 256;
 	static constexpr int STACK_SIZE_MAX = 64;
 	static constexpr int REGISTER_COUNT = 16;
-	static constexpr int VERSION = 1;
 
 	enum Status {
 		OK_RUNNING,
@@ -44,7 +44,7 @@ private:
 	PackedFloat32Array arpeggio;
 	Status status = OK_RUNNING;
 	String error_message;
-	int version = 0;
+	uint32_t version = 0;
 
 protected:
 	bool check_header();

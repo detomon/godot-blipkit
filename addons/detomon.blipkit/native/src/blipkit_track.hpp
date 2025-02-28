@@ -1,6 +1,5 @@
 #pragma once
 
-#include "audio_stream_blipkit.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_waveform.hpp"
 #include "divider.hpp"
@@ -14,6 +13,7 @@ using namespace godot;
 
 namespace BlipKit {
 
+class AudioStreamBlipKit;
 class AudioStreamBlipKitPlayback;
 
 class BlipKitTrack : public RefCounted {

@@ -41,7 +41,7 @@ DividerGroup::~DividerGroup() {
 PackedStringArray DividerGroup::get_divider_names() const {
 	PackedStringArray names;
 	names.resize(dividers.size());
-	int i = 0;
+	uint32_t i = 0;
 
 	for (const KeyValue<String, Divider> &E : dividers) {
 		names[i] = E.key;

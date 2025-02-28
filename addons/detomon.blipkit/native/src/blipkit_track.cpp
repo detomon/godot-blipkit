@@ -395,7 +395,7 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	const float *ptr = p_arpeggio.ptr();
 
 	value[0] = count;
-	for (int i = 0; i < count; i++) {
+	for (uint32_t i = 0; i < count; i++) {
 		value[i + 1] = BKInt(CLAMP(ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
 	}
 

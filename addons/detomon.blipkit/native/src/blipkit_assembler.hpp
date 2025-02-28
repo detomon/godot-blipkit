@@ -5,6 +5,7 @@
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+#include <godot_cpp/variant/string.hpp>
 #include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
@@ -68,16 +69,16 @@ private:
 
 	struct Label {
 		String name;
-		int byte_offset = -1;
+		int32_t byte_offset = -1;
 	};
 
 	struct Address {
-		int label_index = 0;
-		int byte_offset = 0;
+		uint32_t label_index = 0;
+		int32_t byte_offset = 0;
 	};
 
 	ByteStream byte_code;
-	HashMap<String, int> label_indices;
+	HashMap<String, uint32_t> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
 	String error_message;
@@ -85,7 +86,7 @@ private:
 
 protected:
 	void init_byte_code();
-	int get_or_add_label(const String p_label);
+	uint32_t get_or_add_label(const String p_label);
 
 public:
 	Error put(Opcode p_opcode, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);

@@ -66,13 +66,13 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 
 	PackedInt32Array steps_copy;
 	steps_copy.resize(p_steps.size());
-	for (int i = 0; i < p_steps.size(); i++) {
+	for (uint32_t i = 0; i < p_steps.size(); i++) {
 		steps_copy[i] = p_steps[i];
 	}
 
 	PackedFloat32Array values_copy;
 	values_copy.resize(p_values.size());
-	for (int i = 0; i < p_values.size(); i++) {
+	for (uint32_t i = 0; i < p_values.size(); i++) {
 		values_copy[i] = p_values[i];
 	}
 
@@ -83,7 +83,7 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 		thread_local LocalVector<BKSequencePhase> phases;
 		phases.resize(p_values.size());
 
-		for (int i = 0; i < p_values.size(); i++) {
+		for (uint32_t i = 0; i < p_values.size(); i++) {
 			phases[i].steps = BKUInt(has_steps ? p_steps[i] : 0);
 			phases[i].value = BKInt(p_values[i] * multiplier);
 		}
@@ -93,7 +93,7 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 		thread_local LocalVector<BKInt> phases;
 		phases.resize(p_values.size());
 
-		for (int i = 0; i < p_values.size(); i++) {
+		for (uint32_t i = 0; i < p_values.size(); i++) {
 			phases[i] = BKInt(p_values[i] * multiplier);
 		}
 
@@ -209,11 +209,11 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 		int sustain_length = data[3];
 
 		set_envelope(type, steps, values, sustain_offset, sustain_length);
-
-		return true;
+	} else {
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
@@ -244,9 +244,9 @@ bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 		}
 
 		r_ret = data;
-
-		return true;
+	} else {
+		return false;
 	}
 
-	return false;
+	return true;
 }

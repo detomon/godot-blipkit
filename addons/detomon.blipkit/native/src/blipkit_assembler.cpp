@@ -3,6 +3,7 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
+#include "godot_cpp/templates/hash_map.hpp"
 #include "godot_cpp/templates/pair.hpp"
 #include "godot_cpp/variant/char_string.hpp"
 #include <BlipKit.h>
@@ -33,7 +34,7 @@ void BlipKitAssembler::init_byte_code() {
 
 	// Add header.
 	const void *header_ptr = &BlipKitInterpreter::binary_header;
-	byte_code.put_bytes(static_cast<const int8_t *>(header_ptr), sizeof(BlipKitInterpreter::binary_header));
+	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitInterpreter::binary_header));
 }
 
 static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
@@ -125,12 +126,12 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 
 			const PackedFloat32Array &values = p_arg1;
 			const float *values_ptr = values.ptr();
-			const int count = MIN(values.size(), BK_MAX_ARPEGGIO);
+			const uint32_t count = MIN(values.size(), BK_MAX_ARPEGGIO);
 
 			byte_code.put_u8(p_opcode);
 			byte_code.put_u8(count);
-			for (int i = 0; i < count; i++) {
-				float delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+			for (uint32_t i = 0; i < count; i++) {
+				const float delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 				byte_code.put_f16(delta);
 			}
 		} break;
@@ -142,7 +143,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			}
 
 			const String &label = p_arg1;
-			const int label_index = get_or_add_label(label);
+			const uint32_t label_index = get_or_add_label(label);
 
 			byte_code.put_u8(p_opcode);
 
@@ -195,16 +196,18 @@ invalid_argument:
 	ERR_FAIL_V_MSG(ERR_INVALID_ARGUMENT, error_message);
 }
 
-int BlipKitAssembler::get_or_add_label(const String p_label) {
-	if (label_indices.has(p_label)) {
-		return label_indices[p_label];
+uint32_t BlipKitAssembler::get_or_add_label(const String p_label) {
+	const HashMap<String, uint32_t>::Iterator label_itor = label_indices.find(p_label);
+
+	if (label_itor != label_indices.end()) {
+		return label_itor->value;
 	}
 
-	const int index = label_indices.size();
-	label_indices[p_label] = index;
+	const uint32_t label_index = label_indices.size();
 	labels.push_back({ .name = p_label });
+	label_indices[p_label] = label_index;
 
-	return index;
+	return label_index;
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
@@ -220,13 +223,12 @@ BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
-	const CharString &chars = p_label.utf8();
-	if (chars.size() > 255) {
+	if (p_label.utf8().size() > 255) {
 		error_message = vformat("Label '%s' is longer than 255 bytes.", p_label);
 		ERR_FAIL_V_MSG(ERR_INVALID_LABEL, error_message);
 	}
 
-	const int label_index = get_or_add_label(p_label);
+	const uint32_t label_index = get_or_add_label(p_label);
 	Label &label = labels[label_index];
 
 	if (label.byte_offset >= 0) {
@@ -250,7 +252,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	byte_code.put_u8(OP_HALT);
 
 	// Save byte position.
-	const int byte_position = byte_code.get_position();
+	const int32_t byte_position = byte_code.get_position();
 
 	// Write size of code segment.
 	byte_code.seek(offsetof(BlipKitInterpreter::Header, footer_offset));
@@ -261,16 +263,16 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 
 	// Resolve label addresses.
 	for (Address &address : addresses) {
-		const int label_index = address.label_index;
+		const uint32_t label_index = address.label_index;
 		const Label &label = labels[label_index];
-		const int address_offset = address.byte_offset;
+		const int32_t address_offset = address.byte_offset;
 
 		if (label.byte_offset < 0) {
 			error_message = vformat("Label '%s' not defined at address offset %d.", label.name, address_offset);
 			ERR_FAIL_V_MSG(ERR_UNDEFINED_LABEL, error_message);
 		}
 
-		const int jump_offset = label.byte_offset - address_offset; // Jump relative to byte code position.
+		const int32_t jump_offset = label.byte_offset - address_offset; // Jump relative to byte code position.
 		byte_code.seek(address_offset);
 		byte_code.put_s32(jump_offset);
 	}
@@ -278,16 +280,16 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	// Restore byte position.
 	byte_code.seek(byte_position);
 
-	// // Save labels in footer.
-	// byte_code.put_u32(label_indices.size());
-	// for (const KeyValue<String, int> &label_index : label_indices) {
-	// 	const Label &label = labels[label_index.value];
-	// 	const CharString &chars = label.name.utf8();
+	// Save labels in footer.
+	byte_code.put_u32(label_indices.size());
+	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
+		const Label &label = labels[label_index.value];
+		const CharString &chars = label.name.utf8();
 
-	// 	byte_code.put_u32(label.byte_offset);
-	// 	byte_code.put_u8(chars.size());
-	// 	byte_code.put_bytes(reinterpret_cast<const int8_t *>(chars.ptr()), chars.size());
-	// }
+		byte_code.put_u32(label.byte_offset);
+		byte_code.put_u8(chars.size());
+		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars.size());
+	}
 
 	addresses.clear();
 	state = STATE_COMPILED;

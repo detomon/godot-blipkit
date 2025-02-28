@@ -61,7 +61,7 @@ public:
 	void put_u32(uint32_t p_value);
 	void put_s32(int32_t p_value);
 	void put_f32(float p_value);
-	void put_bytes(const int8_t *p_bytes, uint32_t p_count);
+	void put_bytes(const uint8_t *p_bytes, uint32_t p_count);
 
 	uint8_t get_u8();
 	int8_t get_s8();
@@ -71,7 +71,7 @@ public:
 	uint32_t get_u32();
 	int32_t get_s32();
 	float get_f32();
-	uint32_t get_bytes(int8_t *r_bytes, uint32_t p_count);
+	uint32_t get_bytes(uint8_t *r_bytes, uint32_t p_count);
 
 	_FORCE_INLINE_ uint32_t size() const { return count; };
 	_FORCE_INLINE_ uint32_t get_position() const { return pointer; }

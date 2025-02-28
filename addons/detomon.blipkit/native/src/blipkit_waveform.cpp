@@ -46,7 +46,7 @@ PackedFloat32Array BlipKitWaveform::get_frames() const {
 	float *ptrw = ret.ptrw();
 	const float scale = 1.0 / float(BK_FRAME_MAX);
 
-	for (int i = 0; i < frames.size(); i++) {
+	for (uint32_t i = 0; i < frames.size(); i++) {
 		ptrw[i] = float(frames[i]) * scale;
 	}
 
@@ -60,12 +60,12 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
 	const float *ptr = p_frames.ptr();
-	const int size = MIN(p_frames.size(), WAVE_SIZE_MAX);
+	const uint32_t size = MIN(p_frames.size(), WAVE_SIZE_MAX);
 	float factor = 1.0;
 
 	if (p_normalize) {
 		float max_value = 0.0;
-		for (int i = 0; i < size; i++) {
+		for (uint32_t i = 0; i < size; i++) {
 			max_value = MAX(max_value, ABS(ptr[i]));
 		}
 
@@ -79,7 +79,7 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 
 	frames.resize(size);
 
-	for (int i = 0; i < size; i++) {
+	for (uint32_t i = 0; i < size; i++) {
 		const float value = CLAMP(ptr[i] * factor, -1.0, +1.0);
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
@@ -119,10 +119,11 @@ bool BlipKitWaveform::_set(const StringName &p_name, const Variant &p_value) {
 
 	if (name == "frames") {
 		set_frames(p_value);
-		return true;
+	} else {
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool BlipKitWaveform::_get(const StringName &p_name, Variant &r_ret) const {
@@ -130,8 +131,9 @@ bool BlipKitWaveform::_get(const StringName &p_name, Variant &r_ret) const {
 
 	if (name == "frames") {
 		r_ret = get_frames();
-		return true;
+	} else {
+		return false;
 	}
 
-	return false;
+	return true;
 }

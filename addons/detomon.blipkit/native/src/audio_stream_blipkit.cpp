@@ -212,7 +212,7 @@ int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_sca
 		out_count += chunk_size;
 
 		// Fill output buffer.
-		for (int i = 0; i < chunk_size; i++) {
+		for (uint32_t i = 0; i < chunk_size; i++) {
 			float left = float(buffer[i * NUM_CHANNELS + 0]) * frame_scale;
 			float right = float(buffer[i * NUM_CHANNELS + 1]) * frame_scale;
 			*out_buffer++ = { left, right };

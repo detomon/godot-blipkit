@@ -28,7 +28,7 @@ bool BlipKitInterpreter::check_header() {
 
 	Header header_check;
 	void *header_ptr = &header_check;
-	const uint32_t headers_size = byte_code.get_bytes(static_cast<int8_t *>(header_ptr), sizeof(header_check));
+	const uint32_t headers_size = byte_code.get_bytes(reinterpret_cast<uint8_t *>(header_ptr), sizeof(header_check));
 
 	if (headers_size != sizeof(header_check)) {
 		fail_with_error(ERR_INVALID_OPCODE, "Truncated binary header.");
