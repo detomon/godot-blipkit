@@ -2,8 +2,9 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_waveform.hpp"
+#include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/resource_uid.hpp>
 #include <godot_cpp/core/error_macros.hpp>
-#include <godot_cpp/templates/pair.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
 #include <godot_cpp/variant/string.hpp>
 
@@ -216,4 +217,98 @@ bool BlipKitBytecode::_get(const StringName &p_name, Variant &r_ret) const {
 	}
 
 	return true;
+}
+
+PackedStringArray BlipKitBytecodeLoader::_get_recognized_extensions() const {
+	return { "blipc" };
+}
+
+bool BlipKitBytecodeLoader::_handles_type(const StringName &p_type) const {
+	const String &type = p_type;
+
+	return type == "BlipKitBytecode";
+}
+
+String BlipKitBytecodeLoader::_get_resource_type(const String &p_path) const {
+	return "BlipKitBytecode";
+}
+
+Variant BlipKitBytecodeLoader::_load(const String &p_path, const String &p_original_path, bool p_use_sub_threads, int32_t p_cache_mode) const {
+	if (!p_path.ends_with(".blipc")) {
+		return nullptr;
+	}
+
+	Ref<BlipKitBytecode> byte_code;
+	const PackedByteArray byte_array = FileAccess::get_file_as_bytes(p_path);
+
+	const uint32_t bytes_size = byte_array.size();
+	Vector<uint8_t> bytes;
+	bytes.resize(bytes_size);
+	uint8_t *ptrw = bytes.ptrw();
+
+	memcpy(ptrw, byte_array.ptr(), bytes_size);
+
+	byte_code.instantiate();
+	byte_code->set_bytes(bytes);
+
+	return byte_code;
+}
+
+void BlipKitBytecodeLoader::_bind_methods() {
+}
+
+String BlipKitBytecodeLoader::_to_string() const {
+	return vformat("<BlipKitBytecodeLoader:#%d>", int64_t(this));
+}
+
+Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags) {
+	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+
+	ERR_FAIL_NULL_V(byte_code, godot::ERR_INVALID_PARAMETER);
+
+	Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::WRITE);
+
+	if (!file.is_valid()) {
+		return FileAccess::get_open_error();
+	}
+
+	file->store_buffer(byte_code->get_byte_array());
+	file->close();
+
+	return OK;
+}
+
+Error BlipKitBytecodeSaver::_set_uid(const String &p_path, int64_t p_uid) {
+	Ref<FileAccess> file = FileAccess::open(vformat("%s.uid", p_path), FileAccess::WRITE);
+
+	printf("_set_uid: %s\n", vformat("path: %s, p_uid: %d", p_path, p_uid).utf8().ptr());
+
+	if (!file.is_valid()) {
+		return FileAccess::get_open_error();
+	}
+
+	ResourceUID *resid = ResourceUID::get_singleton();
+	const int64_t id = resid->create_id();
+
+	resid->add_id(id, p_path);
+	file->store_line(resid->id_to_text(id));
+
+	return OK;
+}
+
+bool BlipKitBytecodeSaver::_recognize(const Ref<Resource> &p_resource) const {
+	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+
+	return byte_code != nullptr;
+}
+
+PackedStringArray BlipKitBytecodeSaver::_get_recognized_extensions(const Ref<Resource> &p_resource) const {
+	return { "blipc" };
+}
+
+void BlipKitBytecodeSaver::_bind_methods() {
+}
+
+String BlipKitBytecodeSaver::_to_string() const {
+	return vformat("<BlipKitBytecodeSaver:#%d>", int64_t(this));
 }

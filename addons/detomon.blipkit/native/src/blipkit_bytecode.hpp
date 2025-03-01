@@ -2,8 +2,11 @@
 
 #include "byte_stream.hpp"
 #include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/classes/resource_format_loader.hpp>
+#include <godot_cpp/classes/resource_format_saver.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/vector.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
 #include <godot_cpp/variant/string.hpp>
 
@@ -67,6 +70,34 @@ protected:
 	void _get_property_list(List<PropertyInfo> *p_list) const;
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
+};
+
+class BlipKitBytecodeLoader : public ResourceFormatLoader {
+	GDCLASS(BlipKitBytecodeLoader, ResourceFormatLoader)
+
+public:
+	virtual PackedStringArray _get_recognized_extensions() const override;
+	virtual bool _handles_type(const StringName &p_type) const override;
+	virtual String _get_resource_type(const String &p_path) const override;
+	virtual Variant _load(const String &p_path, const String &p_original_path, bool p_use_sub_threads, int32_t p_cache_mode) const override;
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
+};
+
+class BlipKitBytecodeSaver : public ResourceFormatSaver {
+	GDCLASS(BlipKitBytecodeSaver, ResourceFormatSaver)
+
+public:
+	virtual Error _save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags) override;
+	virtual Error _set_uid(const String &p_path, int64_t p_uid) override;
+	virtual bool _recognize(const Ref<Resource> &p_resource) const override;
+	virtual PackedStringArray _get_recognized_extensions(const Ref<Resource> &p_resource) const override;
+
+protected:
+	static void _bind_methods();
+	String _to_string() const;
 };
 
 } // namespace BlipKit

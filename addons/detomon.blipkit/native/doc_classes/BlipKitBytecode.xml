@@ -17,7 +17,7 @@
 		<method name="get_error_message" qualifiers="const">
 			<return type="String" />
 			<description>
-				Returns the error message after loading the byte code.
+				Returns the error message when loading the byte code fails.
 			</description>
 		</method>
 		<method name="get_label_position" qualifiers="const">
@@ -30,18 +30,19 @@
 		<method name="get_labels" qualifiers="const">
 			<return type="PackedStringArray" />
 			<description>
+				Returns all label names in the byte code. The label's byte position can be get with [method get_label_position].
 			</description>
 		</method>
 		<method name="get_start_position" qualifiers="const">
 			<return type="int" />
 			<description>
-				Returns the default byte code start position.
+				Returns the default byte position from which the byte code is executed.
 			</description>
 		</method>
 		<method name="get_status" qualifiers="const">
 			<return type="int" enum="BlipKitBytecode.Status" />
 			<description>
-				Returns the status [enum OK] on success.
+				Returns [enum Status.OK] on success.
 			</description>
 		</method>
 		<method name="has_label" qualifiers="const">

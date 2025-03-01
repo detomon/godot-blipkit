@@ -42,7 +42,7 @@ Returns the byte code.
 
 ### `String get_error_message() const`
 
-Returns the error message after loading the byte code.
+Returns the error message when loading the byte code fails.
 
 ### `int get_label_position(label: String) const`
 
@@ -50,14 +50,15 @@ Returns the byte position for `label`.
 
 ### `PackedStringArray get_labels() const`
 
+Returns all label names in the byte code. The label's byte position can be get with [`get_label_position()`](#int-get_label_positionlabel-string-const).
 
 ### `int get_start_position() const`
 
-Returns the default byte code start position.
+Returns the default byte position from which the byte code is executed.
 
 ### `int get_status() const`
 
-Returns the status [`OK`](#enum-ok) on success.
+Returns [`Status.OK`](#enum-statusok) on success.
 
 ### `bool has_label(label: String) const`
 
