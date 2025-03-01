@@ -4,12 +4,8 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "godot_cpp/templates/hash_map.hpp"
-#include "godot_cpp/templates/pair.hpp"
-#include "godot_cpp/variant/char_string.hpp"
 #include <BlipKit.h>
-#include <godot_cpp/classes/stream_peer_buffer.hpp>
-#include <godot_cpp/variant/packed_float32_array.hpp>
+#include <godot_cpp/variant/char_string.hpp>
 
 using namespace BlipKit;
 using namespace godot;
@@ -283,10 +279,11 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
 		const Label &label = labels[label_index.value];
 		const CharString &chars = label.name.utf8();
+		const uint32_t chars_size = chars.size() - 1; // Remove terminating NUL.
 
 		byte_code.put_u32(label.byte_offset);
-		byte_code.put_u8(chars.size());
-		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars.size());
+		byte_code.put_u8(chars_size);
+		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars_size);
 	}
 
 	addresses.clear();

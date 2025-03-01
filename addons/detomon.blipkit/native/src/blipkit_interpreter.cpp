@@ -4,7 +4,6 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "godot_cpp/core/error_macros.hpp"
 #include <BlipKit.h>
 
 using namespace BlipKit;

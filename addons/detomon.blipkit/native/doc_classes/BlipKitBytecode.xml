@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BlipKitBytecode" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A [Resource] used to save byte code gererated with [BlipKitAssembler].
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_byte_array" qualifiers="const">
+			<return type="PackedByteArray" />
+			<description>
+				Returns the byte code.
+			</description>
+		</method>
+		<method name="get_error_message" qualifiers="const">
+			<return type="String" />
+			<description>
+				Returns the error message after loading the byte code.
+			</description>
+		</method>
+		<method name="get_label_position" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="label" type="String" />
+			<description>
+				Returns the byte position for [param label].
+			</description>
+		</method>
+		<method name="get_labels" qualifiers="const">
+			<return type="PackedStringArray" />
+			<description>
+			</description>
+		</method>
+		<method name="get_start_position" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the default byte code start position.
+			</description>
+		</method>
+		<method name="get_status" qualifiers="const">
+			<return type="int" enum="BlipKitBytecode.Status" />
+			<description>
+				Returns the status [enum OK] on success.
+			</description>
+		</method>
+		<method name="has_label" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="label" type="String" />
+			<description>
+				Returns [code]true[/code] if the [param label] exists.
+			</description>
+		</method>
+		<method name="is_valid" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the byte code is valid.
+				Returns [code]false[/code] if the byte code is not valid. In this case, [method get_status] returns the status and [method get_error_message] returns the error message.
+			</description>
+		</method>
+	</methods>
+	<constants>
+		<constant name="OK" value="0" enum="Status">
+			The byte code is loaded successfully.
+		</constant>
+		<constant name="ERR_INVALID_BINARY" value="1" enum="Status">
+			The byte code is not valid.
+		</constant>
+		<constant name="ERR_UNSUPPORTED_VERSION" value="2" enum="Status">
+			The byte code version is not supported.
+		</constant>
+		<constant name="VERSION" value="1">
+			The current supported byte code version.
+		</constant>
+	</constants>
+</class>

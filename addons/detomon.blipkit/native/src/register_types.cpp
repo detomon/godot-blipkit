@@ -1,17 +1,19 @@
 #include "audio_stream_blipkit.hpp"
 #include "blipkit_assembler.hpp"
 #include "blipkit_bytecode.hpp"
+#include "blipkit_bytecode_saver.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
 #include <gdextension_interface.h>
+#include <godot_cpp/classes/resource_saver.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
 
 using namespace BlipKit;
 using namespace godot;
+
+static Ref<BlipKitBytecodeSaver> bytecode_saver;
 
 static void initialize_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -22,16 +24,23 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(AudioStreamBlipKitPlayback);
 	GDREGISTER_CLASS(BlipKitAssembler);
 	GDREGISTER_CLASS(BlipKitBytecode);
+	GDREGISTER_CLASS(BlipKitBytecodeSaver);
 	GDREGISTER_CLASS(BlipKitInstrument);
 	GDREGISTER_CLASS(BlipKitInterpreter);
 	GDREGISTER_CLASS(BlipKitTrack);
 	GDREGISTER_CLASS(BlipKitWaveform);
+
+	bytecode_saver.instantiate();
+	ResourceSaver::get_singleton()->add_resource_format_saver(bytecode_saver, true);
 }
 
 static void uninitialize_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+
+	ResourceSaver::get_singleton()->remove_resource_format_saver(bytecode_saver);
+	bytecode_saver.unref();
 }
 
 extern "C" {

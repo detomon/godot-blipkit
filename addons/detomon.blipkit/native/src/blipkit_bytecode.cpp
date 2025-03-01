@@ -2,10 +2,10 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_waveform.hpp"
-#include "godot_cpp/core/error_macros.hpp"
-#include "godot_cpp/templates/pair.hpp"
-#include "godot_cpp/variant/packed_string_array.hpp"
-#include "godot_cpp/variant/string.hpp"
+#include <godot_cpp/core/error_macros.hpp>
+#include <godot_cpp/templates/pair.hpp>
+#include <godot_cpp/variant/packed_string_array.hpp>
+#include <godot_cpp/variant/string.hpp>
 
 using namespace BlipKit;
 using namespace godot;
