@@ -30,6 +30,7 @@ func _ready() -> void:
 		return
 
 	var bytes := assem.get_byte_code()
+
 	_interp.load_byte_code(bytes)
 
 	var stream: AudioStreamBlipKit = _player.stream

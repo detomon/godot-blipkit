@@ -18,7 +18,6 @@ class BlipKitInterpreter : public RefCounted {
 	GDCLASS(BlipKitInterpreter, RefCounted)
 
 public:
-	static constexpr int VERSION = 1;
 	static constexpr int SLOT_COUNT = 256;
 	static constexpr int STACK_SIZE_MAX = 64;
 	static constexpr int REGISTER_COUNT = 16;
@@ -26,7 +25,7 @@ public:
 	enum Status {
 		OK_RUNNING,
 		OK_FINISHED,
-		ERR_UNSUPPORTED_VERSION,
+		ERR_INVALID_BINARY,
 		ERR_INVALID_OPCODE,
 		ERR_STACK_OVERFLOW,
 		ERR_STACK_UNDERFLOW,
@@ -38,16 +37,16 @@ private:
 	};
 
 	ByteStream byte_code;
+	String start_label;
 	LocalVector<uint32_t> stack;
 	Registers registers;
 	LocalVector<Ref<BlipKitInstrument>> instruments;
 	LocalVector<Ref<BlipKitWaveform>> waveforms;
 	PackedFloat32Array arpeggio;
+	Ref<BlipKitBytecode> byte_code_res;
 	Status status = OK_RUNNING;
 	String error_message;
-	uint32_t version = 0;
 
-protected:
 	int fail_with_error(Status p_status, const String &error_message);
 
 public:
@@ -61,13 +60,13 @@ public:
 	void set_register(int p_number, int p_value);
 	int get_register(int p_number) const;
 
-	bool load_byte_code(const Ref<BlipKitBytecode> &p_byte_code);
+	bool load_byte_code(const Ref<BlipKitBytecode> &p_byte_code, const String &p_start_label = "");
 
 	int advance(const Ref<BlipKitTrack> &p_track);
 	Status get_status() const;
 	String get_error_message() const;
 
-	void reset();
+	void reset(const String &p_start_label = "");
 
 protected:
 	static void _bind_methods();

@@ -59,11 +59,25 @@ int BlipKitInterpreter::get_register(int p_register) const {
 	return registers.aux[p_register];
 }
 
-bool BlipKitInterpreter::load_byte_code(const Ref<BlipKitBytecode> &p_byte_code) {
-	ERR_FAIL_COND_V(!p_byte_code.is_valid(), false);
+bool BlipKitInterpreter::load_byte_code(const Ref<BlipKitBytecode> &p_byte_code, const String &p_start_label) {
+	ERR_FAIL_COND_V(p_byte_code.is_null(), false);
 
-	byte_code.set_bytes(p_byte_code->get_bytes());
-	reset();
+	if (!p_byte_code->is_valid()) {
+		fail_with_error(ERR_INVALID_BINARY, p_byte_code->get_error_message());
+		return false;
+	}
+
+	if (!p_start_label.is_empty()) {
+		if (!p_byte_code->has_label(p_start_label)) {
+			fail_with_error(ERR_INVALID_BINARY, vformat("Label '%s' does not exist.", p_start_label));
+			return false;
+		}
+	}
+
+	byte_code_res = p_byte_code;
+	byte_code.set_bytes(byte_code_res->get_bytes());
+
+	reset(p_start_label);
 
 	return true;
 }
@@ -229,15 +243,28 @@ String BlipKitInterpreter::get_error_message() const {
 	return error_message;
 }
 
-void BlipKitInterpreter::reset() {
-	byte_code.seek(0);
+void BlipKitInterpreter::reset(const String &p_start_label) {
+	ERR_FAIL_COND(status >= ERR_INVALID_BINARY);
+
+	if (!p_start_label.is_empty()) {
+		if (!byte_code_res->has_label(p_start_label)) {
+			fail_with_error(ERR_INVALID_BINARY, vformat("Label '%s' does not exist.", p_start_label));
+			return;
+		}
+	}
+
+	start_label = p_start_label;
+
+	int start_position = start_label.is_empty()
+			? byte_code_res->get_start_position()
+			: byte_code_res->get_label_position(start_label);
+	byte_code.seek(start_position);
+
 	stack.clear();
 	registers = Registers();
 	arpeggio.clear();
 	status = OK_RUNNING;
 	error_message.resize(0);
-
-	byte_code.seek(sizeof(BlipKitBytecode::Header));
 }
 
 void BlipKitInterpreter::_bind_methods() {
@@ -247,14 +274,15 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
 	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
 	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
-	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code"), &BlipKitInterpreter::load_byte_code);
+	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code", "start_label"), &BlipKitInterpreter::load_byte_code, DEFVAL(""));
 	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
-	ClassDB::bind_method(D_METHOD("reset"), &BlipKitInterpreter::reset);
+	ClassDB::bind_method(D_METHOD("reset", "start_label"), &BlipKitInterpreter::reset, DEFVAL(""));
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
+	BIND_ENUM_CONSTANT(ERR_INVALID_BINARY);
 	BIND_ENUM_CONSTANT(ERR_INVALID_OPCODE);
 	BIND_ENUM_CONSTANT(ERR_STACK_OVERFLOW);
 	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);

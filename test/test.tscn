@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cmkk4inee4owm"]
 
-[ext_resource type="Script" uid="uid://dt5v1c03xagbb" path="res://test/test.gd" id="1_c5qdp"]
+[ext_resource type="Script" uid="uid://cft1c22wtabfp" path="res://test/test2.gd" id="1_8a8pi"]
 [ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://examples/shared/oscilloscope/oscilloscope.tscn" id="5_tbfq4"]
 
 [sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_6ye76"]
@@ -12,7 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_c5qdp")
+script = ExtResource("1_8a8pi")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true

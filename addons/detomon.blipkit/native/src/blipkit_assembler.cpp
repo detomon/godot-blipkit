@@ -223,11 +223,8 @@ BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 
 BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
-
-	if (p_label.utf8().size() > 255) {
-		error_message = vformat("Label '%s' is longer than 255 bytes.", p_label);
-		ERR_FAIL_V_MSG(ERR_INVALID_LABEL, error_message);
-	}
+	ERR_FAIL_COND_V_MSG(p_label.is_empty(), ERR_INVALID_LABEL, "Label cannot be empty.");
+	ERR_FAIL_COND_V_MSG(p_label.utf8().size() > 255, ERR_INVALID_LABEL, vformat("Label '%s' is longer than 255 bytes.", p_label));
 
 	const uint32_t label_index = get_or_add_label(p_label);
 	Label &label = labels[label_index];

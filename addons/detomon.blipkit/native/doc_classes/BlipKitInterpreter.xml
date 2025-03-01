@@ -74,15 +74,18 @@
 			</description>
 		</method>
 		<method name="load_byte_code">
-			<return type="int" enum="BlipKitInterpreter.Status" />
-			<param index="0" name="byte_code" type="PackedByteArray" />
+			<return type="bool" />
+			<param index="0" name="byte_code" type="BlipKitBytecode" />
+			<param index="1" name="start_label" type="String" default="&quot;&quot;" />
 			<description>
 				Sets the byte code to interpret and clears all registers and errors.
-				Returns [constant OK_RUNNING] on success.
+				If [param start_label] is not empty, starts executing byte code from the label's position.
+				Returns [code]false[/code] if the byte code is not valid or the label does not exist. The error message can be get with [method get_error_message].
 			</description>
 		</method>
 		<method name="reset">
 			<return type="void" />
+			<param index="0" name="start_label" type="String" default="&quot;&quot;" />
 			<description>
 				Resets the instruction pointer to the beginning of the byte code, and clears all registers and errors. This does not clear instrument and waveform slots.
 				[b]Note:[/b] This does not reset [BlipKitTrack]. Call [method BlipKitTrack.reset] to reset the corresponding track.
@@ -119,6 +122,9 @@
 		</constant>
 		<constant name="OK_FINISHED" value="1" enum="Status">
 			There are no more instructions to execute.
+		</constant>
+		<constant name="ERR_INVALID_BINARY" value="2" enum="Status">
+			The byte code is not valid.
 		</constant>
 		<constant name="ERR_INVALID_OPCODE" value="3" enum="Status">
 			An invalid opcode was encountered.

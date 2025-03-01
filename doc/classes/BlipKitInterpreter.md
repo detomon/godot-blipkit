@@ -33,8 +33,8 @@ track.add_divider("run", 1, func () -> int:
 - *int* [**`get_register`**](#int-get_registerregister-int-const)(register: int) const
 - *int* [**`get_status`**](#int-get_status-const)() const
 - *BlipKitWaveform* [**`get_waveform`**](#blipkitwaveform-get_waveformslot-int-const)(slot: int) const
-- *int* [**`load_byte_code`**](#int-load_byte_codebyte_code-packedbytearray)(byte_code: PackedByteArray)
-- *void* [**`reset`**](#void-reset)()
+- *bool* [**`load_byte_code`**](#bool-load_byte_codebyte_code-blipkitbytecode-start_label-string--)(byte_code: BlipKitBytecode, start_label: String = "")
+- *void* [**`reset`**](#void-resetstart_label-string--)(start_label: String = "")
 - *void* [**`set_instrument`**](#void-set_instrumentslot-int-instruments-blipkitinstrument)(slot: int, instruments: BlipKitInstrument)
 - *void* [**`set_register`**](#void-set_registerregister-int-value-int)(register: int, value: int)
 - *void* [**`set_waveform`**](#void-set_waveformslot-int-waveforms-blipkitwaveform)(slot: int, waveforms: BlipKitWaveform)
@@ -47,6 +47,8 @@ track.add_divider("run", 1, func () -> int:
 	- More instructions are available to execute.
 - `OK_FINISHED` = `1`
 	- There are no more instructions to execute.
+- `ERR_INVALID_BINARY` = `2`
+	- The byte code is not valid.
 - `ERR_INVALID_OPCODE` = `3`
 	- An invalid opcode was encountered.
 - `ERR_STACK_OVERFLOW` = `4`
@@ -99,13 +101,15 @@ Returns the waveform in `slot`. This is a number between `0` and `255`.
 
 Returns `null` if no waveform is set in `slot`.
 
-### `int load_byte_code(byte_code: PackedByteArray)`
+### `bool load_byte_code(byte_code: BlipKitBytecode, start_label: String = "")`
 
 Sets the byte code to interpret and clears all registers and errors.
 
-Returns [`OK_RUNNING`](#ok_running) on success.
+If `start_label` is not empty, starts executing byte code from the label's position.
 
-### `void reset()`
+Returns `false` if the byte code is not valid or the label does not exist. The error message can be get with [`get_error_message()`](#string-get_error_message-const).
+
+### `void reset(start_label: String = "")`
 
 Resets the instruction pointer to the beginning of the byte code, and clears all registers and errors. This does not clear instrument and waveform slots.
 
