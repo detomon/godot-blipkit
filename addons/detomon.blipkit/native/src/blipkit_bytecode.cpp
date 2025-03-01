@@ -230,6 +230,10 @@ bool BlipKitBytecodeLoader::_handles_type(const StringName &p_type) const {
 }
 
 String BlipKitBytecodeLoader::_get_resource_type(const String &p_path) const {
+	if (!p_path.ends_with(".blipc")) {
+		return "";
+	}
+
 	return "BlipKitBytecode";
 }
 
@@ -288,8 +292,6 @@ Error BlipKitBytecodeSaver::_set_uid(const String &p_path, int64_t p_uid) {
 	}
 
 	Ref<FileAccess> file = FileAccess::open(vformat("%s.uid", p_path), FileAccess::WRITE);
-
-	printf("_set_uid: %s\n", vformat("path: %s, p_uid: %d", p_path, p_uid).utf8().ptr());
 
 	if (!file.is_valid()) {
 		return FileAccess::get_open_error();
