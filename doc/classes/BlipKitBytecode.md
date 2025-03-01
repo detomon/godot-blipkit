@@ -54,11 +54,11 @@ Returns all label names in the byte code. The label's byte position can be get w
 
 ### `int get_start_position() const`
 
-Returns the default byte position from which the byte code is executed.
+Returns the default byte position from which the byte code starts to execute.
 
 ### `int get_status() const`
 
-Returns [`Status.OK`](#enum-statusok) on success.
+Returns [`OK`](#ok) on success.
 
 ### `bool has_label(label: String) const`
 

@@ -36,13 +36,13 @@
 		<method name="get_start_position" qualifiers="const">
 			<return type="int" />
 			<description>
-				Returns the default byte position from which the byte code is executed.
+				Returns the default byte position from which the byte code starts to execute.
 			</description>
 		</method>
 		<method name="get_status" qualifiers="const">
 			<return type="int" enum="BlipKitBytecode.Status" />
 			<description>
-				Returns [enum Status.OK] on success.
+				Returns [constant OK] on success.
 			</description>
 		</method>
 		<method name="has_label" qualifiers="const">

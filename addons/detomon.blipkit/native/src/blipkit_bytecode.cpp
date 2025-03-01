@@ -262,9 +262,13 @@ String BlipKitBytecodeLoader::_to_string() const {
 }
 
 Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags) {
+	if (!p_path.ends_with(".blipc")) {
+		return ERR_FILE_UNRECOGNIZED;
+	}
+
 	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
-	ERR_FAIL_NULL_V(byte_code, godot::ERR_INVALID_PARAMETER);
+	ERR_FAIL_NULL_V(byte_code, ERR_INVALID_PARAMETER);
 
 	Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::WRITE);
 
@@ -279,6 +283,10 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 }
 
 Error BlipKitBytecodeSaver::_set_uid(const String &p_path, int64_t p_uid) {
+	if (!p_path.ends_with(".blipc")) {
+		return ERR_FILE_UNRECOGNIZED;
+	}
+
 	Ref<FileAccess> file = FileAccess::open(vformat("%s.uid", p_path), FileAccess::WRITE);
 
 	printf("_set_uid: %s\n", vformat("path: %s, p_uid: %d", p_path, p_uid).utf8().ptr());
