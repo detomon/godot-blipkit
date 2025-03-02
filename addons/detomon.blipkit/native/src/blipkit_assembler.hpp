@@ -80,10 +80,10 @@ private:
 	};
 
 	ByteStream byte_code;
+	Ref<BlipKitBytecode> compiled_byte_code;
 	HashMap<String, uint32_t> label_indices;
 	LocalVector<Label> labels;
 	LocalVector<Address> addresses;
-	Ref<BlipKitBytecode> bytecode;
 	String error_message;
 	State state = STATE_ASSEMBLE;
 

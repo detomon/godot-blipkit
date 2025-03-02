@@ -321,11 +321,11 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 Ref<BlipKitBytecode> BlipKitAssembler::get_byte_code() {
 	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, nullptr, "Byte code is not compiled.");
 
-	if (bytecode.is_null()) {
-		bytecode = BlipKitBytecode::create_with_byte_stream(byte_code);
+	if (compiled_byte_code.is_null()) {
+		compiled_byte_code = BlipKitBytecode::create_with_byte_stream(byte_code);
 	}
 
-	return bytecode;
+	return compiled_byte_code;
 }
 
 String BlipKitAssembler::get_error_message() const {
@@ -337,7 +337,7 @@ void BlipKitAssembler::clear() {
 	label_indices.clear();
 	labels.clear();
 	addresses.clear();
-	bytecode.unref();
+	compiled_byte_code.unref();
 	error_message.resize(0);
 	state = STATE_ASSEMBLE;
 }
