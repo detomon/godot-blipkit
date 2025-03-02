@@ -19,10 +19,6 @@ int BlipKitBytecode::fail_with_error(Status p_status, const String &p_error_mess
 	status = p_status;
 	error_message = p_error_message;
 
-	// Seek to end.
-	const int size = byte_code.size();
-	byte_code.seek(size);
-
 	ERR_FAIL_V_MSG(-1, error_message);
 }
 
@@ -34,7 +30,7 @@ bool BlipKitBytecode::read_header() {
 		return false;
 	}
 
-	if (memcmp(header.name, binary_header.name, sizeof(binary_header.name)) != 0) {
+	if (memcmp(header.magic, binary_header.magic, sizeof(binary_header.magic)) != 0) {
 		fail_with_error(ERR_INVALID_BINARY, "Invalid binary header.");
 		return false;
 	}
@@ -53,11 +49,11 @@ bool BlipKitBytecode::read_header() {
 	return true;
 }
 
-bool BlipKitBytecode::read_footer() {
+bool BlipKitBytecode::read_meta() {
 	const uint32_t max_size = byte_code.size();
 	const uint32_t position = byte_code.get_position();
 
-	byte_code.seek(header.footer_offset);
+	byte_code.seek(position + header.bytecode_size);
 
 	const uint32_t label_count = MIN(byte_code.get_u32(), max_size);
 	labels.reserve(label_count);
@@ -73,7 +69,10 @@ bool BlipKitBytecode::read_footer() {
 
 		const uint32_t read_size = byte_code.get_bytes(label_bytes.ptrw(), label_size);
 
-		ERR_FAIL_COND_V(read_size < label_size, false);
+		if (read_size < label_size) {
+			fail_with_error(ERR_INVALID_BINARY, "Truncated binary.");
+			return false;
+		}
 
 		const String label = label_bytes.get_string_from_utf8();
 		labels[label] = label_address;
@@ -105,7 +104,7 @@ void BlipKitBytecode::set_bytes(const Vector<uint8_t> &p_bytes) {
 	byte_code.set_bytes(p_bytes);
 
 	if (read_header()) {
-		read_footer();
+		read_meta();
 	}
 }
 
@@ -194,11 +193,12 @@ bool BlipKitBytecode::_set(const StringName &p_name, const Variant &p_value) {
 	if (name == "byte_code") {
 		const PackedByteArray &byte_array = p_value;
 		const uint32_t bytes_size = byte_array.size();
-		Vector<uint8_t> bytes;
-		bytes.resize(bytes_size);
 		const uint8_t *ptr = byte_array.ptr();
+		Vector<uint8_t> bytes;
 
+		bytes.resize(bytes_size);
 		memcpy(bytes.ptrw(), ptr, bytes_size);
+
 		set_bytes(bytes);
 	} else {
 		return false;

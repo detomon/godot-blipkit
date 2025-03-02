@@ -3,7 +3,6 @@
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
-#include <godot_cpp/core/memory.hpp>
 
 using namespace BlipKit;
 using namespace godot;

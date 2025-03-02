@@ -1,7 +1,6 @@
 #pragma once
 
 #include <BlipKit.h>
-#include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>

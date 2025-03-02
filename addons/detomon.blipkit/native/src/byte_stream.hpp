@@ -1,6 +1,5 @@
 #pragma once
 
-#include <godot_cpp/core/math.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
 using namespace godot;

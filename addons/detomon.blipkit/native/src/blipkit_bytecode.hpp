@@ -25,10 +25,10 @@ public:
 	};
 
 	struct Header {
-		char name[4] = { 'B', 'L', 'I', 'P' };
+		char magic[4] = { 'B', 'L', 'I', 'P' };
 		uint8_t version = 0;
 		uint8_t flags[3] = { 0 };
-		uint32_t footer_offset = 0;
+		uint32_t bytecode_size = 0;
 	};
 
 	static constexpr int VERSION = 1;
@@ -43,7 +43,7 @@ private:
 	String error_message;
 
 	bool read_header();
-	bool read_footer();
+	bool read_meta();
 
 	int fail_with_error(Status p_status, const String &p_error_message);
 

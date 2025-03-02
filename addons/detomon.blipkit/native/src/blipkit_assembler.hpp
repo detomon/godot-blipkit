@@ -88,6 +88,7 @@ private:
 
 protected:
 	void init_byte_code();
+	void write_meta();
 	uint32_t get_or_add_label(const String p_label);
 
 public:

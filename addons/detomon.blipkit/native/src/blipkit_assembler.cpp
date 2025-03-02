@@ -45,6 +45,23 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 	return true;
 }
 
+void BlipKitAssembler::write_meta() {
+	// const BlipKitBytecode::Magic meta = { 'L', 'B', 'L', 'S' };
+	// byte_code.put_bytes(meta, sizeof(meta));
+
+	// Save labels in footer.
+	byte_code.put_u32(label_indices.size());
+	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
+		const Label &label = labels[label_index.value];
+		const CharString &chars = label.name.utf8();
+		const uint32_t chars_size = chars.size() - 1; // Remove terminating NUL.
+
+		byte_code.put_u32(label.byte_offset);
+		byte_code.put_u8(chars_size);
+		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars_size);
+	}
+}
+
 BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
 	ERR_FAIL_INDEX_V(p_opcode, OP_MAX, ERR_INVALID_OPCODE);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
@@ -246,11 +263,11 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	byte_code.put_u8(OP_HALT);
 
 	// Save byte position.
-	const int32_t byte_position = byte_code.get_position();
+	const uint32_t byte_position = byte_code.get_position();
 
 	// Write size of code segment.
-	byte_code.seek(offsetof(BlipKitBytecode::Header, footer_offset));
-	byte_code.put_u32(byte_position);
+	byte_code.seek(offsetof(BlipKitBytecode::Header, bytecode_size));
+	byte_code.put_u32(byte_position - sizeof(BlipKitBytecode::Header));
 
 	// Restore byte position.
 	byte_code.seek(byte_position);
@@ -258,8 +275,8 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	// Resolve label addresses.
 	for (Address &address : addresses) {
 		const uint32_t label_index = address.label_index;
-		const Label &label = labels[label_index];
 		const int32_t address_offset = address.byte_offset;
+		const Label &label = labels[label_index];
 
 		if (label.byte_offset < 0) {
 			error_message = vformat("Label '%s' not defined at address offset %d.", label.name, address_offset);
@@ -274,17 +291,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	// Restore byte position.
 	byte_code.seek(byte_position);
 
-	// Save labels in footer.
-	byte_code.put_u32(label_indices.size());
-	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
-		const Label &label = labels[label_index.value];
-		const CharString &chars = label.name.utf8();
-		const uint32_t chars_size = chars.size() - 1; // Remove terminating NUL.
-
-		byte_code.put_u32(label.byte_offset);
-		byte_code.put_u8(chars_size);
-		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars_size);
-	}
+	write_meta();
 
 	addresses.clear();
 	state = STATE_COMPILED;
