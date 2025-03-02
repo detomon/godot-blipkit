@@ -53,7 +53,7 @@ var bytes := assem.get_byte_code()
 - *String* [**`get_error_message`**](#string-get_error_message-const)() const
 - *int* [**`put`**](#int-putopcode-int-arg1-variant--null-arg2-variant--null-arg3-variant--null)(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)
 - *int* [**`put_code`**](#int-put_codecode-string)(code: String)
-- *int* [**`put_label`**](#int-put_labellabel-string)(label: String)
+- *int* [**`put_label`**](#int-put_labellabel-string-public-bool--false)(label: String, public: bool = false)
 
 ## Enumerations
 
@@ -110,13 +110,13 @@ Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitIn
 - `OP_CALL` = `23`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
-**Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
+**Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string-public-bool--false).
 - `OP_RETURN` = `24`
 	- Returns from a function call made with [`OP_CALL`](#op_call). Expects no arguments.
 - `OP_JUMP` = `25`
 	- Jumps to a named label. Expects the label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
-**Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string).
+**Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string-public-bool--false).
 - `OP_RESET` = `26`
 	- Calls `BlipKitTrack.reset()`. Expects no arguments.
 - `OP_STORE` = `27`
@@ -189,9 +189,11 @@ Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already co
 
 **Note:** This method is not implemented yet.
 
-### `int put_label(label: String)`
+### `int put_label(label: String, public: bool = false)`
 
 Adds a named label at the current position which can be referenced by [`OP_CALL`](#op_call) and [`OP_JUMP`](#op_jump) instructions.
+
+If `public` is `true`, the label can be referenced when loading byte code with `BlipKitInterpreter.load_byte_code()`.
 
 Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label with the same name is already defined.
 

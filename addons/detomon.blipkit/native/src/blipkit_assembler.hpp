@@ -71,6 +71,7 @@ private:
 	struct Label {
 		String name;
 		int32_t byte_offset = -1;
+		bool is_public = false;
 	};
 
 	struct Address {
@@ -94,7 +95,7 @@ protected:
 public:
 	Error put(Opcode p_opcode, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);
 	Error put_code(const String &p_code);
-	Error put_label(const String p_label);
+	Error put_label(const String p_label, bool p_public = false);
 	Error compile();
 
 	Ref<BlipKitBytecode> get_byte_code();

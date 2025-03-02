@@ -26,12 +26,12 @@ bool BlipKitBytecode::read_header() {
 	const uint32_t headers_size = byte_code.get_bytes(reinterpret_cast<uint8_t *>(&header), sizeof(header));
 
 	if (headers_size != sizeof(header)) {
-		fail_with_error(ERR_INVALID_BINARY, "Truncated binary header.");
+		fail_with_error(ERR_INVALID_BINARY, "Truncated header.");
 		return false;
 	}
 
 	if (memcmp(header.magic, binary_header.magic, sizeof(binary_header.magic)) != 0) {
-		fail_with_error(ERR_INVALID_BINARY, "Invalid binary header.");
+		fail_with_error(ERR_INVALID_BINARY, "Invalid header.");
 		return false;
 	}
 
@@ -70,7 +70,7 @@ bool BlipKitBytecode::read_meta() {
 		const uint32_t read_size = byte_code.get_bytes(label_bytes.ptrw(), label_size);
 
 		if (read_size < label_size) {
-			fail_with_error(ERR_INVALID_BINARY, "Truncated binary.");
+			fail_with_error(ERR_INVALID_BINARY, "Truncated label.");
 			return false;
 		}
 

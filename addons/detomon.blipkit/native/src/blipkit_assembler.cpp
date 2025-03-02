@@ -11,14 +11,15 @@ using namespace BlipKit;
 using namespace godot;
 
 static constexpr int INITIAL_SPACE = 256;
-static constexpr int ARGS_COUNT_MAX = 3;
 
 struct Args {
-	const Variant args[ARGS_COUNT_MAX];
+	static constexpr int COUNT_MAX = 3;
+
+	const Variant args[COUNT_MAX];
 };
 
 struct Types {
-	Variant::Type types[ARGS_COUNT_MAX];
+	Variant::Type types[Args::COUNT_MAX];
 };
 
 void BlipKitAssembler::init_byte_code() {
@@ -35,7 +36,7 @@ void BlipKitAssembler::init_byte_code() {
 }
 
 static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
-	for (uint32_t i = 0; i < ARGS_COUNT_MAX; i++) {
+	for (uint32_t i = 0; i < Args::COUNT_MAX; i++) {
 		if (p_args.args[i].get_type() != p_types.types[i]) {
 			failed_arg_index = i;
 			return false;
@@ -46,20 +47,36 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 }
 
 void BlipKitAssembler::write_meta() {
-	// const BlipKitBytecode::Magic meta = { 'L', 'B', 'L', 'S' };
-	// byte_code.put_bytes(meta, sizeof(meta));
+	uint32_t label_count = 0;
+	const uint32_t start_position = byte_code.get_position();
 
-	// Save labels in footer.
-	byte_code.put_u32(label_indices.size());
+	// Prepare label count.
+	byte_code.put_u32(0);
+
 	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
 		const Label &label = labels[label_index.value];
+
+		if (!label.is_public) {
+			continue;
+		}
+
 		const CharString &chars = label.name.utf8();
 		const uint32_t chars_size = chars.size() - 1; // Remove terminating NUL.
 
 		byte_code.put_u32(label.byte_offset);
 		byte_code.put_u8(chars_size);
 		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars_size);
+
+		label_count++;
 	}
+
+	const uint32_t end_position = byte_code.get_position();
+
+	// Set label count.
+	byte_code.seek(start_position);
+	byte_code.put_u32(label_count);
+
+	byte_code.seek(end_position);
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
@@ -234,7 +251,7 @@ BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
+BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label, bool p_public) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 	ERR_FAIL_COND_V_MSG(p_label.is_empty(), ERR_INVALID_LABEL, "Label cannot be empty.");
 	ERR_FAIL_COND_V_MSG(p_label.utf8().size() > 255, ERR_INVALID_LABEL, vformat("Label '%s' is longer than 255 bytes.", p_label));
@@ -246,6 +263,8 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label) {
 		error_message = vformat("Label '%s' is already defined.", p_label);
 		ERR_FAIL_V_MSG(ERR_DUPLICATE_LABEL, error_message);
 	}
+
+	label.is_public = p_public;
 
 	init_byte_code();
 
@@ -326,7 +345,7 @@ void BlipKitAssembler::clear() {
 void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("put", "opcode", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
 	ClassDB::bind_method(D_METHOD("put_code", "code"), &BlipKitAssembler::put_code);
-	ClassDB::bind_method(D_METHOD("put_label", "label"), &BlipKitAssembler::put_label);
+	ClassDB::bind_method(D_METHOD("put_label", "label", "public"), &BlipKitAssembler::put_label, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("compile"), &BlipKitAssembler::compile);
 	ClassDB::bind_method(D_METHOD("get_byte_code"), &BlipKitAssembler::get_byte_code);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitAssembler::get_error_message);

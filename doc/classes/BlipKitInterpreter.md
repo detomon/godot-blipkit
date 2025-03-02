@@ -105,7 +105,7 @@ Returns `null` if no waveform is set in `slot`.
 
 Sets the byte code to interpret and clears all registers and errors.
 
-If `start_label` is not empty, starts executing byte code from the label's position.
+If `start_label` is not empty, starts executing byte code from the label's position. The label must be set public when adding it with `BlipKitAssembler.put_label()`.
 
 Returns `false` if the byte code is not valid or the label does not exist. The error message can be get with [`get_error_message()`](#string-get_error_message-const).
 
