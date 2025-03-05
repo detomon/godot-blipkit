@@ -181,7 +181,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			const int byte_offset = byte_code.get_position();
 			addresses.push_back({ .label_index = label_index, .byte_offset = byte_offset });
 
-			byte_code.put_u32(0);
+			byte_code.put_s32(0);
 		} break;
 		case OP_RELEASE:
 		case OP_MUTE:

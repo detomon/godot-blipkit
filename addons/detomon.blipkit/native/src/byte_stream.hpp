@@ -21,8 +21,8 @@ private:
 			return T(0);
 		}
 
-		const uint8_t *ptr = &bytes.ptr()[pointer];
 		T value = 0;
+		const uint8_t *ptr = &bytes.ptr()[pointer];
 		pointer += byte_count;
 
 		for (uint32_t i = 0; i < byte_count; i++) {
