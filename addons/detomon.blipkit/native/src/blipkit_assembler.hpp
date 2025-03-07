@@ -88,7 +88,7 @@ private:
 	State state = STATE_ASSEMBLE;
 
 protected:
-	void write_meta();
+	void write_sections();
 	void write_labels();
 	uint32_t get_or_add_label(const String p_label);
 

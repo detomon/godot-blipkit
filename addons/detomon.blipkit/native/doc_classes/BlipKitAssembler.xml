@@ -87,6 +87,16 @@
 				Returns [constant ERR_INVALID_STATE] if the byte code is already compiled.
 			</description>
 		</method>
+		<method name="put_byte_code">
+			<return type="int" enum="BlipKitAssembler.Error" />
+			<param index="0" name="byte_code" type="BlipKitBytecode" />
+			<description>
+				Adds compiled [BlipKitBytecode] and returns [constant OK] on success. Public labels are added to the existing labels.
+				Returns [constant ERR_DUPLICATE_LABEL] if a label in [param byte_code] already exists.
+				Returns [constant ERR_INVALID_ARGUMENT] if [param byte_code] is not valid.
+				Returns [constant ERR_INVALID_STATE] if the byte code is already compiled.
+			</description>
+		</method>
 		<method name="put_code">
 			<return type="int" enum="BlipKitAssembler.Error" />
 			<param index="0" name="code" type="String" />

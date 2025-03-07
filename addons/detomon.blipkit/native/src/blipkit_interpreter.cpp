@@ -254,9 +254,15 @@ void BlipKitInterpreter::reset(const String &p_start_label) {
 
 	start_label = p_start_label;
 
-	int start_position = start_label.is_empty()
-			? byte_code_res->get_start_position()
-			: byte_code_res->get_label_position(start_label);
+	int start_position = 0;
+
+	if (start_label.is_empty()) {
+		start_position = byte_code_res->get_code_section_offset();
+	} else {
+		int label_index = byte_code_res->find_label(start_label);
+		start_position = byte_code_res->get_label_position(label_index);
+	}
+
 	byte_code.seek(start_position);
 
 	stack.clear();

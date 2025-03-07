@@ -37,7 +37,7 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 	return true;
 }
 
-void BlipKitAssembler::write_meta() {
+void BlipKitAssembler::write_sections() {
 	write_labels();
 }
 
@@ -236,23 +236,24 @@ BlipKitAssembler::Error BlipKitAssembler::put_byte_code(const Ref<BlipKitBytecod
 	ERR_FAIL_COND_V(p_byte_code.is_null(), ERR_INVALID_ARGUMENT);
 	ERR_FAIL_COND_V_MSG(!p_byte_code->is_valid(), ERR_INVALID_ARGUMENT, p_byte_code->get_error_message());
 
-	const PackedStringArray &code_labels = p_byte_code->get_labels();
-	const String *ptr = code_labels.ptr();
-	const uint32_t labels_count = code_labels.size();
-	const uint8_t code_position = byte_code.get_position();
+	const uint32_t code_section_offset = p_byte_code->get_code_section_offset();
+	const uint32_t code_section_size = p_byte_code->get_code_section_size();
+	const uint32_t label_count = p_byte_code->get_label_count();
+	const int code_offset = byte_code.get_position() - code_section_offset;
 
-	for (uint32_t i = 0; i < labels_count; i++) {
-		const String &label = ptr[i];
-		const int label_offset = code_position + p_byte_code->get_label_position(label);
-		const Error error = put_label(ptr[i], label_offset, true);
+	for (uint32_t i = 0; i < label_count; i++) {
+		const String &label_name = p_byte_code->get_label_name(i);
+		const int label_offset = code_offset + p_byte_code->get_label_position(i);
+		const Error error = put_label(label_name, label_offset, true);
 
 		if (error != OK) {
 			return error;
 		}
 	}
 
-	// Append byte code.
-	byte_code.put_bytes(p_byte_code->get_bytes());
+	// Append code section.
+	const Vector<uint8_t> &bytes = p_byte_code->get_bytes();
+	byte_code.put_bytes(bytes, code_section_offset, code_section_size);
 
 	return OK;
 }
@@ -339,7 +340,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 	// Restore byte position.
 	byte_code.seek(byte_position);
 
-	write_meta();
+	write_sections();
 
 	addresses.clear();
 	state = STATE_COMPILED;

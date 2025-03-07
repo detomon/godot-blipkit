@@ -5,6 +5,7 @@
 #include <godot_cpp/classes/resource_format_loader.hpp>
 #include <godot_cpp/classes/resource_format_saver.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
+#include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
@@ -32,6 +33,11 @@ public:
 		uint32_t bytecode_size = 0;
 	};
 
+	struct Label {
+		String name;
+		uint32_t byte_offset = 0;
+	};
+
 	static constexpr int VERSION = 1;
 
 	static const Header binary_header;
@@ -39,7 +45,8 @@ public:
 private:
 	Header header;
 	ByteStream byte_code;
-	HashMap<String, uint32_t> labels;
+	HashMap<String, uint32_t> label_indices;
+	LocalVector<Label> labels;
 	Status status = OK;
 	String error_message;
 
@@ -61,10 +68,13 @@ public:
 	Vector<uint8_t> get_bytes() const;
 	PackedByteArray get_byte_array() const;
 
+	int get_code_section_offset() const;
+	int get_code_section_size() const;
 	bool has_label(const String &p_label) const;
-	PackedStringArray get_labels() const;
-	int get_start_position() const;
-	int get_label_position(const String &p_label) const;
+	int find_label(const String &p_name) const;
+	int get_label_count() const;
+	String get_label_name(int p_label_index) const;
+	int get_label_position(int p_label_index) const;
 
 protected:
 	static void _bind_methods();

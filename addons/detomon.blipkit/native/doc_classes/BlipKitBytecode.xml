@@ -8,10 +8,28 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="find_label" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="label" type="String" />
+			<description>
+			</description>
+		</method>
 		<method name="get_byte_array" qualifiers="const">
 			<return type="PackedByteArray" />
 			<description>
 				Returns the byte code.
+			</description>
+		</method>
+		<method name="get_code_section_offset" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the byte offset of the code section.
+			</description>
+		</method>
+		<method name="get_code_section_size" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the size in bytes the code section.
 			</description>
 		</method>
 		<method name="get_error_message" qualifiers="const">
@@ -20,23 +38,24 @@
 				Returns the error message when loading the byte code fails.
 			</description>
 		</method>
+		<method name="get_label_count" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the number of labels.
+			</description>
+		</method>
+		<method name="get_label_name" qualifiers="const">
+			<return type="String" />
+			<param index="0" name="label_index" type="int" />
+			<description>
+				Returns the label name for the label with index [param label_index].
+			</description>
+		</method>
 		<method name="get_label_position" qualifiers="const">
 			<return type="int" />
-			<param index="0" name="label" type="String" />
+			<param index="0" name="label_index" type="int" />
 			<description>
-				Returns the byte position for [param label].
-			</description>
-		</method>
-		<method name="get_labels" qualifiers="const">
-			<return type="PackedStringArray" />
-			<description>
-				Returns all label names in the byte code. The label's byte position can be get with [method get_label_position].
-			</description>
-		</method>
-		<method name="get_start_position" qualifiers="const">
-			<return type="int" />
-			<description>
-				Returns the default byte position from which the byte code starts to execute.
+				Returns the byte position for the label with index [param label_index].
 			</description>
 		</method>
 		<method name="get_status" qualifiers="const">

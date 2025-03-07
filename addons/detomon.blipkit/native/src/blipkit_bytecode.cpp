@@ -71,7 +71,7 @@ bool BlipKitBytecode::read_sections() {
 				return false;
 			}
 		} else {
-			fail_with_error(ERR_INVALID_BINARY, vformat("Unknown section %x%x%x%x at offset %d.", magic[0], magic[1], magic[2], magic[3], section_position));
+			fail_with_error(ERR_INVALID_BINARY, vformat("Unknown section'%x%x%x%x' at offset %d.", magic[0], magic[1], magic[2], magic[3], section_position));
 		}
 	}
 
@@ -87,6 +87,8 @@ bool BlipKitBytecode::read_labels() {
 
 	labels.clear();
 	labels.reserve(label_count);
+	label_indices.clear();
+	label_indices.reserve(label_count);
 
 	PackedByteArray label_bytes;
 
@@ -105,8 +107,14 @@ bool BlipKitBytecode::read_labels() {
 			return false;
 		}
 
-		const String label = label_bytes.get_string_from_utf8();
-		labels[label] = label_address;
+		const String &label_name = label_bytes.get_string_from_utf8();
+		uint32_t &label_index = label_indices[label_name]; // Find or insert.
+
+		// Insert label.
+		if (label_indices.size() > labels.size()) {
+			label_index = labels.size();
+			labels.push_back({ .name = label_name, .byte_offset = label_address });
+		}
 	}
 
 	return true;
@@ -164,35 +172,42 @@ PackedByteArray BlipKitBytecode::get_byte_array() const {
 	return bytes;
 }
 
-bool BlipKitBytecode::has_label(const String &p_label) const {
-	return labels.has(p_label);
-}
-
-PackedStringArray BlipKitBytecode::get_labels() const {
-	const uint32_t label_count = labels.size();
-	PackedStringArray label_names;
-
-	label_names.resize(label_count);
-	String *ptrw = label_names.ptrw();
-
-	uint32_t i = 0;
-	for (const KeyValue<String, uint32_t> &label : labels) {
-		ptrw[i++] = label.key;
-	}
-
-	return label_names;
-}
-
-int BlipKitBytecode::get_start_position() const {
+int BlipKitBytecode::get_code_section_offset() const {
 	return sizeof(Header);
 }
 
-int BlipKitBytecode::get_label_position(const String &p_label) const {
-	const HashMap<String, uint32_t>::ConstIterator label_itor = labels.find(p_label);
+int BlipKitBytecode::get_code_section_size() const {
+	return header.bytecode_size;
+}
 
-	ERR_FAIL_COND_V_MSG(label_itor == labels.end(), get_start_position(), vformat("Label '%s' not found.", p_label));
+bool BlipKitBytecode::has_label(const String &p_label) const {
+	return label_indices.has(p_label);
+}
+
+int BlipKitBytecode::find_label(const String &p_name) const {
+	const HashMap<String, uint32_t>::ConstIterator label_itor = label_indices.find(p_name);
+
+	if (label_itor == label_indices.end()) {
+		return -1;
+	}
 
 	return label_itor->value;
+}
+
+int BlipKitBytecode::get_label_count() const {
+	return label_indices.size();
+}
+
+String BlipKitBytecode::get_label_name(int p_label_index) const {
+	ERR_FAIL_INDEX_V(p_label_index, labels.size(), "");
+
+	return labels[p_label_index].name;
+}
+
+int BlipKitBytecode::get_label_position(int p_label_index) const {
+	ERR_FAIL_INDEX_V(p_label_index, labels.size(), 0);
+
+	return labels[p_label_index].byte_offset;
 }
 
 void BlipKitBytecode::_bind_methods() {
@@ -200,10 +215,13 @@ void BlipKitBytecode::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitBytecode::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitBytecode::get_error_message);
 	ClassDB::bind_method(D_METHOD("get_byte_array"), &BlipKitBytecode::get_byte_array);
+	ClassDB::bind_method(D_METHOD("get_code_section_offset"), &BlipKitBytecode::get_code_section_offset);
+	ClassDB::bind_method(D_METHOD("get_code_section_size"), &BlipKitBytecode::get_code_section_size);
 	ClassDB::bind_method(D_METHOD("has_label", "label"), &BlipKitBytecode::has_label);
-	ClassDB::bind_method(D_METHOD("get_labels"), &BlipKitBytecode::get_labels);
-	ClassDB::bind_method(D_METHOD("get_start_position"), &BlipKitBytecode::get_start_position);
-	ClassDB::bind_method(D_METHOD("get_label_position", "label"), &BlipKitBytecode::get_label_position);
+	ClassDB::bind_method(D_METHOD("find_label", "label"), &BlipKitBytecode::find_label);
+	ClassDB::bind_method(D_METHOD("get_label_count"), &BlipKitBytecode::get_label_count);
+	ClassDB::bind_method(D_METHOD("get_label_name", "label_index"), &BlipKitBytecode::get_label_name);
+	ClassDB::bind_method(D_METHOD("get_label_position", "label_index"), &BlipKitBytecode::get_label_position);
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_BINARY);

@@ -5,12 +5,12 @@ using namespace BlipKit;
 using namespace godot;
 
 union FInt16 {
-	uint16_t u;
+	uint16_t u = 0;
 	float16 f;
 };
 
 union FInt32 {
-	uint32_t u;
+	uint32_t u = 0;
 	float f;
 };
 

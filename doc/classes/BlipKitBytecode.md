@@ -9,11 +9,14 @@ Inherits: *Resource*
 
 ## Methods
 
+- *int* [**`find_label`**](#int-find_labellabel-string-const)(label: String) const
 - *PackedByteArray* [**`get_byte_array`**](#packedbytearray-get_byte_array-const)() const
+- *int* [**`get_code_section_offset`**](#int-get_code_section_offset-const)() const
+- *int* [**`get_code_section_size`**](#int-get_code_section_size-const)() const
 - *String* [**`get_error_message`**](#string-get_error_message-const)() const
-- *int* [**`get_label_position`**](#int-get_label_positionlabel-string-const)(label: String) const
-- *PackedStringArray* [**`get_labels`**](#packedstringarray-get_labels-const)() const
-- *int* [**`get_start_position`**](#int-get_start_position-const)() const
+- *int* [**`get_label_count`**](#int-get_label_count-const)() const
+- *String* [**`get_label_name`**](#string-get_label_namelabel_index-int-const)(label_index: int) const
+- *int* [**`get_label_position`**](#int-get_label_positionlabel_index-int-const)(label_index: int) const
 - *int* [**`get_status`**](#int-get_status-const)() const
 - *bool* [**`has_label`**](#bool-has_labellabel-string-const)(label: String) const
 - *bool* [**`is_valid`**](#bool-is_valid-const)() const
@@ -36,25 +39,36 @@ Inherits: *Resource*
 
 ## Method Descriptions
 
+### `int find_label(label: String) const`
+
+
 ### `PackedByteArray get_byte_array() const`
 
 Returns the byte code.
+
+### `int get_code_section_offset() const`
+
+Returns the byte offset of the code section.
+
+### `int get_code_section_size() const`
+
+Returns the size in bytes the code section.
 
 ### `String get_error_message() const`
 
 Returns the error message when loading the byte code fails.
 
-### `int get_label_position(label: String) const`
+### `int get_label_count() const`
 
-Returns the byte position for `label`.
+Returns the number of labels.
 
-### `PackedStringArray get_labels() const`
+### `String get_label_name(label_index: int) const`
 
-Returns all label names in the byte code. The label's byte position can be get with [`get_label_position()`](#int-get_label_positionlabel-string-const).
+Returns the label name for the label with index `label_index`.
 
-### `int get_start_position() const`
+### `int get_label_position(label_index: int) const`
 
-Returns the default byte position from which the byte code starts to execute.
+Returns the byte position for the label with index `label_index`.
 
 ### `int get_status() const`
 

@@ -52,6 +52,7 @@ var bytes := assem.get_byte_code()
 - *BlipKitBytecode* [**`get_byte_code`**](#blipkitbytecode-get_byte_code)()
 - *String* [**`get_error_message`**](#string-get_error_message-const)() const
 - *int* [**`put`**](#int-putopcode-int-arg1-variant--null-arg2-variant--null-arg3-variant--null)(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)
+- *int* [**`put_byte_code`**](#int-put_byte_codebyte_code-blipkitbytecode)(byte_code: BlipKitBytecode)
 - *int* [**`put_code`**](#int-put_codecode-string)(code: String)
 - *int* [**`put_label`**](#int-put_labellabel-string-public-bool--false)(label: String, public: bool = false)
 
@@ -179,6 +180,16 @@ Returns [`ERR_INVALID_ARGUMENT`](#err_invalid_argument) if the arguments are inv
 
 Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already compiled.
 
+### `int put_byte_code(byte_code: BlipKitBytecode)`
+
+Adds compiled [`BlipKitBytecode`](BlipKitBytecode.md) and returns [`OK`](#ok) on success. Public labels are added to the existing labels.
+
+Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label in `byte_code` already exists.
+
+Returns [`ERR_INVALID_ARGUMENT`](#err_invalid_argument) if `byte_code` is not valid.
+
+Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already compiled.
+
 ### `int put_code(code: String)`
 
 Parses a string containing instructions.
@@ -193,12 +204,12 @@ Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already co
 
 Adds a named label at the current position which can be referenced by [`OP_CALL`](#op_call) and [`OP_JUMP`](#op_jump) instructions.
 
-If `public` is `true`, the label can be referenced when loading byte code with `BlipKitInterpreter.load_byte_code()`.
+If `public` is `true`, the label can be used as entry point when loading byte code with `BlipKitInterpreter.load_byte_code()`.
 
 Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label with the same name is already defined.
 
 Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already compiled.
 
-**Note:**The name is limited to `255` bytes. If the name is longer when converted to UTF-8, [`ERR_INVALID_LABEL`](#err_invalid_label) is returned.
+**Note:** The name is limited to `255` bytes. If the name is longer when converted to UTF-8, [`ERR_INVALID_LABEL`](#err_invalid_label) is returned.
 
 
