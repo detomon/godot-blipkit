@@ -103,10 +103,10 @@
 			<param index="1" name="public" type="bool" default="false" />
 			<description>
 				Adds a named label at the current position which can be referenced by [constant OP_CALL] and [constant OP_JUMP] instructions.
-				If [param public] is [code]true[/code], the label can be referenced when loading byte code with [method BlipKitInterpreter.load_byte_code].
+				If [param public] is [code]true[/code], the label can be used as entry point when loading byte code with [method BlipKitInterpreter.load_byte_code].
 				Returns [constant ERR_DUPLICATE_LABEL] if a label with the same name is already defined.
 				Returns [constant ERR_INVALID_STATE] if the byte code is already compiled.
-				[b]Note:[/b]The name is limited to [code]255[/code] bytes. If the name is longer when converted to UTF-8, [constant ERR_INVALID_LABEL] is returned.
+				[b]Note:[/b] The name is limited to [code]255[/code] bytes. If the name is longer when converted to UTF-8, [constant ERR_INVALID_LABEL] is returned.
 			</description>
 		</method>
 	</methods>

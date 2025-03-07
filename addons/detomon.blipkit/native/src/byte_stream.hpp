@@ -68,6 +68,7 @@ public:
 	void put_u32(uint32_t p_value);
 	void put_s32(int32_t p_value);
 	void put_f32(float p_value);
+	uint32_t put_bytes(const Vector<uint8_t> &p_bytes, uint32_t p_from = 0, uint32_t p_size = INT_MAX);
 	void put_bytes(const uint8_t *p_bytes, uint32_t p_count);
 
 	uint8_t get_u8();

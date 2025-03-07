@@ -28,6 +28,7 @@ public:
 		char magic[4] = { 'B', 'L', 'I', 'P' };
 		uint8_t version = 0;
 		uint8_t flags[3] = { 0 };
+		char code_magic[4] = { 'c', 'o', 'd', 'e' };
 		uint32_t bytecode_size = 0;
 	};
 
@@ -43,7 +44,8 @@ private:
 	String error_message;
 
 	bool read_header();
-	bool read_meta();
+	bool read_sections();
+	bool read_labels();
 
 	int fail_with_error(Status p_status, const String &p_error_message);
 

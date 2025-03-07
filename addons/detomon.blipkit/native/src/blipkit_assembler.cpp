@@ -22,17 +22,8 @@ struct Types {
 	Variant::Type types[Args::COUNT_MAX];
 };
 
-void BlipKitAssembler::init_byte_code() {
-	if (likely(byte_code.size() > 0)) {
-		return;
-	}
-
-	// Reserve some space.
-	byte_code.reserve(INITIAL_SPACE);
-
-	// Add header.
-	const void *header_ptr = &BlipKitBytecode::binary_header;
-	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitBytecode::binary_header));
+BlipKitAssembler::BlipKitAssembler() {
+	clear();
 }
 
 static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
@@ -47,11 +38,22 @@ static bool check_arg_types(const Args &p_args, const Types &p_types, int &faile
 }
 
 void BlipKitAssembler::write_meta() {
-	uint32_t label_count = 0;
-	const uint32_t start_position = byte_code.get_position();
+	write_labels();
+}
 
+void BlipKitAssembler::write_labels() {
+	if (label_indices.is_empty()) {
+		return;
+	}
+
+	const uint8_t magic[4] = { 'l', 'a', 'b', 'l' };
+	byte_code.put_bytes(magic, 4);
+
+	const uint32_t label_count_pos = byte_code.get_position();
 	// Prepare label count.
 	byte_code.put_u32(0);
+
+	uint32_t label_count = 0;
 
 	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
 		const Label &label = labels[label_index.value];
@@ -73,17 +75,22 @@ void BlipKitAssembler::write_meta() {
 	const uint32_t end_position = byte_code.get_position();
 
 	// Set label count.
-	byte_code.seek(start_position);
+	byte_code.seek(label_count_pos);
 	byte_code.put_u32(label_count);
 
 	byte_code.seek(end_position);
 }
 
+void BlipKitAssembler::fail_with_error(const String &p_error_message) {
+	state = STATE_FAILED;
+	error_message = p_error_message;
+
+	ERR_FAIL_MSG(error_message);
+}
+
 BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
 	ERR_FAIL_INDEX_V(p_opcode, OP_MAX, ERR_INVALID_OPCODE);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
-
-	init_byte_code();
 
 	Types types;
 	const Args args = { p_arg1, p_arg2, p_arg3 };
@@ -208,10 +215,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code.put_s32(value);
 		} break;
 		default: {
-			state = STATE_FAILED;
-
-			error_message = vformat("Invalid opcode %d.", p_opcode);
-			ERR_FAIL_V_MSG(ERR_INVALID_OPCODE, error_message);
+			fail_with_error(vformat("Invalid opcode %d.", p_opcode));
+			return ERR_INVALID_OPCODE;
 		} break;
 	}
 
@@ -221,10 +226,35 @@ invalid_argument:
 
 	const String &type_name = Variant::get_type_name(types.types[failed_arg_index]);
 
-	state = STATE_FAILED; // Fail.
-	error_message = vformat("Expected argument %d to be type %s.", failed_arg_index + 1, type_name);
+	fail_with_error(vformat("Expected argument %d to be type %s.", failed_arg_index + 1, type_name));
 
-	ERR_FAIL_V_MSG(ERR_INVALID_ARGUMENT, error_message);
+	return ERR_INVALID_ARGUMENT;
+}
+
+BlipKitAssembler::Error BlipKitAssembler::put_byte_code(const Ref<BlipKitBytecode> &p_byte_code) {
+	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+	ERR_FAIL_COND_V(p_byte_code.is_null(), ERR_INVALID_ARGUMENT);
+	ERR_FAIL_COND_V_MSG(!p_byte_code->is_valid(), ERR_INVALID_ARGUMENT, p_byte_code->get_error_message());
+
+	const PackedStringArray &code_labels = p_byte_code->get_labels();
+	const String *ptr = code_labels.ptr();
+	const uint32_t labels_count = code_labels.size();
+	const uint8_t code_position = byte_code.get_position();
+
+	for (uint32_t i = 0; i < labels_count; i++) {
+		const String &label = ptr[i];
+		const int label_offset = code_position + p_byte_code->get_label_position(label);
+		const Error error = put_label(ptr[i], label_offset, true);
+
+		if (error != OK) {
+			return error;
+		}
+	}
+
+	// Append byte code.
+	byte_code.put_bytes(p_byte_code->get_bytes());
+
+	return OK;
 }
 
 uint32_t BlipKitAssembler::get_or_add_label(const String p_label) {
@@ -244,14 +274,12 @@ uint32_t BlipKitAssembler::get_or_add_label(const String p_label) {
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
-	init_byte_code();
-
 	// a:c#4; t:16; r; e:vb:16:0.5; t:24; r;
 
 	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label, bool p_public) {
+BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label, int p_label_position, bool p_public) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 	ERR_FAIL_COND_V_MSG(p_label.is_empty(), ERR_INVALID_LABEL, "Label cannot be empty.");
 	ERR_FAIL_COND_V_MSG(p_label.utf8().size() > 255, ERR_INVALID_LABEL, vformat("Label '%s' is longer than 255 bytes.", p_label));
@@ -260,23 +288,24 @@ BlipKitAssembler::Error BlipKitAssembler::put_label(String p_label, bool p_publi
 	Label &label = labels[label_index];
 
 	if (label.byte_offset >= 0) {
-		error_message = vformat("Label '%s' is already defined.", p_label);
-		ERR_FAIL_V_MSG(ERR_DUPLICATE_LABEL, error_message);
+		fail_with_error(vformat("Label '%s' is already defined.", p_label));
+		return ERR_DUPLICATE_LABEL;
 	}
 
 	label.is_public = p_public;
-
-	init_byte_code();
-
-	label.byte_offset = byte_code.get_position();
+	label.byte_offset = p_label_position;
 
 	return OK;
 }
 
+BlipKitAssembler::Error BlipKitAssembler::put_label_bind(const String p_label, bool p_public) {
+	const uint32_t label_position = byte_code.get_position();
+
+	return put_label(p_label, label_position, p_public);
+}
+
 BlipKitAssembler::Error BlipKitAssembler::compile() {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
-
-	init_byte_code();
 
 	// Terminate.
 	byte_code.put_u8(OP_HALT);
@@ -298,8 +327,8 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 		const Label &label = labels[label_index];
 
 		if (label.byte_offset < 0) {
-			error_message = vformat("Label '%s' not defined at address offset %d.", label.name, address_offset);
-			ERR_FAIL_V_MSG(ERR_UNDEFINED_LABEL, error_message);
+			fail_with_error(vformat("Label '%s' not defined at address offset %d.", label.name, address_offset));
+			return ERR_UNDEFINED_LABEL;
 		}
 
 		const int32_t jump_offset = label.byte_offset - address_offset; // Jump relative to byte code position.
@@ -334,18 +363,25 @@ String BlipKitAssembler::get_error_message() const {
 
 void BlipKitAssembler::clear() {
 	byte_code.clear();
+	byte_code.reserve(INITIAL_SPACE);
+
 	label_indices.clear();
 	labels.clear();
 	addresses.clear();
 	compiled_byte_code.unref();
 	error_message.resize(0);
 	state = STATE_ASSEMBLE;
+
+	// Add header.
+	const void *header_ptr = &BlipKitBytecode::binary_header;
+	byte_code.put_bytes(static_cast<const uint8_t *>(header_ptr), sizeof(BlipKitBytecode::binary_header));
 }
 
 void BlipKitAssembler::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("put", "opcode", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
+	ClassDB::bind_method(D_METHOD("put_byte_code", "byte_code"), &BlipKitAssembler::put_byte_code);
 	ClassDB::bind_method(D_METHOD("put_code", "code"), &BlipKitAssembler::put_code);
-	ClassDB::bind_method(D_METHOD("put_label", "label", "public"), &BlipKitAssembler::put_label, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("put_label", "label", "public"), &BlipKitAssembler::put_label_bind, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("compile"), &BlipKitAssembler::compile);
 	ClassDB::bind_method(D_METHOD("get_byte_code"), &BlipKitAssembler::get_byte_code);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitAssembler::get_error_message);

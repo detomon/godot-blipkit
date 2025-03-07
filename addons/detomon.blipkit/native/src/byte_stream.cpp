@@ -50,16 +50,28 @@ void ByteStream::put_f32(float p_value) {
 	write(d.u);
 }
 
+uint32_t ByteStream::put_bytes(const Vector<uint8_t> &p_bytes, uint32_t p_from, uint32_t p_size) {
+	const uint32_t bytes_size = p_bytes.size();
+	p_from = MIN(p_from, bytes_size);
+	p_size = MIN(p_size, bytes_size - p_from);
+
+	const uint8_t *ptr = &p_bytes.ptr()[p_from];
+	put_bytes(ptr, p_size);
+
+	return p_size;
+}
+
 void ByteStream::put_bytes(const uint8_t *p_bytes, uint32_t p_count) {
 	const uint32_t capacity = bytes.size();
+	const uint32_t needed_size = pointer + p_count;
 
-	if (unlikely(pointer + p_count > capacity)) {
-		reserve(pointer + p_count);
+	if (unlikely(needed_size > capacity)) {
+		reserve(needed_size);
 	}
 
 	uint8_t *ptrw = &bytes.ptrw()[pointer];
-
 	memcpy(ptrw, p_bytes, p_count);
+
 	pointer += p_count;
 	count = MAX(count, pointer);
 }

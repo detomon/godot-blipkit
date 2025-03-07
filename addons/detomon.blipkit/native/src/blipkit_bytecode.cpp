@@ -35,6 +35,11 @@ bool BlipKitBytecode::read_header() {
 		return false;
 	}
 
+	if (memcmp(header.code_magic, "code", 4) != 0) {
+		fail_with_error(ERR_INVALID_BINARY, "Invalid code section.");
+		return false;
+	}
+
 	// Check version.
 	switch (header.version) {
 		case 1: {
@@ -49,14 +54,40 @@ bool BlipKitBytecode::read_header() {
 	return true;
 }
 
-bool BlipKitBytecode::read_meta() {
-	const uint32_t max_size = byte_code.size();
+bool BlipKitBytecode::read_sections() {
 	const uint32_t position = byte_code.get_position();
 
 	byte_code.seek(position + header.bytecode_size);
 
+	while (byte_code.get_available_bytes() > 0) {
+		uint8_t magic[4] = { 0 };
+		const uint32_t section_position = byte_code.get_position();
+		const uint32_t read_size = byte_code.get_bytes(magic, 4);
+
+		ERR_FAIL_COND_V_MSG(read_size < 4, false, vformat("Truncated section header at offset %d.", section_position));
+
+		if (memcmp(magic, "labl", 4) == 0) {
+			if (!read_labels()) {
+				return false;
+			}
+		} else {
+			fail_with_error(ERR_INVALID_BINARY, vformat("Unknown section %x%x%x%x at offset %d.", magic[0], magic[1], magic[2], magic[3], section_position));
+		}
+	}
+
+	// Reset to byte code.
+	byte_code.seek(position);
+
+	return true;
+}
+
+bool BlipKitBytecode::read_labels() {
+	const uint32_t max_size = byte_code.size();
 	const uint32_t label_count = MIN(byte_code.get_u32(), max_size);
+
+	labels.clear();
 	labels.reserve(label_count);
+
 	PackedByteArray label_bytes;
 
 	for (uint32_t i = 0; i < label_count; i++) {
@@ -77,8 +108,6 @@ bool BlipKitBytecode::read_meta() {
 		const String label = label_bytes.get_string_from_utf8();
 		labels[label] = label_address;
 	}
-
-	byte_code.seek(position);
 
 	return true;
 }
@@ -103,8 +132,12 @@ bool BlipKitBytecode::is_valid() const {
 void BlipKitBytecode::set_bytes(const Vector<uint8_t> &p_bytes) {
 	byte_code.set_bytes(p_bytes);
 
-	if (read_header()) {
-		read_meta();
+	if (!read_header()) {
+		return;
+	}
+
+	if (!read_sections()) {
+		return;
 	}
 }
 
