@@ -1,0 +1,56 @@
+name: Make Pull Request
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'The run ID to get the artifacts from'
+        default: '0'
+        required: true
+        type: number
+
+env:
+  AUTHOR: 'detomon <simon@monoxid.ch>'
+  BIN_PATH: './addons/detomon.blipkit/native/bin'
+
+jobs:
+  pull-request:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Store the revision
+        id: revision
+        run: |
+          hash=$(git rev-parse HEAD)
+          hash_short=$(git rev-parse --short HEAD)
+          echo "rev_hash=$hash" >> $GITHUB_OUTPUT
+          echo "rev_hash_short=$hash_short" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: godot-blipkit-*
+          path: ./addons/detomon.blipkit/native/bin
+          merge-multiple: true
+          run-id: ${{ inputs.run_id }}
+
+      - name: Submit pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            Update binaries from branch ${{ github.ref }} (${{ steps.revision.outputs.rev_hash_short }})
+          branch: build/bin-${{ steps.revision.outputs.rev_hash_short }}
+          add-paths: '${{ env.BIN_PATH }}'
+          delete-branch: true
+          author: '${{ env.AUTHOR }}'
+          committer: '${{ env.AUTHOR }}'
+          title: 'Update binaries from branch ${{ github.ref }} (${{ steps.revision.outputs.rev_hash_short }})'
+          body: |
+            Update binaries from https://github.com/${{ github.repository }}/commit/${{ steps.revision.outputs.rev_hash }} (`${{ github.ref }}`).
+          labels: 'enhancement'
