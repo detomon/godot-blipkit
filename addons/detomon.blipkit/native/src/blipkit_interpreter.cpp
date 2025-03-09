@@ -13,8 +13,78 @@ typedef BlipKitAssembler::Opcode Opcode;
 
 BlipKitInterpreter::BlipKitInterpreter() {
 	stack.reserve(STACK_SIZE_MAX);
+	arpeggio.resize(MAX_ARPEGGIO);
 	instruments.resize(SLOT_COUNT);
 	waveforms.resize(SLOT_COUNT);
+}
+
+int BlipKitInterpreter::exec_delay_begin(uint32_t p_ticks) {
+	if (delay_register.is_exec) {
+		printf("exec_delay_begin: is_delay\n");
+		return exec_delay_shift();
+	} else {
+		// Keep space for step instruction ticks.
+		if (!p_ticks || delay_register.delay_size >= DelayRegister::MAX_DELAYS - 1) {
+			return 0;
+		}
+
+		if (!delay_register.delay_size) {
+			delay_register.is_delay = true;
+			delay_register.code_offset = byte_code.get_position() - sizeof(uint8_t) * 3;
+			printf("exec_delay_begin: Set code offset: %d\n", delay_register.code_offset);
+		}
+		printf("exec_delay_begin: Push: size=%d, ticks=%d\n", delay_register.delay_size, p_ticks);
+		delay_register.ticks += p_ticks;
+		delay_register.delays[delay_register.delay_size++] = p_ticks;
+
+		return 0;
+	}
+}
+
+int BlipKitInterpreter::exec_delay_step(uint32_t p_ticks) {
+	if (delay_register.is_exec) {
+		printf("exec_delay_step: is_delay: END\n");
+		const uint32_t ticks = exec_delay_shift();
+
+		delay_register.is_exec = false;
+		delay_register.delay_index = 0;
+		delay_register.delay_size = 0;
+
+		return ticks;
+	} else {
+		if (!p_ticks || delay_register.delay_size >= DelayRegister::MAX_DELAYS) {
+			delay_register.delay_index = 0;
+			delay_register.delay_size = 0;
+			return 0;
+		}
+
+		// Limit total delay to step ticks.
+		delay_register.ticks = MIN(delay_register.ticks, p_ticks);
+
+		const uint32_t ticks_rest = p_ticks - delay_register.ticks;
+		printf("exec_delay_step: Push: size=%d, ticks=%d, rest=%d\n", delay_register.delay_size, p_ticks, ticks_rest);
+		delay_register.ticks += ticks_rest;
+		delay_register.is_delay = false;
+		delay_register.is_exec = true;
+		delay_register.delays[delay_register.delay_size++] = p_ticks;
+
+		const uint32_t code_offset = delay_register.code_offset;
+		printf("exec_delay_step: seek=%d\n", code_offset);
+		byte_code.seek(code_offset);
+
+		return 0;
+	}
+}
+
+int BlipKitInterpreter::exec_delay_shift() {
+	uint32_t ticks = delay_register.delays[delay_register.delay_index++];
+
+	ticks = MIN(ticks, delay_register.ticks);
+	delay_register.ticks -= ticks;
+
+	printf("exec_delay_shift: ticks=%d\n", ticks);
+
+	return ticks;
 }
 
 int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_message) {
@@ -22,7 +92,7 @@ int BlipKitInterpreter::fail_with_error(Status p_status, const String &p_error_m
 	error_message = p_error_message;
 
 	// Seek to end.
-	const int size = byte_code.size();
+	const uint32_t size = byte_code.size();
 	byte_code.seek(size);
 
 	ERR_FAIL_V_MSG(-1, error_message);
@@ -46,6 +116,14 @@ void BlipKitInterpreter::set_waveform(int p_slot, const Ref<BlipKitWaveform> &p_
 Ref<BlipKitWaveform> BlipKitInterpreter::get_waveform(int p_slot) const {
 	ERR_FAIL_INDEX_V(p_slot, waveforms.size(), nullptr);
 	return waveforms[p_slot];
+}
+
+void BlipKitInterpreter::set_step_ticks(int p_step_ticks) {
+	step_ticks = CLAMP(p_step_ticks, 1, UINT16_MAX);
+}
+
+int BlipKitInterpreter::get_step_ticks() const {
+	return step_ticks;
 }
 
 void BlipKitInterpreter::set_register(int p_register, int p_value) {
@@ -85,6 +163,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	ERR_FAIL_COND_V(p_track.is_null(), 0);
 
 	while (byte_code.get_available_bytes() > 0) {
+		const bool execute = !delay_register.is_delay;
 		const uint32_t code_offset = byte_code.get_position();
 		const Opcode opcode = static_cast<Opcode>(byte_code.get_u8());
 
@@ -93,128 +172,245 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				// Do nothing.
 			} break;
 			case Opcode::OP_ATTACK: {
-				p_track->set_note(byte_code.get_f16());
+				const float value = byte_code.get_f16();
+
+				if (likely(execute)) {
+					p_track->set_note(value);
+				}
 			} break;
 			case Opcode::OP_RELEASE: {
-				p_track->release();
+				if (likely(execute)) {
+					p_track->release();
+				}
 			} break;
 			case Opcode::OP_MUTE: {
-				p_track->mute();
+				if (likely(execute)) {
+					p_track->mute();
+				}
 			} break;
 			case Opcode::OP_VOLUME: {
-				p_track->set_volume(byte_code.get_f16());
+				const float value = byte_code.get_f16();
+
+				if (likely(execute)) {
+					p_track->set_volume(value);
+				}
 			} break;
 			case Opcode::OP_MASTER_VOLUME: {
-				p_track->set_master_volume(byte_code.get_f16());
+				const float value = byte_code.get_f16();
+
+				if (likely(execute)) {
+					p_track->set_master_volume(value);
+				}
 			} break;
 			case Opcode::OP_PANNING: {
-				p_track->set_panning(byte_code.get_f16());
+				const float value = byte_code.get_f16();
+
+				if (likely(execute)) {
+					p_track->set_panning(value);
+				}
 			} break;
 			case Opcode::OP_PITCH: {
-				p_track->set_pitch(byte_code.get_f16());
+				const float value = byte_code.get_f16();
+
+				if (likely(execute)) {
+					p_track->set_pitch(value);
+				}
 			} break;
 			case Opcode::OP_WAVEFORM: {
-				p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(byte_code.get_u8()));
+				const int value = byte_code.get_u8();
+
+				if (likely(execute)) {
+					p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(value));
+				}
 			} break;
 			case Opcode::OP_CUSTOM_WAVEFORM: {
 				const int index = byte_code.get_u8();
-				const Ref<BlipKitWaveform> &waveform = waveforms[index];
-				p_track->set_custom_waveform(waveform);
+
+				if (likely(execute)) {
+					const Ref<BlipKitWaveform> &waveform = waveforms[index];
+					p_track->set_custom_waveform(waveform);
+				}
 			} break;
 			case Opcode::OP_DUTY_CYCLE: {
-				p_track->set_duty_cycle(byte_code.get_u8());
+				const int value = byte_code.get_u8();
+
+				if (likely(execute)) {
+					p_track->set_duty_cycle(value);
+				}
 			} break;
 			case Opcode::OP_PHASE_WRAP: {
-				p_track->set_phase_wrap(byte_code.get_u8());
+				const int value = byte_code.get_u8();
+
+				if (likely(execute)) {
+					p_track->set_phase_wrap(value);
+				}
 			} break;
 			case Opcode::OP_INSTRUMENT: {
 				const int index = byte_code.get_u8();
-				const Ref<BlipKitInstrument> &instrument = instruments[index];
-				p_track->set_instrument(instrument);
+
+				if (likely(execute)) {
+					const Ref<BlipKitInstrument> &instrument = instruments[index];
+					p_track->set_instrument(instrument);
+				}
 			} break;
 			case Opcode::OP_EFFECT_DIV: {
-				p_track->set_effect_divider(byte_code.get_u16());
+				const int value = byte_code.get_u16();
+
+				if (likely(execute)) {
+					p_track->set_effect_divider(value);
+				}
 			} break;
 			case Opcode::OP_VOLUME_SLIDE: {
-				p_track->set_volume_slide(byte_code.get_u16());
+				const int value = byte_code.get_u16();
+
+				if (likely(execute)) {
+					p_track->set_volume_slide(value);
+				}
 			} break;
 			case Opcode::OP_PANNING_SLIDE: {
-				p_track->set_panning_slide(byte_code.get_u16());
+				const int value = byte_code.get_u16();
+
+				if (likely(execute)) {
+					p_track->set_panning_slide(value);
+				}
 			} break;
 			case Opcode::OP_PORTAMENTO: {
-				p_track->set_portamento(byte_code.get_u16());
+				const int value = byte_code.get_u16();
+
+				if (likely(execute)) {
+					p_track->set_portamento(value);
+				}
 			} break;
 			case Opcode::OP_ARPEGGIO_DIV: {
-				p_track->set_arpeggio_divider(byte_code.get_u16());
+				const int value = byte_code.get_u16();
+
+				if (likely(execute)) {
+					p_track->set_arpeggio_divider(value);
+				}
 			} break;
 			case Opcode::OP_INSTRUMENT_DIV: {
-				p_track->set_instrument_divider(byte_code.get_u16());
+				const int value = byte_code.get_u16();
+
+				if (likely(execute)) {
+					p_track->set_instrument_divider(value);
+				}
 			} break;
 			case Opcode::OP_TICK: {
-				const int ticks = byte_code.get_u16();
-				return ticks;
+				int ticks = byte_code.get_u16();
+
+				if (delay_register.delay_size) {
+					ticks = exec_delay_step(ticks);
+				}
+
+				if (ticks) {
+					return ticks;
+				}
+			} break;
+			case Opcode::OP_STEP: {
+				const int steps = byte_code.get_u16();
+				int ticks = steps * step_ticks;
+
+				if (delay_register.delay_size) {
+					ticks = exec_delay_step(ticks);
+				}
+
+				if (ticks) {
+					return ticks;
+				}
+			} break;
+			case Opcode::OP_DELAY: {
+				const int factor = byte_code.get_u8();
+				const int parts = byte_code.get_u8();
+				int ticks = parts ? (step_ticks * factor / parts) : factor;
+
+				ticks = exec_delay_begin(ticks);
+
+				if (ticks) {
+					return ticks;
+				}
 			} break;
 			case Opcode::OP_TREMOLO: {
 				const int ticks = byte_code.get_u16();
 				const float delta = byte_code.get_f16();
 				const int slide_ticks = byte_code.get_u16();
-				p_track->set_tremolo(ticks, delta, slide_ticks);
+
+				if (likely(execute)) {
+					p_track->set_tremolo(ticks, delta, slide_ticks);
+				}
 			} break;
 			case Opcode::OP_VIBRATO: {
 				const int ticks = byte_code.get_u16();
 				const float delta = byte_code.get_f16();
 				const int slide_ticks = byte_code.get_u16();
-				p_track->set_vibrato(ticks, delta, slide_ticks);
+
+				if (likely(execute)) {
+					p_track->set_vibrato(ticks, delta, slide_ticks);
+				}
 			} break;
 			case Opcode::OP_ARPEGGIO: {
 				const int count = byte_code.get_u8();
-				arpeggio.resize(count);
 
-				for (uint32_t i = 0; i < count; i++) {
-					arpeggio[i] = byte_code.get_f16();
+				if (likely(execute)) {
+					arpeggio.resize(count);
+					for (uint32_t i = 0; i < count; i++) {
+						arpeggio[i] = byte_code.get_f16();
+					}
+					p_track->set_arpeggio(arpeggio);
 				}
-				p_track->set_arpeggio(arpeggio);
 			} break;
 			case Opcode::OP_CALL: {
 				const int offset = byte_code.get_s32();
-				const int position = byte_code.get_position();
 
-				if (stack.size() >= STACK_SIZE_MAX) {
-					return fail_with_error(ERR_STACK_OVERFLOW, "Stack overflow.");
+				if (likely(execute)) {
+					if (stack.size() >= STACK_SIZE_MAX) {
+						return fail_with_error(ERR_STACK_OVERFLOW, "Stack overflow.");
+					}
+
+					const int position = byte_code.get_position();
+					const int jump_offset = position + offset - sizeof(int32_t); // Subtract size of address.
+					stack.push_back(position);
+					byte_code.seek(jump_offset);
 				}
-
-				stack.push_back(position);
-				const int jump_offset = position + offset - 4; // Subtract size of address.
-				byte_code.seek(jump_offset);
 			} break;
 			case Opcode::OP_JUMP: {
 				const int offset = byte_code.get_s32();
-				const int position = byte_code.get_position();
-				const int jump_offset = position + offset - 4; // Subtract size of address.
-				byte_code.seek(jump_offset);
+
+				if (likely(execute)) {
+					const int position = byte_code.get_position();
+					const int jump_offset = position + offset - sizeof(int32_t); // Subtract size of address.
+					byte_code.seek(jump_offset);
+				}
 			} break;
 			case Opcode::OP_RETURN: {
-				if (stack.is_empty()) {
-					return fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
-				}
+				if (likely(execute)) {
+					if (stack.is_empty()) {
+						return fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
+					}
 
-				// Pop last value.
-				const int index = stack.size() - 1;
-				const int offset = stack[index];
-				stack.remove_at(index);
-				byte_code.seek(offset);
+					// Pop last value.
+					const int index = stack.size() - 1;
+					const int offset = stack[index];
+
+					stack.resize(index);
+					byte_code.seek(offset);
+				}
 			} break;
 			case Opcode::OP_RESET: {
-				p_track->reset();
+				if (likely(execute)) {
+					p_track->reset();
+				}
 			} break;
 			case Opcode::OP_STORE: {
 				const int number = CLAMP(byte_code.get_u8(), 0, REGISTER_COUNT);
 				const int value = byte_code.get_s32();
-				registers.aux[number] = value;
+
+				if (likely(execute)) {
+					registers.aux[number] = value;
+				}
 			} break;
 			case Opcode::OP_HALT: {
-				// Seek to end.
-				byte_code.seek(byte_code.size());
+				status = OK_FINISHED;
+				return 0;
 			} break;
 			default: {
 				return fail_with_error(ERR_INVALID_OPCODE, vformat("Invalid opcode %d at offset %d.", opcode, code_offset));
@@ -243,7 +439,7 @@ String BlipKitInterpreter::get_error_message() const {
 }
 
 void BlipKitInterpreter::reset(const String &p_start_label) {
-	ERR_FAIL_COND(status >= ERR_INVALID_BINARY);
+	ERR_FAIL_COND(byte_code_res.is_null());
 
 	if (!p_start_label.is_empty()) {
 		if (!byte_code_res->has_label(p_start_label)) {
@@ -254,11 +450,9 @@ void BlipKitInterpreter::reset(const String &p_start_label) {
 
 	start_label = p_start_label;
 
-	int start_position = 0;
+	int start_position = byte_code_res->get_code_section_offset();
 
-	if (start_label.is_empty()) {
-		start_position = byte_code_res->get_code_section_offset();
-	} else {
+	if (!start_label.is_empty()) {
 		int label_index = byte_code_res->find_label(start_label);
 		start_position = byte_code_res->get_label_position(label_index);
 	}
@@ -267,6 +461,7 @@ void BlipKitInterpreter::reset(const String &p_start_label) {
 
 	stack.clear();
 	registers = Registers();
+	delay_register = DelayRegister();
 	arpeggio.clear();
 	status = OK_RUNNING;
 	error_message.resize(0);
@@ -277,6 +472,8 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_instrument", "slot"), &BlipKitInterpreter::get_instrument);
 	ClassDB::bind_method(D_METHOD("set_waveform", "slot", "waveforms"), &BlipKitInterpreter::set_waveform);
 	ClassDB::bind_method(D_METHOD("get_waveform", "slot"), &BlipKitInterpreter::get_waveform);
+	ClassDB::bind_method(D_METHOD("set_step_ticks", "step_ticks"), &BlipKitInterpreter::set_step_ticks);
+	ClassDB::bind_method(D_METHOD("get_step_ticks"), &BlipKitInterpreter::get_step_ticks);
 	ClassDB::bind_method(D_METHOD("set_register", "register", "value"), &BlipKitInterpreter::set_register);
 	ClassDB::bind_method(D_METHOD("get_register", "register"), &BlipKitInterpreter::get_register);
 	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code", "start_label"), &BlipKitInterpreter::load_byte_code, DEFVAL(""));
@@ -284,6 +481,8 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_status"), &BlipKitInterpreter::get_status);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitInterpreter::get_error_message);
 	ClassDB::bind_method(D_METHOD("reset", "start_label"), &BlipKitInterpreter::reset, DEFVAL(""));
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "step_ticks"), "set_step_ticks", "get_step_ticks");
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);
@@ -293,7 +492,9 @@ void BlipKitInterpreter::_bind_methods() {
 	BIND_ENUM_CONSTANT(ERR_STACK_UNDERFLOW);
 
 	BIND_CONSTANT(REGISTER_COUNT);
+	BIND_CONSTANT(STACK_SIZE_MAX);
 	BIND_CONSTANT(SLOT_COUNT);
+	BIND_CONSTANT(DEFAULT_STEP_TICKS);
 }
 
 String BlipKitInterpreter::_to_string() const {

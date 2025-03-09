@@ -17,7 +17,7 @@ class BlipKitAssembler : public RefCounted {
 	GDCLASS(BlipKitAssembler, RefCounted)
 
 public:
-	enum Opcode {
+	enum Opcode : uint8_t {
 		OP_NOOP,
 		OP_ATTACK,
 		OP_RELEASE,
@@ -41,6 +41,8 @@ public:
 		OP_INSTRUMENT,
 		OP_INSTRUMENT_DIV,
 		OP_TICK,
+		OP_STEP,
+		OP_DELAY,
 		OP_CALL,
 		OP_RETURN,
 		OP_JUMP,
@@ -79,6 +81,16 @@ private:
 		int32_t byte_offset = 0;
 	};
 
+	struct Args {
+		static constexpr int COUNT_MAX = 3;
+
+		const Variant args[COUNT_MAX];
+	};
+
+	struct Types {
+		Variant::Type types[Args::COUNT_MAX];
+	};
+
 	ByteStream byte_code;
 	Ref<BlipKitBytecode> compiled_byte_code;
 	HashMap<String, uint32_t> label_indices;
@@ -92,6 +104,7 @@ protected:
 	void write_labels();
 	uint32_t get_or_add_label(const String p_label);
 
+	bool check_arg_types(const Args &p_args, const Types &p_types);
 	void fail_with_error(const String &p_error_message);
 
 public:

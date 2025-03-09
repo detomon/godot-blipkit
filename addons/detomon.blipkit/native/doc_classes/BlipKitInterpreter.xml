@@ -117,6 +117,11 @@
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="step_ticks" type="int" setter="set_step_ticks" getter="get_step_ticks" default="24">
+			The number of [i]ticks[/i] per [constant BlipKitAssembler.OP_STEP] instruction. The value is clamped between [code]1[/code] and [code]65535[/code].
+		</member>
+	</members>
 	<constants>
 		<constant name="OK_RUNNING" value="0" enum="Status">
 			More instructions are available to execute.
@@ -139,8 +144,12 @@
 		<constant name="REGISTER_COUNT" value="16">
 			The number of usable registers.
 		</constant>
+		<constant name="STACK_SIZE_MAX" value="64">
+		</constant>
 		<constant name="SLOT_COUNT" value="256">
 			The number of slots for instruments and waveforms.
+		</constant>
+		<constant name="DEFAULT_STEP_TICKS" value="24">
 		</constant>
 	</constants>
 </class>

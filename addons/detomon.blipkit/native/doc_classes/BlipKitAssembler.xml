@@ -189,21 +189,21 @@
 		<constant name="OP_TICK" value="22" enum="Opcode">
 			Interrupts the execution for a number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
 		</constant>
-		<constant name="OP_CALL" value="23" enum="Opcode">
+		<constant name="OP_CALL" value="25" enum="Opcode">
 			Calls a named label like a function. Expects a label name as [String] argument.
 			[b]Note:[/b] The label is not required to be defined at this point and can also be set later with [method put_label].
 		</constant>
-		<constant name="OP_RETURN" value="24" enum="Opcode">
+		<constant name="OP_RETURN" value="26" enum="Opcode">
 			Returns from a function call made with [constant OP_CALL]. Expects no arguments.
 		</constant>
-		<constant name="OP_JUMP" value="25" enum="Opcode">
+		<constant name="OP_JUMP" value="27" enum="Opcode">
 			Jumps to a named label. Expects the label name as [String] argument.
 			[b]Note:[/b] The label is not required to be defined at this point and can also be set later with [method put_label].
 		</constant>
-		<constant name="OP_RESET" value="26" enum="Opcode">
+		<constant name="OP_RESET" value="28" enum="Opcode">
 			Calls [method BlipKitTrack.reset]. Expects no arguments.
 		</constant>
-		<constant name="OP_STORE" value="27" enum="Opcode">
+		<constant name="OP_STORE" value="29" enum="Opcode">
 			Stores a value in a register. Expects the register number as [int] argument between [code]0[/code] and [code]15[/code], and the value as [int] argument.
 			The value can be read with [method BlipKitInterpreter.get_register].
 		</constant>

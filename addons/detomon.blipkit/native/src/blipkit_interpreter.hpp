@@ -2,6 +2,8 @@
 
 #include "blipkit_bytecode.hpp"
 #include "byte_stream.hpp"
+#include "BlipKit.h"
+#include "godot_cpp/core/defs.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -18,9 +20,11 @@ class BlipKitInterpreter : public RefCounted {
 	GDCLASS(BlipKitInterpreter, RefCounted)
 
 public:
-	static constexpr int SLOT_COUNT = 256;
-	static constexpr int STACK_SIZE_MAX = 64;
 	static constexpr int REGISTER_COUNT = 16;
+	static constexpr int STACK_SIZE_MAX = 64;
+	static constexpr int SLOT_COUNT = 256;
+	static constexpr int DEFAULT_STEP_TICKS = 24;
+	static constexpr int MAX_ARPEGGIO = BK_MAX_ARPEGGIO;
 
 	enum Status {
 		OK_RUNNING,
@@ -36,18 +40,39 @@ private:
 		int32_t aux[REGISTER_COUNT] = { 0 };
 	};
 
+	struct DelayRegister {
+		static constexpr int MAX_DELAYS = 8;
+
+		uint32_t code_offset = 0;
+		uint32_t ticks = 0;
+		bool is_delay = false;
+		bool is_exec = false;
+		uint8_t delay_index = 0;
+		uint8_t delay_size = 0;
+		uint32_t delays[MAX_DELAYS] = { 0 };
+	};
+
 	ByteStream byte_code;
+	Ref<BlipKitBytecode> byte_code_res;
 	String start_label;
+
 	LocalVector<uint32_t> stack;
 	Registers registers;
+	DelayRegister delay_register;
+	PackedFloat32Array arpeggio;
+	uint32_t step_ticks = DEFAULT_STEP_TICKS;
+
 	LocalVector<Ref<BlipKitInstrument>> instruments;
 	LocalVector<Ref<BlipKitWaveform>> waveforms;
-	PackedFloat32Array arpeggio;
-	Ref<BlipKitBytecode> byte_code_res;
+
 	Status status = OK_RUNNING;
 	String error_message;
 
-	int fail_with_error(Status p_status, const String &error_message);
+	int exec_delay_begin(uint32_t p_ticks);
+	int exec_delay_step(uint32_t p_ticks);
+	int exec_delay_shift();
+
+	int fail_with_error(Status p_status, const String &p_error_message);
 
 public:
 	BlipKitInterpreter();
@@ -57,6 +82,8 @@ public:
 	Ref<BlipKitInstrument> get_instrument(int p_slot) const;
 	void set_waveform(int p_slot, const Ref<BlipKitWaveform> &p_waveform);
 	Ref<BlipKitWaveform> get_waveform(int p_slot) const;
+	void set_step_ticks(int p_step_ticks);
+	int get_step_ticks() const;
 	void set_register(int p_number, int p_value);
 	int get_register(int p_number) const;
 

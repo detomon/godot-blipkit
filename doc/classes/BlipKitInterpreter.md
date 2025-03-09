@@ -25,6 +25,10 @@ track.add_divider("run", 1, func () -> int:
     return interp.advance(track)
 )
 ```
+## Properties
+
+- *int* [**`step_ticks`**](#int-step_ticks)
+
 ## Methods
 
 - *int* [**`advance`**](#int-advancetrack-blipkittrack)(track: BlipKitTrack)
@@ -60,8 +64,21 @@ track.add_divider("run", 1, func () -> int:
 
 - `REGISTER_COUNT` = `16`
 	- The number of usable registers.
+- `STACK_SIZE_MAX` = `64`
+	- 
 - `SLOT_COUNT` = `256`
 	- The number of slots for instruments and waveforms.
+- `DEFAULT_STEP_TICKS` = `24`
+	- 
+
+## Property Descriptions
+
+### `int step_ticks`
+
+*Default*: `24`
+
+The number of *ticks* per `BlipKitAssembler.OP_STEP` instruction. The value is clamped between `1` and `65535`.
+
 
 ## Method Descriptions
 

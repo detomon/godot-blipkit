@@ -108,19 +108,19 @@ Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitIn
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
 - `OP_TICK` = `22`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
-- `OP_CALL` = `23`
+- `OP_CALL` = `25`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string-public-bool--false).
-- `OP_RETURN` = `24`
+- `OP_RETURN` = `26`
 	- Returns from a function call made with [`OP_CALL`](#op_call). Expects no arguments.
-- `OP_JUMP` = `25`
+- `OP_JUMP` = `27`
 	- Jumps to a named label. Expects the label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string-public-bool--false).
-- `OP_RESET` = `26`
+- `OP_RESET` = `28`
 	- Calls `BlipKitTrack.reset()`. Expects no arguments.
-- `OP_STORE` = `27`
+- `OP_STORE` = `29`
 	- Stores a value in a register. Expects the register number as `int` argument between `0` and `15`, and the value as `int` argument.
 
 The value can be read with `BlipKitInterpreter.get_register()`.

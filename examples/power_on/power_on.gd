@@ -14,7 +14,7 @@ func _ready() -> void:
 
 	assem.put_label("start")
 	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_5))
-	assem.put(BlipKitAssembler.OP_TICK, 18)
+	assem.put(BlipKitAssembler.OP_STEP, 1)
 	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_6))
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 162)
 	assem.put(BlipKitAssembler.OP_VOLUME, 0.0)
@@ -22,7 +22,7 @@ func _ready() -> void:
 	assem.put(BlipKitAssembler.OP_RELEASE)
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 0)
 	assem.put(BlipKitAssembler.OP_VOLUME, 1.0)
-	assem.put(BlipKitAssembler.OP_TICK, 180)
+	assem.put(BlipKitAssembler.OP_STEP, 10)
 	assem.put(BlipKitAssembler.OP_JUMP, "start")
 
 	if assem.compile() != BlipKitAssembler.OK:
@@ -31,6 +31,9 @@ func _ready() -> void:
 
 	var bytes := assem.get_byte_code()
 
+	ResourceSaver.save(bytes, "res://examples/power_on/power_on.blipc")
+
+	_interp.step_ticks = 18
 	_interp.load_byte_code(bytes)
 
 	var stream: AudioStreamBlipKit = _player.stream

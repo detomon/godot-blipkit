@@ -12,29 +12,8 @@ using namespace godot;
 
 static constexpr int INITIAL_SPACE = 256;
 
-struct Args {
-	static constexpr int COUNT_MAX = 3;
-
-	const Variant args[COUNT_MAX];
-};
-
-struct Types {
-	Variant::Type types[Args::COUNT_MAX];
-};
-
 BlipKitAssembler::BlipKitAssembler() {
 	clear();
-}
-
-static bool check_arg_types(const Args &p_args, const Types &p_types, int &failed_arg_index) {
-	for (uint32_t i = 0; i < Args::COUNT_MAX; i++) {
-		if (p_args.args[i].get_type() != p_types.types[i]) {
-			failed_arg_index = i;
-			return false;
-		}
-	}
-
-	return true;
 }
 
 void BlipKitAssembler::write_sections() {
@@ -81,6 +60,18 @@ void BlipKitAssembler::write_labels() {
 	byte_code.seek(end_position);
 }
 
+bool BlipKitAssembler::check_arg_types(const Args &p_args, const Types &p_types) {
+	for (uint32_t i = 0; i < Args::COUNT_MAX; i++) {
+		if (p_args.args[i].get_type() != p_types.types[i]) {
+			const String &type_name = Variant::get_type_name(p_types.types[i]);
+			fail_with_error(vformat("Expected argument %d to be type %s.", i + 1, type_name));
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void BlipKitAssembler::fail_with_error(const String &p_error_message) {
 	state = STATE_FAILED;
 	error_message = p_error_message;
@@ -92,9 +83,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 	ERR_FAIL_INDEX_V(p_opcode, OP_MAX, ERR_INVALID_OPCODE);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
-	Types types;
 	const Args args = { p_arg1, p_arg2, p_arg3 };
-	int failed_arg_index = 0;
 
 	switch (p_opcode) {
 		case OP_ATTACK:
@@ -102,9 +91,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_MASTER_VOLUME:
 		case OP_PANNING:
 		case OP_PITCH: {
-			types = { Variant::FLOAT, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::FLOAT, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			byte_code.put_u8(p_opcode);
@@ -115,9 +103,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_DUTY_CYCLE:
 		case OP_PHASE_WRAP:
 		case OP_INSTRUMENT: {
-			types = { Variant::INT, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			byte_code.put_u8(p_opcode);
@@ -128,23 +115,33 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_PANNING_SLIDE:
 		case OP_PORTAMENTO:
 		case OP_ARPEGGIO_DIV:
-		case OP_INSTRUMENT_DIV:
-		case OP_TICK: {
-			types = { Variant::INT, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				state = STATE_FAILED;
-				goto invalid_argument;
+		case OP_INSTRUMENT_DIV: {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			const int value = CLAMP(int(p_arg1), 0, UINT16_MAX);
 			byte_code.put_u8(p_opcode);
 			byte_code.put_u16(value);
 		} break;
+		case OP_TICK:
+		case OP_STEP: {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
+			}
+
+			// TODO: Error if value is 0?
+
+			const int value = CLAMP(int(p_arg1), 0, UINT16_MAX);
+			if (value) {
+				byte_code.put_u8(p_opcode);
+				byte_code.put_u16(value);
+			}
+		} break;
 		case OP_TREMOLO:
 		case OP_VIBRATO: {
-			types = { Variant::INT, Variant::FLOAT, Variant::INT };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::FLOAT, Variant::INT }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			const int ticks = CLAMP(int(p_arg1), 0, UINT16_MAX);
@@ -157,9 +154,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code.put_u16(slide_ticks);
 		} break;
 		case OP_ARPEGGIO: {
-			types = { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			const PackedFloat32Array &values = p_arg1;
@@ -175,9 +171,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		} break;
 		case OP_CALL:
 		case OP_JUMP: {
-			types = { Variant::STRING, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::STRING, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			const String &label = p_arg1;
@@ -188,23 +183,22 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			const int byte_offset = byte_code.get_position();
 			addresses.push_back({ .label_index = label_index, .byte_offset = byte_offset });
 
+			// Placeholder address.
 			byte_code.put_s32(0);
 		} break;
 		case OP_RELEASE:
 		case OP_MUTE:
 		case OP_RETURN:
 		case OP_RESET: {
-			types = { Variant::NIL, Variant::NIL, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::NIL, Variant::NIL, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			byte_code.put_u8(p_opcode);
 		} break;
 		case OP_STORE: {
-			types = { Variant::INT, Variant::INT, Variant::NIL };
-			if (unlikely(!check_arg_types(args, types, failed_arg_index))) {
-				goto invalid_argument;
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::INT, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
 			}
 
 			const int number = CLAMP(int(p_arg1), 0, BlipKitInterpreter::REGISTER_COUNT);
@@ -214,6 +208,22 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code.put_u8(number);
 			byte_code.put_s32(value);
 		} break;
+		case Opcode::OP_DELAY: {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::INT, Variant::NIL }))) {
+				return ERR_INVALID_ARGUMENT;
+			}
+
+			const int factor = CLAMP(int(p_arg1), 0, UINT8_MAX);
+			const int parts = CLAMP(int(p_arg2), 1, UINT8_MAX);
+
+			// TODO: Error if factor is 0?
+
+			if (factor) {
+				byte_code.put_u8(p_opcode);
+				byte_code.put_u8(factor);
+				byte_code.put_u8(parts);
+			}
+		} break;
 		default: {
 			fail_with_error(vformat("Invalid opcode %d.", p_opcode));
 			return ERR_INVALID_OPCODE;
@@ -221,14 +231,6 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 	}
 
 	return OK;
-
-invalid_argument:
-
-	const String &type_name = Variant::get_type_name(types.types[failed_arg_index]);
-
-	fail_with_error(vformat("Expected argument %d to be type %s.", failed_arg_index + 1, type_name));
-
-	return ERR_INVALID_ARGUMENT;
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put_byte_code(const Ref<BlipKitBytecode> &p_byte_code) {
@@ -275,7 +277,7 @@ uint32_t BlipKitAssembler::get_or_add_label(const String p_label) {
 BlipKitAssembler::Error BlipKitAssembler::put_code(const String &p_code) {
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
-	// a:c#4; t:16; r; e:vb:16:0.5; t:24; r;
+	// TODO: Implement.
 
 	ERR_FAIL_V_MSG(ERR_PARSER_ERROR, "Not implemented.");
 }
@@ -410,6 +412,8 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(OP_INSTRUMENT);
 	BIND_ENUM_CONSTANT(OP_INSTRUMENT_DIV);
 	BIND_ENUM_CONSTANT(OP_TICK);
+	BIND_ENUM_CONSTANT(OP_STEP);
+	BIND_ENUM_CONSTANT(OP_DELAY);
 	BIND_ENUM_CONSTANT(OP_CALL);
 	BIND_ENUM_CONSTANT(OP_RETURN);
 	BIND_ENUM_CONSTANT(OP_JUMP);

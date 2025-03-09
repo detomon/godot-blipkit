@@ -30,7 +30,7 @@ namespace BlipKit {
 
 struct float16 {
 private:
-	union fu32 {
+	union FInt32 {
 		uint32_t u32;
 		float f32;
 	};
@@ -43,18 +43,16 @@ public:
 	}
 
 	_ALWAYS_INLINE_ operator float() const {
-		fu32 fu;
-		uint16_t h_exp, h_sig;
-		uint32_t f_sgn, f_exp, f_sig;
+		FInt32 fi;
+		uint16_t h_exp = (hf & 0x7c00u);
+		uint32_t f_sgn = ((uint32_t)hf & 0x8000u) << 16;
 
-		h_exp = (hf & 0x7c00u);
-		f_sgn = ((uint32_t)hf & 0x8000u) << 16;
 		switch (h_exp) {
 			case 0x0000u: { /* 0 or subnormal */
-				h_sig = (hf & 0x03ffu);
+				uint16_t h_sig = (hf & 0x03ffu);
 				/* Signed zero */
 				if (h_sig == 0) {
-					fu.u32 = f_sgn;
+					fi.u32 = f_sgn;
 					break;
 				}
 				/* Subnormal */
@@ -63,21 +61,21 @@ public:
 					h_sig <<= 1;
 					h_exp++;
 				}
-				f_exp = ((uint32_t)(127 - 15 - h_exp)) << 23;
-				f_sig = ((uint32_t)(h_sig & 0x03ffu)) << 13;
-				fu.u32 = f_sgn + f_exp + f_sig;
+				uint32_t f_exp = ((uint32_t)(127 - 15 - h_exp)) << 23;
+				uint32_t f_sig = ((uint32_t)(h_sig & 0x03ffu)) << 13;
+				fi.u32 = f_sgn + f_exp + f_sig;
 			} break;
 			case 0x7c00u: { /* inf or NaN */
 				/* All-ones exponent and a copy of the significand */
-				fu.u32 = f_sgn + 0x7f800000u + (((uint32_t)(hf & 0x03ffu)) << 13);
+				fi.u32 = f_sgn + 0x7f800000u + (((uint32_t)(hf & 0x03ffu)) << 13);
 			} break;
 			default: { /* normalized */
 				/* Just need to adjust the exponent and shift */
-				fu.u32 = f_sgn + (((uint32_t)(hf & 0x7fffu) + 0x1c000u) << 13);
+				fi.u32 = f_sgn + (((uint32_t)(hf & 0x7fffu) + 0x1c000u) << 13);
 			} break;
 		}
 
-		return fu.f32;
+		return fi.f32;
 	}
 
 	_ALWAYS_INLINE_ float16 operator=(uint16_t u) {
@@ -86,18 +84,14 @@ public:
 	}
 
 	_ALWAYS_INLINE_ float16 operator=(float f) {
-		fu32 fu;
-		fu.f32 = f;
+		FInt32 fi;
+		fi.f32 = f;
 
-		uint32_t x = fu.u32;
+		uint32_t x = fi.u32;
 		uint32_t sign = (unsigned short)(x >> 31);
-		uint32_t mantissa;
-		uint32_t exponent;
+		uint32_t mantissa = x & ((1 << 23) - 1);
+		uint32_t exponent = x & (0xFF << 23);
 
-		// get mantissa
-		mantissa = x & ((1 << 23) - 1);
-		// get exponent bits
-		exponent = x & (0xFF << 23);
 		if (exponent >= 0x47800000) {
 			// check if the original single precision float number is a NaN
 			if (mantissa && (exponent == (0xFF << 23))) {
