@@ -30,11 +30,18 @@ func set_enabled(value: bool) -> void:
 
 
 func _input_midi_event(event: InputEventMIDI) -> void:
-	if event.velocity:
-		_notes[event.pitch] = event.velocity
+	match event.message:
+		MIDI_MESSAGE_NOTE_ON:
+			if event.velocity:
+				_notes[event.pitch] = float(event.velocity) / 127.0
+			else:
+				_notes.erase(event.pitch)
 
-	else:
-		_notes.erase(event.pitch)
+		MIDI_MESSAGE_NOTE_OFF:
+			_notes.erase(event.pitch)
+
+		_:
+			return
 
 	notes_changes.emit(_notes)
 
@@ -45,8 +52,6 @@ func _open_midi_inputs() -> void:
 	_is_midi_open = true
 
 	OS.open_midi_inputs()
-
-	print_debug("MIDI inputs: ", OS.get_connected_midi_inputs())
 
 
 func _close_midi_inputs() -> void:
