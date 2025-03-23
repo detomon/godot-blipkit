@@ -92,7 +92,7 @@ void AudioStreamBlipKitPlayback::_bind_methods() {
 }
 
 String AudioStreamBlipKitPlayback::_to_string() const {
-	return vformat("<AudioStreamBlipKitPlayback:#%d>", int64_t(this));
+	return vformat("<AudioStreamBlipKitPlayback#%d>", get_instance_id());
 }
 
 bool AudioStreamBlipKitPlayback::initialize(int p_clock_rate) {
@@ -225,5 +225,5 @@ void AudioStreamBlipKit::_bind_methods() {
 }
 
 String AudioStreamBlipKit::_to_string() const {
-	return vformat("<AudioStreamBlipKit:#%d>", int64_t(this));
+	return vformat("<AudioStreamBlipKit#%d>", get_instance_id());
 }

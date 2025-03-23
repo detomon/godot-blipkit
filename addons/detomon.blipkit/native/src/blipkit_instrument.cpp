@@ -172,7 +172,7 @@ void BlipKitInstrument::_bind_methods() {
 }
 
 String BlipKitInstrument::_to_string() const {
-	return vformat("<BlipKitInstrument:#%d>", int64_t(this));
+	return vformat("<BlipKitInstrument#%d>", get_instance_id());
 }
 
 void BlipKitInstrument::_get_property_list(List<PropertyInfo> *p_list) const {

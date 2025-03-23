@@ -231,7 +231,7 @@ void BlipKitBytecode::_bind_methods() {
 }
 
 String BlipKitBytecode::_to_string() const {
-	return vformat("<BlipKitBytecode:#%d>", int64_t(this));
+	return vformat("<BlipKitBytecode#%d>", get_instance_id());
 }
 
 void BlipKitBytecode::_get_property_list(List<PropertyInfo> *p_list) const {
@@ -313,7 +313,7 @@ void BlipKitBytecodeLoader::_bind_methods() {
 }
 
 String BlipKitBytecodeLoader::_to_string() const {
-	return vformat("<BlipKitBytecodeLoader:#%d>", int64_t(this));
+	return vformat("<BlipKitBytecodeLoader#%d>", get_instance_id());
 }
 
 Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags) {
@@ -371,5 +371,5 @@ void BlipKitBytecodeSaver::_bind_methods() {
 }
 
 String BlipKitBytecodeSaver::_to_string() const {
-	return vformat("<BlipKitBytecodeSaver:#%d>", int64_t(this));
+	return vformat("<BlipKitBytecodeSaver#%d>", get_instance_id());
 }

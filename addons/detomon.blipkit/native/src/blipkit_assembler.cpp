@@ -431,5 +431,5 @@ void BlipKitAssembler::_bind_methods() {
 }
 
 String BlipKitAssembler::_to_string() const {
-	return vformat("<BlipKitAssembler:#%d>", int64_t(this));
+	return vformat("<BlipKitAssembler#%d>", get_instance_id());
 }

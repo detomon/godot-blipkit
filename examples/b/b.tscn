@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://bpsbq0xbw7kn"]
+
+[ext_resource type="Script" uid="uid://b2mq43iomj4xm" path="res://examples/b/b.gd" id="1_o8kue"]
+[ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://examples/shared/oscilloscope/oscilloscope.tscn" id="2_y8nur"]
+[ext_resource type="Script" uid="uid://0fgb5wdim45h" path="res://helpers/midi_input.gd" id="3_rkpd3"]
+
+[sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_wdhyx"]
+
+[node name="B" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_o8kue")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamBlipKit_wdhyx")
+autoplay = true
+
+[node name="Oscilloscope" parent="." instance=ExtResource("2_y8nur")]
+layout_mode = 1
+
+[node name="BlipKitMidiInput" type="Node" parent="."]
+script = ExtResource("3_rkpd3")
+metadata/_custom_type_script = "uid://0fgb5wdim45h"
+
+[connection signal="notes_changes" from="BlipKitMidiInput" to="." method="_on_blip_kit_midi_input_notes_changes"]

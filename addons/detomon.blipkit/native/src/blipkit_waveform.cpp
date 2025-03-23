@@ -107,7 +107,7 @@ void BlipKitWaveform::_bind_methods() {
 }
 
 String BlipKitWaveform::_to_string() const {
-	return vformat("<BlipKitWaveform:#%d>", int64_t(this));
+	return vformat("<BlipKitWaveform#%d>", get_instance_id());
 }
 
 void BlipKitWaveform::_get_property_list(List<PropertyInfo> *p_list) const {

@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://dxbcy5y61rxeo"]
+
+[ext_resource type="Script" uid="uid://dyvvop06b4la5" path="res://examples/movie/movie.gd" id="1_pkejj"]
+[ext_resource type="PackedScene" uid="uid://r7w22shy5vla" path="res://examples/shared/oscilloscope/oscilloscope.tscn" id="2_t2hp3"]
+
+[sub_resource type="AudioStreamBlipKit" id="AudioStreamBlipKit_wdhyx"]
+
+[node name="Movie" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pkejj")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamBlipKit_wdhyx")
+autoplay = true
+
+[node name="Oscilloscope" parent="." instance=ExtResource("2_t2hp3")]
+layout_mode = 1

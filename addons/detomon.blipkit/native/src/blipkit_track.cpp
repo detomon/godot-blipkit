@@ -765,5 +765,5 @@ void BlipKitTrack::_bind_methods() {
 }
 
 String BlipKitTrack::_to_string() const {
-	return vformat("<BlipKitTrack:#%d>", int64_t(this));
+	return vformat("<BlipKitTrack#%d>", get_instance_id());
 }
