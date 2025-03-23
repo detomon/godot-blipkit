@@ -82,7 +82,7 @@ private:
 	};
 
 	struct Args {
-		static constexpr int COUNT_MAX = 4;
+		static constexpr int COUNT_MAX = 3;
 
 		const Variant args[COUNT_MAX];
 	};
@@ -110,7 +110,7 @@ protected:
 public:
 	BlipKitAssembler();
 
-	Error put(Opcode p_opcode, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr, const Variant &p_arg4 = nullptr);
+	Error put(Opcode p_opcode, const Variant &p_arg1 = nullptr, const Variant &p_arg2 = nullptr, const Variant &p_arg3 = nullptr);
 	Error put_byte_code(const Ref<BlipKitBytecode> &p_byte_code);
 	Error put_code(const String &p_code);
 	Error put_label(const String p_label, int p_label_position, bool p_public);

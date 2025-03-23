@@ -10,6 +10,7 @@ namespace BlipKit {
 class ByteStream {
 private:
 	Vector<uint8_t> bytes;
+	uint8_t *ptrw = nullptr;
 	uint32_t count = 0;
 	uint32_t pointer = 0;
 

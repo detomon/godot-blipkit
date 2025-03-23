@@ -80,7 +80,6 @@
 			<param index="1" name="arg1" type="Variant" default="null" />
 			<param index="2" name="arg2" type="Variant" default="null" />
 			<param index="3" name="arg3" type="Variant" default="null" />
-			<param index="4" name="arg4" type="Variant" default="null" />
 			<description>
 				Adds an instruction and returns [constant OK] on success. See [enum Opcode] for the required arguments.
 				Returns [constant ERR_INVALID_OPCODE] if [param opcode] is not valid.

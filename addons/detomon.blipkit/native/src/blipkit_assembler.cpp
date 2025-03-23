@@ -79,11 +79,11 @@ void BlipKitAssembler::fail_with_error(const String &p_error_message) {
 	ERR_FAIL_MSG(error_message);
 }
 
-BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3, const Variant &p_arg4) {
+BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {
 	ERR_FAIL_INDEX_V(p_opcode, OP_MAX, ERR_INVALID_OPCODE);
 	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
 
-	const Args args = { p_arg1, p_arg2, p_arg3, p_arg4 };
+	const Args args = { p_arg1, p_arg2, p_arg3 };
 
 	switch (p_opcode) {
 		case OP_ATTACK:
@@ -91,7 +91,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_MASTER_VOLUME:
 		case OP_PANNING:
 		case OP_PITCH: {
-			if (unlikely(!check_arg_types(args, { Variant::FLOAT, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::FLOAT, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -103,7 +103,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_DUTY_CYCLE:
 		case OP_PHASE_WRAP:
 		case OP_INSTRUMENT: {
-			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -116,7 +116,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_PORTAMENTO:
 		case OP_ARPEGGIO_DIV:
 		case OP_INSTRUMENT_DIV: {
-			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -126,7 +126,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		} break;
 		case OP_TICK:
 		case OP_STEP: {
-			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -140,7 +140,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		} break;
 		case OP_TREMOLO:
 		case OP_VIBRATO: {
-			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::FLOAT, Variant::INT, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::FLOAT, Variant::INT }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -154,7 +154,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code.put_u16(slide_ticks);
 		} break;
 		case OP_ARPEGGIO: {
-			if (unlikely(!check_arg_types(args, { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::PACKED_FLOAT32_ARRAY, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -171,7 +171,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		} break;
 		case OP_CALL:
 		case OP_JUMP: {
-			if (unlikely(!check_arg_types(args, { Variant::STRING, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::STRING, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -190,14 +190,14 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		case OP_MUTE:
 		case OP_RETURN:
 		case OP_RESET: {
-			if (unlikely(!check_arg_types(args, { Variant::NIL, Variant::NIL, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::NIL, Variant::NIL, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
 			byte_code.put_u8(p_opcode);
 		} break;
 		case OP_STORE: {
-			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::INT, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::INT, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -209,7 +209,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 			byte_code.put_s32(value);
 		} break;
 		case Opcode::OP_DELAY: {
-			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::INT, Variant::NIL, Variant::NIL }))) {
+			if (unlikely(!check_arg_types(args, { Variant::INT, Variant::INT, Variant::NIL }))) {
 				return ERR_INVALID_ARGUMENT;
 			}
 
@@ -381,7 +381,7 @@ void BlipKitAssembler::clear() {
 }
 
 void BlipKitAssembler::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("put", "opcode", "arg1", "arg2", "arg3", "arg4"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
+	ClassDB::bind_method(D_METHOD("put", "opcode", "arg1", "arg2", "arg3"), &BlipKitAssembler::put, DEFVAL(nullptr), DEFVAL(nullptr), DEFVAL(nullptr));
 	ClassDB::bind_method(D_METHOD("put_byte_code", "byte_code"), &BlipKitAssembler::put_byte_code);
 	ClassDB::bind_method(D_METHOD("put_code", "code"), &BlipKitAssembler::put_code);
 	ClassDB::bind_method(D_METHOD("put_label", "label", "public"), &BlipKitAssembler::put_label_bind, DEFVAL(false));

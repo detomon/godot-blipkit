@@ -1,6 +1,6 @@
 # Class: AudioStreamBlipKitPlayback
 
-Inherits: *AudioStreamPlayback*
+Inherits: *AudioStreamPlaybackResampled*
 
 **Plays back audio generated from [`BlipKitTrack`](BlipKitTrack.md)s.**
 
