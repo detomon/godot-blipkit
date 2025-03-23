@@ -66,17 +66,7 @@ void AudioStreamBlipKit::call_synced(const Callable &p_callable) {
 }
 
 AudioStreamBlipKitPlayback::AudioStreamBlipKitPlayback() {
-	int sample_rate = 44100;
-
-	if (OS::get_singleton()->has_feature("movie")) {
-		// Use mix rate from movie writer.
-		sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("editor/movie_writer/mix_rate");
-	} else {
-		// Use mix rate from project.
-		sample_rate = ProjectSettings::get_singleton()->get_setting_with_override("audio/driver/mix_rate");
-	}
-
-	const BKInt result = BKContextInit(&context, NUM_CHANNELS, sample_rate);
+	const BKInt result = BKContextInit(&context, NUM_CHANNELS, SAMPLE_RATE);
 
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKContext: %s.", BKStatusGetName(result)));
 
@@ -171,7 +161,7 @@ bool AudioStreamBlipKitPlayback::_is_playing() const {
 	return active;
 }
 
-int32_t AudioStreamBlipKitPlayback::_mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) {
+int32_t AudioStreamBlipKitPlayback::_mix_resampled(AudioFrame *p_buffer, int32_t p_frames) {
 	if (!active) {
 		return 0;
 	}

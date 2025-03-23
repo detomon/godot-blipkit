@@ -51,7 +51,7 @@ var bytes := assem.get_byte_code()
 - *int* [**`compile`**](#int-compile)()
 - *BlipKitBytecode* [**`get_byte_code`**](#blipkitbytecode-get_byte_code)()
 - *String* [**`get_error_message`**](#string-get_error_message-const)() const
-- *int* [**`put`**](#int-putopcode-int-arg1-variant--null-arg2-variant--null-arg3-variant--null)(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)
+- *int* [**`put`**](#int-putopcode-int-arg1-variant--null-arg2-variant--null-arg3-variant--null-arg4-variant--null)(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null, arg4: Variant = null)
 - *int* [**`put_byte_code`**](#int-put_byte_codebyte_code-blipkitbytecode)(byte_code: BlipKitBytecode)
 - *int* [**`put_code`**](#int-put_codecode-string)(code: String)
 - *int* [**`put_label`**](#int-put_labellabel-string-public-bool--false)(label: String, public: bool = false)
@@ -108,6 +108,10 @@ Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitIn
 	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
 - `OP_TICK` = `22`
 	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
+- `OP_STEP` = `23`
+	- 
+- `OP_DELAY` = `24`
+	- 
 - `OP_CALL` = `25`
 	- Calls a named label like a function. Expects a label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html) argument.
 
@@ -170,7 +174,7 @@ Returns the last error as string.
 
 Returns an empty string if no error occurred.
 
-### `int put(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null)`
+### `int put(opcode: int, arg1: Variant = null, arg2: Variant = null, arg3: Variant = null, arg4: Variant = null)`
 
 Adds an instruction and returns [`OK`](#ok) on success. See [`Opcode`](#enum-opcode) for the required arguments.
 

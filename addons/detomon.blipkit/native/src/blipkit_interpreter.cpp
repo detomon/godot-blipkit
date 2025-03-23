@@ -19,21 +19,18 @@ BlipKitInterpreter::BlipKitInterpreter() {
 }
 
 int BlipKitInterpreter::exec_delay_begin(uint32_t p_ticks) {
-	if (delay_register.is_exec) {
-		printf("exec_delay_begin: is_delay\n");
+	if (delay_register.state == DELAY_STATE_EXEC) {
 		return exec_delay_shift();
 	} else {
-		// Keep space for step instruction ticks.
+		// Keep space for ticks instruction.
 		if (!p_ticks || delay_register.delay_size >= DelayRegister::MAX_DELAYS - 1) {
 			return 0;
 		}
 
 		if (!delay_register.delay_size) {
-			delay_register.is_delay = true;
+			delay_register.state = DELAY_STATE_DELAY;
 			delay_register.code_offset = byte_code.get_position() - sizeof(uint8_t) * 3;
-			printf("exec_delay_begin: Set code offset: %d\n", delay_register.code_offset);
 		}
-		printf("exec_delay_begin: Push: size=%d, ticks=%d\n", delay_register.delay_size, p_ticks);
 		delay_register.ticks += p_ticks;
 		delay_register.delays[delay_register.delay_size++] = p_ticks;
 
@@ -42,11 +39,10 @@ int BlipKitInterpreter::exec_delay_begin(uint32_t p_ticks) {
 }
 
 int BlipKitInterpreter::exec_delay_step(uint32_t p_ticks) {
-	if (delay_register.is_exec) {
-		printf("exec_delay_step: is_delay: END\n");
+	if (delay_register.state == DELAY_STATE_EXEC) {
 		const uint32_t ticks = exec_delay_shift();
 
-		delay_register.is_exec = false;
+		delay_register.state = DELAY_STATE_NONE;
 		delay_register.delay_index = 0;
 		delay_register.delay_size = 0;
 
@@ -62,14 +58,11 @@ int BlipKitInterpreter::exec_delay_step(uint32_t p_ticks) {
 		delay_register.ticks = MIN(delay_register.ticks, p_ticks);
 
 		const uint32_t ticks_rest = p_ticks - delay_register.ticks;
-		printf("exec_delay_step: Push: size=%d, ticks=%d, rest=%d\n", delay_register.delay_size, p_ticks, ticks_rest);
 		delay_register.ticks += ticks_rest;
-		delay_register.is_delay = false;
-		delay_register.is_exec = true;
+		delay_register.state = DELAY_STATE_EXEC;
 		delay_register.delays[delay_register.delay_size++] = p_ticks;
 
 		const uint32_t code_offset = delay_register.code_offset;
-		printf("exec_delay_step: seek=%d\n", code_offset);
 		byte_code.seek(code_offset);
 
 		return 0;
@@ -77,12 +70,14 @@ int BlipKitInterpreter::exec_delay_step(uint32_t p_ticks) {
 }
 
 int BlipKitInterpreter::exec_delay_shift() {
+	if (delay_register.delay_index >= delay_register.delay_size) {
+		return 0;
+	}
+
 	uint32_t ticks = delay_register.delays[delay_register.delay_index++];
 
 	ticks = MIN(ticks, delay_register.ticks);
 	delay_register.ticks -= ticks;
-
-	printf("exec_delay_shift: ticks=%d\n", ticks);
 
 	return ticks;
 }
@@ -163,7 +158,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 	ERR_FAIL_COND_V(p_track.is_null(), 0);
 
 	while (byte_code.get_available_bytes() > 0) {
-		const bool execute = !delay_register.is_delay;
+		const bool execute = delay_register.state != DELAY_STATE_DELAY;
 		const uint32_t code_offset = byte_code.get_position();
 		const Opcode opcode = static_cast<Opcode>(byte_code.get_u8());
 

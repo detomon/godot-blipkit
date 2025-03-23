@@ -18,7 +18,7 @@ func _ready() -> void:
 	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_6))
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 162)
 	assem.put(BlipKitAssembler.OP_VOLUME, 0.0)
-	assem.put(BlipKitAssembler.OP_TICK, 162)
+	assem.put(BlipKitAssembler.OP_STEP, 9)
 	assem.put(BlipKitAssembler.OP_RELEASE)
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 0)
 	assem.put(BlipKitAssembler.OP_VOLUME, 1.0)

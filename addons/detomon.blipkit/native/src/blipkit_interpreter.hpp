@@ -2,8 +2,7 @@
 
 #include "blipkit_bytecode.hpp"
 #include "byte_stream.hpp"
-#include "BlipKit.h"
-#include "godot_cpp/core/defs.hpp"
+#include <BlipKit.h>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -36,6 +35,12 @@ public:
 	};
 
 private:
+	enum DelayState : uint8_t {
+		DELAY_STATE_NONE,
+		DELAY_STATE_DELAY,
+		DELAY_STATE_EXEC,
+	};
+
 	struct Registers {
 		int32_t aux[REGISTER_COUNT] = { 0 };
 	};
@@ -45,8 +50,7 @@ private:
 
 		uint32_t code_offset = 0;
 		uint32_t ticks = 0;
-		bool is_delay = false;
-		bool is_exec = false;
+		DelayState state = DELAY_STATE_NONE;
 		uint8_t delay_index = 0;
 		uint8_t delay_size = 0;
 		uint32_t delays[MAX_DELAYS] = { 0 };

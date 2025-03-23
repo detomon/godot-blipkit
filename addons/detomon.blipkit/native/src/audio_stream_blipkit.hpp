@@ -1,11 +1,10 @@
 #pragma once
 
-#include "blipkit_instrument.hpp"
-#include "blipkit_waveform.hpp"
+#include <BlipKit.h>
+#include "godot_cpp/core/defs.hpp"
 #include "recursive_spin_lock.hpp"
-#include <BKBase.h>
 #include <godot_cpp/classes/audio_stream.hpp>
-#include <godot_cpp/classes/audio_stream_playback.hpp>
+#include <godot_cpp/classes/audio_stream_playback_resampled.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/callable.hpp>
@@ -55,12 +54,13 @@ protected:
 	String _to_string() const;
 };
 
-class AudioStreamBlipKitPlayback : public AudioStreamPlayback {
-	GDCLASS(AudioStreamBlipKitPlayback, AudioStreamPlayback)
+class AudioStreamBlipKitPlayback : public AudioStreamPlaybackResampled {
+	GDCLASS(AudioStreamBlipKitPlayback, AudioStreamPlaybackResampled)
 	friend class AudioStreamBlipKit;
 	friend class BlipKitTrack;
 
 private:
+	static constexpr int SAMPLE_RATE = BK_DEFAULT_SAMPLE_RATE;
 	static constexpr int NUM_CHANNELS = 2;
 	static constexpr int CHANNEL_SIZE = 1024;
 
@@ -86,12 +86,13 @@ public:
 	AudioStreamBlipKitPlayback();
 	~AudioStreamBlipKitPlayback();
 
-	_FORCE_INLINE_ BKContext *get_context() { return &context; };
+	_FORCE_INLINE_ BKContext *get_context() { return &context; }
 
 	void _start(double p_from_pos) override;
 	void _stop() override;
 	bool _is_playing() const override;
-	int32_t _mix(AudioFrame *p_buffer, double p_rate_scale, int32_t p_frames) override;
+	int32_t _mix_resampled(AudioFrame *p_buffer, int32_t p_frames) override;
+	double _get_stream_sampling_rate() const override { return double(SAMPLE_RATE); }
 
 protected:
 	static void _bind_methods();

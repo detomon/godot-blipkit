@@ -20,15 +20,15 @@
 
 		# Play notes.
 		assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_5))
-		assem.put(BlipKitAssembler.OP_TICK, 18)
+		assem.put(BlipKitAssembler.OP_STEP, 1)
 		assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_6))
 		assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 162)
 		assem.put(BlipKitAssembler.OP_VOLUME, 0.0)
-		assem.put(BlipKitAssembler.OP_TICK, 162)
+		assem.put(BlipKitAssembler.OP_STEP, 9)
 		assem.put(BlipKitAssembler.OP_RELEASE)
 		assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 0)
 		assem.put(BlipKitAssembler.OP_VOLUME, 1.0)
-		assem.put(BlipKitAssembler.OP_TICK, 180)
+		assem.put(BlipKitAssembler.OP_STEP, 10)
 
 		# Jump back to label "start".
 		assem.put(BlipKitAssembler.OP_JUMP, "start")
@@ -80,6 +80,7 @@
 			<param index="1" name="arg1" type="Variant" default="null" />
 			<param index="2" name="arg2" type="Variant" default="null" />
 			<param index="3" name="arg3" type="Variant" default="null" />
+			<param index="4" name="arg4" type="Variant" default="null" />
 			<description>
 				Adds an instruction and returns [constant OK] on success. See [enum Opcode] for the required arguments.
 				Returns [constant ERR_INVALID_OPCODE] if [param opcode] is not valid.
@@ -188,6 +189,13 @@
 		</constant>
 		<constant name="OP_TICK" value="22" enum="Opcode">
 			Interrupts the execution for a number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+		</constant>
+		<constant name="OP_STEP" value="23" enum="Opcode">
+			Interrupts the execution for a number of [i]ticks[/i] multiplied with [member BlipKitInterpreter.step_ticks]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+		</constant>
+		<constant name="OP_DELAY" value="24" enum="Opcode">
+			Delays the following instructions by the given number of [i]ticks[/i]. Expects a factor as first argument and a divider as the second argument.
+			[b]Note:[/b] This instruction does not interrupt the execution. The instruction sequence must be terminated by [constant OP_STEP] or [constant OP_TICKS].
 		</constant>
 		<constant name="OP_CALL" value="25" enum="Opcode">
 			Calls a named label like a function. Expects a label name as [String] argument.

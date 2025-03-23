@@ -10,6 +10,8 @@ build:
 	scons platform=macos arch=universal $(TARGET_DEBUG)
 #	scons platform=macos arch=universal $(TARGET_RELEASE)
 
+#	scons platform=web arch=wasm32 $(TARGET_RELEASE)
+
 .PHONY: doc
 doc:
 	$(GODOT) --headless --gdextension-docs --doctool "$(NATIVE_DIR)"

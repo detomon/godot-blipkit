@@ -24,9 +24,22 @@
 
 #pragma once
 
+#define __STDC_WANT_IEC_60559_TYPES_EXT__
+
+#include <float.h>
 #include <godot_cpp/core/defs.hpp>
 
+#if defined(FLT16_MIN) && !defined(__wasm__)
+#define HAS_FLOAT16 1
+#endif
+
 namespace BlipKit {
+
+#ifdef HAS_FLOAT16
+
+typedef _Float16 float16;
+
+#else
 
 struct float16 {
 private:
@@ -123,5 +136,6 @@ public:
 		return *this;
 	}
 };
+#endif //!HAS_FLOAT16
 
 } //namespace BlipKit

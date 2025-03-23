@@ -7,6 +7,7 @@ compatibility_minimum = 4.3
 [icons]
 
 AudioStreamBlipKit = "res://addons/detomon.blipkit/icons/audio_stream_blipkit.svg"
+BlipKitBytecode = "res://addons/detomon.blipkit/icons/blipkit_bytecode.svg"
 BlipKitInstrument = "res://addons/detomon.blipkit/icons/blipkit_instrument.svg"
 BlipKitWaveform = "res://addons/detomon.blipkit/icons/blipkit_waveform.svg"
 

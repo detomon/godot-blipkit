@@ -16,6 +16,10 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/bg_color=Color(0.0941176, 0.0941176, 0.0941176, 1)
 config/icon="res://icon.svg"
 
+[audio]
+
+driver/driver=""
+
 [debug]
 
 gdscript/warnings/exclude_addons=false

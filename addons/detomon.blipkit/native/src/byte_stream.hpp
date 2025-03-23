@@ -1,5 +1,6 @@
 #pragma once
 
+#include "decls.hpp"
 #include <godot_cpp/templates/vector.hpp>
 
 using namespace godot;
@@ -90,7 +91,7 @@ public:
 	Vector<uint8_t> get_bytes() const;
 	void set_bytes(const Vector<uint8_t> &p_bytes);
 
-	void reserve(uint32_t p_size);
+	_NO_INLINE_ void reserve(uint32_t p_size);
 	void clear();
 };
 
