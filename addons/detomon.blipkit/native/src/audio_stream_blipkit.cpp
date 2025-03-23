@@ -7,7 +7,11 @@
 using namespace BlipKit;
 using namespace godot;
 
-RecursiveSpinLock AudioStreamBlipKit::spin_lock;
+Ref<Mutex> AudioStreamBlipKit::mutex;
+
+void AudioStreamBlipKit::initialize() {
+	mutex.instantiate();
+}
 
 Ref<AudioStreamBlipKitPlayback> AudioStreamBlipKit::get_playback() {
 	if (playback.is_valid()) {

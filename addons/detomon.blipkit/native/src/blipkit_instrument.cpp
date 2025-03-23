@@ -2,6 +2,7 @@
 #include "audio_stream_blipkit.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
+#include <godot_cpp/core/mutex_lock.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/array.hpp>
 
@@ -76,7 +77,7 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 		values_copy[i] = p_values[i];
 	}
 
-	RecursiveSpinLock::Autolock lock = AudioStreamBlipKit::autolock();
+	MutexLock lock = AudioStreamBlipKit::mutex_lock();
 	BKInt result = 0;
 
 	if (has_steps) {
@@ -111,8 +112,6 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 	seq.values = values_copy;
 	seq.sustain_offset = p_sustain_offset;
 	seq.sustain_length = p_sustain_length;
-
-	lock.unlock();
 
 	emit_changed();
 }

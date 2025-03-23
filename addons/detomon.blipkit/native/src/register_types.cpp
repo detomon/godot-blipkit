@@ -32,11 +32,13 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(BlipKitTrack);
 	GDREGISTER_CLASS(BlipKitWaveform);
 
-	bytecode_saver.instantiate();
-	ResourceSaver::get_singleton()->add_resource_format_saver(bytecode_saver, false);
+	AudioStreamBlipKit::initialize();
 
 	bytecode_loader.instantiate();
 	ResourceLoader::get_singleton()->add_resource_format_loader(bytecode_loader, false);
+
+	bytecode_saver.instantiate();
+	ResourceSaver::get_singleton()->add_resource_format_saver(bytecode_saver, false);
 }
 
 static void uninitialize_module(ModuleInitializationLevel p_level) {
@@ -44,11 +46,11 @@ static void uninitialize_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	ResourceSaver::get_singleton()->remove_resource_format_saver(bytecode_saver);
-	bytecode_saver.unref();
-
 	ResourceLoader::get_singleton()->remove_resource_format_loader(bytecode_loader);
 	bytecode_loader.unref();
+
+	ResourceSaver::get_singleton()->remove_resource_format_saver(bytecode_saver);
+	bytecode_saver.unref();
 }
 
 extern "C" {

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "godot_cpp/core/defs.hpp"
-#include "recursive_spin_lock.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback_resampled.hpp>
+#include <godot_cpp/classes/mutex.hpp>
+#include <godot_cpp/core/mutex_lock.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
 #include <godot_cpp/variant/callable.hpp>
@@ -26,7 +26,7 @@ private:
 
 	int clock_rate = BK_DEFAULT_CLOCK_RATE;
 	Ref<AudioStreamBlipKitPlayback> playback;
-	static RecursiveSpinLock spin_lock;
+	static Ref<Mutex> mutex;
 
 public:
 	Ref<AudioStreamPlayback> _instantiate_playback() const override;
@@ -45,9 +45,10 @@ public:
 
 	void call_synced(const Callable &p_callable);
 
-	_FORCE_INLINE_ static void lock() { spin_lock.lock(); }
-	_FORCE_INLINE_ static void unlock() { spin_lock.unlock(); }
-	_FORCE_INLINE_ static RecursiveSpinLock::Autolock autolock() { return spin_lock.autolock(); }
+	static void initialize();
+	_FORCE_INLINE_ static void lock() { mutex->lock(); }
+	_FORCE_INLINE_ static void unlock() { mutex->unlock(); }
+	_FORCE_INLINE_ static MutexLock mutex_lock() { return MutexLock(*mutex.ptr()); }
 
 protected:
 	static void _bind_methods();
