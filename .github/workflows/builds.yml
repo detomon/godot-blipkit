@@ -16,7 +16,7 @@ jobs:
             float-precision: single
             arch: x86_64
             target-type: template_debug
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: windows
             float-precision: single
@@ -40,25 +40,25 @@ jobs:
             float-precision: single
             arch: arm64
             target-type: template_debug
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: android
             float-precision: single
             arch: arm32
             target-type: template_debug
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: android
             float-precision: single
             arch: x86_64
             target-type: template_debug
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: android
             float-precision: single
             arch: x86_32
             target-type: template_debug
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: ios
             float-precision: single
@@ -70,14 +70,14 @@ jobs:
             float-precision: single
             arch: wasm32
             target-type: template_debug
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
         # Release templates
           - platform: linux
             float-precision: single
             arch: x86_64
             target-type: template_release
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: windows
             float-precision: single
@@ -101,25 +101,25 @@ jobs:
             float-precision: single
             arch: arm64
             target-type: template_release
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: android
             float-precision: single
             arch: arm32
             target-type: template_release
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: android
             float-precision: single
             arch: x86_64
             target-type: template_release
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: android
             float-precision: single
             arch: x86_32
             target-type: template_release
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - platform: ios
             float-precision: single
@@ -131,7 +131,7 @@ jobs:
             float-precision: single
             arch: wasm32
             target-type: template_release
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
         # Double precision templates
         # Double precision debug templates
@@ -139,7 +139,7 @@ jobs:
           #   float-precision: double
           #   arch: x86_64
           #   target-type: template_debug
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: windows
           #   float-precision: double
@@ -163,25 +163,25 @@ jobs:
           #   float-precision: double
           #   arch: arm64
           #   target-type: template_debug
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: android
           #   float-precision: double
           #   arch: arm32
           #   target-type: template_debug
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: android
           #   float-precision: double
           #   arch: x86_64
           #   target-type: template_debug
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: android
           #   float-precision: double
           #   arch: x86_32
           #   target-type: template_debug
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: ios
           #   float-precision: double
@@ -193,14 +193,14 @@ jobs:
           #   float-precision: double
           #   arch: wasm32
           #   target-type: template_debug
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
         # Double precision release templates
           # - platform: linux
           #   float-precision: double
           #   arch: x86_64
           #   target-type: template_release
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: windows
           #   float-precision: double
@@ -224,25 +224,25 @@ jobs:
           #   float-precision: double
           #   arch: arm64
           #   target-type: template_release
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: android
           #   float-precision: double
           #   arch: arm32
           #   target-type: template_release
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: android
           #   float-precision: double
           #   arch: x86_64
           #   target-type: template_release
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: android
           #   float-precision: double
           #   arch: x86_32
           #   target-type: template_release
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
 
           # - platform: ios
           #   float-precision: double
@@ -254,7 +254,7 @@ jobs:
           #   float-precision: double
           #   arch: wasm32
           #   target-type: template_release
-          #   os: ubuntu-20.04
+          #   os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
