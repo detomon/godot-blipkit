@@ -16,6 +16,8 @@ Time is measured in *ticks*. Every *tick* allows properties of the waveform to b
 - [Usage](#usage)
 - [Byte code interpreter](#byte_code_interpreter)
 
+[![Power On](doc/poweron.jpg)](doc/poweron.mp4)
+
 *Uses the [BlipKit](https://github.com/detomon/BlipKit) library to generate audio.*
 
 ## Installation
