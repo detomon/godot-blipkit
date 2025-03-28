@@ -144,7 +144,8 @@
 		<constant name="REGISTER_COUNT" value="16">
 			The number of usable registers.
 		</constant>
-		<constant name="STACK_SIZE_MAX" value="64">
+		<constant name="STACK_SIZE_MAX" value="16">
+			The maximum function call depth.
 		</constant>
 		<constant name="SLOT_COUNT" value="256">
 			The number of slots for instruments and waveforms.

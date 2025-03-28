@@ -20,7 +20,7 @@ class BlipKitInterpreter : public RefCounted {
 
 public:
 	static constexpr int REGISTER_COUNT = 16;
-	static constexpr int STACK_SIZE_MAX = 64;
+	static constexpr int STACK_SIZE_MAX = 16;
 	static constexpr int SLOT_COUNT = 256;
 	static constexpr int DEFAULT_STEP_TICKS = 24;
 	static constexpr int MAX_ARPEGGIO = BK_MAX_ARPEGGIO;

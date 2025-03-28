@@ -64,8 +64,8 @@ track.add_divider("run", 1, func () -> int:
 
 - `REGISTER_COUNT` = `16`
 	- The number of usable registers.
-- `STACK_SIZE_MAX` = `64`
-	- 
+- `STACK_SIZE_MAX` = `16`
+	- The maximum function call depth.
 - `SLOT_COUNT` = `256`
 	- The number of slots for instruments and waveforms.
 - `DEFAULT_STEP_TICKS` = `24`

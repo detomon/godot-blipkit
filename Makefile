@@ -9,6 +9,8 @@ build:
 
 	scons platform=macos arch=universal $(TARGET_DEBUG)
 #	scons platform=macos arch=universal $(TARGET_RELEASE)
+#	scons platform=ios $(TARGET_DEBUG)
+#	scons platform=ios $(TARGET_RELEASE)
 
 #	scons platform=web arch=wasm32 $(TARGET_RELEASE)
 

@@ -35,8 +35,7 @@ Time is measured in *ticks*. Every *tick* allows properties of the waveform to b
 > [!TIP]
 > See the [examples](examples) directory for some examples.
 >
-> Class descriptions are available in the Editor via the reference documentation after the extension is loaded,
-or in the [doc/classes](doc/classes) directory.
+> Class descriptions are available in the Editor via the reference documentation after the extension is loaded, or in the [doc/classes](doc/classes) directory.
 
 **Example**: Play a note:
 
