@@ -94,14 +94,15 @@ func _ready() -> void:
 
 	# Play notes.
 	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_5))
-	assem.put(BlipKitAssembler.OP_TICK, 18)
+	assem.put(BlipKitAssembler.OP_STEP, 1)
 	assem.put(BlipKitAssembler.OP_ATTACK, float(BlipKitTrack.NOTE_C_6))
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 162)
 	assem.put(BlipKitAssembler.OP_VOLUME, 0.0)
-	assem.put(BlipKitAssembler.OP_TICK, 162)
+	assem.put(BlipKitAssembler.OP_STEP, 9)
 	assem.put(BlipKitAssembler.OP_RELEASE)
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 0)
 	assem.put(BlipKitAssembler.OP_VOLUME, 1.0)
+	assem.put(BlipKitAssembler.OP_STEP, 10)
 
 	# Compile and check for errors.
 	if assem.compile() != BlipKitAssembler.OK:
