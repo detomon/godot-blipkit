@@ -65,7 +65,7 @@ void ByteStream::put_bytes(const uint8_t *p_bytes, uint32_t p_count) {
 	const uint32_t capacity = bytes.size();
 	const uint32_t needed_size = pointer + p_count;
 
-	if (unlikely(needed_size > capacity)) {
+	if (needed_size > capacity) [[unlikely]] {
 		reserve(needed_size);
 	}
 

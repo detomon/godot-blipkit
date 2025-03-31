@@ -9,7 +9,7 @@ void RecursiveSpinLock::lock() {
 	uint32_t thread_id = lock_thread_id;
 
 	// Create new ID for current thread.
-	if (unlikely(thread_id == 0)) {
+	if (thread_id == 0) [[unlikely]] {
 		thread_id = ++lock_thread_id_inc;
 		lock_thread_id = thread_id;
 	}
@@ -31,7 +31,7 @@ void RecursiveSpinLock::lock() {
 
 void RecursiveSpinLock::unlock() {
 	// Current thread is not lock owner.
-	if (unlikely(lock_owner.load() != lock_thread_id)) {
+	if (lock_owner.load() != lock_thread_id) [[unlikely]] {
 		return;
 	}
 

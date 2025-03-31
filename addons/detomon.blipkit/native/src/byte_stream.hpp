@@ -19,7 +19,7 @@ private:
 		constexpr uint32_t byte_count = sizeof(T);
 
 		// Not enough bytes left to read.
-		if (unlikely(pointer + byte_count > count)) {
+		if (pointer + byte_count > count) [[unlikely]] {
 			return T(0);
 		}
 
@@ -40,7 +40,7 @@ private:
 		const uint32_t capacity = bytes.size();
 
 		// Not enough space left to write.
-		if (unlikely(pointer + byte_count > capacity)) {
+		if (pointer + byte_count > capacity) [[unlikely]] {
 			reserve(pointer + byte_count);
 		}
 

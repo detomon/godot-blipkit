@@ -169,59 +169,59 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Opcode::OP_ATTACK: {
 				const float value = byte_code.get_f16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_note(value);
 				}
 			} break;
 			case Opcode::OP_RELEASE: {
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->release();
 				}
 			} break;
 			case Opcode::OP_MUTE: {
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->mute();
 				}
 			} break;
 			case Opcode::OP_VOLUME: {
 				const float value = byte_code.get_f16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_volume(value);
 				}
 			} break;
 			case Opcode::OP_MASTER_VOLUME: {
 				const float value = byte_code.get_f16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_master_volume(value);
 				}
 			} break;
 			case Opcode::OP_PANNING: {
 				const float value = byte_code.get_f16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_panning(value);
 				}
 			} break;
 			case Opcode::OP_PITCH: {
 				const float value = byte_code.get_f16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_pitch(value);
 				}
 			} break;
 			case Opcode::OP_WAVEFORM: {
 				const int value = byte_code.get_u8();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_waveform(static_cast<BlipKitTrack::Waveform>(value));
 				}
 			} break;
 			case Opcode::OP_CUSTOM_WAVEFORM: {
 				const int index = byte_code.get_u8();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					const Ref<BlipKitWaveform> &waveform = waveforms[index];
 					p_track->set_custom_waveform(waveform);
 				}
@@ -229,21 +229,21 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Opcode::OP_DUTY_CYCLE: {
 				const int value = byte_code.get_u8();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_duty_cycle(value);
 				}
 			} break;
 			case Opcode::OP_PHASE_WRAP: {
 				const int value = byte_code.get_u8();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_phase_wrap(value);
 				}
 			} break;
 			case Opcode::OP_INSTRUMENT: {
 				const int index = byte_code.get_u8();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					const Ref<BlipKitInstrument> &instrument = instruments[index];
 					p_track->set_instrument(instrument);
 				}
@@ -251,42 +251,42 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Opcode::OP_EFFECT_DIV: {
 				const int value = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_effect_divider(value);
 				}
 			} break;
 			case Opcode::OP_VOLUME_SLIDE: {
 				const int value = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_volume_slide(value);
 				}
 			} break;
 			case Opcode::OP_PANNING_SLIDE: {
 				const int value = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_panning_slide(value);
 				}
 			} break;
 			case Opcode::OP_PORTAMENTO: {
 				const int value = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_portamento(value);
 				}
 			} break;
 			case Opcode::OP_ARPEGGIO_DIV: {
 				const int value = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_arpeggio_divider(value);
 				}
 			} break;
 			case Opcode::OP_INSTRUMENT_DIV: {
 				const int value = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_instrument_divider(value);
 				}
 			} break;
@@ -329,7 +329,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				const float delta = byte_code.get_f16();
 				const int slide_ticks = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_tremolo(ticks, delta, slide_ticks);
 				}
 			} break;
@@ -338,14 +338,14 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				const float delta = byte_code.get_f16();
 				const int slide_ticks = byte_code.get_u16();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->set_vibrato(ticks, delta, slide_ticks);
 				}
 			} break;
 			case Opcode::OP_ARPEGGIO: {
 				const int count = byte_code.get_u8();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					arpeggio.resize(count);
 					for (uint32_t i = 0; i < count; i++) {
 						arpeggio[i] = byte_code.get_f16();
@@ -356,7 +356,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Opcode::OP_CALL: {
 				const int offset = byte_code.get_s32();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					if (stack.size() >= STACK_SIZE_MAX) {
 						return fail_with_error(ERR_STACK_OVERFLOW, "Stack overflow.");
 					}
@@ -370,14 +370,14 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 			case Opcode::OP_JUMP: {
 				const int offset = byte_code.get_s32();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					const int position = byte_code.get_position();
 					const int jump_offset = position + offset - sizeof(int32_t); // Subtract size of address.
 					byte_code.seek(jump_offset);
 				}
 			} break;
 			case Opcode::OP_RETURN: {
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					if (stack.is_empty()) {
 						return fail_with_error(ERR_STACK_OVERFLOW, "Stack underflow.");
 					}
@@ -391,7 +391,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				}
 			} break;
 			case Opcode::OP_RESET: {
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					p_track->reset();
 				}
 			} break;
@@ -399,7 +399,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				const int number = CLAMP(byte_code.get_u8(), 0, REGISTER_COUNT);
 				const int value = byte_code.get_s32();
 
-				if (likely(execute)) {
+				if (execute) [[likely]] {
 					registers.aux[number] = value;
 				}
 			} break;
