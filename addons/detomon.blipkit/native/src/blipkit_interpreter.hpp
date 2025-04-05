@@ -72,7 +72,7 @@ private:
 	Status status = OK_RUNNING;
 	String error_message;
 
-	int exec_delay_begin(uint32_t p_ticks);
+	int exec_delay_begin(uint32_t p_ticks, uint32_t p_code_offset);
 	int exec_delay_step(uint32_t p_ticks);
 	int exec_delay_shift();
 

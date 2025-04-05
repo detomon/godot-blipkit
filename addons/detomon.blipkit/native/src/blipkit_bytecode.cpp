@@ -66,12 +66,13 @@ bool BlipKitBytecode::read_sections() {
 
 		ERR_FAIL_COND_V_MSG(read_size < 4, false, vformat("Truncated section header at offset %d.", section_position));
 
-		if (memcmp(magic, "labl", 4) == 0) {
-			if (!read_labels()) {
-				return false;
-			}
-		} else {
+		if (memcmp(magic, "labl", 4) != 0) {
 			fail_with_error(ERR_INVALID_BINARY, vformat("Unknown section'%x%x%x%x' at offset %d.", magic[0], magic[1], magic[2], magic[3], section_position));
+			return false;
+		}
+
+		if (!read_labels()) {
+			return false;
 		}
 	}
 

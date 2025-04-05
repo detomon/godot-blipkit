@@ -1,8 +1,9 @@
 GODOT = godot
 NATIVE_DIR = addons/detomon.blipkit/native
 
-TARGET_DEBUG = target=template_debug debug_symbols=yes
-TARGET_RELEASE = target=template_release
+FLAGS = -j 16
+TARGET_DEBUG = target=template_debug debug_symbols=yes $(FLAGS)
+TARGET_RELEASE = target=template_release $(FLAGS)
 
 build:
 	git submodule update --init --recursive

@@ -18,7 +18,7 @@ BlipKitInterpreter::BlipKitInterpreter() {
 	waveforms.resize(SLOT_COUNT);
 }
 
-int BlipKitInterpreter::exec_delay_begin(uint32_t p_ticks) {
+int BlipKitInterpreter::exec_delay_begin(uint32_t p_ticks, uint32_t p_code_offset) {
 	if (delay_register.state == DELAY_STATE_EXEC) {
 		return exec_delay_shift();
 	} else {
@@ -27,9 +27,10 @@ int BlipKitInterpreter::exec_delay_begin(uint32_t p_ticks) {
 			return 0;
 		}
 
+		// Save code offset of delay sequence.
 		if (!delay_register.delay_size) {
 			delay_register.state = DELAY_STATE_DELAY;
-			delay_register.code_offset = byte_code.get_position() - sizeof(uint8_t) * 3;
+			delay_register.code_offset = p_code_offset;
 		}
 		delay_register.ticks += p_ticks;
 		delay_register.delays[delay_register.delay_size++] = p_ticks;
@@ -318,7 +319,7 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 				const int parts = byte_code.get_u8();
 				int ticks = parts ? (step_ticks * factor / parts) : factor;
 
-				ticks = exec_delay_begin(ticks);
+				ticks = exec_delay_begin(ticks, code_offset);
 
 				if (ticks) {
 					return ticks;
