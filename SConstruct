@@ -22,6 +22,19 @@ env.Append(CPPPATH=[projectdir + "/src/", projectdir + "/vendor/BlipKit/src/"])
 
 if env["platform"] != "windows":
     env.Append(CFLAGS=["-Wno-shift-negative-value"])
+    env.Append(CXXFLAGS=[
+        "-Wall",
+        "-Wformat",
+        "-Wformat=2",
+        #"-Wconversion",
+        "-Wimplicit-fallthrough",
+        "-Werror=format-security",
+        "-U_FORTIFY_SOURCE",
+        "-D_FORTIFY_SOURCE=3",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-fstrict-flex-arrays=3",
+    ])
+
 if env["platform"] == "windows":
     env.Append(CXXFLAGS=["/std:c++20"])
 
