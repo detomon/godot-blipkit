@@ -39,7 +39,7 @@ public:
 
 	static Ref<BlipKitInstrument> create_with_adsr(int p_attack, int p_decay, float p_sustain, int p_release);
 
-	_FORCE_INLINE_ BKInstrument *get_instrument() { return &instrument; };
+	_ALWAYS_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
 	void set_envelope(EnvelopeType p_type, const PackedInt32Array &p_steps, const PackedFloat32Array &p_values, int p_sustain_offset, int p_sustain_length);
 	void set_adsr(int p_attack, int p_decay, float p_sustain, int p_release);

@@ -10,12 +10,11 @@ namespace BlipKit {
 class ByteStream {
 private:
 	Vector<uint8_t> bytes;
-	uint8_t *ptrw = nullptr;
 	uint32_t count = 0;
 	uint32_t pointer = 0;
 
 	template <typename T>
-	_FORCE_INLINE_ T read() {
+	_ALWAYS_INLINE_ T read() {
 		constexpr uint32_t byte_count = sizeof(T);
 
 		// Not enough bytes left to read.
@@ -35,7 +34,7 @@ private:
 	}
 
 	template <typename T>
-	_FORCE_INLINE_ void write(T value) {
+	_ALWAYS_INLINE_ void write(T value) {
 		constexpr uint32_t byte_count = sizeof(T);
 		const uint32_t capacity = bytes.size();
 
@@ -83,12 +82,12 @@ public:
 	float get_f32();
 	uint32_t get_bytes(uint8_t *r_bytes, uint32_t p_count);
 
-	_FORCE_INLINE_ uint32_t size() const { return count; };
-	_FORCE_INLINE_ uint32_t get_position() const { return pointer; }
-	_FORCE_INLINE_ uint32_t get_available_bytes() const { return count - pointer; }
-	_FORCE_INLINE_ void seek(uint32_t p_offset) { pointer = MIN(p_offset, size()); }
+	_ALWAYS_INLINE_ uint32_t size() const { return count; };
+	_ALWAYS_INLINE_ uint32_t get_position() const { return pointer; }
+	_ALWAYS_INLINE_ uint32_t get_available_bytes() const { return count - pointer; }
+	_ALWAYS_INLINE_ void seek(uint32_t p_offset) { pointer = MIN(p_offset, size()); }
 
-	_FORCE_INLINE_ const uint8_t *ptr() const { return bytes.ptr(); }
+	_ALWAYS_INLINE_ const uint8_t *ptr() const { return bytes.ptr(); }
 	Vector<uint8_t> get_bytes() const;
 	void set_bytes(const Vector<uint8_t> &p_bytes);
 

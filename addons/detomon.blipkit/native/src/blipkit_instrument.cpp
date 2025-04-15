@@ -117,7 +117,6 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedInt32Array
 }
 
 void BlipKitInstrument::set_adsr(int p_attack, int p_decay, float p_sustain, int p_release) {
-	BKInt sustain = BKInt(CLAMP(p_sustain, 0.0, 1.0) * float(BK_MAX_VOLUME));
 	set_envelope(ENVELOPE_VOLUME, { p_attack, p_decay, 240, p_release }, { 1.0, p_sustain, p_sustain, 0.0 }, 2, 1);
 }
 
