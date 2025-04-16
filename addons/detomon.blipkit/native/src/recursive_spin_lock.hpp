@@ -12,7 +12,7 @@ private:
 
 public:
 	struct Autolock {
-		friend class RecursiveSpinLock;
+		friend struct RecursiveSpinLock;
 
 	private:
 		RecursiveSpinLock &spin_lock;
@@ -21,13 +21,13 @@ public:
 				spin_lock(p_spin_lock) {}
 
 	public:
-		_FORCE_INLINE_ void unlock() { spin_lock.unlock(); }
-		_FORCE_INLINE_ ~Autolock() { unlock(); }
+		_ALWAYS_INLINE_ void unlock() { spin_lock.unlock(); }
+		_ALWAYS_INLINE_ ~Autolock() { unlock(); }
 	};
 
 	void lock();
 	void unlock();
-	_FORCE_INLINE_ Autolock autolock() { return Autolock(*this); }
+	_ALWAYS_INLINE_ Autolock autolock() { return Autolock(*this); }
 };
 
 } //namespace BlipKit

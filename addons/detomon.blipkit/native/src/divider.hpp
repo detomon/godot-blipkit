@@ -20,12 +20,12 @@ private:
 		int counter = 0;
 
 	public:
-		_FORCE_INLINE_ void initialize(const Callable &p_callable, int p_tick_interval) {
+		_ALWAYS_INLINE_ void initialize(const Callable &p_callable, int p_tick_interval) {
 			callable = p_callable;
 			divider = p_tick_interval;
 		}
 
-		_FORCE_INLINE_ int tick() {
+		_ALWAYS_INLINE_ int tick() {
 			int ticks = 0;
 
 			counter--;
@@ -41,7 +41,7 @@ private:
 			return ticks;
 		}
 
-		_FORCE_INLINE_ void reset(int p_tick_interval = 0) {
+		_ALWAYS_INLINE_ void reset(int p_tick_interval = 0) {
 			if (p_tick_interval > 0) {
 				divider = p_tick_interval;
 			}

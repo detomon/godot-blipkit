@@ -25,9 +25,9 @@ public:
 
 	static Ref<BlipKitWaveform> create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 
-	_FORCE_INLINE_ BKData *get_data() { return &data; };
-	_FORCE_INLINE_ int size() const { return frames.size(); };
-	_FORCE_INLINE_ bool is_valid() const { return !frames.is_empty(); };
+	_ALWAYS_INLINE_ BKData *get_data() { return &data; };
+	_ALWAYS_INLINE_ int size() const { return frames.size(); };
+	_ALWAYS_INLINE_ bool is_valid() const { return !frames.is_empty(); };
 
 	PackedFloat32Array get_frames() const;
 	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);

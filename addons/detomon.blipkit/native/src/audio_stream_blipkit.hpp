@@ -46,9 +46,9 @@ public:
 	void call_synced(const Callable &p_callable);
 
 	static void initialize();
-	_FORCE_INLINE_ static void lock() { mutex->lock(); }
-	_FORCE_INLINE_ static void unlock() { mutex->unlock(); }
-	_FORCE_INLINE_ static MutexLock mutex_lock() { return MutexLock(*mutex.ptr()); }
+	_ALWAYS_INLINE_ static void lock() { mutex->lock(); }
+	_ALWAYS_INLINE_ static void unlock() { mutex->unlock(); }
+	_ALWAYS_INLINE_ static MutexLock mutex_lock() { return MutexLock(*mutex.ptr()); }
 
 protected:
 	static void _bind_methods();
@@ -87,7 +87,7 @@ public:
 	AudioStreamBlipKitPlayback();
 	~AudioStreamBlipKitPlayback();
 
-	_FORCE_INLINE_ BKContext *get_context() { return &context; }
+	_ALWAYS_INLINE_ BKContext *get_context() { return &context; }
 
 	void _start(double p_from_pos) override;
 	void _stop() override;

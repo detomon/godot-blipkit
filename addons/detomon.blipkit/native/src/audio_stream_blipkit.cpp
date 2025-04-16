@@ -184,7 +184,7 @@ int32_t AudioStreamBlipKitPlayback::_mix_resampled(AudioFrame *p_buffer, int32_t
 	}
 	AudioStreamBlipKit::unlock();
 
-	int out_count = 0;
+	int32_t out_count = 0;
 	AudioFrame *out_buffer = p_buffer;
 	BKFrame *chunk_buffer = buffer.ptr();
 	const float frame_scale = 1.0 / float(BK_FRAME_MAX);
