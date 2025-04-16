@@ -13,6 +13,10 @@ void AudioStreamBlipKit::initialize() {
 	mutex.instantiate();
 }
 
+void AudioStreamBlipKit::uninitialize() {
+	mutex.unref();
+}
+
 Ref<AudioStreamBlipKitPlayback> AudioStreamBlipKit::get_playback() {
 	if (playback.is_valid()) {
 		return playback;

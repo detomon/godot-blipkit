@@ -46,6 +46,7 @@ public:
 	void call_synced(const Callable &p_callable);
 
 	static void initialize();
+	static void uninitialize();
 	_ALWAYS_INLINE_ static void lock() { mutex->lock(); }
 	_ALWAYS_INLINE_ static void unlock() { mutex->unlock(); }
 	_ALWAYS_INLINE_ static MutexLock mutex_lock() { return MutexLock(*mutex.ptr()); }

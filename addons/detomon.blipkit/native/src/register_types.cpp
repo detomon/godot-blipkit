@@ -51,6 +51,8 @@ static void uninitialize_module(ModuleInitializationLevel p_level) {
 
 	ResourceSaver::get_singleton()->remove_resource_format_saver(bytecode_saver);
 	bytecode_saver.unref();
+
+	AudioStreamBlipKit::uninitialize();
 }
 
 extern "C" {
