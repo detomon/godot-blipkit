@@ -376,8 +376,6 @@ jobs:
           branch: build/bin-${{ steps.revision.outputs.rev_hash_short }}
           add-paths: '${{ env.bin-path }}'
           delete-branch: true
-          author: '${{ env.AUTHOR }}'
-          committer: '${{ env.AUTHOR }}'
           title: 'Update binaries from branch ${{ env.BRANCH }} (${{ steps.revision.outputs.rev_hash_short }})'
           body: |
             Update binaries from https://github.com/${{ github.repository }}/commit/${{ steps.revision.outputs.rev_hash }} (`${{ env.BRANCH }}`).
