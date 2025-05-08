@@ -4,9 +4,9 @@
 		An audio stream used to attach and play audio generated from [BlipKitTrack]s.
 	</brief_description>
 	<description>
-		When the stream is playing, its internal master clock is ticking at a rate of 240 [i]ticks[/i] per second. Every [i]tick[/i] updates effects and dividers of attached [BlipKitTrack]s, and envelope values of [BlipKitInstrument]s.
-		This resource reuses the same [AudioStreamBlipKitPlayback] instance between playbacks.
+		When the stream is playing, its internal master clock is ticking at a rate of 240 [i]ticks[/i] per second per default. Every [i]tick[/i] updates effects of attached [BlipKitTrack]s, and envelopes of [BlipKitInstrument]s. See also [method BlipKitTrack.add_divider].
 		The stream audio is always resampled to 44100 Hz.
+		This resource reuses the same [AudioStreamBlipKitPlayback] instance between playbacks.
 		[b]Note:[/b] If an [AudioStreamBlipKit] resource is freed, all attached [BlipKitTrack]s are detached.
 	</description>
 	<tutorials>
@@ -23,6 +23,9 @@
 		</method>
 	</methods>
 	<members>
+		<member name="clock_rate" type="int" setter="set_clock_rate" getter="get_clock_rate" default="240">
+			Sets the number of [i]ticks[/i] per second of the internal master clock.
+		</member>
 		<member name="resource_local_to_scene" type="bool" setter="set_local_to_scene" getter="is_local_to_scene" overrides="Resource" default="true" />
 	</members>
 </class>

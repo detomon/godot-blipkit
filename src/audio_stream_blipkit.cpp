@@ -69,6 +69,11 @@ void AudioStreamBlipKit::call_synced(const Callable &p_callable) {
 
 void AudioStreamBlipKit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("call_synced", "callback"), &AudioStreamBlipKit::call_synced);
+
+	ClassDB::bind_method(D_METHOD("set_clock_rate"), &AudioStreamBlipKit::set_clock_rate);
+	ClassDB::bind_method(D_METHOD("get_clock_rate"), &AudioStreamBlipKit::get_clock_rate);
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "clock_rate", godot::PROPERTY_HINT_RANGE, vformat("%d,%d,1", CLOCK_RATE_MIN, CLOCK_RATE_MAX)), "set_clock_rate", "get_clock_rate");
 }
 
 String AudioStreamBlipKit::_to_string() const {
