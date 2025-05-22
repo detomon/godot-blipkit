@@ -1,21 +1,19 @@
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/core/memory.hpp>
 
 using namespace BlipKit;
 using namespace godot;
 
-Strings *Strings::strings = nullptr;
-
-void Strings::initialize() {
-	strings = memnew(Strings);
+void StringNames::create() {
+	singleton = memnew(StringNames);
 }
 
-void Strings::uninitialize() {
-	memdelete(strings);
-	strings = nullptr;
+void StringNames::free() {
+	memdelete(singleton);
+	singleton = nullptr;
 }
 
-Strings::Strings() {
+StringNames::StringNames() {
 	_bytes = StringName("_bytes");
 	_frames = StringName("_frames");
 	BlipKitBytecode = StringName("BlipKitBytecode");

@@ -3,7 +3,7 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_sample.hpp"
 #include "blipkit_waveform.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/resource_uid.hpp>
 #include <godot_cpp/core/error_macros.hpp>

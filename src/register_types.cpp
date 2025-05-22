@@ -6,7 +6,7 @@
 #include "blipkit_sample.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <gdextension_interface.h>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_saver.hpp>
@@ -35,7 +35,7 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(BlipKitTrack);
 	GDREGISTER_CLASS(BlipKitWaveform);
 
-	Strings::initialize();
+	StringNames::create();
 
 	bytecode_loader.instantiate();
 	ResourceLoader::get_singleton()->add_resource_format_loader(bytecode_loader, false);
@@ -55,7 +55,7 @@ static void uninitialize_module(ModuleInitializationLevel p_level) {
 	ResourceSaver::get_singleton()->remove_resource_format_saver(bytecode_saver);
 	bytecode_saver.unref();
 
-	Strings::uninitialize();
+	StringNames::free();
 }
 
 extern "C" {

@@ -1,6 +1,6 @@
 #include "blipkit_sample.hpp"
 #include "audio_stream_blipkit.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 

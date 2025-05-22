@@ -1,6 +1,6 @@
 #include "blipkit_instrument.hpp"
 #include "audio_stream_blipkit.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/core/mutex_lock.hpp>

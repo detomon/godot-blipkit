@@ -3,15 +3,13 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/variant/string_name.hpp>
 
-#define BKStringName(m_name) Strings::get_singleton()->m_name
-
 using namespace godot;
 
 namespace BlipKit {
 
-struct Strings {
+struct StringNames {
 private:
-	static Strings *strings;
+	static inline StringNames *singleton = nullptr;
 
 public:
 	StringName _bytes;
@@ -29,12 +27,14 @@ public:
 	StringName sustain_offset;
 	StringName ticks;
 
-	static void initialize();
-	static void uninitialize();
-	static _ALWAYS_INLINE_ const Strings *get_singleton() { return strings; }
+	static void create();
+	static void free();
+	static _ALWAYS_INLINE_ const StringNames *get_singleton() { return singleton; }
 
-	Strings();
-	~Strings() = default;
+	StringNames();
+	~StringNames() = default;
 };
 
 } //namespace BlipKit
+
+#define BKStringName(m_name) StringNames::get_singleton()->m_name
