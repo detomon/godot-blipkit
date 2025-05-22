@@ -272,13 +272,13 @@ void BlipKitSample::_get_property_list(List<PropertyInfo> *p_list) const {
 }
 
 bool BlipKitSample::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name == Strings::get()._frames) {
+	if (p_name == BKStringName(_frames)) {
 		set_frame_bytes(p_value);
-	} else if (p_name == Strings::get().sustain_offset) {
+	} else if (p_name == BKStringName(sustain_offset)) {
 		set_sustain_offset(p_value);
-	} else if (p_name == Strings::get().sustain_end) {
+	} else if (p_name == BKStringName(sustain_end)) {
 		set_sustain_end(p_value);
-	} else if (p_name == Strings::get().repeat_mode) {
+	} else if (p_name == BKStringName(repeat_mode)) {
 		const int mode = p_value;
 		set_repeat_mode(static_cast<RepeatMode>(mode));
 	} else {
@@ -289,13 +289,13 @@ bool BlipKitSample::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool BlipKitSample::_get(const StringName &p_name, Variant &r_ret) const {
-	if (p_name == Strings::get()._frames) {
+	if (p_name == BKStringName(_frames)) {
 		r_ret = get_frame_bytes();
-	} else if (p_name == Strings::get().sustain_offset) {
+	} else if (p_name == BKStringName(sustain_offset)) {
 		r_ret = get_sustain_offset();
-	} else if (p_name == Strings::get().sustain_end) {
+	} else if (p_name == BKStringName(sustain_end)) {
 		r_ret = get_sustain_end();
-	} else if (p_name == Strings::get().repeat_mode) {
+	} else if (p_name == BKStringName(repeat_mode)) {
 		r_ret = get_repeat_mode();
 	} else {
 		return false;

@@ -3,6 +3,8 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/variant/string_name.hpp>
 
+#define BKStringName(m_name) Strings::get_singleton()->m_name
+
 using namespace godot;
 
 namespace BlipKit {
@@ -29,7 +31,7 @@ public:
 
 	static void initialize();
 	static void uninitialize();
-	static _ALWAYS_INLINE_ const Strings &get() { return *strings; }
+	static _ALWAYS_INLINE_ const Strings *get_singleton() { return strings; }
 
 	Strings();
 	~Strings() = default;

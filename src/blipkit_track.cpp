@@ -294,9 +294,9 @@ void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 
 Dictionary BlipKitTrack::get_tremolo() const {
 	Dictionary ret;
-	Variant &ticks_value = ret[Strings::get().ticks];
-	Variant &delta_value = ret[Strings::get().delta];
-	Variant &slide_ticks_value = ret[Strings::get().slide_ticks];
+	Variant &ticks_value = ret[BKStringName(ticks)];
+	Variant &delta_value = ret[BKStringName(delta)];
+	Variant &slide_ticks_value = ret[BKStringName(slide_ticks)];
 
 	BK_THREAD_SAFE_METHOD
 
@@ -323,9 +323,9 @@ void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
 
 Dictionary BlipKitTrack::get_vibrato() const {
 	Dictionary ret;
-	Variant &ticks_value = ret[Strings::get().ticks];
-	Variant &delta_value = ret[Strings::get().delta];
-	Variant &slide_ticks_value = ret[Strings::get().slide_ticks];
+	Variant &ticks_value = ret[BKStringName(ticks)];
+	Variant &delta_value = ret[BKStringName(delta)];
+	Variant &slide_ticks_value = ret[BKStringName(slide_ticks)];
 
 	BK_THREAD_SAFE_METHOD
 
