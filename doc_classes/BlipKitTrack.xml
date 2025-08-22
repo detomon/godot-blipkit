@@ -34,10 +34,10 @@
 		<method name="add_divider">
 			<return type="int" />
 			<param index="0" name="tick_interval" type="int" />
-			<param index="1" name="callable" type="Callable" />
+			<param index="1" name="callback" type="Callable" />
 			<description>
-				Adds a divider which calls [param callable] every multiple number of [i]ticks[/i] given by [param tick_interval]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
-				[param callable] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callable] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callable] is called next after the returned number of ticks. If [param callback] returns a value less than [code]0[/code], the divider is removed.
+				Adds a divider which calls [param callback] every multiple number of [i]ticks[/i] given by [param tick_interval]. For callbacks to be called, [BlipKitTrack] has to be attached to an [AudioStreamBlipKit] (see [method attach]). Callbacks are called in the same order as they are added.
+				[param callback] does not receive any arguments and should return an [int] indicating whether to change the tick interval. If [param callback] returns [code]0[/code], the tick interval is not changed and [param callback] is called again after the same number of ticks. If [param callback] returns a value greater than [code]0[/code], the tick interval is permanently changed and [param callback] is called next after the returned number of ticks. If [param callback] returns a value less than [code]0[/code], the divider is removed.
 				Returns an ID which can be used for [method remove_divider] or [method reset_divider].
 				[b]Note:[/b] Callbacks are called from the audio thread and should run as fast as possible to prevent distorted audio. Consider using [method Object.call_deferred] for functions which are expensive to run or should run on the main thread.
 				[b]Note:[/b] [param callback] is called for the first time on the next tick.
@@ -601,7 +601,7 @@
 			Note G on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_G_SH_7" value="92" enum="Note">
-			Note G on octave [code]7[/code].
+			Note G# on octave [code]7[/code].
 		</constant>
 		<constant name="NOTE_A_7" value="93" enum="Note">
 			Note A on octave [code]7[/code].

@@ -4,6 +4,7 @@
 		Defines a waveform consisting of amplitude values.
 	</brief_description>
 	<description>
+		[b]Example:[/b] Create a waveform with frames:
 		[codeblocks]
 		[gdscript]
 		var aah := BlipKitWaveform.new()
@@ -25,7 +26,7 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Creates a waveform and set its amplitudes to the given [param frames]. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				Creates a waveform and sets its amplitudes to the given [param frames]. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between -[param amplitude] and +[param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
 				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
 			</description>
 		</method>
@@ -38,7 +39,7 @@
 		<method name="is_valid" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the waveform was initialized with frames.
+				Returns [code]true[/code] if the waveform has been initialized with frames.
 			</description>
 		</method>
 		<method name="set_frames">
@@ -47,7 +48,7 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Set the waveform amplitudes. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				Sets the waveform amplitudes. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between -[param amplitude] and +[param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
 				[b]Note:[/b] The number of frames must be between [code]2[/code] and [code]64[/code].
 			</description>
 		</method>

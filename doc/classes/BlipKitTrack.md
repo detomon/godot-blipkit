@@ -57,7 +57,7 @@ func _ready() -> void:
 
 ## Methods
 
-- *int* [**`add_divider`**](#int-add_dividertick_interval-int-callable-callable)(tick_interval: int, callable: Callable)
+- *int* [**`add_divider`**](#int-add_dividertick_interval-int-callback-callable)(tick_interval: int, callback: Callable)
 - *void* [**`attach`**](#void-attachplayback-audiostreamblipkit)(playback: AudioStreamBlipKit)
 - *void* [**`clear_dividers`**](#void-clear_dividers)()
 - *BlipKitTrack* [**`create_with_waveform`**](#blipkittrack-create_with_waveformwaveform-int-static)(waveform: int) static
@@ -280,7 +280,7 @@ func _ready() -> void:
 - `NOTE_G_7` = `91`
 	- Note G on octave `7`.
 - `NOTE_G_SH_7` = `92`
-	- Note G on octave `7`.
+	- Note G# on octave `7`.
 - `NOTE_A_7` = `93`
 	- Note A on octave `7`.
 - `NOTE_A_SH_7` = `94`
@@ -488,11 +488,11 @@ The default is [`WAVEFORM_SQUARE`](#waveform_square).
 
 ## Method Descriptions
 
-### `int add_divider(tick_interval: int, callable: Callable)`
+### `int add_divider(tick_interval: int, callback: Callable)`
 
-Adds a divider which calls `callable` every multiple number of *ticks* given by `tick_interval`. For callbacks to be called, [`BlipKitTrack`](BlipKitTrack.md) has to be attached to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md) (see [`attach()`](#void-attachplayback-audiostreamblipkit)). Callbacks are called in the same order as they are added.
+Adds a divider which calls `callback` every multiple number of *ticks* given by `tick_interval`. For callbacks to be called, [`BlipKitTrack`](BlipKitTrack.md) has to be attached to an [`AudioStreamBlipKit`](AudioStreamBlipKit.md) (see [`attach()`](#void-attachplayback-audiostreamblipkit)). Callbacks are called in the same order as they are added.
 
-`callable` does not receive any arguments and should return an `int` indicating whether to change the tick interval. If `callback` returns `0`, the tick interval is not changed and `callable` is called again after the same number of ticks. If `callback` returns a value greater than `0`, the tick interval is permanently changed and `callable` is called next after the returned number of ticks. If `callback` returns a value less than `0`, the divider is removed.
+`callback` does not receive any arguments and should return an `int` indicating whether to change the tick interval. If `callback` returns `0`, the tick interval is not changed and `callback` is called again after the same number of ticks. If `callback` returns a value greater than `0`, the tick interval is permanently changed and `callback` is called next after the returned number of ticks. If `callback` returns a value less than `0`, the divider is removed.
 
 Returns an ID which can be used for [`remove_divider()`](#void-remove_dividerid-int) or [`reset_divider()`](#void-reset_dividerid-int-tick_interval-int--0).
 

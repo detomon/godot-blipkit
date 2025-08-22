@@ -6,6 +6,8 @@ Inherits: *Resource*
 
 ## Description
 
+**Example:** Create a waveform with frames:
+
 ```gdscript
 var aah := BlipKitWaveform.new()
 aah.set_frames_normalized([
@@ -32,7 +34,7 @@ aah.set_frames_normalized([
 
 ### `BlipKitWaveform create_with_frames(frames: PackedFloat32Array, normalize: bool = false, amplitude: float = 1.0) static`
 
-Creates a waveform and set its amplitudes to the given `frames`. If `normalize` is `false`, values of `frames` are clamped between `-1.0` and `+1.0`. If `normalize` is `true`, values of `frames` are normalized between negative and positive `amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
+Creates a waveform and sets its amplitudes to the given `frames`. If `normalize` is `false`, values of `frames` are clamped between `-1.0` and `+1.0`. If `normalize` is `true`, values of `frames` are normalized between -`amplitude` and +`amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
 
 **Note:** The number of frames must be between `2` and `64`.
 
@@ -42,11 +44,11 @@ Returns the waveform amplitudes as values between `-1.0` and `+1.0`.
 
 ### `bool is_valid() const`
 
-Returns `true` if the waveform was initialized with frames.
+Returns `true` if the waveform has been initialized with frames.
 
 ### `void set_frames(frames: PackedFloat32Array, normalize: bool = false, amplitude: float = 1.0)`
 
-Set the waveform amplitudes. If `normalize` is `false`, values of `frames` are clamped between `-1.0` and `+1.0`. If `normalize` is `true`, values of `frames` are normalized between negative and positive `amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
+Sets the waveform amplitudes. If `normalize` is `false`, values of `frames` are clamped between `-1.0` and `+1.0`. If `normalize` is `true`, values of `frames` are normalized between -`amplitude` and +`amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
 
 **Note:** The number of frames must be between `2` and `64`.
 
