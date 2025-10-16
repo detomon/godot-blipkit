@@ -209,7 +209,7 @@
 		<member name="instrument_divider" type="int" setter="set_instrument_divider" getter="get_instrument_divider" default="4">
 			Sets the number of [i]ticks[/i] each instrument envelope value is played when no steps are defined.
 		</member>
-		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.149998">
+		<member name="master_volume" type="float" setter="set_master_volume" getter="get_master_volume" default="0.14999847">
 			Sets the mix volume. This is multiplied with [member volume] to be used as the output volume.
 			[b]Note:[/b] This is also changed when setting the waveform (see [enum Waveform] for the default values).
 		</member>

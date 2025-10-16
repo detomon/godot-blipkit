@@ -4,7 +4,7 @@
 		A [Resource] used to save byte code gererated with [BlipKitAssembler].
 	</brief_description>
 	<description>
-		Can be saved as `.blipc` files.
+		Can be saved as [code].blipc[/code] files.
 		[b]Example:[/b] Save byte code:
 		[codeblocks]
 		[gdscript]

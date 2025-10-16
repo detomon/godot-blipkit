@@ -42,7 +42,7 @@ func _ready() -> void:
 - *int* [**`effect_divider`**](#int-effect_divider) `[default: 1]`
 - *BlipKitInstrument* [**`instrument`**](#blipkitinstrument-instrument)
 - *int* [**`instrument_divider`**](#int-instrument_divider) `[default: 4]`
-- *float* [**`master_volume`**](#float-master_volume) `[default: 0.149998]`
+- *float* [**`master_volume`**](#float-master_volume) `[default: 0.14999847]`
 - *float* [**`note`**](#float-note) `[default: -1.0]`
 - *float* [**`panning`**](#float-panning) `[default: 0.0]`
 - *int* [**`panning_slide`**](#int-panning_slide) `[default: 0]`
@@ -354,7 +354,7 @@ Sets the number of *ticks* each instrument envelope value is played when no step
 
 ### `float master_volume`
 
-*Default*: `0.149998`
+*Default*: `0.14999847`
 
 Sets the mix volume. This is multiplied with `volume` to be used as the output volume.
 
