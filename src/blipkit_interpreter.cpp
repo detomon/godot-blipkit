@@ -139,6 +139,15 @@ int BlipKitInterpreter::get_step_ticks() const {
 	return step_ticks;
 }
 
+void BlipKitInterpreter::set_interrupt_handler(const Callable &p_handler) {
+	interrupt_handler = p_handler;
+	has_interrupt_handler = p_handler.is_valid();
+}
+
+Callable BlipKitInterpreter::get_interrupt_handler() const {
+	return interrupt_handler;
+}
+
 bool BlipKitInterpreter::load_byte_code(const Ref<BlipKitBytecode> &p_byte_code, const String &p_start_label) {
 	ERR_FAIL_COND_V(p_byte_code.is_null(), false);
 
@@ -447,6 +456,15 @@ int BlipKitInterpreter::advance(const Ref<BlipKitTrack> &p_track) {
 					p_track->set_sample_pitch(pitch);
 				}
 			} break;
+			case Opcode::OP_INTERRUPT: {
+				const int32_t value = byte_code.get_u16();
+
+				if (execute) [[likely]] {
+					if (has_interrupt_handler) {
+						interrupt_handler.call(value);
+					}
+				}
+			} break;
 			default: {
 				return fail_with_error(ERR_INVALID_OPCODE, vformat("Invalid opcode %d at offset %d.", opcode, code_offset));
 			} break;
@@ -509,6 +527,8 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_sample", "slot"), &BlipKitInterpreter::get_sample);
 	ClassDB::bind_method(D_METHOD("set_step_ticks", "step_ticks"), &BlipKitInterpreter::set_step_ticks);
 	ClassDB::bind_method(D_METHOD("get_step_ticks"), &BlipKitInterpreter::get_step_ticks);
+	ClassDB::bind_method(D_METHOD("set_interrupt_handler", "interrupt_handler"), &BlipKitInterpreter::set_interrupt_handler);
+	ClassDB::bind_method(D_METHOD("get_interrupt_handler"), &BlipKitInterpreter::get_interrupt_handler);
 	ClassDB::bind_method(D_METHOD("load_byte_code", "byte_code", "start_label"), &BlipKitInterpreter::load_byte_code, DEFVAL(""));
 	ClassDB::bind_method(D_METHOD("advance", "track"), &BlipKitInterpreter::advance);
 	ClassDB::bind_method(D_METHOD("get_state"), &BlipKitInterpreter::get_state);
@@ -516,6 +536,7 @@ void BlipKitInterpreter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reset", "start_label"), &BlipKitInterpreter::reset, DEFVAL(""));
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "step_ticks"), "set_step_ticks", "get_step_ticks");
+	ADD_PROPERTY(PropertyInfo(Variant::CALLABLE, "interrupt_handler"), "set_interrupt_handler", "get_interrupt_handler");
 
 	BIND_ENUM_CONSTANT(OK_RUNNING);
 	BIND_ENUM_CONSTANT(OK_FINISHED);

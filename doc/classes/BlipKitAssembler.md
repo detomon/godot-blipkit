@@ -147,6 +147,8 @@ Which [`BlipKitSample`](BlipKitSample.md) used is define with `BlipKitInterprete
 **Note:** If the sample is set to an empty slot, the waveform is reset to `BlipKitTrack.WAVEFORM_SQUARE`.
 - `OP_SAMPLE_PITCH` = `33`
 	- Sets `BlipKitTrack.sample_pitch`. Expects a `float` argument.
+- `OP_INTERRUPT` = `34`
+	- Calls the [`Callable`](https://docs.godotengine.org/en/stable/classes/class_callable.html) defined in `BlipKitInterpreter.interrupt_handler`. Expects an `int` argument between `0` and `65536`.
 
 ### enum `Error`
 

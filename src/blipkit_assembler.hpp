@@ -52,6 +52,7 @@ public:
 		OP_CUSTOM_WAVEFORM,
 		OP_SAMPLE,
 		OP_SAMPLE_PITCH,
+		OP_INTERRUPT,
 		OP_MAX,
 		// NOTE: Update 'blipc_file.md' when changing list.
 	};

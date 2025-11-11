@@ -57,6 +57,7 @@ private:
 
 	LocalVector<uint32_t> stack;
 	DelayRegister delay_register;
+	Callable interrupt_handler;
 	PackedFloat32Array arpeggio;
 	uint32_t step_ticks = STEP_TICKS_DEFAULT;
 
@@ -66,6 +67,8 @@ private:
 
 	State state = OK_RUNNING;
 	String error_message;
+
+	bool has_interrupt_handler = false;
 
 	uint32_t exec_delay_begin(uint32_t p_ticks, uint32_t p_code_offset);
 	uint32_t exec_delay_step(uint32_t p_ticks);
@@ -85,6 +88,9 @@ public:
 
 	void set_step_ticks(int p_step_ticks);
 	int get_step_ticks() const;
+
+	void set_interrupt_handler(const Callable &p_handler);
+	Callable get_interrupt_handler() const;
 
 	bool load_byte_code(const Ref<BlipKitBytecode> &p_byte_code, const String &p_start_label = "");
 

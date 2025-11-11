@@ -119,6 +119,10 @@
 		</method>
 	</methods>
 	<members>
+		<member name="interrupt_handler" type="Callable" setter="set_interrupt_handler" getter="get_interrupt_handler" default="Callable()">
+			Sets the interrupt handler which is called when [constant BlipKitAssembler.OP_INTERRUPT] is executed.
+			[b]Note:[/b] Callbacks are called from the audio thread and should run as fast as possible to prevent distorted audio. Consider using [Object.call_deferred()] for functions which are expensive to run or should run on the main thread.
+		</member>
 		<member name="step_ticks" type="int" setter="set_step_ticks" getter="get_step_ticks" default="24">
 			The number of [i]ticks[/i] per [constant BlipKitAssembler.OP_STEP] instruction. The value is clamped between [code]1[/code] and [code]65535[/code].
 		</member>

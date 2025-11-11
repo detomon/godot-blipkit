@@ -181,7 +181,8 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 		} break;
 		case OP_EFFECT_DIV:
 		case OP_ARPEGGIO_DIV:
-		case OP_INSTRUMENT_DIV: {
+		case OP_INSTRUMENT_DIV:
+		case OP_INTERRUPT: {
 			if (not check_arg_types(args, { Variant::INT, Variant::NIL, Variant::NIL })) [[unlikely]] {
 				return ERR_INVALID_ARGUMENT;
 			}
@@ -289,7 +290,6 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				byte_code.put_u16(ticks);
 			}
 		} break;
-
 		case Opcode::OP_DELAY_STEP: {
 			if (not check_args_number_nil_nil(args)) [[unlikely]] {
 				return ERR_INVALID_ARGUMENT;
@@ -526,6 +526,7 @@ void BlipKitAssembler::_bind_methods() {
 	BIND_ENUM_CONSTANT(OP_CUSTOM_WAVEFORM);
 	BIND_ENUM_CONSTANT(OP_SAMPLE);
 	BIND_ENUM_CONSTANT(OP_SAMPLE_PITCH);
+	BIND_ENUM_CONSTANT(OP_INTERRUPT);
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(ERR_INVALID_STATE);

@@ -221,6 +221,9 @@
 		<constant name="OP_SAMPLE_PITCH" value="33" enum="Opcode">
 			Sets [member BlipKitTrack.sample_pitch]. Expects a [float] argument.
 		</constant>
+		<constant name="OP_INTERRUPT" value="34" enum="Opcode">
+			Calls the [Callable] defined in [member BlipKitInterpreter.interrupt_handler]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+		</constant>
 		<constant name="OK" value="0" enum="Error">
 			No error.
 		</constant>

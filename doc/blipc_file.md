@@ -117,6 +117,7 @@ Opcodes grouped by argument types.
 | `OP_STEP` | Number of steps to wait | Wait for number of steps |
 | `OP_DELAY_TICKS` | Number of ticks to delay the following instructions | Delay following instructions for number if ticks |
 | `OP_STEP_TICKS` | Number of ticks per step | Set number of ticks per step |
+| `OP_INTERRUPT` | Trigger interrupt | Calls interrupt handler |
 
 ---
 

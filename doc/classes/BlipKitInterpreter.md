@@ -27,6 +27,7 @@ track.add_divider(1, func () -> int:
 ```
 ## Properties
 
+- *Callable* [**`interrupt_handler`**](#callable-interrupt_handler) `[default: Callable()]`
 - *int* [**`step_ticks`**](#int-step_ticks) `[default: 24]`
 
 ## Methods
@@ -72,6 +73,14 @@ track.add_divider(1, func () -> int:
 	- Default value of number of ticks per step instruction.
 
 ## Property Descriptions
+
+### `Callable interrupt_handler`
+
+*Default*: `Callable()`
+
+Sets the interrupt handler which is called when `BlipKitAssembler.OP_INTERRUPT` is executed.
+
+**Note:** Callbacks are called from the audio thread and should run as fast as possible to prevent distorted audio. Consider using [Object.call_deferred()] for functions which are expensive to run or should run on the main thread.
 
 ### `int step_ticks`
 
