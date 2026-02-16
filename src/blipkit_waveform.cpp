@@ -49,13 +49,13 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
 
 	const float *ptr = p_frames.ptr();
-	const uint32_t size = MIN(frames_size, WAVE_SIZE_MAX);
+	const uint32_t size = Math::min(frames_size, uint32_t(WAVE_SIZE_MAX));
 	float scale = 1.0;
 
 	if (p_normalize) {
 		float max_value = 0.0;
 		for (uint32_t i = 0; i < size; i++) {
-			max_value = MAX(max_value, ABS(ptr[i]));
+			max_value = Math::max(max_value, Math::abs(ptr[i]));
 		}
 
 		scale = 0.0;

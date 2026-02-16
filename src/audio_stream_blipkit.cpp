@@ -215,6 +215,6 @@ int32_t AudioStreamBlipKitPlayback::_mix_resampled(AudioFrame *p_buffer, int32_t
 	return out_count;
 }
 
-double AudioStreamBlipKitPlayback::_get_stream_sampling_rate() const {
-	return double(SAMPLE_RATE);
+float AudioStreamBlipKitPlayback::_get_stream_sampling_rate() const {
+	return float(SAMPLE_RATE);
 }

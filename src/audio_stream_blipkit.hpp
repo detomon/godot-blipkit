@@ -96,7 +96,7 @@ public:
 	void _stop() override;
 	bool _is_playing() const override;
 	int32_t _mix_resampled(AudioFrame *p_buffer, int32_t p_frames) override;
-	double _get_stream_sampling_rate() const override;
+	float _get_stream_sampling_rate() const override;
 
 protected:
 	static void _bind_methods();
