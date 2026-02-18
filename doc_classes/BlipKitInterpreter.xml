@@ -149,7 +149,7 @@
 			The maximum function call depth.
 		</constant>
 		<constant name="SLOT_COUNT" value="256">
-			The number of slots for instruments and waveforms.
+			The number of slots for instruments, waveforms and samples.
 		</constant>
 		<constant name="STEP_TICKS_DEFAULT" value="24">
 			Default value of number of ticks per step instruction.
