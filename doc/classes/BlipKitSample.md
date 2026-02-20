@@ -2,7 +2,7 @@
 
 Inherits: *Resource*
 
-**Defines a sample consisting of frames values.**
+**Contains audio frames.**
 
 ## Description
 
@@ -38,9 +38,9 @@ track.note = BlipKitTrack.NOTE_C_4
 - `REPEAT_FORWARD` = `1`
 	- Repeats the sample forward.
 - `REPEAT_PING_PONG` = `2`
-	- Repeats the sample forward. Changes the direction if it reaches the end or the beginning again.
+	- Repeats the sample forward and backward. Changes the direction when it reaches the end or the beginning.
 - `REPEAT_BACKWARD` = `3`
-	- Repeats the sample backward.
+	- Repeats the sample backward from the end to the beginning.
 
 ## Property Descriptions
 
@@ -87,7 +87,7 @@ Returns `true` if the sample was initialized with frames.
 
 ### `void set_frames(frames: PackedFloat32Array, normalize: bool = false, amplitude: float = 1.0)`
 
-Set the sample frames. If `normalize` is `false`, values of `frames` are clamped between `-1.0` and `+1.0`. If `normalize` is `true`, values of `frames` are normalized between negative and positive `amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
+Sets the sample frames. If `normalize` is `false`, values in `frames` are clamped between `-1.0` and `+1.0`. If `normalize` is `true`, values in `frames` are normalized between negative and positive `amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
 
 **Note:** Only supports a mono channel.
 

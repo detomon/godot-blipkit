@@ -2,7 +2,7 @@
 
 Inherits: *Resource*
 
-**A [`Resource`](https://docs.godotengine.org/en/stable/classes/class_resource.html) used to save byte code gererated with [`BlipKitAssembler`](BlipKitAssembler.md).**
+**A [`Resource`](https://docs.godotengine.org/en/stable/classes/class_resource.html) used to save byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md).**
 
 ## Description
 
@@ -85,7 +85,7 @@ Returns the label name for the label with index `label_index`.
 
 ### `int get_label_position(label_index: int) const`
 
-Returns the byte position for the label with index `label_index` relative to the byte code section offset.
+Returns the byte offset for the label with index `label_index` relative to the byte code section offset.
 
 ### `int get_state() const`
 
@@ -93,7 +93,7 @@ Returns [`OK`](#ok) on success.
 
 ### `bool has_label(name: String) const`
 
-Returns `true` if the `label` exists.
+Returns `true` if the `name` exists.
 
 ### `bool is_valid() const`
 

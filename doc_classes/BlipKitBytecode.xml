@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitBytecode" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		A [Resource] used to save byte code gererated with [BlipKitAssembler].
+		A [Resource] used to save byte code generated with [BlipKitAssembler].
 	</brief_description>
 	<description>
 		Can be saved as [code].blipc[/code] files.
@@ -69,7 +69,7 @@
 			<return type="int" />
 			<param index="0" name="label_index" type="int" />
 			<description>
-				Returns the byte position for the label with index [param label_index] relative to the byte code section offset.
+				Returns the byte offset for the label with index [param label_index] relative to the byte code section offset.
 			</description>
 		</method>
 		<method name="get_state" qualifiers="const">
@@ -82,7 +82,7 @@
 			<return type="bool" />
 			<param index="0" name="name" type="String" />
 			<description>
-				Returns [code]true[/code] if the [param label] exists.
+				Returns [code]true[/code] if the [param name] exists.
 			</description>
 		</method>
 		<method name="is_valid" qualifiers="const">

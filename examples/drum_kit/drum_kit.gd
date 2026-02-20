@@ -19,8 +19,6 @@ var _samples: Array[BlipKitSample] = [
 
 
 func _ready() -> void:
-	#_samples[3].repeat_mode = BlipKitSample.REP
-
 	# Set master volume.
 	_track.master_volume = 0.4
 

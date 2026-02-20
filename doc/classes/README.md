@@ -10,7 +10,7 @@ Plays back audio generated from [`BlipKitTrack`](BlipKitTrack.md)s.
 Generates byte code from instructions.
 
 **[BlipKitBytecode](BlipKitBytecode.md)**  
-A [`Resource`](https://docs.godotengine.org/en/stable/classes/class_resource.html) used to save byte code gererated with [`BlipKitAssembler`](BlipKitAssembler.md).
+A [`Resource`](https://docs.godotengine.org/en/stable/classes/class_resource.html) used to save byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md).
 
 **[BlipKitBytecodeLoader](BlipKitBytecodeLoader.md)**  
 Allows loading [`BlipKitBytecode`](BlipKitBytecode.md) resources from files with extension `.blipc`.
@@ -25,7 +25,7 @@ Changes parameters of a [`BlipKitTrack`](BlipKitTrack.md) while a note is playin
 Executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md).
 
 **[BlipKitSample](BlipKitSample.md)**  
-Defines a sample consisting of frames values.
+Contains audio frames.
 
 **[BlipKitTrack](BlipKitTrack.md)**  
 Generates a single waveform.
