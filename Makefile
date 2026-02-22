@@ -2,6 +2,7 @@ GIT = git
 SCONS = scons
 GODOT = godot
 CLANG_FORMAT = clang-format
+SVGO = svgo
 PROJECT_DIR = .
 
 FLAGS =
@@ -20,3 +21,7 @@ doc:
 .PHONY: format
 format:
 	cd "$(PROJECT_DIR)/src" && $(CLANG_FORMAT) -i *.cpp -i *.hpp
+
+.PHONY: svgo
+svgo:
+	find . -name "*.svg" -exec $(SVGO) --final-newline {} \;
