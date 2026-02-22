@@ -4,6 +4,7 @@
 		Changes parameters of a [BlipKitTrack] while a note is playing or after it is released.
 	</brief_description>
 	<description>
+		[b]Example:[/b] Create an instrument and set ADSR and pitch envelopes:
 		[codeblocks]
 		[gdscript]
 		var instrument := BlipKitInstrument.new()

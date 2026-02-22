@@ -74,43 +74,43 @@ var bytes := assem.get_byte_code()
 - `OP_WAVEFORM` = `8`
 	- Sets `BlipKitTrack.waveform`. Expects [`BlipKitTrack.Waveform`](#enum-blipkittrackwaveform) as `int` argument.
 - `OP_DUTY_CYCLE` = `9`
-	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`
+	- Sets `BlipKitTrack.duty_cycle`. Expects an `int` argument between `0` and `15`.
 - `OP_PITCH` = `10`
 	- Sets `BlipKitTrack.pitch`. Expects a `float` argument.
 - `OP_PHASE_WRAP` = `11`
 	- Sets `BlipKitTrack.phase_wrap`. Expects an `int` argument.
 - `OP_PORTAMENTO` = `12`
-	- Sets `BlipKitTrack.portamento`. Expects an `int` argument between `0` and `65536`.
+	- Sets `BlipKitTrack.portamento`. Expects an `int` argument between `0` and `65535`.
 - `OP_VIBRATO` = `13`
-	- Calls `BlipKitTrack.set_vibrato()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
+	- Calls `BlipKitTrack.set_vibrato()`. Expects `ticks` (`int` between `0` and `65535`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65535`).
 - `OP_TREMOLO` = `14`
-	- Calls `BlipKitTrack.set_tremolo()`. Expects `ticks` (`int` between `0` and `65536`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65536`).
+	- Calls `BlipKitTrack.set_tremolo()`. Expects `ticks` (`int` between `0` and `65535`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65535`).
 - `OP_VOLUME_SLIDE` = `15`
-	- Sets `BlipKitTrack.volume_slide`. Expects an `int` argument between `0` and `65536`.
+	- Sets `BlipKitTrack.volume_slide`. Expects an `int` argument between `0` and `65535`.
 - `OP_PANNING_SLIDE` = `16`
-	- Sets `BlipKitTrack.panning_slide`. Expects an `int` argument between `0` and `65536`.
+	- Sets `BlipKitTrack.panning_slide`. Expects an `int` argument between `0` and `65535`.
 - `OP_EFFECT_DIV` = `17`
-	- Sets `BlipKitTrack.effect_divider`. Expects an `int` argument between `0` and `65536`.
+	- Sets `BlipKitTrack.effect_divider`. Expects an `int` argument between `0` and `65535`.
 - `OP_ARPEGGIO` = `18`
 	- Sets `BlipKitTrack.arpeggio`. Expects a [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html) argument.
 - `OP_ARPEGGIO_DIV` = `19`
-	- Sets `BlipKitTrack.arpeggio_divider`. Expects an `int` argument between `0` and `65536`.
+	- Sets `BlipKitTrack.arpeggio_divider`. Expects an `int` argument between `0` and `65535`.
 - `OP_TICK` = `20`
-	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65536`.
+	- Interrupts the execution for a number of *ticks*. Expects an `int` argument between `0` and `65535`.
 - `OP_STEP` = `21`
-	- Interrupts the execution for a number of *ticks* multiplied with `BlipKitInterpreter.step_ticks`. Expects an `int` argument between `0` and `65536`.
+	- Interrupts the execution for a number of *ticks* multiplied with `BlipKitInterpreter.step_ticks`. Expects an `int` argument between `0` and `65535`.
 - `OP_STEP_TICKS` = `22`
-	- Sets `BlipKitInterpreter.step_ticks`. Expects an `int` argument between `1` and `65536`.
+	- Sets `BlipKitInterpreter.step_ticks`. Expects an `int` argument between `1` and `65535`.
 - `OP_DELAY_TICK` = `23`
-	- Delays the execution of the following instructions by the given number of *ticks*. Expects an `int` argument between `0` and `65536`.
+	- Delays the execution of the following instructions by the given number of *ticks*. Expects an `int` argument between `0` and `65535`.
 
-Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction eventually. A maximum of `8` [`OP_DELAY_TICK`](#op_delay_tick) or [`OP_DELAY_STEP`](#op_delay_step) instruction sequences can be chained together.
+Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction eventually. A maximum of `8` delay [`OP_DELAY_TICK`](#op_delay_tick) or [`OP_DELAY_STEP`](#op_delay_step) instruction sequences can be chained together.
 
 **Note:** This instruction does not interrupt the execution.
 - `OP_DELAY_STEP` = `24`
-	- Delays the execution of the following instructions by the given number of *steps* (can be a fraction). Expects a `float` argument between `0.0` and `65536.0`.
+	- Delays the execution of the following instructions by the given number of *steps* (can be a fraction). Expects a `float` argument between `0.0` and `65535.0`.
 
-Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction eventually. A maximum of `8` [`OP_DELAY_TICK`](#op_delay_tick) or [`OP_DELAY_STEP`](#op_delay_step) instruction sequences can be chained together.
+Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction eventually. A maximum of `8` delay [`OP_DELAY_TICK`](#op_delay_tick) or [`OP_DELAY_STEP`](#op_delay_step) instruction sequences can be chained together.
 
 **Note:** This instruction does not interrupt the execution.
 - `OP_JUMP` = `25`
@@ -128,21 +128,21 @@ Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction
 - `OP_INSTRUMENT` = `29`
 	- Sets `BlipKitTrack.instrument` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
-Which [`BlipKitInstrument`](BlipKitInstrument.md) used is define with `BlipKitInterpreter.set_instrument()`.
+Which [`BlipKitInstrument`](BlipKitInstrument.md) is used is defined with `BlipKitInterpreter.set_instrument()`.
 
 **Note:** An instrument cannot be unset. Keep a slot empty to be able to set an empty instrument (for example, `255`) if needed.
 - `OP_INSTRUMENT_DIV` = `30`
-	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65536`.
+	- Sets `BlipKitTrack.instrument_divider`. Expects an `int` argument between `0` and `65535`.
 - `OP_CUSTOM_WAVEFORM` = `31`
 	- Sets `BlipKitTrack.custom_waveform` from the given slot. Expects a slot index as `int` argument between `0` and `255`.
 
-Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is define with `BlipKitInterpreter.set_waveform()`.
+Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is defined with `BlipKitInterpreter.set_waveform()`.
 
 **Note:** If the custom waveform is set to an empty slot, the waveform is reset to `BlipKitTrack.WAVEFORM_SQUARE`.
 - `OP_SAMPLE` = `32`
 	- Sets `BlipKitTrack.sample` from the given slot. Expects a slot index between `0` and `255` as `int` argument.
 
-Which [`BlipKitSample`](BlipKitSample.md) used is define with `BlipKitInterpreter.set_sample()`.
+Which [`BlipKitSample`](BlipKitSample.md) is used is defined with `BlipKitInterpreter.set_sample()`.
 
 **Note:** If the sample is set to an empty slot, the waveform is reset to `BlipKitTrack.WAVEFORM_SQUARE`.
 - `OP_SAMPLE_PITCH` = `33`
@@ -203,9 +203,9 @@ Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already co
 
 ### `int put_byte_code(byte_code: BlipKitBytecode, public: bool = false)`
 
-Adds compiled [`BlipKitBytecode`](BlipKitBytecode.md) and returns [`OK`](#ok) on success. Public labels are added to the existing labels.
+Adds compiled [`BlipKitBytecode`](BlipKitBytecode.md) and returns [`OK`](#ok) on success. Public labels from `byte_code` are added to the existing labels.
 
-If `public` is `true`, labels are added public.
+If `public` is `true`, public labels from `byte_code` are also made public.
 
 Returns [`ERR_DUPLICATE_LABEL`](#err_duplicate_label) if a label in `byte_code` already exists.
 

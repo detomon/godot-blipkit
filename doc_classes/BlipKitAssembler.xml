@@ -92,8 +92,8 @@
 			<param index="0" name="byte_code" type="BlipKitBytecode" />
 			<param index="1" name="public" type="bool" default="false" />
 			<description>
-				Adds compiled [BlipKitBytecode] and returns [constant OK] on success. Public labels are added to the existing labels.
-				If [param public] is [code]true[/code], labels are added public.
+				Adds compiled [BlipKitBytecode] and returns [constant OK] on success. Public labels from [param byte_code] are added to the existing labels.
+				If [param public] is [code]true[/code], public labels from [param byte_code] are also made public.
 				Returns [constant ERR_DUPLICATE_LABEL] if a label in [param byte_code] already exists.
 				Returns [constant ERR_INVALID_ARGUMENT] if [param byte_code] is not valid.
 				Returns [constant ERR_INVALID_STATE] if the byte code is already compiled.
@@ -135,7 +135,7 @@
 			Sets [member BlipKitTrack.waveform]. Expects [enum BlipKitTrack.Waveform] as [int] argument.
 		</constant>
 		<constant name="OP_DUTY_CYCLE" value="9" enum="Opcode">
-			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument between [code]0[/code] and [code]15[/code]
+			Sets [member BlipKitTrack.duty_cycle]. Expects an [int] argument between [code]0[/code] and [code]15[/code].
 		</constant>
 		<constant name="OP_PITCH" value="10" enum="Opcode">
 			Sets [member BlipKitTrack.pitch]. Expects a [float] argument.
@@ -144,46 +144,46 @@
 			Sets [member BlipKitTrack.phase_wrap]. Expects an [int] argument.
 		</constant>
 		<constant name="OP_PORTAMENTO" value="12" enum="Opcode">
-			Sets [member BlipKitTrack.portamento]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Sets [member BlipKitTrack.portamento]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_VIBRATO" value="13" enum="Opcode">
-			Calls [method BlipKitTrack.set_vibrato]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]).
+			Calls [method BlipKitTrack.set_vibrato]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65535[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65535[/code]).
 		</constant>
 		<constant name="OP_TREMOLO" value="14" enum="Opcode">
-			Calls [method BlipKitTrack.set_tremolo]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65536[/code]).
+			Calls [method BlipKitTrack.set_tremolo]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65535[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65535[/code]).
 		</constant>
 		<constant name="OP_VOLUME_SLIDE" value="15" enum="Opcode">
-			Sets [member BlipKitTrack.volume_slide]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Sets [member BlipKitTrack.volume_slide]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_PANNING_SLIDE" value="16" enum="Opcode">
-			Sets [member BlipKitTrack.panning_slide]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Sets [member BlipKitTrack.panning_slide]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_EFFECT_DIV" value="17" enum="Opcode">
-			Sets [member BlipKitTrack.effect_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Sets [member BlipKitTrack.effect_divider]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_ARPEGGIO" value="18" enum="Opcode">
 			Sets [member BlipKitTrack.arpeggio]. Expects a [PackedFloat32Array] argument.
 		</constant>
 		<constant name="OP_ARPEGGIO_DIV" value="19" enum="Opcode">
-			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Sets [member BlipKitTrack.arpeggio_divider]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_TICK" value="20" enum="Opcode">
-			Interrupts the execution for a number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Interrupts the execution for a number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_STEP" value="21" enum="Opcode">
-			Interrupts the execution for a number of [i]ticks[/i] multiplied with [member BlipKitInterpreter.step_ticks]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Interrupts the execution for a number of [i]ticks[/i] multiplied with [member BlipKitInterpreter.step_ticks]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_STEP_TICKS" value="22" enum="Opcode">
-			Sets [member BlipKitInterpreter.step_ticks]. Expects an [int] argument between [code]1[/code] and [code]65536[/code].
+			Sets [member BlipKitInterpreter.step_ticks]. Expects an [int] argument between [code]1[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_DELAY_TICK" value="23" enum="Opcode">
-			Delays the execution of the following instructions by the given number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
-			Must be followed by a [constant OP_STEP] or [constant OP_TICK] instruction eventually. A maximum of [code]8[/code] [constant OP_DELAY_TICK] or [constant OP_DELAY_STEP] instruction sequences can be chained together.
+			Delays the execution of the following instructions by the given number of [i]ticks[/i]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
+			Must be followed by a [constant OP_STEP] or [constant OP_TICK] instruction eventually. A maximum of [code]8[/code] delay [constant OP_DELAY_TICK] or [constant OP_DELAY_STEP] instruction sequences can be chained together.
 			[b]Note:[/b] This instruction does not interrupt the execution.
 		</constant>
 		<constant name="OP_DELAY_STEP" value="24" enum="Opcode">
-			Delays the execution of the following instructions by the given number of [i]steps[/i] (can be a fraction). Expects a [float] argument between [code]0.0[/code] and [code]65536.0[/code].
-			Must be followed by a [constant OP_STEP] or [constant OP_TICK] instruction eventually. A maximum of [code]8[/code] [constant OP_DELAY_TICK] or [constant OP_DELAY_STEP] instruction sequences can be chained together.
+			Delays the execution of the following instructions by the given number of [i]steps[/i] (can be a fraction). Expects a [float] argument between [code]0.0[/code] and [code]65535.0[/code].
+			Must be followed by a [constant OP_STEP] or [constant OP_TICK] instruction eventually. A maximum of [code]8[/code] delay [constant OP_DELAY_TICK] or [constant OP_DELAY_STEP] instruction sequences can be chained together.
 			[b]Note:[/b] This instruction does not interrupt the execution.
 		</constant>
 		<constant name="OP_JUMP" value="25" enum="Opcode">
@@ -202,20 +202,20 @@
 		</constant>
 		<constant name="OP_INSTRUMENT" value="29" enum="Opcode">
 			Sets [member BlipKitTrack.instrument] from the given slot. Expects a slot index between [code]0[/code] and [code]255[/code] as [int] argument.
-			Which [BlipKitInstrument] used is define with [method BlipKitInterpreter.set_instrument].
+			Which [BlipKitInstrument] is used is defined with [method BlipKitInterpreter.set_instrument].
 			[b]Note:[/b] An instrument cannot be unset. Keep a slot empty to be able to set an empty instrument (for example, [code]255[/code]) if needed.
 		</constant>
 		<constant name="OP_INSTRUMENT_DIV" value="30" enum="Opcode">
-			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument between [code]0[/code] and [code]65536[/code].
+			Sets [member BlipKitTrack.instrument_divider]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
 		</constant>
 		<constant name="OP_CUSTOM_WAVEFORM" value="31" enum="Opcode">
 			Sets [member BlipKitTrack.custom_waveform] from the given slot. Expects a slot index as [int] argument between [code]0[/code] and [code]255[/code].
-			Which [BlipKitWaveform] is used is define with [method BlipKitInterpreter.set_waveform].
+			Which [BlipKitWaveform] is used is defined with [method BlipKitInterpreter.set_waveform].
 			[b]Note:[/b] If the custom waveform is set to an empty slot, the waveform is reset to [constant BlipKitTrack.WAVEFORM_SQUARE].
 		</constant>
 		<constant name="OP_SAMPLE" value="32" enum="Opcode">
 			Sets [member BlipKitTrack.sample] from the given slot. Expects a slot index between [code]0[/code] and [code]255[/code] as [int] argument.
-			Which [BlipKitSample] used is define with [method BlipKitInterpreter.set_sample].
+			Which [BlipKitSample] is used is defined with [method BlipKitInterpreter.set_sample].
 			[b]Note:[/b] If the sample is set to an empty slot, the waveform is reset to [constant BlipKitTrack.WAVEFORM_SQUARE].
 		</constant>
 		<constant name="OP_SAMPLE_PITCH" value="33" enum="Opcode">

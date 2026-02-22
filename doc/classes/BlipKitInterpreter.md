@@ -67,7 +67,7 @@ track.add_divider(1, func () -> int:
 - `STACK_SIZE_MAX` = `16`
 	- The maximum function call depth.
 - `SLOT_COUNT` = `256`
-	- The number of slots for instruments and waveforms.
+	- The number of slots for instruments, waveforms and samples.
 - `STEP_TICKS_DEFAULT` = `24`
 	- Default value of number of ticks per step instruction.
 

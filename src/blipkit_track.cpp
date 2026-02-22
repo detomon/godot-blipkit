@@ -779,7 +779,7 @@ void BlipKitTrack::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reset"), &BlipKitTrack::reset);
 	ClassDB::bind_method(D_METHOD("get_dividers"), &BlipKitTrack::get_dividers);
 	ClassDB::bind_method(D_METHOD("has_divider", "id"), &BlipKitTrack::has_divider);
-	ClassDB::bind_method(D_METHOD("add_divider", "tick_interval", "callable"), &BlipKitTrack::add_divider);
+	ClassDB::bind_method(D_METHOD("add_divider", "tick_interval", "callback"), &BlipKitTrack::add_divider);
 	ClassDB::bind_method(D_METHOD("remove_divider", "id"), &BlipKitTrack::remove_divider);
 	ClassDB::bind_method(D_METHOD("clear_dividers"), &BlipKitTrack::clear_dividers);
 	ClassDB::bind_method(D_METHOD("reset_divider", "id", "tick_interval"), &BlipKitTrack::reset_divider, DEFVAL(0));

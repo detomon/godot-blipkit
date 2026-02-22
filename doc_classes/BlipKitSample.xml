@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitSample" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Defines a sample consisting of frames values.
+		Contains audio frames.
 	</brief_description>
 	<description>
 		[codeblocks]
@@ -50,7 +50,7 @@
 			<param index="1" name="normalize" type="bool" default="false" />
 			<param index="2" name="amplitude" type="float" default="1.0" />
 			<description>
-				Set the sample frames. If [param normalize] is [code]false[/code], values of [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values of [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
+				Sets the sample frames. If [param normalize] is [code]false[/code], values in [param frames] are clamped between [code]-1.0[/code] and [code]+1.0[/code]. If [param normalize] is [code]true[/code], values in [param frames] are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
 				[b]Note:[/b] Only supports a mono channel.
 			</description>
 		</method>
@@ -80,10 +80,10 @@
 			Repeats the sample forward.
 		</constant>
 		<constant name="REPEAT_PING_PONG" value="2" enum="RepeatMode">
-			Repeats the sample forward. Changes the direction if it reaches the end or the beginning again.
+			Repeats the sample forward and backward. Changes the direction when it reaches the end or the beginning.
 		</constant>
 		<constant name="REPEAT_BACKWARD" value="3" enum="RepeatMode">
-			Repeats the sample backward.
+			Repeats the sample backward from the end to the beginning.
 		</constant>
 	</constants>
 </class>

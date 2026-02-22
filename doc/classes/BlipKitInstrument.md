@@ -6,6 +6,8 @@ Inherits: *Resource*
 
 ## Description
 
+**Example:** Create an instrument and set ADSR and pitch envelopes:
+
 ```gdscript
 var instrument := BlipKitInstrument.new()
 instrument.set_adsr(4, 16, 0.75, 36)

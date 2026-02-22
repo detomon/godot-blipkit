@@ -439,8 +439,10 @@ def make_markdown_docs(target_dir: str, source: list) -> None:
         f.write("# Classes\n\n")
         for class_name in class_names:
             class_ = classes[class_name]
-            f.write(f"**[{class_name}]({class_["link"]})**  \n")
-            f.write(f"{class_["brief_description"]}\n\n")
+            link = class_["link"]
+            brief_description = class_["brief_description"]
+            f.write(f"**[{class_name}]({link})**  \n")
+            f.write(f"{brief_description}\n\n")
 
 
 if __name__ == "__main__":
