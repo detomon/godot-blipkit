@@ -3,7 +3,7 @@
 #include "blipkit_interpreter.hpp"
 #include "blipkit_sample.hpp"
 #include "blipkit_waveform.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/resource_uid.hpp>
 #include <godot_cpp/core/error_macros.hpp>
@@ -235,7 +235,7 @@ void BlipKitBytecode::_get_property_list(List<PropertyInfo> *p_list) const {
 }
 
 bool BlipKitBytecode::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name == Strings::get()._bytes) {
+	if (p_name == BKStringName(_bytes)) {
 		const PackedByteArray &byte_array = p_value;
 		const uint32_t bytes_size = byte_array.size();
 		const uint8_t *ptr = byte_array.ptr();
@@ -253,7 +253,7 @@ bool BlipKitBytecode::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool BlipKitBytecode::_get(const StringName &p_name, Variant &r_ret) const {
-	if (p_name == Strings::get()._bytes) {
+	if (p_name == BKStringName(_bytes)) {
 		r_ret = get_byte_array();
 	} else {
 		return false;
@@ -269,7 +269,7 @@ PackedStringArray BlipKitBytecodeLoader::_get_recognized_extensions() const {
 bool BlipKitBytecodeLoader::_handles_type(const StringName &p_type) const {
 	const String &type = p_type;
 
-	return type == Strings::get().BlipKitBytecode;
+	return type == BKStringName(BlipKitBytecode);
 }
 
 String BlipKitBytecodeLoader::_get_resource_type(const String &p_path) const {
@@ -277,7 +277,7 @@ String BlipKitBytecodeLoader::_get_resource_type(const String &p_path) const {
 		return "";
 	}
 
-	return Strings::get().BlipKitBytecode;
+	return BKStringName(BlipKitBytecode);
 }
 
 Variant BlipKitBytecodeLoader::_load(const String &p_path, const String &p_original_path, bool p_use_sub_threads, int32_t p_cache_mode) const {

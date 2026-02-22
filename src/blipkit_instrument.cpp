@@ -1,6 +1,6 @@
 #include "blipkit_instrument.hpp"
 #include "audio_stream_blipkit.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/core/mutex_lock.hpp>
@@ -192,17 +192,17 @@ void BlipKitInstrument::_get_property_list(List<PropertyInfo> *p_list) const {
 }
 
 bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name.begins_with(Strings::get().envelope_)) {
+	if (p_name.begins_with(BKStringName(envelope_))) {
 		const String name = p_name;
 		EnvelopeType type;
 
-		if (p_name == Strings::get().envelope_volume) {
+		if (p_name == BKStringName(envelope_volume)) {
 			type = ENVELOPE_VOLUME;
-		} else if (p_name == Strings::get().envelope_panning) {
+		} else if (p_name == BKStringName(envelope_panning)) {
 			type = ENVELOPE_PANNING;
-		} else if (p_name == Strings::get().envelope_pitch) {
+		} else if (p_name == BKStringName(envelope_pitch)) {
 			type = ENVELOPE_PITCH;
-		} else if (p_name == Strings::get().envelope_duty_cycle) {
+		} else if (p_name == BKStringName(envelope_duty_cycle)) {
 			type = ENVELOPE_DUTY_CYCLE;
 		} else {
 			return false;
@@ -226,16 +226,16 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
-	if (p_name.begins_with(Strings::get().envelope_)) {
+	if (p_name.begins_with(BKStringName(envelope_))) {
 		EnvelopeType type;
 
-		if (p_name == Strings::get().envelope_volume) {
+		if (p_name == BKStringName(envelope_volume)) {
 			type = ENVELOPE_VOLUME;
-		} else if (p_name == Strings::get().envelope_panning) {
+		} else if (p_name == BKStringName(envelope_panning)) {
 			type = ENVELOPE_PANNING;
-		} else if (p_name == Strings::get().envelope_pitch) {
+		} else if (p_name == BKStringName(envelope_pitch)) {
 			type = ENVELOPE_PITCH;
-		} else if (p_name == Strings::get().envelope_duty_cycle) {
+		} else if (p_name == BKStringName(envelope_duty_cycle)) {
 			type = ENVELOPE_DUTY_CYCLE;
 		} else {
 			return false;

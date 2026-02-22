@@ -1,6 +1,6 @@
 #include "blipkit_waveform.hpp"
 #include "audio_stream_blipkit.hpp"
-#include "strings.hpp"
+#include "string_names.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
 
@@ -116,7 +116,7 @@ void BlipKitWaveform::_get_property_list(List<PropertyInfo> *p_list) const {
 }
 
 bool BlipKitWaveform::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name == Strings::get()._frames) {
+	if (p_name == BKStringName(_frames)) {
 		set_frames(p_value);
 	} else {
 		return false;
@@ -126,7 +126,7 @@ bool BlipKitWaveform::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool BlipKitWaveform::_get(const StringName &p_name, Variant &r_ret) const {
-	if (p_name == Strings::get()._frames) {
+	if (p_name == BKStringName(_frames)) {
 		r_ret = get_frames();
 	} else {
 		return false;
