@@ -17,11 +17,11 @@ func _ready() -> void:
 		printerr(assem.get_error_message())
 		return
 
-	var byte_code := assem.get_byte_code()
+	var bytecode := assem.get_byte_code()
 
-	_init_saw(saw, byte_code, saw_interp)
-	_init_bass(bass, byte_code, bass_interp)
-	_init_noise(noise, byte_code, noise_interp)
+	_init_saw(saw, bytecode, saw_interp)
+	_init_bass(bass, bytecode, bass_interp)
+	_init_noise(noise, bytecode, noise_interp)
 
 	var stream: AudioStreamBlipKit = _audio_stream_player.stream
 
@@ -243,20 +243,20 @@ func _init_byte_code() -> BlipKitAssembler:
 	return assem
 
 
-func _init_saw(track: BlipKitTrack, byte_code: BlipKitBytecode, interp: BlipKitInterpreter) -> void:
+func _init_saw(track: BlipKitTrack, bytecode: BlipKitBytecode, interp: BlipKitInterpreter) -> void:
 	var lead := BlipKitInstrument.new()
 	lead.set_envelope(BlipKitInstrument.ENVELOPE_VOLUME, [1.0, 1.0, 0.25, 0.25, 0.0], [0, 24, 36, 24, 12], 1, 1)
 	lead.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [24, 24, 0, 12], [], 2, 1)
 	interp.set_instrument(0, lead)
 
-	interp.load_byte_code(byte_code, "saw:init")
+	interp.load_byte_code(bytecode, "saw:init")
 
 	track.add_divider(1, func () -> int:
 		return interp.advance(track)
 	)
 
 
-func _init_bass(track: BlipKitTrack, byte_code: BlipKitBytecode, interp: BlipKitInterpreter) -> void:
+func _init_bass(track: BlipKitTrack, bytecode: BlipKitBytecode, interp: BlipKitInterpreter) -> void:
 	var drum1 := BlipKitInstrument.new()
 	drum1.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [24.0, 0.0], [0, 16], 1, 1)
 	interp.set_instrument(0, drum1)
@@ -265,14 +265,14 @@ func _init_bass(track: BlipKitTrack, byte_code: BlipKitBytecode, interp: BlipKit
 	drum2.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [24.0, 0.0], [], 1, 1)
 	interp.set_instrument(1, drum2)
 
-	interp.load_byte_code(byte_code, "bass:init")
+	interp.load_byte_code(bytecode, "bass:init")
 
 	track.add_divider(1, func () -> int:
 		return interp.advance(track)
 	)
 
 
-func _init_noise(track: BlipKitTrack, byte_code: BlipKitBytecode, interp: BlipKitInterpreter) -> void:
+func _init_noise(track: BlipKitTrack, bytecode: BlipKitBytecode, interp: BlipKitInterpreter) -> void:
 	var snare := BlipKitInstrument.create_with_adsr(0, 24, 0.5, 12)
 	snare.set_envelope(BlipKitInstrument.ENVELOPE_PITCH, [0.0, -12.0], [0, 24], 1, 1)
 	interp.set_instrument(0, snare)
@@ -280,7 +280,7 @@ func _init_noise(track: BlipKitTrack, byte_code: BlipKitBytecode, interp: BlipKi
 	var hihat := BlipKitInstrument.create_with_adsr(0, 12, 0.0, 0)
 	interp.set_instrument(1, hihat)
 
-	interp.load_byte_code(byte_code, "noise:init")
+	interp.load_byte_code(bytecode, "noise:init")
 
 	track.add_divider(1, func () -> int:
 		return interp.advance(track)

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitBytecode" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		A [Resource] used to save byte code generated with [BlipKitAssembler].
+		A [Resource] used to save bytecode generated with [BlipKitAssembler].
 	</brief_description>
 	<description>
 		Can be saved as [code].blipc[/code] files.
-		[b]Example:[/b] Save byte code:
+		[b]Example:[/b] Save bytecode:
 		[codeblocks]
 		[gdscript]
-		# Get byte code from a BlipKitAssembler.
+		# Get bytecode from a BlipKitAssembler.
 		var bytecode := assem.get_byte_code()
 
-		# Save byte code to a file.
+		# Save bytecode to a file.
 		ResourceSaver.save(bytecode, "res://bytecode.blipc")
 		[/gdscript]
 		[/codeblocks]
@@ -31,7 +31,7 @@
 		<method name="get_byte_array" qualifiers="const">
 			<return type="PackedByteArray" />
 			<description>
-				Returns the byte code.
+				Returns the bytecode.
 			</description>
 		</method>
 		<method name="get_code_section_offset" qualifiers="const">
@@ -49,7 +49,7 @@
 		<method name="get_error_message" qualifiers="const">
 			<return type="String" />
 			<description>
-				Returns the error message when loading the byte code fails.
+				Returns the error message when loading the bytecode fails.
 			</description>
 		</method>
 		<method name="get_label_count" qualifiers="const">
@@ -69,7 +69,7 @@
 			<return type="int" />
 			<param index="0" name="label_index" type="int" />
 			<description>
-				Returns the byte offset for the label with index [param label_index] relative to the byte code section offset.
+				Returns the byte offset for the label with index [param label_index] relative to the bytecode section offset.
 			</description>
 		</method>
 		<method name="get_state" qualifiers="const">
@@ -88,23 +88,23 @@
 		<method name="is_valid" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the byte code is valid.
-				Returns [code]false[/code] if the byte code is not valid. In this case, [method get_state] returns the state and [method get_error_message] returns the error message.
+				Returns [code]true[/code] if the bytecode is valid.
+				Returns [code]false[/code] if the bytecode is not valid. In this case, [method get_state] returns the state and [method get_error_message] returns the error message.
 			</description>
 		</method>
 	</methods>
 	<constants>
 		<constant name="OK" value="0" enum="State">
-			The byte code is loaded successfully.
+			The bytecode is loaded successfully.
 		</constant>
 		<constant name="ERR_INVALID_BINARY" value="1" enum="State">
-			The byte code is not valid.
+			The bytecode is not valid.
 		</constant>
 		<constant name="ERR_UNSUPPORTED_VERSION" value="2" enum="State">
-			The byte code version is not supported.
+			The bytecode version is not supported.
 		</constant>
 		<constant name="VERSION" value="0">
-			The current supported byte code version.
+			The current supported bytecode version.
 		</constant>
 	</constants>
 </class>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="BlipKitInterpreter" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Executes byte code generated with [BlipKitAssembler].
+		Executes bytecode generated with [BlipKitAssembler].
 	</brief_description>
 	<description>
-		Executes byte code generated with [BlipKitAssembler] to modify properties of a [BlipKitTrack].
+		Executes bytecode generated with [BlipKitAssembler] to modify properties of a [BlipKitTrack].
 		[b]Example:[/b] Play instructions:
 		[codeblocks]
 		[gdscript]
 		# Create the interpreter.
 		var interp := BlipKitInterpreter.new()
 
-		# Get the byte code from a [BlipKitAssembler].
-		var byte_code := assem.get_byte_code()
+		# Get the bytecode from a [BlipKitAssembler].
+		var bytecode := assem.get_byte_code()
 
-		# Load the byte code.
-		interp.load_byte_code(byte_code)
+		# Load the bytecode.
+		interp.load_byte_code(bytecode)
 
 		# Add a divider and run the interpreter on the track.
 		track.add_divider(1, func () -&gt; int:
@@ -79,17 +79,17 @@
 			<param index="0" name="byte_code" type="BlipKitBytecode" />
 			<param index="1" name="start_label" type="String" default="&quot;&quot;" />
 			<description>
-				Sets the byte code to interpret and resets all registers and errors.
-				If [param start_label] is not empty, starts executing byte code from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
-				Returns [code]false[/code] if the byte code is not valid or the label does not exist. The error message can be get with [method get_error_message].
+				Sets the bytecode to interpret and resets all registers and errors.
+				If [param start_label] is not empty, starts executing bytecode from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
+				Returns [code]false[/code] if the bytecode is not valid or the label does not exist. The error message can be get with [method get_error_message].
 			</description>
 		</method>
 		<method name="reset">
 			<return type="void" />
 			<param index="0" name="start_label" type="String" default="&quot;&quot;" />
 			<description>
-				Resets the instruction pointer to the beginning of the byte code, and resets all registers and errors. This does not clear instrument, waveform or sample slots.
-				If [param start_label] is not empty, starts executing byte code from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
+				Resets the instruction pointer to the beginning of the bytecode, and resets all registers and errors. This does not clear instrument, waveform or sample slots.
+				If [param start_label] is not empty, starts executing bytecode from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
 				[b]Note:[/b] This does not reset [BlipKitTrack]. Call [method BlipKitTrack.reset] to reset the corresponding track.
 			</description>
 		</method>
@@ -131,7 +131,7 @@
 			There are no more instructions to execute.
 		</constant>
 		<constant name="ERR_INVALID_BINARY" value="2" enum="State">
-			The byte code is not valid.
+			The bytecode is not valid.
 		</constant>
 		<constant name="ERR_INVALID_OPCODE" value="3" enum="State">
 			An invalid opcode was encountered.

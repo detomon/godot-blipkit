@@ -2,11 +2,11 @@
 
 Inherits: *RefCounted*
 
-**Executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md).**
+**Executes bytecode generated with [`BlipKitAssembler`](BlipKitAssembler.md).**
 
 ## Description
 
-Executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md) to modify properties of a [`BlipKitTrack`](BlipKitTrack.md).
+Executes bytecode generated with [`BlipKitAssembler`](BlipKitAssembler.md) to modify properties of a [`BlipKitTrack`](BlipKitTrack.md).
 
 **Example:** Play instructions:
 
@@ -14,11 +14,11 @@ Executes byte code generated with [`BlipKitAssembler`](BlipKitAssembler.md) to m
 # Create the interpreter.
 var interp := BlipKitInterpreter.new()
 
-# Get the byte code from a [BlipKitAssembler].
-var byte_code := assem.get_byte_code()
+# Get the bytecode from a [BlipKitAssembler].
+var bytecode := assem.get_byte_code()
 
-# Load the byte code.
-interp.load_byte_code(byte_code)
+# Load the bytecode.
+interp.load_byte_code(bytecode)
 
 # Add a divider and run the interpreter on the track.
 track.add_divider(1, func () -> int:
@@ -52,7 +52,7 @@ track.add_divider(1, func () -> int:
 - `OK_FINISHED` = `1`
 	- There are no more instructions to execute.
 - `ERR_INVALID_BINARY` = `2`
-	- The byte code is not valid.
+	- The bytecode is not valid.
 - `ERR_INVALID_OPCODE` = `3`
 	- An invalid opcode was encountered.
 - `ERR_INVALID_LABEL` = `4`
@@ -122,17 +122,17 @@ Returns `null` if no waveform is set in `slot`.
 
 ### `bool load_byte_code(byte_code: BlipKitBytecode, start_label: String = "")`
 
-Sets the byte code to interpret and resets all registers and errors.
+Sets the bytecode to interpret and resets all registers and errors.
 
-If `start_label` is not empty, starts executing byte code from the label's position. The label must be set `public` when adding it with `BlipKitAssembler.put_label()`.
+If `start_label` is not empty, starts executing bytecode from the label's position. The label must be set `public` when adding it with `BlipKitAssembler.put_label()`.
 
-Returns `false` if the byte code is not valid or the label does not exist. The error message can be get with [`get_error_message()`](#string-get_error_message-const).
+Returns `false` if the bytecode is not valid or the label does not exist. The error message can be get with [`get_error_message()`](#string-get_error_message-const).
 
 ### `void reset(start_label: String = "")`
 
-Resets the instruction pointer to the beginning of the byte code, and resets all registers and errors. This does not clear instrument, waveform or sample slots.
+Resets the instruction pointer to the beginning of the bytecode, and resets all registers and errors. This does not clear instrument, waveform or sample slots.
 
-If `start_label` is not empty, starts executing byte code from the label's position. The label must be set `public` when adding it with `BlipKitAssembler.put_label()`.
+If `start_label` is not empty, starts executing bytecode from the label's position. The label must be set `public` when adding it with `BlipKitAssembler.put_label()`.
 
 **Note:** This does not reset [`BlipKitTrack`](BlipKitTrack.md). Call `BlipKitTrack.reset()` to reset the corresponding track.
 
