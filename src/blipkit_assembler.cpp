@@ -30,15 +30,15 @@ void BlipKitAssembler::write_sections() {
 }
 
 void BlipKitAssembler::write_labels() {
-	uint32_t public_label_count = 0;
+	uint32_t label_count = 0;
 
 	for (const Label &label : labels) {
 		if (label.is_public) {
-			public_label_count++;
+			label_count++;
 		}
 	}
 
-	if (not public_label_count) {
+	if (not label_count) {
 		return;
 	}
 
@@ -49,11 +49,9 @@ void BlipKitAssembler::write_labels() {
 	const uint32_t section_size_position = byte_code.get_position();
 	byte_code.put_u32(0);
 
-	// Prepare label count.
+	// Set label count.
 	const uint32_t label_count_position = byte_code.get_position();
-	byte_code.put_u32(0);
-
-	uint32_t label_count = 0;
+	byte_code.put_u32(label_count);
 
 	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
 		const Label &label = labels[label_index.value];
@@ -68,8 +66,6 @@ void BlipKitAssembler::write_labels() {
 		byte_code.put_u32(label.byte_offset);
 		byte_code.put_u8(chars_size);
 		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars_size);
-
-		label_count++;
 	}
 
 	const uint32_t end_position = byte_code.get_position();
@@ -77,10 +73,6 @@ void BlipKitAssembler::write_labels() {
 	// Set section size.
 	byte_code.seek(section_size_position);
 	byte_code.put_u32(end_position - label_count_position);
-
-	// Set label count.
-	byte_code.seek(label_count_position);
-	byte_code.put_u32(label_count);
 
 	byte_code.seek(end_position);
 }
