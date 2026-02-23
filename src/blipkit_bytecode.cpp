@@ -267,9 +267,7 @@ PackedStringArray BlipKitBytecodeLoader::_get_recognized_extensions() const {
 }
 
 bool BlipKitBytecodeLoader::_handles_type(const StringName &p_type) const {
-	const String &type = p_type;
-
-	return type == BKStringName(BlipKitBytecode);
+	return p_type == BKStringName(BlipKitBytecode);
 }
 
 String BlipKitBytecodeLoader::_get_resource_type(const String &p_path) const {
@@ -351,7 +349,7 @@ Error BlipKitBytecodeSaver::_set_uid(const String &p_path, int64_t p_uid) {
 }
 
 bool BlipKitBytecodeSaver::_recognize(const Ref<Resource> &p_resource) const {
-	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+	const BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
 	return byte_code != nullptr;
 }
