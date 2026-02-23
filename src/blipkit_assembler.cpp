@@ -30,30 +30,22 @@ void BlipKitAssembler::write_sections() {
 }
 
 void BlipKitAssembler::write_labels() {
-	uint32_t public_label_count = 0;
+	uint32_t label_count = 0;
 
 	for (const Label &label : labels) {
 		if (label.is_public) {
-			public_label_count++;
+			label_count++;
 		}
 	}
 
-	if (not public_label_count) {
+	if (not label_count) {
 		return;
 	}
 
-	const uint8_t magic[4] = { 'l', 'a', 'b', 'l' };
-	byte_code.put_bytes(magic, 4);
+	ERR_FAIL_COND(section_begin("labl") != OK);
 
-	// Prepare section size.
-	const uint32_t section_size_position = byte_code.get_position();
-	byte_code.put_u32(0);
-
-	// Prepare label count.
-	const uint32_t label_count_position = byte_code.get_position();
-	byte_code.put_u32(0);
-
-	uint32_t label_count = 0;
+	// Set label count.
+	byte_code.put_u32(label_count);
 
 	for (const KeyValue<String, uint32_t> &label_index : label_indices) {
 		const Label &label = labels[label_index.value];
@@ -68,21 +60,9 @@ void BlipKitAssembler::write_labels() {
 		byte_code.put_u32(label.byte_offset);
 		byte_code.put_u8(chars_size);
 		byte_code.put_bytes(reinterpret_cast<const uint8_t *>(chars.ptr()), chars_size);
-
-		label_count++;
 	}
 
-	const uint32_t end_position = byte_code.get_position();
-
-	// Set section size.
-	byte_code.seek(section_size_position);
-	byte_code.put_u32(end_position - label_count_position);
-
-	// Set label count.
-	byte_code.seek(label_count_position);
-	byte_code.put_u32(label_count);
-
-	byte_code.seek(end_position);
+	ERR_FAIL_COND(section_end() != OK);
 }
 
 bool BlipKitAssembler::check_arg_type(const Variant &p_var, Variant::Type p_type, uint32_t p_index) {
@@ -134,6 +114,38 @@ void BlipKitAssembler::fail_with_error(const String &p_error_message) {
 void BlipKitAssembler::fail_argument_type(Variant::Type p_type, uint32_t p_index) {
 	const String &type_name = Variant::get_type_name(p_type);
 	fail_with_error(vformat("Expected instruction argument %d to be of type %s.", p_index, type_name));
+}
+
+BlipKitAssembler::Error BlipKitAssembler::section_begin(const String &p_name) {
+	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+
+	const CharString &name_utf8 = p_name.utf8();
+
+	ERR_FAIL_COND_V(current_section_start >= 0, ERR_INVALID_STATE);
+	ERR_FAIL_COND_V(name_utf8.length() != 4, ERR_INVALID_ARGUMENT);
+
+	const uint8_t *name_bytes = reinterpret_cast<const uint8_t *>(name_utf8.ptr());
+
+	byte_code.put_bytes(name_bytes, name_utf8.size() - 1); // Remove terminating NUL.
+	byte_code.put_u32(0);
+	current_section_start = byte_code.get_position();
+
+	return OK;
+}
+
+BlipKitAssembler::Error BlipKitAssembler::section_end() {
+	ERR_FAIL_COND_V(state != STATE_ASSEMBLE, ERR_INVALID_STATE);
+	ERR_FAIL_COND_V(current_section_start < 0, ERR_INVALID_STATE);
+
+	const int32_t section_end_position = byte_code.size();
+
+	byte_code.seek(current_section_start - 4);
+	byte_code.put_u32(section_end_position - current_section_start);
+	byte_code.seek(section_end_position);
+
+	current_section_start = -1;
+
+	return OK;
 }
 
 BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_arg1, const Variant &p_arg2, const Variant &p_arg3) {

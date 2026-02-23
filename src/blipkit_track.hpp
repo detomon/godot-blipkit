@@ -137,7 +137,7 @@ public:
 	static constexpr int ARPEGGIO_MAX = BK_MAX_ARPEGGIO;
 
 private:
-	BKTrack track;
+	BKTrack track = {};
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
 	Ref<BlipKitSample> sample;

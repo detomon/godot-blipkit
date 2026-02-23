@@ -13,9 +13,7 @@
 using namespace BlipKit;
 using namespace godot;
 
-const BlipKitBytecode::Header BlipKitBytecode::binary_header{
-	.version = VERSION,
-};
+const BlipKitBytecode::Header BlipKitBytecode::binary_header;
 
 int BlipKitBytecode::fail_with_error(State p_state, const String &p_error_message) {
 	state = p_state;
@@ -267,9 +265,7 @@ PackedStringArray BlipKitBytecodeLoader::_get_recognized_extensions() const {
 }
 
 bool BlipKitBytecodeLoader::_handles_type(const StringName &p_type) const {
-	const String &type = p_type;
-
-	return type == BKStringName(BlipKitBytecode);
+	return p_type == BKStringName(BlipKitBytecode);
 }
 
 String BlipKitBytecodeLoader::_get_resource_type(const String &p_path) const {
@@ -313,7 +309,7 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 		return ERR_FILE_UNRECOGNIZED;
 	}
 
-	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+	const BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
 	ERR_FAIL_NULL_V(byte_code, ERR_INVALID_PARAMETER);
 
@@ -323,7 +319,8 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 		return FileAccess::get_open_error();
 	}
 
-	file->store_buffer(byte_code->get_byte_array());
+	const Vector<uint8_t> &bytes = byte_code->get_bytes();
+	file->store_buffer(bytes.ptr(), bytes.size());
 	file->close();
 
 	return OK;
@@ -350,7 +347,7 @@ Error BlipKitBytecodeSaver::_set_uid(const String &p_path, int64_t p_uid) {
 }
 
 bool BlipKitBytecodeSaver::_recognize(const Ref<Resource> &p_resource) const {
-	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+	const BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
 	return byte_code != nullptr;
 }

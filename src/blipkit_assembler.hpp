@@ -102,6 +102,7 @@ private:
 	String error_message;
 	State state = STATE_ASSEMBLE;
 	uint32_t code_section_offset = 0;
+	int32_t current_section_start = -1;
 
 	void write_header();
 	void write_sections();
@@ -114,6 +115,9 @@ private:
 
 	void fail_with_error(const String &p_error_message);
 	void fail_argument_type(Variant::Type p_type, uint32_t p_index);
+
+	Error section_begin(const String &p_name);
+	Error section_end();
 
 public:
 	BlipKitAssembler();

@@ -27,8 +27,8 @@ public:
 
 	struct Header {
 		uint8_t magic[4] = { 'B', 'L', 'I', 'P' };
-		uint8_t version = 0;
-		uint8_t flags[3] = { 0 };
+		uint8_t version = VERSION;
+		uint8_t flags[3] = {};
 		uint8_t code_magic[4] = { 'c', 'o', 'd', 'e' };
 		uint32_t bytecode_size = 0;
 	};
