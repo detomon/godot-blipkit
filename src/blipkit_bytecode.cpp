@@ -313,7 +313,7 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 		return ERR_FILE_UNRECOGNIZED;
 	}
 
-	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+	const BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
 	ERR_FAIL_NULL_V(byte_code, ERR_INVALID_PARAMETER);
 
@@ -323,7 +323,8 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 		return FileAccess::get_open_error();
 	}
 
-	file->store_buffer(byte_code->get_byte_array());
+	const Vector<uint8_t> &bytes = byte_code->get_bytes();
+	file->store_buffer(bytes.ptr(), bytes.size());
 	file->close();
 
 	return OK;
