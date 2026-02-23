@@ -50,7 +50,7 @@ func _ready() -> void:
 		printerr(assem.get_error_message())
 		return
 
-	# Get and load the byte code.
+	# Get and load the bytecode.
 	var bytes := assem.get_byte_code()
 	_interp.load_byte_code(bytes)
 

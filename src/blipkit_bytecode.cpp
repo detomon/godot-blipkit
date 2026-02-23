@@ -25,7 +25,7 @@ int BlipKitBytecode::fail_with_error(State p_state, const String &p_error_messag
 }
 
 bool BlipKitBytecode::read_header() {
-	const uint32_t headers_size = byte_code.get_bytes(reinterpret_cast<uint8_t *>(&header), sizeof(header));
+	const uint32_t headers_size = bytecode.get_bytes(reinterpret_cast<uint8_t *>(&header), sizeof(header));
 
 	if (headers_size != sizeof(header)) {
 		fail_with_error(ERR_INVALID_BINARY, "Truncated header.");
@@ -53,21 +53,21 @@ bool BlipKitBytecode::read_header() {
 		} break;
 	}
 
-	byte_code.seek(offsetof(Header, bytecode_size));
-	header.bytecode_size = byte_code.get_u32();
+	bytecode.seek(offsetof(Header, bytecode_size));
+	header.bytecode_size = bytecode.get_u32();
 
 	return true;
 }
 
 bool BlipKitBytecode::read_sections() {
-	const uint32_t position = byte_code.get_position();
+	const uint32_t position = bytecode.get_position();
 
-	byte_code.seek(position + header.bytecode_size);
+	bytecode.seek(position + header.bytecode_size);
 
-	while (byte_code.get_available_bytes() > 0) {
+	while (bytecode.get_available_bytes() > 0) {
 		uint8_t magic[4] = { 0 };
-		const uint32_t section_position = byte_code.get_position();
-		const uint32_t read_size = byte_code.get_bytes(magic, 4);
+		const uint32_t section_position = bytecode.get_position();
+		const uint32_t read_size = bytecode.get_bytes(magic, 4);
 
 		ERR_FAIL_COND_V_MSG(read_size < 4, false, vformat("Truncated section header at offset %d.", section_position));
 
@@ -81,16 +81,16 @@ bool BlipKitBytecode::read_sections() {
 		}
 	}
 
-	// Reset to byte code.
-	byte_code.seek(position);
+	// Reset to bytecode.
+	bytecode.seek(position);
 
 	return true;
 }
 
 bool BlipKitBytecode::read_labels() {
-	const uint32_t section_size = byte_code.get_u32();
-	const uint32_t position = byte_code.get_position();
-	const uint32_t label_count = byte_code.get_u32();
+	const uint32_t section_size = bytecode.get_u32();
+	const uint32_t position = bytecode.get_position();
+	const uint32_t label_count = bytecode.get_u32();
 
 	labels.clear();
 	labels.reserve(label_count);
@@ -100,14 +100,14 @@ bool BlipKitBytecode::read_labels() {
 	PackedByteArray label_bytes;
 
 	for (uint32_t i = 0; i < label_count; i++) {
-		const uint32_t label_address = byte_code.get_u32();
-		const uint32_t label_size = byte_code.get_u8();
+		const uint32_t label_address = bytecode.get_u32();
+		const uint32_t label_size = bytecode.get_u8();
 
 		if (label_size > label_bytes.size()) {
 			label_bytes.resize(label_size);
 		}
 
-		const uint32_t read_size = byte_code.get_bytes(label_bytes.ptrw(), label_size);
+		const uint32_t read_size = bytecode.get_bytes(label_bytes.ptrw(), label_size);
 
 		if (read_size < label_size) {
 			fail_with_error(ERR_INVALID_BINARY, "Truncated label.");
@@ -124,7 +124,7 @@ bool BlipKitBytecode::read_labels() {
 		}
 	}
 
-	byte_code.seek(position + section_size);
+	bytecode.seek(position + section_size);
 
 	return true;
 }
@@ -134,7 +134,7 @@ bool BlipKitBytecode::is_valid() const {
 }
 
 void BlipKitBytecode::set_bytes(const Vector<uint8_t> &p_bytes) {
-	byte_code.set_bytes(p_bytes);
+	bytecode.set_bytes(p_bytes);
 
 	if (not read_header()) {
 		return;
@@ -154,16 +154,16 @@ String BlipKitBytecode::get_error_message() const {
 }
 
 Vector<uint8_t> BlipKitBytecode::get_bytes() const {
-	return byte_code.get_bytes();
+	return bytecode.get_bytes();
 }
 
 PackedByteArray BlipKitBytecode::get_byte_array() const {
-	const uint32_t bytes_size = byte_code.size();
+	const uint32_t bytes_size = bytecode.size();
 	PackedByteArray bytes;
 	bytes.resize(bytes_size);
 	uint8_t *ptrw = bytes.ptrw();
 
-	memcpy(ptrw, byte_code.ptr(), bytes_size);
+	memcpy(ptrw, bytecode.ptr(), bytes_size);
 
 	return bytes;
 }
@@ -285,7 +285,7 @@ Variant BlipKitBytecodeLoader::_load(const String &p_path, const String &p_origi
 		return nullptr;
 	}
 
-	Ref<BlipKitBytecode> byte_code;
+	Ref<BlipKitBytecode> bytecode;
 	const PackedByteArray byte_array = FileAccess::get_file_as_bytes(p_path);
 
 	const uint32_t bytes_size = byte_array.size();
@@ -295,10 +295,10 @@ Variant BlipKitBytecodeLoader::_load(const String &p_path, const String &p_origi
 
 	memcpy(ptrw, byte_array.ptr(), bytes_size);
 
-	byte_code.instantiate();
-	byte_code->set_bytes(bytes);
+	bytecode.instantiate();
+	bytecode->set_bytes(bytes);
 
-	return byte_code;
+	return bytecode;
 }
 
 void BlipKitBytecodeLoader::_bind_methods() {
@@ -313,9 +313,9 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 		return ERR_FILE_UNRECOGNIZED;
 	}
 
-	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+	const BlipKitBytecode *bytecode = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
-	ERR_FAIL_NULL_V(byte_code, ERR_INVALID_PARAMETER);
+	ERR_FAIL_NULL_V(bytecode, ERR_INVALID_PARAMETER);
 
 	Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::WRITE);
 
@@ -323,7 +323,7 @@ Error BlipKitBytecodeSaver::_save(const Ref<Resource> &p_resource, const String 
 		return FileAccess::get_open_error();
 	}
 
-	file->store_buffer(byte_code->get_byte_array());
+	file->store_buffer(bytecode->get_byte_array());
 	file->close();
 
 	return OK;
@@ -350,9 +350,9 @@ Error BlipKitBytecodeSaver::_set_uid(const String &p_path, int64_t p_uid) {
 }
 
 bool BlipKitBytecodeSaver::_recognize(const Ref<Resource> &p_resource) const {
-	BlipKitBytecode *byte_code = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
+	const BlipKitBytecode *bytecode = Object::cast_to<BlipKitBytecode>(p_resource.ptr());
 
-	return byte_code != nullptr;
+	return bytecode != nullptr;
 }
 
 PackedStringArray BlipKitBytecodeSaver::_get_recognized_extensions(const Ref<Resource> &p_resource) const {

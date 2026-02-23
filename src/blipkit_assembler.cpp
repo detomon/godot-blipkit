@@ -427,7 +427,7 @@ BlipKitAssembler::Error BlipKitAssembler::compile() {
 			return ERR_UNDEFINED_LABEL;
 		}
 
-		const int32_t jump_offset = label.byte_offset - address.byte_offset; // Jump relative to byte code position.
+		const int32_t jump_offset = label.byte_offset - address.byte_offset; // Jump relative to bytecode position.
 		byte_code.seek(address_offset);
 		byte_code.put_s32(jump_offset);
 	}
@@ -449,7 +449,7 @@ Vector<uint8_t> BlipKitAssembler::get_bytes() const {
 }
 
 Ref<BlipKitBytecode> BlipKitAssembler::get_byte_code() {
-	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, nullptr, "Byte code is not compiled.");
+	ERR_FAIL_COND_V_MSG(state != STATE_COMPILED, nullptr, "Bytecode is not compiled.");
 
 	if (compiled_byte_code.is_valid()) {
 		return compiled_byte_code;

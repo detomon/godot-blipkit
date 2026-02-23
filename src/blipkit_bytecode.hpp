@@ -44,7 +44,7 @@ public:
 
 private:
 	Header header;
-	ByteStreamReader byte_code;
+	ByteStreamReader bytecode;
 	HashMap<String, uint32_t> label_indices;
 	LocalVector<Label> labels;
 	State state = OK;
