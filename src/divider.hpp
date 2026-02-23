@@ -47,7 +47,7 @@ private:
 		}
 	};
 
-	static std::atomic<ID> id;
+	static inline std::atomic<ID> id = 0;
 	HashMap<ID, Divider> dividers;
 	BKDivider divider = { { 0 } };
 
