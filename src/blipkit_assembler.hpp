@@ -102,6 +102,7 @@ private:
 	String error_message;
 	State state = STATE_ASSEMBLE;
 	uint32_t code_section_offset = 0;
+	int32_t current_section_start = -1;
 
 	void write_header();
 	void write_sections();
