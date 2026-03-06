@@ -19,6 +19,7 @@ class AudioStreamBlipKitPlayback;
 
 class BlipKitTrack : public RefCounted {
 	GDCLASS(BlipKitTrack, RefCounted)
+	friend class BlipKitServer;
 
 public:
 	enum Waveform {
@@ -137,6 +138,7 @@ public:
 	static constexpr int ARPEGGIO_MAX = BK_MAX_ARPEGGIO;
 
 private:
+	RID self;
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
@@ -146,9 +148,13 @@ private:
 	AudioStreamBlipKitPlayback *playback = nullptr;
 	bool master_volume_changed = false;
 
+	_FORCE_INLINE_ void set_self(const RID &p_self) { self = p_self; }
+
 public:
 	BlipKitTrack();
 	~BlipKitTrack();
+
+	_FORCE_INLINE_ RID get_self() const { return self; }
 
 	static Ref<BlipKitTrack> create_with_waveform(Waveform p_waveform);
 

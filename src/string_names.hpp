@@ -11,6 +11,7 @@ private:
 	static inline StringNames *singleton = nullptr;
 
 public:
+	StringName BlipKitServer = "BlipKitServer";
 	StringName _bytes = "_bytes";
 	StringName _frames = "_frames";
 	StringName BlipKitBytecode = "BlipKitBytecode";
