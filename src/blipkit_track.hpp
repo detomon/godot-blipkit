@@ -19,7 +19,6 @@ class AudioStreamBlipKitPlayback;
 
 class BlipKitTrack : public RefCounted {
 	GDCLASS(BlipKitTrack, RefCounted)
-	friend class BlipKitServer;
 
 public:
 	enum Waveform {
@@ -138,7 +137,6 @@ public:
 	static constexpr int ARPEGGIO_MAX = BK_MAX_ARPEGGIO;
 
 private:
-	RID self;
 	BKTrack track;
 	Ref<BlipKitInstrument> instrument;
 	Ref<BlipKitWaveform> custom_waveform;
@@ -148,13 +146,9 @@ private:
 	AudioStreamBlipKitPlayback *playback = nullptr;
 	bool master_volume_changed = false;
 
-	_FORCE_INLINE_ void set_self(const RID &p_self) { self = p_self; }
-
 public:
 	BlipKitTrack();
 	~BlipKitTrack();
-
-	_FORCE_INLINE_ RID get_self() const { return self; }
 
 	static Ref<BlipKitTrack> create_with_waveform(Waveform p_waveform);
 
@@ -216,7 +210,7 @@ public:
 
 	PackedInt32Array get_dividers() const;
 	bool has_divider(DividerGroup::ID p_id);
-	DividerGroup::ID add_divider(int p_tick_interval, Callable p_callable);
+	DividerGroup::ID add_divider(int p_tick_interval, const Callable &p_callable);
 	void remove_divider(DividerGroup::ID p_id);
 	void reset_divider(DividerGroup::ID p_id, int p_tick_interval = 0);
 	void clear_dividers();

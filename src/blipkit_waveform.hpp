@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fixed_vector.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
@@ -17,7 +18,10 @@ public:
 
 private:
 	BKData data;
-	LocalVector<BKFrame> frames;
+	FixedVector<BKFrame, WAVE_SIZE_MAX> frames;
+	RID rid;
+
+	bool update_frames();
 
 public:
 	BlipKitWaveform();
@@ -31,6 +35,8 @@ public:
 
 	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 	PackedFloat32Array get_frames() const;
+
+	_FORCE_INLINE_ RID get_rid() const { return rid; }
 
 protected:
 	static void _bind_methods();

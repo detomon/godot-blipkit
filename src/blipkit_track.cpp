@@ -564,7 +564,7 @@ PackedInt32Array BlipKitTrack::get_dividers() const {
 	return dividers.get_dividers();
 }
 
-DividerGroup::ID BlipKitTrack::add_divider(int p_tick_interval, Callable p_callable) {
+DividerGroup::ID BlipKitTrack::add_divider(int p_tick_interval, const Callable &p_callable) {
 	ERR_FAIL_COND_V(p_tick_interval <= 0, 0);
 	ERR_FAIL_COND_V(p_callable.is_null(), 0);
 

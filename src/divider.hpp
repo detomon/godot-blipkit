@@ -3,6 +3,7 @@
 #include <BlipKit.h>
 #include <atomic>
 #include <godot_cpp/templates/hash_map.hpp>
+#include <godot_cpp/templates/rid_owner.hpp>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/string.hpp>
@@ -14,6 +15,8 @@ namespace BlipKit {
 class AudioStreamBlipKitPlayback;
 
 class DividerGroup {
+	friend class BlipKitServer;
+
 public:
 	typedef uint32_t ID;
 

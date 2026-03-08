@@ -1,5 +1,6 @@
 #include "blipkit_waveform.hpp"
 #include "audio_stream_blipkit.hpp"
+#include "blipkit_server.hpp"
 #include "string_names.hpp"
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/core/math.hpp>
@@ -8,10 +9,12 @@ using namespace BlipKit;
 using namespace godot;
 
 BlipKitWaveform::BlipKitWaveform() {
-	BKInt result = BKDataInit(&data);
+	rid = BlipKitServer::get_singleton()->create_waveform();
+	ERR_FAIL_COND(rid == RID());
+
+	/*BKInt result = BKDataInit(&data);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
 
-	frames.reserve(WAVE_SIZE_MAX);
 	frames.resize(8);
 	frames[0] = BK_FRAME_MAX;
 	frames[1] = BK_FRAME_MAX;
@@ -21,12 +24,24 @@ BlipKitWaveform::BlipKitWaveform() {
 	frames[5] = 0;
 	frames[6] = 0;
 	frames[7] = 0;
+
+	update_frames();*/
 }
 
 BlipKitWaveform::~BlipKitWaveform() {
 	BK_THREAD_SAFE_METHOD
 
 	BKDispose(&data);
+}
+
+bool BlipKitWaveform::update_frames() {
+	BKInt result = BKDataSetFrames(&data, frames.ptr(), frames.size(), 1, false);
+
+	if (result != BK_SUCCESS) {
+		ERR_FAIL_V_MSG(false, vformat("Failed to update BKData: %s.", BKStatusGetName(result)));
+	}
+
+	return true;
 }
 
 Ref<BlipKitWaveform> BlipKitWaveform::create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
@@ -73,10 +88,8 @@ void BlipKitWaveform::set_frames(const PackedFloat32Array &p_frames, bool p_norm
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
 
-	BKInt result = BKDataSetFrames(&data, frames.ptr(), frames.size(), 1, false);
-
-	if (result != BK_SUCCESS) [[unlikely]] {
-		ERR_FAIL_MSG(vformat("Failed to update BKData: %s.", BKStatusGetName(result)));
+	if (not update_frames()) {
+		return;
 	}
 
 	emit_changed();
@@ -103,6 +116,7 @@ void BlipKitWaveform::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitWaveform::is_valid);
 	ClassDB::bind_method(D_METHOD("set_frames", "frames", "normalize", "amplitude"), &BlipKitWaveform::set_frames, DEFVAL(false), DEFVAL(1.0));
 	ClassDB::bind_method(D_METHOD("get_frames"), &BlipKitWaveform::get_frames);
+	ClassDB::bind_method(D_METHOD("get_rid"), &BlipKitWaveform::get_rid);
 
 	BIND_CONSTANT(WAVE_SIZE_MAX);
 }
