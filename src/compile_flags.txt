@@ -7,3 +7,5 @@
 ../vendor/godot-cpp/gen/include
 -I
 ../vendor/BlipKit/src
+-I
+./

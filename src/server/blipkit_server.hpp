@@ -1,7 +1,9 @@
 #pragma once
 
 #include "divider.hpp"
-#include "fixed_vector.hpp"
+#include "server/instrument.hpp"
+#include "server/track.hpp"
+#include "server/waveform.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/classes/ref.hpp>
@@ -25,50 +27,7 @@ class BlipKitServer : public Object {
 	using Divider = DividerGroup::Divider;
 
 private:
-	struct Instrument {
-		enum EnvelopeType {
-			ENVELOPE_VOLUME,
-			ENVELOPE_PANNING,
-			ENVELOPE_PITCH,
-			ENVELOPE_DUTY_CYCLE,
-			ENVELOPE_MAX,
-		};
-
-		struct Sequence {
-			PackedInt32Array steps;
-			PackedFloat32Array values;
-			int sustain_offset = 0;
-			int sustain_length = 0;
-		};
-
-		BKInstrument instrument = { { 0 } };
-		Sequence sequences[ENVELOPE_MAX];
-	};
-
 	struct Sample {
-	};
-
-	struct Track {
-		BKTrack track = { { { 0 } } };
-		PackedFloat32Array arpeggio;
-		DividerGroup dividers;
-		AudioStreamBlipKitPlayback *playback = nullptr;
-		RID instrument;
-		RID custom_waveform;
-		RID sample;
-		bool master_volume_changed = false;
-	};
-
-	struct Waveform {
-		static constexpr int WAVE_SIZE_MAX = BK_WAVE_MAX_LENGTH;
-
-		BKData data = { { 0 } };
-		FixedVector<BKFrame, WAVE_SIZE_MAX> frames;
-
-		~Waveform();
-
-		bool initialize();
-		bool set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 	};
 
 	static inline BlipKitServer *singleton = nullptr;
@@ -84,6 +43,9 @@ public:
 		return singleton;
 	}
 
+	static void create();
+	static void free();
+
 	RID create_instrument();
 	RID create_sample();
 	RID create_track();
@@ -91,6 +53,10 @@ public:
 	RID create_divider(const RID &p_track_rid, int p_tick_interval, const Callable &p_callable);
 
 	bool waveform_set_frames(const RID &p_rid, const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
+	PackedFloat32Array waveform_get_frames(const RID &p_rid) const;
+	int waveform_get_size(const RID &p_rid) const;
+	bool waveform_get_is_valid(const RID &p_rid) const;
+	BKData *waveform_get_data(const RID &p_rid) const;
 
 	void free_rid(const RID &p_rid);
 

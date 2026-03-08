@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fixed_vector.hpp"
+#include "server/blipkit_server.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/templates/local_vector.hpp>
@@ -17,11 +18,7 @@ public:
 	static constexpr int WAVE_SIZE_MAX = BK_WAVE_MAX_LENGTH;
 
 private:
-	BKData data;
-	FixedVector<BKFrame, WAVE_SIZE_MAX> frames;
 	RID rid;
-
-	bool update_frames();
 
 public:
 	BlipKitWaveform();
@@ -29,12 +26,12 @@ public:
 
 	static Ref<BlipKitWaveform> create_with_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 
-	_ALWAYS_INLINE_ BKData *get_data() { return &data; };
-	_ALWAYS_INLINE_ int size() const { return frames.size(); };
-	_ALWAYS_INLINE_ bool is_valid() const { return !frames.is_empty(); };
-
 	void set_frames(const PackedFloat32Array &p_frames, bool p_normalize = false, float p_amplitude = 1.0);
 	PackedFloat32Array get_frames() const;
+
+	_ALWAYS_INLINE_ BKData *get_data() { return BlipKitServer::get_singleton()->waveform_get_data(rid); };
+	_ALWAYS_INLINE_ int size() const { return BlipKitServer::get_singleton()->waveform_get_size(rid); };
+	_ALWAYS_INLINE_ bool is_valid() const { return BlipKitServer::get_singleton()->waveform_get_is_valid(rid); };
 
 	_FORCE_INLINE_ RID get_rid() const { return rid; }
 

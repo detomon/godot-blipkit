@@ -4,10 +4,9 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_sample.hpp"
-#include "blipkit_server.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "godot_cpp/core/memory.hpp"
+#include "server/blipkit_server.hpp"
 #include "string_names.hpp"
 #include <gdextension_interface.h>
 #include <godot_cpp/classes/engine.hpp>
@@ -20,7 +19,6 @@ using namespace godot;
 
 static Ref<BlipKitBytecodeLoader> bytecode_loader;
 static Ref<BlipKitBytecodeSaver> bytecode_saver;
-static BlipKitServer *blipkit_server;
 
 static void initialize_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -42,8 +40,8 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 
 	StringNames::create();
 
-	blipkit_server = memnew(BlipKitServer);
-	Engine::get_singleton()->register_singleton(BKStringName(BlipKitServer), blipkit_server);
+	BlipKitServer::create();
+	Engine::get_singleton()->register_singleton(BKStringName(BlipKitServer), BlipKitServer::get_singleton());
 
 	bytecode_loader.instantiate();
 	ResourceLoader::get_singleton()->add_resource_format_loader(bytecode_loader, false);
@@ -64,8 +62,7 @@ static void uninitialize_module(ModuleInitializationLevel p_level) {
 	bytecode_saver.unref();
 
 	Engine::get_singleton()->unregister_singleton(BKStringName(BlipKitServer));
-	memfree(blipkit_server);
-	blipkit_server = nullptr;
+	BlipKitServer::free();
 
 	StringNames::free();
 }

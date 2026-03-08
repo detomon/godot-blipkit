@@ -1,6 +1,7 @@
 #pragma once
 
-#include "blipkit_server.hpp"
+#include "server/blipkit_server.hpp"
+#include "server/instrument.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
@@ -15,7 +16,7 @@ class BlipKitInstrument : public Resource {
 	GDCLASS(BlipKitInstrument, Resource)
 
 public:
-	using Sequence = BlipKitServer::Instrument::Sequence;
+	using Sequence = Instrument::Sequence;
 
 	enum EnvelopeType {
 		ENVELOPE_VOLUME,
@@ -37,7 +38,7 @@ public:
 
 	_ALWAYS_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 
-	void set_envelope(EnvelopeType p_type, const PackedFloat32Array &p_values, const PackedInt32Array &p_steps = PackedInt32Array(), int p_sustain_offset = -1, int p_sustain_length = 0);
+	void set_envelope(EnvelopeType p_type, const PackedFloat32Array &p_values, const PackedInt32Array &p_steps = {}, int p_sustain_offset = -1, int p_sustain_length = 0);
 	void set_adsr(int p_attack, int p_decay, float p_sustain, int p_release);
 	bool has_envelope(EnvelopeType p_type) const;
 	PackedInt32Array get_envelope_steps(EnvelopeType p_type) const;
