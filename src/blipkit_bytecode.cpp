@@ -13,9 +13,7 @@
 using namespace BlipKit;
 using namespace godot;
 
-const BlipKitBytecode::Header BlipKitBytecode::binary_header{
-	.version = VERSION,
-};
+const BlipKitBytecode::Header BlipKitBytecode::binary_header;
 
 int BlipKitBytecode::fail_with_error(State p_state, const String &p_error_message) {
 	state = p_state;
