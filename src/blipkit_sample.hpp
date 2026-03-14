@@ -24,7 +24,7 @@ public:
 	};
 
 private:
-	BKData data;
+	BKData data = {};
 	LocalVector<BKFrame> frames;
 	uint32_t sustain_offset = 0;
 	uint32_t sustain_end = 0;

@@ -9,7 +9,7 @@ namespace BlipKit {
 
 class Track {
 private:
-	BKTrack track = { { { 0 } } };
+	BKTrack track = {};
 	PackedFloat32Array arpeggio;
 	DividerGroup dividers;
 	AudioStreamBlipKitPlayback *playback = nullptr;

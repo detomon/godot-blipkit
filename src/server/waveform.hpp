@@ -13,7 +13,7 @@ public:
 	static constexpr int WAVE_SIZE_MAX = BK_WAVE_MAX_LENGTH;
 
 private:
-	BKData data = { { 0 } };
+	BKData data = {};
 	FixedVector<BKFrame, WAVE_SIZE_MAX> frames;
 
 public:

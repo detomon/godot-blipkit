@@ -25,7 +25,7 @@ public:
 	};
 
 private:
-	BKInstrument instrument = { { 0 } };
+	BKInstrument instrument = {};
 	Sequence sequences[ENVELOPE_MAX];
 };
 
