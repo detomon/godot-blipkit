@@ -68,7 +68,7 @@ private:
 	static constexpr int CHANNEL_COUNT = 2;
 	static constexpr int CHANNEL_SIZE = 1024;
 
-	BKContext context;
+	BKContext context = {};
 	LocalVector<BKFrame> buffer;
 	LocalVector<BlipKitTrack *> tracks;
 	LocalVector<Callable> sync_callables;

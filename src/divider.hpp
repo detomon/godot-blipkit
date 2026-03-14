@@ -49,7 +49,7 @@ private:
 
 	static inline std::atomic<ID> id = 0;
 	HashMap<ID, Divider> dividers;
-	BKDivider divider = { { 0 } };
+	BKDivider divider = {};
 
 	static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
 
