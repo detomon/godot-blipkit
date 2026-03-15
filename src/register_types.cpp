@@ -1,6 +1,7 @@
 #include "audio_stream_blipkit.hpp"
 #include "blipkit_assembler.hpp"
 #include "blipkit_bytecode.hpp"
+#include "blipkit_code_parser.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_sample.hpp"
@@ -29,6 +30,7 @@ static void initialize_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(BlipKitBytecode);
 	GDREGISTER_CLASS(BlipKitBytecodeLoader);
 	GDREGISTER_CLASS(BlipKitBytecodeSaver);
+	GDREGISTER_CLASS(BlipKitCodeParser);
 	GDREGISTER_CLASS(BlipKitInstrument);
 	GDREGISTER_CLASS(BlipKitInterpreter);
 	GDREGISTER_CLASS(BlipKitSample);
