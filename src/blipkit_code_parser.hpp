@@ -58,31 +58,13 @@ private:
 		return token_table[Math::min(p_char, TOKEN_TABLE_SIZE - 1)];
 	}
 
-	_ALWAYS_INLINE_ bool peek_is_token(TokenType p_token) const {
-		if (has_token()) [[likely]] {
-			return token_from_char(code_ptr[offset]) == p_token;
-		}
-		return TOKEN_END;
-	}
-
 	_ALWAYS_INLINE_ TokenType next_token() {
-		if (has_token()) [[likely]] {
-			return token_from_char(code_ptr[offset++]);
-		}
-		return TOKEN_END;
-	}
-
-	_ALWAYS_INLINE_ bool next_if_token(TokenType p_token) {
-		if (peek_is_token(p_token)) [[likely]] {
-			offset++;
-			return true;
-		}
-		return false;
+		return has_token() ? token_from_char(code_ptr[offset++]) : TOKEN_END;
 	}
 
 	_ALWAYS_INLINE_ void next_while(TokenType p_token) {
-		while (next_if_token(p_token)) {
-			//
+		while (has_token() && token_from_char(code_ptr[offset]) == p_token) {
+			offset++;
 		}
 	}
 
