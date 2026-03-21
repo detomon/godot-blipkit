@@ -1,65 +1,78 @@
 #include "blipkit_code_parser.hpp"
+#include <godot_cpp/classes/time.hpp>
 
 using namespace godot;
 using namespace BlipKit;
 
-static constexpr char32_t NO_BREAK_SPACE = 0xA0;
+constexpr BlipKitCodeParser::TokenTable::TokenTable() {
+	table[0] = BlipKitCodeParser::TOKEN_END;
+	table['\t'] = BlipKitCodeParser::TOKEN_INDENTION;
+	table['\n'] = BlipKitCodeParser::TOKEN_LINE_BREAK;
+	table['\r'] = BlipKitCodeParser::TOKEN_WHITESPACE;
+	table[' '] = BlipKitCodeParser::TOKEN_WHITESPACE;
+	table['%'] = BlipKitCodeParser::TOKEN_COMMENT;
+	table[';'] = BlipKitCodeParser::TOKEN_SEMICOLON;
+	table['_'] = BlipKitCodeParser::TOKEN_IDENTIFIER;
+	table['#'] = BlipKitCodeParser::TOKEN_IDENTIFIER;
+	table[CHAR_NO_BREAK_SPACE] = BlipKitCodeParser::TOKEN_WHITESPACE;
 
-const BlipKitCodeParser::TokenType BlipKitCodeParser::token_table[TOKEN_TABLE_SIZE] = {
-	['\t'] = BlipKitCodeParser::TOKEN_INDENTION,
-	['\n'] = BlipKitCodeParser::TOKEN_LINE_BREAK,
-	['\r'] = BlipKitCodeParser::TOKEN_SPACE,
-	[' '] = BlipKitCodeParser::TOKEN_SPACE,
-	['%'] = BlipKitCodeParser::TOKEN_COMMENT,
-	[';'] = BlipKitCodeParser::TOKEN_SEMICOLON,
-	[NO_BREAK_SPACE] = BlipKitCodeParser::TOKEN_SPACE,
-	[TOKEN_TABLE_SIZE - 1] = BlipKitCodeParser::TOKEN_OTHER, // Explicite fallback.
-};
+	for (uint32_t c = '0'; c <= '9'; c++) {
+		table[c] = BlipKitCodeParser::TOKEN_IDENTIFIER;
+	}
+	for (uint32_t c = 'A'; c <= 'Z'; c++) {
+		table[c] = BlipKitCodeParser::TOKEN_IDENTIFIER;
+	}
+	for (uint32_t c = 'a'; c <= 'z'; c++) {
+		table[c] = BlipKitCodeParser::TOKEN_IDENTIFIER;
+	}
+}
+
+const BlipKitCodeParser::TokenTable BlipKitCodeParser::token_table;
 
 BlipKitCodeParser::TokenType BlipKitCodeParser::get_token() {
-	token.offset_start = offset;
+	token.start = offset;
 	token.line = line;
 
 	TokenType type = next_token();
-	token.offset_end = offset;
+	token.end = offset;
 
 	switch (type) {
 		case TOKEN_INDENTION: {
 			next_while(TOKEN_INDENTION);
-			indention = offset - token.offset_start;
-			token.offset_end = offset;
+			indention = offset - token.start;
+			token.end = offset;
 			break;
 		}
-		case TOKEN_SPACE:
+		case TOKEN_WHITESPACE:
 		case TOKEN_SEMICOLON: {
-			next_while(TOKEN_SPACE);
-			token.offset_end = offset;
+			next_while(TOKEN_WHITESPACE);
+			token.end = offset;
 			break;
 		}
 		case TOKEN_LINE_BREAK: {
 			advance_line();
-			token.offset_end = offset;
+			token.end = offset;
 			break;
 		}
 		case TOKEN_COMMENT: {
-			token.offset_start = offset;
+			token.start = offset;
 			do {
 				type = next_token();
-				if (type != TOKEN_LINE_BREAK) {
-					token.offset_end = offset;
-				} else {
+				if (type == TOKEN_LINE_BREAK) {
 					advance_line();
 					break;
+				} else {
+					token.end = offset;
 				}
 			} while (type != TOKEN_END);
 			type = TOKEN_COMMENT;
-			token.offset_end = offset;
+			token.end = offset;
 			break;
 		}
-		case TOKEN_OTHER: {
-			next_while(TOKEN_OTHER);
-			token.offset_end = offset;
-			next_while(TOKEN_SPACE);
+		case TOKEN_IDENTIFIER: {
+			next_while(TOKEN_IDENTIFIER);
+			token.end = offset;
+			next_while(TOKEN_WHITESPACE);
 			break;
 		}
 		default: {
@@ -74,7 +87,7 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 	switch (p_state) {
 		case STATE_ROOT: {
 			switch (p_token) {
-				case TOKEN_SPACE: {
+				case TOKEN_WHITESPACE: {
 					return STATE_IGNORE;
 				}
 				case TOKEN_LINE_BREAK:
@@ -84,7 +97,7 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 				case TOKEN_INDENTION: {
 					return STATE_LINE;
 				}
-				case TOKEN_OTHER: {
+				case TOKEN_IDENTIFIER: {
 					return next_state(STATE_COMMAND, p_token);
 				}
 				case TOKEN_END: {
@@ -98,14 +111,14 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 		}
 		case STATE_LINE: {
 			switch (p_token) {
-				case TOKEN_SPACE: {
+				case TOKEN_WHITESPACE: {
 					return STATE_IGNORE;
 				}
 				case TOKEN_LINE_BREAK:
 				case TOKEN_COMMENT: {
 					return STATE_ROOT;
 				}
-				case TOKEN_OTHER: {
+				case TOKEN_IDENTIFIER: {
 					return next_state(STATE_COMMAND, p_token);
 				}
 				case TOKEN_END: {
@@ -119,7 +132,7 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 		}
 		case STATE_IGNORE: {
 			switch (p_token) {
-				case TOKEN_SPACE:
+				case TOKEN_WHITESPACE:
 				case TOKEN_INDENTION: {
 					return STATE_IGNORE;
 				}
@@ -138,7 +151,7 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 		}
 		case STATE_COMMAND: {
 			switch (p_token) {
-				case TOKEN_OTHER: {
+				case TOKEN_IDENTIFIER: {
 					return begin_command();
 				}
 				case TOKEN_LINE_BREAK:
@@ -156,7 +169,7 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 		}
 		case STATE_ARGUMENT: {
 			switch (p_token) {
-				case TOKEN_OTHER: {
+				case TOKEN_IDENTIFIER: {
 					return add_argument();
 				}
 				case TOKEN_SEMICOLON: {
@@ -176,31 +189,33 @@ BlipKitCodeParser::StateType BlipKitCodeParser::next_state(StateType p_state, To
 			break;
 		}
 		default: {
-			break;
+			return STATE_ERROR;
 		}
 	}
-
-	return STATE_ERROR;
 }
 
 String BlipKitCodeParser::get_token_value() const {
-	return code.substr(token.offset_start, token.offset_end - token.offset_start);
+	return code.code.substr(token.start, token.end - token.start);
 }
 
 BlipKitCodeParser::StateType BlipKitCodeParser::begin_command() {
-	if (indention > prev_indention + 1) {
-		error = vformat("Wrong indention on line %d (got %d but expected %d)", line + 1, indention, prev_indention + 1);
+	const int32_t next_indention = indention_prev + 1;
+	if (indention > next_indention) {
+		error = vformat("Too much indention on line %d (got %d but expected %d)", line + 1, indention, next_indention);
 		return STATE_ERROR;
 	}
 
 	// TODO: handle indention.
 
-	prev_indention = indention;
+	indention_prev = indention;
 
 	// TODO: Implement.
 
-	const String value = code.substr(token.offset_start, token.offset_end - token.offset_start);
-	printf("CMD %s (%d)\n", get_token_value().utf8().ptr(), indention);
+	const String &command = get_token_value();
+
+	GDVIRTUAL_CALL(_begin_command, command, indention);
+
+	//printf("CMD %s (%d)\n", get_token_value().utf8().ptr(), indention);
 
 	return STATE_ARGUMENT;
 }
@@ -208,29 +223,52 @@ BlipKitCodeParser::StateType BlipKitCodeParser::begin_command() {
 BlipKitCodeParser::StateType BlipKitCodeParser::add_argument() {
 	// TODO: Implement.
 
-	const String value = code.substr(token.offset_start, token.offset_end - token.offset_start);
-	printf("ARG %s\n", get_token_value().utf8().ptr());
+	const String &argument = get_token_value();
+
+	GDVIRTUAL_CALL(_add_argument, argument);
+
+	//printf("ARG %s\n", get_token_value().utf8().ptr());
 
 	return STATE_ARGUMENT;
 }
 
 BlipKitCodeParser::StateType BlipKitCodeParser::unexpected_token(TokenType p_token) {
-	error = vformat("Unexpected token \"%s\" (%d) on line %d", get_token_value(), p_token, line + 1);
+	const String &token_value = get_token_value();
+	const uint32_t token_size = token_value.length();
+	String escaped_value;
+
+	for (uint32_t i = 0; i < token_size; i++) {
+		const char32_t c = token_value[i];
+		if (c >= 0x21 && c <= 0x7E) {
+			escaped_value += c;
+		} else {
+			escaped_value += vformat("\\u%02X", c);
+		}
+	}
+
+	error = vformat("Unexpected token \"%s\" on line %d:%d", escaped_value, line + 1, column());
+
 	return STATE_ERROR;
 }
 
 bool BlipKitCodeParser::parse(const String &p_code) {
+	const Time *time = Time::get_singleton();
+	const uint64_t ticks = time->get_ticks_usec();
+
 	clear();
 
-	code = p_code;
-	code_ptr = code.ptr();
-	code_length = code.length();
+	code.code = p_code;
+	code.ptr = code.code.ptr();
+	code.size = code.code.length();
 	StateType state = STATE_ROOT;
 
 	while (state < STATE_END) {
 		const TokenType type = get_token();
 		state = next_state(state, type);
 	}
+
+	const uint64_t ticks2 = time->get_ticks_usec();
+	printf("*** parse %lfs\n", double(ticks2 - ticks) / 1000000.0);
 
 	return state != STATE_ERROR;
 }
@@ -240,23 +278,27 @@ String BlipKitCodeParser::get_error_message() const {
 }
 
 void BlipKitCodeParser::clear() {
-	code.resize(0);
-	code_ptr = nullptr;
-	code_length = 0;
-	error.resize(0);
+	code.code = String();
+	code.ptr = nullptr;
+	code.size = 0;
+	error = String();
 	offset = 0;
 	line = 0;
-	prev_indention = -1;
+	line_start = 0;
 	indention = 0;
+	indention_prev = -1;
 	token.line = 0;
-	token.offset_start = 0;
-	token.offset_end = 0;
+	token.start = 0;
+	token.end = 0;
 }
 
 void BlipKitCodeParser::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("parse", "code"), &BlipKitCodeParser::parse);
 	ClassDB::bind_method(D_METHOD("get_error_message"), &BlipKitCodeParser::get_error_message);
 	ClassDB::bind_method(D_METHOD("clear"), &BlipKitCodeParser::clear);
+
+	GDVIRTUAL_BIND(_begin_command, "command", "indention");
+	GDVIRTUAL_BIND(_add_argument, "argument");
 }
 
 String BlipKitCodeParser::_to_string() const {
