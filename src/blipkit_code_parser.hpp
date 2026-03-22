@@ -12,7 +12,7 @@ class BlipKitCodeParser : public RefCounted {
 	GDCLASS(BlipKitCodeParser, RefCounted)
 
 private:
-	enum TokenType {
+	enum TokenType : uint8_t {
 		TOKEN_OTHER,
 		TOKEN_WHITESPACE,
 		TOKEN_INDENTION,
@@ -24,7 +24,7 @@ private:
 		TOKEN_END,
 	};
 
-	enum StateType {
+	enum StateType : uint8_t {
 		STATE_ROOT,
 		STATE_LINE,
 		STATE_IGNORE,
@@ -37,7 +37,6 @@ private:
 
 	struct TokenTable {
 		static constexpr uint32_t SIZE = 256;
-		static constexpr uint32_t CHAR_NO_BREAK_SPACE = 0xA0;
 
 		TokenType table[SIZE] = {};
 
@@ -45,6 +44,22 @@ private:
 
 		constexpr _ALWAYS_INLINE_ TokenType get(uint32_t p_char) const {
 			return table[Math::min(p_char, SIZE - 1)];
+		}
+
+		constexpr void set(TokenType p_token, uint32_t p_char) {
+			table[p_char] = p_token;
+		}
+
+		constexpr void set(TokenType p_token, const std::initializer_list<uint32_t> &p_list) {
+			for (const uint32_t c : p_list) {
+				set(p_token, c);
+			}
+		}
+
+		constexpr void range(TokenType p_token, uint32_t p_start, uint32_t p_end) {
+			for (uint32_t c = p_start; c <= p_end; c++) {
+				set(p_token, c);
+			}
 		}
 	};
 

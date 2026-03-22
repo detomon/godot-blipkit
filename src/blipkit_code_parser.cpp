@@ -5,26 +5,21 @@ using namespace godot;
 using namespace BlipKit;
 
 constexpr BlipKitCodeParser::TokenTable::TokenTable() {
-	table[0] = BlipKitCodeParser::TOKEN_END;
-	table['\t'] = BlipKitCodeParser::TOKEN_INDENTION;
-	table['\n'] = BlipKitCodeParser::TOKEN_LINE_BREAK;
-	table['\r'] = BlipKitCodeParser::TOKEN_WHITESPACE;
-	table[' '] = BlipKitCodeParser::TOKEN_WHITESPACE;
-	table['%'] = BlipKitCodeParser::TOKEN_COMMENT;
-	table[';'] = BlipKitCodeParser::TOKEN_SEMICOLON;
-	table['_'] = BlipKitCodeParser::TOKEN_IDENTIFIER;
-	table['#'] = BlipKitCodeParser::TOKEN_IDENTIFIER;
-	table[CHAR_NO_BREAK_SPACE] = BlipKitCodeParser::TOKEN_WHITESPACE;
+	constexpr uint32_t NO_BREAK_SPACE = 0xA0;
 
-	for (uint32_t c = '0'; c <= '9'; c++) {
-		table[c] = BlipKitCodeParser::TOKEN_IDENTIFIER;
-	}
-	for (uint32_t c = 'A'; c <= 'Z'; c++) {
-		table[c] = BlipKitCodeParser::TOKEN_IDENTIFIER;
-	}
-	for (uint32_t c = 'a'; c <= 'z'; c++) {
-		table[c] = BlipKitCodeParser::TOKEN_IDENTIFIER;
-	}
+	set(TOKEN_END, '\0');
+
+	set(TOKEN_WHITESPACE, { '\r', ' ', NO_BREAK_SPACE });
+
+	set(TOKEN_INDENTION, '\t');
+	set(TOKEN_LINE_BREAK, '\n');
+	set(TOKEN_COMMENT, '%');
+	set(TOKEN_SEMICOLON, ';');
+
+	set(TOKEN_IDENTIFIER, { '#', '_' });
+	range(TOKEN_IDENTIFIER, '0', '9');
+	range(TOKEN_IDENTIFIER, 'A', 'Z');
+	range(TOKEN_IDENTIFIER, 'a', 'Z');
 }
 
 const BlipKitCodeParser::TokenTable BlipKitCodeParser::token_table;
@@ -205,29 +200,17 @@ BlipKitCodeParser::StateType BlipKitCodeParser::begin_command() {
 		return STATE_ERROR;
 	}
 
-	// TODO: handle indention.
-
 	indention_prev = indention;
 
-	// TODO: Implement.
-
 	const String &command = get_token_value();
-
 	GDVIRTUAL_CALL(_begin_command, command, indention);
-
-	//printf("CMD %s (%d)\n", get_token_value().utf8().ptr(), indention);
 
 	return STATE_ARGUMENT;
 }
 
 BlipKitCodeParser::StateType BlipKitCodeParser::add_argument() {
-	// TODO: Implement.
-
 	const String &argument = get_token_value();
-
 	GDVIRTUAL_CALL(_add_argument, argument);
-
-	//printf("ARG %s\n", get_token_value().utf8().ptr());
 
 	return STATE_ARGUMENT;
 }
