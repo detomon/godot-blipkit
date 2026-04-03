@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #pragma once
 
 #include <godot_cpp/classes/ref_counted.hpp>
@@ -42,11 +44,11 @@ private:
 
 		constexpr TokenTable();
 
-		constexpr _ALWAYS_INLINE_ TokenType get(uint32_t p_char) const {
+		_ALWAYS_INLINE_ constexpr TokenType get(uint32_t p_char) const {
 			return table[Math::min(p_char, SIZE - 1)];
 		}
 
-		constexpr void set(TokenType p_token, uint32_t p_char) {
+		_ALWAYS_INLINE_ constexpr void set(TokenType p_token, uint32_t p_char) {
 			table[p_char] = p_token;
 		}
 
@@ -82,13 +84,8 @@ private:
 		uint32_t line = 0;
 	} token;
 
-	_ALWAYS_INLINE_ uint32_t column() const {
-		return offset - line_start;
-	}
-
-	_ALWAYS_INLINE_ bool has_token() const {
-		return offset < code.size;
-	}
+	_ALWAYS_INLINE_ uint32_t column() const { return offset - line_start; }
+	_ALWAYS_INLINE_ bool has_token() const { return offset < code.size; }
 
 	_ALWAYS_INLINE_ TokenType next_token() {
 		return has_token() ? token_table.get(code.ptr[offset++]) : TOKEN_END;

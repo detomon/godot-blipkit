@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #include "blipkit_code_parser.hpp"
 #include <godot_cpp/classes/time.hpp>
 
