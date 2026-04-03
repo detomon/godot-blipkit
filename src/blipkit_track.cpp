@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #include "blipkit_track.hpp"
 #include "BKBase.h"
 #include "audio_stream_blipkit.hpp"

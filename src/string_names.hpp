@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #pragma once
 
 #include <godot_cpp/variant/string_name.hpp>

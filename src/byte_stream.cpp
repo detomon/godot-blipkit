@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #include "byte_stream.hpp"
 #include "float16.hpp"
 

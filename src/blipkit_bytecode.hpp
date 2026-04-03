@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #pragma once
 
 #include "byte_stream.hpp"

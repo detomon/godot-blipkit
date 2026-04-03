@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #include "blipkit_waveform.hpp"
 #include "audio_stream_blipkit.hpp"
 #include "string_names.hpp"

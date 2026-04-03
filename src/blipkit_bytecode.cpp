@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #include "blipkit_bytecode.hpp"
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"

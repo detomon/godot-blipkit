@@ -1,3 +1,5 @@
+// Copyright © 2026 Simon Schoenenberger and Contributors.
+
 #include "string_names.hpp"
 #include <godot_cpp/core/memory.hpp>
 
