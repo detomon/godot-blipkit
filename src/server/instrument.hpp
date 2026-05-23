@@ -1,7 +1,9 @@
 #pragma once
 
-#include "divider.hpp"
 #include <BlipKit.h>
+#include <godot_cpp/variant/packed_float32_array.hpp>
+#include <godot_cpp/variant/packed_int32_array.hpp>
+#include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
 
@@ -27,6 +29,12 @@ public:
 private:
 	BKInstrument instrument = {};
 	Sequence sequences[ENVELOPE_MAX];
+
+public:
+	~Instrument();
+
+	bool initialize();
+	_ALWAYS_INLINE_ BKInstrument *get_instrument() { return &instrument; };
 };
 
 } //namespace BlipKit

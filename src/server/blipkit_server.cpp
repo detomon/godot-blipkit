@@ -22,41 +22,20 @@ void BlipKitServer::free() {
 	}
 }
 
-RID BlipKitServer::create_instrument() {
-	const RID rid = instrument_owner.make_rid();
-	Instrument *instance = instrument_owner.get_or_null(rid);
-	ERR_FAIL_NULL_V(instance, RID());
-
-	return rid;
-}
-
-RID BlipKitServer::create_sample() {
-	const RID rid = sample_owner.make_rid();
-	Sample *instance = sample_owner.get_or_null(rid);
-	ERR_FAIL_NULL_V(instance, RID());
-
-	return rid;
-}
-
 RID BlipKitServer::create_track() {
-	const RID rid = track_owner.make_rid();
-	Track *instance = track_owner.get_or_null(rid);
-	ERR_FAIL_NULL_V(instance, RID());
+	return create_resource(track_owner);
+}
 
-	return rid;
+RID BlipKitServer::create_instrument() {
+	return create_resource(instrument_owner);
 }
 
 RID BlipKitServer::create_waveform() {
-	const RID rid = waveform_owner.make_rid();
-	Waveform *instance = waveform_owner.get_or_null(rid);
-	ERR_FAIL_NULL_V(instance, RID());
+	return create_resource(waveform_owner);
+}
 
-	if (not instance->initialize()) {
-		waveform_owner.free(rid);
-		return RID();
-	}
-
-	return rid;
+RID BlipKitServer::create_sample() {
+	return create_resource(sample_owner);
 }
 
 RID BlipKitServer::create_divider(const RID &p_track, int p_tick_interval, const Callable &p_callable) {
@@ -65,7 +44,6 @@ RID BlipKitServer::create_divider(const RID &p_track, int p_tick_interval, const
 
 	const RID rid = divider_owner.make_rid();
 	Divider *instance = divider_owner.get_or_null(rid);
-	ERR_FAIL_NULL_V(instance, RID());
 
 	instance->initialize(p_callable, p_tick_interval);
 
@@ -116,10 +94,10 @@ void BlipKitServer::free_rid(const RID &p_rid) {
 		track_owner.free(p_rid);
 	} else if (instrument_owner.owns(p_rid)) {
 		instrument_owner.free(p_rid);
-	} else if (sample_owner.owns(p_rid)) {
-		sample_owner.free(p_rid);
 	} else if (waveform_owner.owns(p_rid)) {
 		waveform_owner.free(p_rid);
+	} else if (sample_owner.owns(p_rid)) {
+		sample_owner.free(p_rid);
 	} else if (divider_owner.owns(p_rid)) {
 		divider_owner.free(p_rid);
 	} else {
@@ -128,15 +106,14 @@ void BlipKitServer::free_rid(const RID &p_rid) {
 }
 
 void BlipKitServer::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("create_instrument"), &BlipKitServer::create_instrument);
-	ClassDB::bind_method(D_METHOD("create_sample"), &BlipKitServer::create_sample);
 	ClassDB::bind_method(D_METHOD("create_track"), &BlipKitServer::create_track);
+	ClassDB::bind_method(D_METHOD("create_instrument"), &BlipKitServer::create_instrument);
 	ClassDB::bind_method(D_METHOD("create_waveform"), &BlipKitServer::create_waveform);
+	ClassDB::bind_method(D_METHOD("create_sample"), &BlipKitServer::create_sample);
 	ClassDB::bind_method(D_METHOD("create_divider", "track_rid", "tick_interval", "callback"), &BlipKitServer::create_divider);
 
 	ClassDB::bind_method(D_METHOD("waveform_set_frames", "rid", "frames", "normalize", "amplitude"), &BlipKitServer::waveform_set_frames, DEFVAL(false), DEFVAL(1.0));
 	ClassDB::bind_method(D_METHOD("waveform_get_frames", "rid"), &BlipKitServer::waveform_get_frames);
-
 	ClassDB::bind_method(D_METHOD("waveform_get_size", "rid"), &BlipKitServer::waveform_get_size);
 	ClassDB::bind_method(D_METHOD("waveform_get_is_valid", "rid"), &BlipKitServer::waveform_get_is_valid);
 

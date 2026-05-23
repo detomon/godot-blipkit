@@ -9,3 +9,13 @@
 #define _NO_INLINE_
 #endif
 #endif
+
+#ifndef _RESTRICT_
+#if defined(__GNUC__)
+#define _RESTRICT_ __restrict__
+#elif defined(_MSC_VER)
+#define _RESTRICT_ __declspec(restrict)
+#else
+#define _RESTRICT_
+#endif
+#endif

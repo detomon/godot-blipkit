@@ -2,6 +2,7 @@
 
 #include "divider.hpp"
 #include <BlipKit.h>
+#include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
 
@@ -16,7 +17,14 @@ private:
 	RID instrument;
 	RID custom_waveform;
 	RID sample;
-	bool master_volume_changed = false;
+	struct {
+		bool master_volume_changed : 1 = false;
+	};
+
+public:
+	~Track();
+
+	bool initialize();
 };
 
 } //namespace BlipKit

@@ -1,12 +1,11 @@
 #include "waveform.hpp"
 #include "audio_stream_blipkit.hpp"
-#include <godot_cpp/variant/variant.hpp>
 
 using namespace BlipKit;
 using namespace godot;
 
 bool Waveform::initialize() {
-	BKInt result = BKDataInit(&data);
+	const BKInt result = BKDataInit(&data);
 	ERR_FAIL_COND_V_MSG(false, result != BK_SUCCESS, vformat("Failed to initialize BKData: %s.", BKStatusGetName(result)));
 
 	return true;
