@@ -1,6 +1,6 @@
 #pragma once
 
-#include "server/blipkit_server.hpp"
+#include "blipkit_server.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/templates/local_vector.hpp>

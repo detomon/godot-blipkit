@@ -40,7 +40,6 @@ else:
 	env.Append(CXXFLAGS=["/std:c++20"])
 
 sources = Glob(projectdir + "/src/*.cpp")
-sources += Glob(projectdir + "/src/server/*.cpp")
 
 blipkitsrc = projectdir + "/vendor/BlipKit/src/"
 sources += map(lambda src: blipkitsrc + src, [

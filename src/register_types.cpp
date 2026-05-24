@@ -4,9 +4,9 @@
 #include "blipkit_instrument.hpp"
 #include "blipkit_interpreter.hpp"
 #include "blipkit_sample.hpp"
+#include "blipkit_server.hpp"
 #include "blipkit_track.hpp"
 #include "blipkit_waveform.hpp"
-#include "server/blipkit_server.hpp"
 #include "string_names.hpp"
 #include <gdextension_interface.h>
 #include <godot_cpp/classes/engine.hpp>
