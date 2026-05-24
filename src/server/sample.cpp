@@ -1,5 +1,4 @@
 #include "sample.hpp"
-#include <BKBase.h>
 
 using namespace BlipKit;
 using namespace godot;

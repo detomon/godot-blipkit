@@ -1,5 +1,5 @@
 #include "track.hpp"
-#include <BKBase.h>
+#include "server/blipkit_server.hpp"
 
 using namespace BlipKit;
 using namespace godot;
@@ -13,4 +13,32 @@ bool Track::initialize() {
 
 Track::~Track() {
 	BKDispose(&track);
+}
+
+TypedArray<RID> Track::get_dividers() const {
+	return {};
+}
+
+bool Track::has_divider(RID p_rid) {
+	// TODO: Implement.
+
+	return false;
+}
+
+RID Track::add_divider(int p_tick_interval, const Callable &p_callable) {
+	// TODO: Implement.
+
+	return RID();
+}
+
+void Track::remove_divider(RID p_rid) {
+	// TODO: Implement.
+}
+
+void Track::reset_divider(RID p_rid, int p_tick_interval) {
+	// TODO: Implement.
+}
+
+void Track::clear_dividers() {
+	// TODO: Implement.
 }

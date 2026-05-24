@@ -144,7 +144,10 @@ private:
 	PackedFloat32Array arpeggio;
 	DividerGroup dividers;
 	AudioStreamBlipKitPlayback *playback = nullptr;
-	bool master_volume_changed = false;
+	RID rid;
+	struct {
+		bool master_volume_changed : 1 = false;
+	};
 
 public:
 	BlipKitTrack();

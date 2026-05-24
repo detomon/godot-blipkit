@@ -6,9 +6,11 @@ using namespace godot;
 
 std::atomic<DividerGroup::ID> DividerGroup::id = 0;
 
-void DividerGroup::Divider::initialize(const Callable &p_callable, int p_tick_interval) {
+bool DividerGroup::Divider::initialize(const Callable &p_callable, int p_tick_interval) {
 	callable = p_callable;
 	divider = p_tick_interval;
+
+	return true;
 }
 
 void DividerGroup::Divider::reset(int p_tick_interval) {

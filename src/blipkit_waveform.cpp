@@ -1,14 +1,11 @@
 #include "blipkit_waveform.hpp"
 #include "string_names.hpp"
-#include <godot_cpp/classes/audio_server.hpp>
-#include <godot_cpp/core/math.hpp>
 
 using namespace BlipKit;
 using namespace godot;
 
 BlipKitWaveform::BlipKitWaveform() {
-	rid = BlipKitServer::get_singleton()->create_waveform();
-	ERR_FAIL_COND(rid == RID());
+	rid = BlipKitServer::get_singleton()->waveform_create();
 }
 
 BlipKitWaveform::~BlipKitWaveform() {

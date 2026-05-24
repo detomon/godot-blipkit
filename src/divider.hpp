@@ -3,7 +3,6 @@
 #include <BlipKit.h>
 #include <atomic>
 #include <godot_cpp/templates/hash_map.hpp>
-#include <godot_cpp/templates/rid_owner.hpp>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/string.hpp>
@@ -28,7 +27,7 @@ private:
 		int counter = 0;
 
 	public:
-		void initialize(const Callable &p_callable, int p_tick_interval);
+		bool initialize(const Callable &p_callable, int p_tick_interval);
 		void reset(int p_tick_interval = 0);
 
 		_ALWAYS_INLINE_ int tick() {

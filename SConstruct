@@ -34,7 +34,9 @@ if env["platform"] != "windows":
 		"-D_GLIBCXX_ASSERTIONS",
 	])
 
-if env["platform"] == "windows":
+if env["platform"] != "windows":
+	env.Append(CXXFLAGS=["-std=c++20"])
+else:
 	env.Append(CXXFLAGS=["/std:c++20"])
 
 sources = Glob(projectdir + "/src/*.cpp")

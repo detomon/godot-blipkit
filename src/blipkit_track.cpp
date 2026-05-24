@@ -639,20 +639,18 @@ void BlipKitTrack::update_waveform(Waveform p_waveform) {
 			BKData *data = custom_waveform->get_data();
 			const BKInt result = BKSetPtr(&track, BK_WAVEFORM, data, 0);
 
-			if (result == BK_INVALID_STATE) {
-				// OK. Track is not attached yet.
-			} else {
-				ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set custom waveform: %s.", BKStatusGetName(result)));
+			// BK_INVALID_STATE is OK; track is not attached yet.
+			if (result != BK_SUCCESS && result != BK_INVALID_STATE) {
+				ERR_FAIL_MSG(vformat("Failed to set custom waveform: %s.", BKStatusGetName(result)));
 			}
 		} break;
 		case WAVEFORM_SAMPLE: {
 			BKData *data = sample->get_data();
 			const BKInt result = BKSetPtr(&track, BK_SAMPLE, data, 0);
 
-			if (result == BK_INVALID_STATE) {
-				// OK. Track is not attached yet.
-			} else {
-				ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set sample: %s.", BKStatusGetName(result)));
+			// BK_INVALID_STATE is OK; track is not attached yet.
+			if (result != BK_SUCCESS && result != BK_INVALID_STATE) {
+				ERR_FAIL_MSG(vformat("Failed to set sample: %s.", BKStatusGetName(result)));
 			}
 
 			const BlipKitSample::RepeatMode repeat_mode = sample->get_repeat_mode();
