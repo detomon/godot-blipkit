@@ -30,25 +30,25 @@ Ref<BlipKitInstrument> BlipKitInstrument::create_with_adsr(int p_attack, int p_d
 }
 
 void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedFloat32Array &p_values, const PackedInt32Array &p_steps, int p_sustain_offset, int p_sustain_length) {
-	ERR_FAIL_INDEX(p_type, ENVELOPE_MAX);
+	ERR_FAIL_INDEX(p_type, BlipKitServer::ENVELOPE_MAX);
 
 	float multiplier = 1.0;
 	BKEnum sequence = 0;
 
 	switch (p_type) {
-		case ENVELOPE_VOLUME: {
+		case BlipKitServer::ENVELOPE_VOLUME: {
 			multiplier = float(BK_MAX_VOLUME);
 			sequence = BK_SEQUENCE_VOLUME;
 		} break;
-		case ENVELOPE_PANNING: {
+		case BlipKitServer::ENVELOPE_PANNING: {
 			multiplier = float(BK_MAX_VOLUME);
 			sequence = BK_SEQUENCE_PANNING;
 		} break;
-		case ENVELOPE_PITCH: {
+		case BlipKitServer::ENVELOPE_PITCH: {
 			multiplier = float(BK_FINT20_UNIT);
 			sequence = BK_SEQUENCE_PITCH;
 		} break;
-		case ENVELOPE_DUTY_CYCLE: {
+		case BlipKitServer::ENVELOPE_DUTY_CYCLE: {
 			multiplier = 1.0;
 			sequence = BK_SEQUENCE_DUTY_CYCLE;
 		} break;
@@ -130,31 +130,31 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedFloat32Arr
 }
 
 void BlipKitInstrument::set_adsr(int p_attack, int p_decay, float p_sustain, int p_release) {
-	set_envelope(ENVELOPE_VOLUME, { 1.0, p_sustain, p_sustain, 0.0 }, { p_attack, p_decay, 240, p_release }, 2, 1);
+	set_envelope(BlipKitServer::ENVELOPE_VOLUME, { 1.0, p_sustain, p_sustain, 0.0 }, { p_attack, p_decay, 240, p_release }, 2, 1);
 }
 
 bool BlipKitInstrument::has_envelope(EnvelopeType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, false);
+	ERR_FAIL_INDEX_V(p_type, BlipKitServer::ENVELOPE_MAX, false);
 	return not sequences[p_type].values.is_empty();
 }
 
 PackedInt32Array BlipKitInstrument::get_envelope_steps(EnvelopeType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, PackedInt32Array());
+	ERR_FAIL_INDEX_V(p_type, BlipKitServer::ENVELOPE_MAX, PackedInt32Array());
 	return sequences[p_type].steps;
 }
 
 PackedFloat32Array BlipKitInstrument::get_envelope_values(EnvelopeType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, PackedFloat32Array());
+	ERR_FAIL_INDEX_V(p_type, BlipKitServer::ENVELOPE_MAX, PackedFloat32Array());
 	return sequences[p_type].values;
 }
 
 int BlipKitInstrument::get_envelope_sustain_offset(EnvelopeType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, 0);
+	ERR_FAIL_INDEX_V(p_type, BlipKitServer::ENVELOPE_MAX, 0);
 	return sequences[p_type].sustain_offset;
 }
 
 int BlipKitInstrument::get_envelope_sustain_length(EnvelopeType p_type) const {
-	ERR_FAIL_INDEX_V(p_type, ENVELOPE_MAX, 0);
+	ERR_FAIL_INDEX_V(p_type, BlipKitServer::ENVELOPE_MAX, 0);
 	return sequences[p_type].sustain_length;
 }
 
@@ -174,10 +174,10 @@ void BlipKitInstrument::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_envelope_sustain_length", "type"), &BlipKitInstrument::get_envelope_sustain_length);
 	ClassDB::bind_method(D_METHOD("clear_envelope", "type"), &BlipKitInstrument::clear_envelope);
 
-	BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
-	BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
-	BIND_ENUM_CONSTANT(ENVELOPE_PITCH);
-	BIND_ENUM_CONSTANT(ENVELOPE_DUTY_CYCLE);
+	BIND_ENUM_CONSTANT(BlipKitServer::ENVELOPE_VOLUME);
+	BIND_ENUM_CONSTANT(BlipKitServer::ENVELOPE_PANNING);
+	BIND_ENUM_CONSTANT(BlipKitServer::ENVELOPE_PITCH);
+	BIND_ENUM_CONSTANT(BlipKitServer::ENVELOPE_DUTY_CYCLE);
 }
 
 String BlipKitInstrument::_to_string() const {
@@ -197,13 +197,13 @@ bool BlipKitInstrument::_set(const StringName &p_name, const Variant &p_value) {
 		EnvelopeType type;
 
 		if (p_name == BKStringName(envelope_volume)) {
-			type = ENVELOPE_VOLUME;
+			type = BlipKitServer::ENVELOPE_VOLUME;
 		} else if (p_name == BKStringName(envelope_panning)) {
-			type = ENVELOPE_PANNING;
+			type = BlipKitServer::ENVELOPE_PANNING;
 		} else if (p_name == BKStringName(envelope_pitch)) {
-			type = ENVELOPE_PITCH;
+			type = BlipKitServer::ENVELOPE_PITCH;
 		} else if (p_name == BKStringName(envelope_duty_cycle)) {
-			type = ENVELOPE_DUTY_CYCLE;
+			type = BlipKitServer::ENVELOPE_DUTY_CYCLE;
 		} else {
 			return false;
 		}
@@ -230,13 +230,13 @@ bool BlipKitInstrument::_get(const StringName &p_name, Variant &r_ret) const {
 		EnvelopeType type;
 
 		if (p_name == BKStringName(envelope_volume)) {
-			type = ENVELOPE_VOLUME;
+			type = BlipKitServer::ENVELOPE_VOLUME;
 		} else if (p_name == BKStringName(envelope_panning)) {
-			type = ENVELOPE_PANNING;
+			type = BlipKitServer::ENVELOPE_PANNING;
 		} else if (p_name == BKStringName(envelope_pitch)) {
-			type = ENVELOPE_PITCH;
+			type = BlipKitServer::ENVELOPE_PITCH;
 		} else if (p_name == BKStringName(envelope_duty_cycle)) {
-			type = ENVELOPE_DUTY_CYCLE;
+			type = BlipKitServer::ENVELOPE_DUTY_CYCLE;
 		} else {
 			return false;
 		}

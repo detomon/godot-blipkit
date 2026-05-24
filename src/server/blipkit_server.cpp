@@ -87,8 +87,8 @@ RID BlipKitServer::context_create() {
 	return context_owner.make_rid();
 }
 
-int32_t BlipKitServer::context_generate(const RID &p_rid, AudioFrame *r_buffer, int32_t p_frames) {
-	Context *ctx = context_owner.get_or_null(p_rid);
+int32_t BlipKitServer::context_generate(const RID &p_ctx, AudioFrame *r_buffer, int32_t p_frames) {
+	Context *ctx = context_owner.get_or_null(p_ctx);
 	ERR_FAIL_NULL_V(ctx, 0);
 
 	BK_THREAD_SAFE_METHOD
@@ -138,8 +138,8 @@ int32_t BlipKitServer::context_generate(const RID &p_rid, AudioFrame *r_buffer, 
 	return out_count;
 }
 
-int32_t BlipKitServer::context_generate_samples(const RID &p_rid, PackedFloat32Array &r_buffer, int32_t p_frames) {
-	{
+int32_t BlipKitServer::context_generate_samples(const RID &p_ctx, PackedFloat32Array r_buffer, int32_t p_frames) {
+	{ // Check if AudioFrame == float[2].
 		constexpr AudioFrame frame = {};
 		static_assert(std::is_same<decltype(frame.left), float>::value);
 		static_assert(std::is_same<decltype(frame.right), float>::value);
@@ -149,75 +149,32 @@ int32_t BlipKitServer::context_generate_samples(const RID &p_rid, PackedFloat32A
 	r_buffer.resize(p_frames * CHANNEL_COUNT);
 	AudioFrame *buffer = reinterpret_cast<AudioFrame *>(r_buffer.ptrw());
 
-	return context_generate(p_rid, buffer, p_frames);
+	return context_generate(p_ctx, buffer, p_frames);
 }
 
 RID BlipKitServer::track_create() {
 	return track_owner.make_rid();
 }
 
-void BlipKitServer::track_attach(const RID &p_rid, const RID &p_ctx_rid) {
-	Track *track = track_owner.get_or_null(p_rid);
+void BlipKitServer::track_attach(const RID &p_track, const RID &p_ctx) {
+	Track *track = track_owner.get_or_null(p_track);
 	ERR_FAIL_NULL(track);
-	Context *ctx = context_owner.get_or_null(p_ctx_rid);
+	Context *ctx = context_owner.get_or_null(p_ctx);
 	ERR_FAIL_NULL(ctx);
 
 	BKInt result = BKTrackAttach(&track->track, &ctx->ctx);
 	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to attach BKTrack: %s.", BKStatusGetName(result)));
 }
 
-void BlipKitServer::track_detach(const RID &p_rid) {
-	Track *track = track_owner.get_or_null(p_rid);
+void BlipKitServer::track_detach(const RID &p_track) {
+	Track *track = track_owner.get_or_null(p_track);
 	ERR_FAIL_NULL(track);
 
 	BKTrackDetach(&track->track);
 }
 
-RID BlipKitServer::instrument_create() {
-	return instrument_owner.make_rid();
-}
-
-RID BlipKitServer::waveform_create() {
-	return waveform_owner.make_rid();
-}
-
-RID BlipKitServer::sample_create() {
-	return sample_owner.make_rid();
-}
-
-void BlipKitServer::divider_group_set_active(const RID &p_rid) {
-	DividerGroup *group = divider_group_owner.get_or_null(p_rid);
-	ERR_FAIL_NULL(group);
-
-	// TODO: Implement.
-}
-
-bool BlipKitServer::divider_group_is_active(const RID &p_rid) const {
-	DividerGroup *group = divider_group_owner.get_or_null(p_rid);
-	ERR_FAIL_NULL_V(group, false);
-
-	// TODO: Implement.
-
-	return false;
-}
-
-RID BlipKitServer::divider_create(const RID &p_track, int p_tick_interval, const Callable &p_callable) {
+void BlipKitServer::track_set_arpeggio(const RID &p_track, const PackedFloat32Array &p_arpeggio) {
 	Track *track = track_owner.get_or_null(p_track);
-	ERR_FAIL_NULL_V(track, RID());
-
-	const RID rid = divider_owner.make_rid();
-	Divider *divider = divider_owner.get_or_null(rid);
-
-	divider->callable = p_callable;
-	divider->counter = p_tick_interval;
-
-	// TODO: Add divider to track.
-
-	return rid;
-}
-
-void BlipKitServer::track_set_arpeggio(const RID &p_rid, const PackedFloat32Array &p_arpeggio) {
-	Track *track = track_owner.get_or_null(p_rid);
 	ERR_FAIL_NULL(track);
 
 	BK_THREAD_SAFE_METHOD
@@ -234,8 +191,30 @@ void BlipKitServer::track_set_arpeggio(const RID &p_rid, const PackedFloat32Arra
 	BKSetPtr(&track, BK_ARPEGGIO, value, (count + 1) * sizeof(BKInt));
 }
 
-bool BlipKitServer::waveform_set_frames(const RID &p_rid, const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
-	Waveform *waveform = waveform_owner.get_or_null(p_rid);
+TypedArray<RID> BlipKitServer::track_get_dividers(const RID &p_track) const {
+	Track *track = track_owner.get_or_null(p_track);
+	ERR_FAIL_NULL_V(track, {});
+
+	// TODO: Implement.
+	return {};
+}
+
+bool BlipKitServer::track_has_divider(const RID &p_track, const RID &p_divider) const {
+	// TODO: Implement.
+	return false;
+}
+
+RID BlipKitServer::track_add_divider(const RID &p_track, int p_tick_interval, const Callable &p_callable) {
+	// TODO: Implement.
+	return RID();
+}
+
+void BlipKitServer::track_clear_dividers(const RID &p_track) {
+	// TODO: Implement.
+}
+
+bool BlipKitServer::waveform_set_frames(const RID &p_waveform, const PackedFloat32Array &p_frames, bool p_normalize, float p_amplitude) {
+	Waveform *waveform = waveform_owner.get_or_null(p_waveform);
 	ERR_FAIL_NULL_V(waveform, false);
 
 	const uint32_t frames_size = p_frames.size();
@@ -276,8 +255,8 @@ bool BlipKitServer::waveform_set_frames(const RID &p_rid, const PackedFloat32Arr
 	return true;
 }
 
-PackedFloat32Array BlipKitServer::waveform_get_frames(const RID &p_rid) const {
-	Waveform *waveform = waveform_owner.get_or_null(p_rid);
+PackedFloat32Array BlipKitServer::waveform_get_frames(const RID &p_waveform) const {
+	Waveform *waveform = waveform_owner.get_or_null(p_waveform);
 	ERR_FAIL_NULL_V(waveform, {});
 
 	auto &frames = waveform->frames;
@@ -294,25 +273,72 @@ PackedFloat32Array BlipKitServer::waveform_get_frames(const RID &p_rid) const {
 	return ret;
 }
 
-int BlipKitServer::waveform_get_size(const RID &p_rid) const {
-	Waveform *waveform = waveform_owner.get_or_null(p_rid);
+int BlipKitServer::waveform_get_size(const RID &p_waveform) const {
+	Waveform *waveform = waveform_owner.get_or_null(p_waveform);
 	ERR_FAIL_NULL_V(waveform, 0);
 
 	return waveform->frames.size();
 }
 
-bool BlipKitServer::waveform_get_is_valid(const RID &p_rid) const {
-	Waveform *waveform = waveform_owner.get_or_null(p_rid);
+bool BlipKitServer::waveform_is_valid(const RID &p_waveform) const {
+	Waveform *waveform = waveform_owner.get_or_null(p_waveform);
 	ERR_FAIL_NULL_V(waveform, false);
 
 	return not waveform->frames.is_empty();
 }
 
-BKData *BlipKitServer::waveform_get_data(const RID &p_rid) const {
-	Waveform *waveform = waveform_owner.get_or_null(p_rid);
+BKData *BlipKitServer::waveform_get_data(const RID &p_waveform) const {
+	Waveform *waveform = waveform_owner.get_or_null(p_waveform);
 	ERR_FAIL_NULL_V(waveform, nullptr);
 
 	return &waveform->data;
+}
+
+RID BlipKitServer::divider_create(const RID &p_track, int p_tick_interval, const Callable &p_callable) {
+	Track *track = track_owner.get_or_null(p_track);
+	ERR_FAIL_NULL_V(track, RID());
+
+	const RID rid = divider_owner.make_rid();
+	Divider *divider = divider_owner.get_or_null(rid);
+
+	divider->callable = p_callable;
+	divider->counter = p_tick_interval;
+
+	// TODO: Add divider to track.
+
+	return rid;
+}
+
+void BlipKitServer::divider_group_set_active(const RID &p_divider_group, bool p_active) {
+	DividerGroup *group = divider_group_owner.get_or_null(p_divider_group);
+	ERR_FAIL_NULL(group);
+
+	// TODO: Implement.
+}
+
+bool BlipKitServer::divider_group_is_active(const RID &p_divider_group) const {
+	DividerGroup *group = divider_group_owner.get_or_null(p_divider_group);
+	ERR_FAIL_NULL_V(group, false);
+
+	// TODO: Implement.
+
+	return false;
+}
+
+void BlipKitServer::divider_reset(const RID &p_divider, int p_tick_interval) {
+	// TODO: Implement.
+}
+
+RID BlipKitServer::instrument_create() {
+	return instrument_owner.make_rid();
+}
+
+RID BlipKitServer::waveform_create() {
+	return waveform_owner.make_rid();
+}
+
+RID BlipKitServer::sample_create() {
+	return sample_owner.make_rid();
 }
 
 void BlipKitServer::free_rid(const RID &p_rid) {
@@ -338,17 +364,38 @@ void BlipKitServer::free_rid(const RID &p_rid) {
 }
 
 void BlipKitServer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("context_create"), &BlipKitServer::context_create);
+	ClassDB::bind_method(D_METHOD("context_generate", "ctx", "out_buffer", "frames"), &BlipKitServer::context_generate_samples);
+
 	ClassDB::bind_method(D_METHOD("track_create"), &BlipKitServer::track_create);
+	ClassDB::bind_method(D_METHOD("track_attach", "track", "ctx"), &BlipKitServer::track_attach);
+	ClassDB::bind_method(D_METHOD("track_detach", "track"), &BlipKitServer::track_detach);
+	ClassDB::bind_method(D_METHOD("track_set_arpeggio", "track", "arpeggio"), &BlipKitServer::track_set_arpeggio);
+	ClassDB::bind_method(D_METHOD("track_has_divider", "track", "divider"), &BlipKitServer::track_has_divider);
+	ClassDB::bind_method(D_METHOD("track_get_dividers", "track"), &BlipKitServer::track_get_dividers);
+	ClassDB::bind_method(D_METHOD("track_add_divider", "track", "tick_interval", "callable"), &BlipKitServer::track_add_divider);
+	ClassDB::bind_method(D_METHOD("track_clear_dividers", "track"), &BlipKitServer::track_clear_dividers);
+
+	ClassDB::bind_method(D_METHOD("divider_group_set_active", "divider_group", "active"), &BlipKitServer::divider_group_set_active);
+	ClassDB::bind_method(D_METHOD("divider_group_is_active", "divider_group"), &BlipKitServer::divider_group_is_active);
+	ClassDB::bind_method(D_METHOD("divider_reset", "divider", "tick_interval"), &BlipKitServer::divider_reset);
+
 	ClassDB::bind_method(D_METHOD("instrument_create"), &BlipKitServer::instrument_create);
+
 	ClassDB::bind_method(D_METHOD("waveform_create"), &BlipKitServer::waveform_create);
+	ClassDB::bind_method(D_METHOD("waveform_set_frames", "waveform", "frames", "normalize", "amplitude"), &BlipKitServer::waveform_set_frames, DEFVAL(false), DEFVAL(1.0));
+	ClassDB::bind_method(D_METHOD("waveform_get_frames", "waveform"), &BlipKitServer::waveform_get_frames);
+	ClassDB::bind_method(D_METHOD("waveform_get_size", "waveform"), &BlipKitServer::waveform_get_size);
+	ClassDB::bind_method(D_METHOD("waveform_is_valid", "waveform"), &BlipKitServer::waveform_is_valid);
+
 	ClassDB::bind_method(D_METHOD("sample_create"), &BlipKitServer::sample_create);
 
-	ClassDB::bind_method(D_METHOD("waveform_set_frames", "rid", "frames", "normalize", "amplitude"), &BlipKitServer::waveform_set_frames, DEFVAL(false), DEFVAL(1.0));
-	ClassDB::bind_method(D_METHOD("waveform_get_frames", "rid"), &BlipKitServer::waveform_get_frames);
-	ClassDB::bind_method(D_METHOD("waveform_get_size", "rid"), &BlipKitServer::waveform_get_size);
-	ClassDB::bind_method(D_METHOD("waveform_get_is_valid", "rid"), &BlipKitServer::waveform_get_is_valid);
-
 	ClassDB::bind_method(D_METHOD("free_rid", "rid"), &BlipKitServer::free_rid);
+
+	// BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
+	// BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
+	// BIND_ENUM_CONSTANT(ENVELOPE_PITCH);
+	// BIND_ENUM_CONSTANT(ENVELOPE_DUTY_CYCLE);
 }
 
 String BlipKitServer::_to_string() const {

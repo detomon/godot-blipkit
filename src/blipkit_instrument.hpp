@@ -1,10 +1,8 @@
 #pragma once
 
-#include "server/instrument.hpp"
+#include "server/blipkit_server.hpp"
 #include <BlipKit.h>
 #include <godot_cpp/classes/resource.hpp>
-#include <godot_cpp/variant/packed_float32_array.hpp>
-#include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
@@ -15,19 +13,19 @@ class BlipKitInstrument : public Resource {
 	GDCLASS(BlipKitInstrument, Resource)
 
 public:
-	using Sequence = Instrument::Sequence;
-
-	enum EnvelopeType {
-		ENVELOPE_VOLUME,
-		ENVELOPE_PANNING,
-		ENVELOPE_PITCH,
-		ENVELOPE_DUTY_CYCLE,
-		ENVELOPE_MAX,
-	};
+	using EnvelopeType = BlipKitServer::EnvelopeType;
 
 private:
+	struct Sequence {
+		PackedInt32Array steps;
+		PackedFloat32Array values;
+		int sustain_offset = 0;
+		int sustain_length = 0;
+	};
+
 	BKInstrument instrument = {};
-	Sequence sequences[ENVELOPE_MAX];
+	Sequence sequences[BlipKitServer::ENVELOPE_MAX];
+	RID rid;
 
 public:
 	BlipKitInstrument();

@@ -30,7 +30,7 @@ public:
 
 	_ALWAYS_INLINE_ BKData *get_data() { return BlipKitServer::get_singleton()->waveform_get_data(rid); };
 	_ALWAYS_INLINE_ int size() const { return BlipKitServer::get_singleton()->waveform_get_size(rid); };
-	_ALWAYS_INLINE_ bool is_valid() const { return BlipKitServer::get_singleton()->waveform_get_is_valid(rid); };
+	_ALWAYS_INLINE_ bool is_valid() const { return BlipKitServer::get_singleton()->waveform_is_valid(rid); };
 
 	_FORCE_INLINE_ RID get_rid() const { return rid; }
 

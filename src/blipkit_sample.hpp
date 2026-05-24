@@ -29,6 +29,7 @@ private:
 	uint32_t sustain_offset = 0;
 	uint32_t sustain_end = 0;
 	RepeatMode repeat_mode = RepeatMode::REPEAT_NONE;
+	RID rid;
 
 public:
 	BlipKitSample();
