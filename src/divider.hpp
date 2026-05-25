@@ -33,10 +33,8 @@ private:
 		_ALWAYS_INLINE_ int tick() {
 			counter--;
 
-			if (counter > 0) [[likely]] {
-				return 0;
-			} else {
-				int ticks = callable.call();
+			if (counter <= 0) [[unlikely]] {
+				const int ticks = callable.call();
 
 				// Set new divider value.
 				if (ticks > 0) {
@@ -46,21 +44,25 @@ private:
 
 				return ticks;
 			}
+
+			return 0;
 		}
 	};
 
-	static std::atomic<ID> id;
-	HashMap<ID, Divider> dividers;
+	static inline std::atomic<ID> id = 0;
 	BKDivider divider = {};
+	HashMap<ID, Divider> dividers;
+	std::atomic<bool> is_ticking = false;
 
 	static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
+	BKEnum tick();
 
 public:
 	DividerGroup();
 	~DividerGroup();
 
 	PackedInt32Array get_dividers() const;
-	ID add_divider(int p_tick_interval, const Callable &p_callable);
+	ID add_divider(int p_tick_interval, const Callable &p_callable, bool p_tick_now = false);
 	void remove_divider(ID p_id);
 	bool has_divider(ID p_id);
 	void reset_divider(ID p_id, int p_tick_interval = 0);

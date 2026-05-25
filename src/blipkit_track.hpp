@@ -145,9 +145,7 @@ private:
 	DividerGroup dividers;
 	AudioStreamBlipKitPlayback *playback = nullptr;
 	RID rid;
-	struct {
-		bool master_volume_changed : 1 = false;
-	};
+	bool master_volume_changed : 1 = false;
 
 public:
 	BlipKitTrack();

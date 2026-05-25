@@ -25,3 +25,11 @@ format:
 .PHONY: svgo
 svgo:
 	find . -name "*.svg" -exec $(SVGO) --final-newline {} \;
+
+.PHONY: otool
+otool:
+	otool -tVv bin/macos/libblipkit.macos.template_debug.universal.framework/libblipkit.macos.template_debug.universal | c++filt
+
+.PHONY: otool-release
+otool-release:
+	otool -tVv bin/macos/libblipkit.macos.template_release.universal.framework/libblipkit.macos.template_release.universal | c++filt

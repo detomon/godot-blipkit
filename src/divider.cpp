@@ -4,8 +4,6 @@
 using namespace BlipKit;
 using namespace godot;
 
-std::atomic<DividerGroup::ID> DividerGroup::id = 0;
-
 bool DividerGroup::Divider::initialize(const Callable &p_callable, int p_tick_interval) {
 	callable = p_callable;
 	divider = p_tick_interval;
@@ -21,26 +19,7 @@ void DividerGroup::Divider::reset(int p_tick_interval) {
 }
 
 BKEnum DividerGroup::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
-	DividerGroup *group = static_cast<DividerGroup *>(p_user_info);
-	HashMap<ID, Divider> &dividers = group->dividers;
-	thread_local LocalVector<ID> removed_dividers;
-	removed_dividers.clear();
-
-	for (KeyValue<ID, Divider> &E : dividers) {
-		Divider &divider = E.value;
-		int ticks = divider.tick();
-
-		// Remove divider.
-		if (ticks < 0) {
-			removed_dividers.push_back(E.key);
-		}
-	}
-
-	for (const ID &id : removed_dividers) {
-		dividers.erase(id);
-	}
-
-	return BK_SUCCESS;
+	return static_cast<DividerGroup *>(p_user_info)->tick();
 }
 
 DividerGroup::DividerGroup() {
@@ -55,22 +34,60 @@ DividerGroup::~DividerGroup() {
 	detach();
 }
 
+BKEnum DividerGroup::tick() {
+	thread_local LocalVector<ID> removed_dividers;
+	removed_dividers.clear();
+
+	is_ticking = true;
+
+	for (KeyValue<ID, Divider> &E : dividers) {
+		Divider &divider = E.value;
+		const int ticks = divider.tick();
+
+		// Remove divider.
+		if (ticks < 0) {
+			removed_dividers.push_back(E.key);
+		}
+	}
+
+	is_ticking = false;
+
+	for (const ID &id : removed_dividers) {
+		dividers.erase(id);
+	}
+
+	return BK_SUCCESS;
+}
+
 PackedInt32Array DividerGroup::get_dividers() const {
 	PackedInt32Array ids;
 	ids.resize(dividers.size());
+	int *ptrw = ids.ptrw();
 	uint32_t i = 0;
 
 	for (const KeyValue<ID, Divider> &E : dividers) {
-		ids[i++] = E.key;
+		ptrw[i++] = E.key;
 	}
 
 	return ids;
 }
 
-DividerGroup::ID DividerGroup::add_divider(int p_tick_interval, const Callable &p_callable) {
+DividerGroup::ID DividerGroup::add_divider(int p_tick_interval, const Callable &p_callable, bool p_tick_now) {
 	ID new_id = ++id;
 	Divider &divider = dividers[new_id];
 	divider.initialize(p_callable, p_tick_interval);
+
+	if (p_tick_now && is_ticking) {
+		const int ticks = divider.tick();
+
+		// Remove divider.
+		if (ticks < 0) {
+			// TODO: Remove divider.
+			// Return RID().
+
+			//removed_dividers.push_back(E.key);
+		}
+	}
 
 	return new_id;
 }

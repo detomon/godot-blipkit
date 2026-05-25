@@ -23,18 +23,22 @@ public:
 		ENVELOPE_MAX,
 	};
 
+	static constexpr int CLOCK_RATE_MIN = 60;
+	static constexpr int CLOCK_RATE_MAX = 960;
+
 	static constexpr int SAMPLE_RATE = BK_DEFAULT_SAMPLE_RATE;
 	static constexpr int CHANNEL_COUNT = 2;
 	static constexpr int CHUNK_SIZE = 512;
+
+	static constexpr int SEQUENCE_SIZE_MAX = 32;
 
 private:
 	struct Context {
 		BKContext ctx = {};
 		FixedVector<BKFrame, CHUNK_SIZE * CHANNEL_COUNT> buffer;
 		LocalVector<Callable> sync_callables;
-		struct {
-			bool is_calling_callbacks : 1 = false;
-		};
+		int clock_rate = BK_DEFAULT_CLOCK_RATE;
+		bool is_calling_callbacks : 1 = false;
 
 		Context();
 		~Context();
@@ -43,14 +47,13 @@ private:
 	struct Track {
 		BKTrack track = {};
 		PackedFloat32Array arpeggio;
+		// FixedVector<float, BK_MAX_ARPEGGIO> arpeggio;
 		AudioStreamBlipKitPlayback *playback = nullptr;
 		RID divider_group;
 		RID instrument;
 		RID custom_waveform;
 		RID sample;
-		struct {
-			bool master_volume_changed : 1 = false;
-		};
+		bool master_volume_changed : 1 = false;
 
 		Track();
 		~Track();
@@ -58,8 +61,8 @@ private:
 
 	struct Instrument {
 		struct Sequence {
-			PackedInt32Array steps;
-			PackedFloat32Array values;
+			FixedVector<uint32_t, SEQUENCE_SIZE_MAX> steps;
+			FixedVector<float, SEQUENCE_SIZE_MAX> values;
 			int sustain_offset = 0;
 			int sustain_length = 0;
 		};
@@ -101,6 +104,7 @@ private:
 		~DividerGroup();
 
 		static BKEnum divider_callback(BKCallbackInfo *p_info, void *p_user_info);
+		BKEnum tick();
 	};
 
 	static inline BlipKitServer *singleton = nullptr;
@@ -122,6 +126,8 @@ public:
 	static void free();
 
 	RID context_create();
+	void context_set_clock_rate(const RID &p_ctx, int p_clock_rate);
+	int context_get_clock_rate(const RID &p_ctx) const;
 	int32_t context_generate(const RID &p_ctx, AudioFrame *r_buffer, int32_t p_frames);
 	int32_t context_generate_samples(const RID &p_ctx, PackedFloat32Array r_buffer, int32_t p_frames);
 

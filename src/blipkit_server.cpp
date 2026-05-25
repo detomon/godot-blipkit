@@ -1,13 +1,16 @@
 #include "blipkit_server.hpp"
 #include "audio_stream_blipkit.hpp"
+#include "godot_cpp/core/class_db.hpp"
 #include <godot_cpp/core/error_macros.hpp>
 
 using namespace BlipKit;
 using namespace godot;
 
 BKEnum BlipKitServer::DividerGroup::divider_callback(BKCallbackInfo *p_info, void *p_user_info) {
-	DividerGroup *group = static_cast<DividerGroup *>(p_user_info);
+	return static_cast<DividerGroup *>(p_user_info)->tick();
+}
 
+BKEnum BlipKitServer::DividerGroup::tick() {
 	// TODO: Implement.
 
 	return BK_SUCCESS;
@@ -85,6 +88,27 @@ void BlipKitServer::free() {
 
 RID BlipKitServer::context_create() {
 	return context_owner.make_rid();
+}
+
+void BlipKitServer::context_set_clock_rate(const RID &p_ctx, int p_clock_rate) {
+	Context *ctx = context_owner.get_or_null(p_ctx);
+	ERR_FAIL_NULL(ctx);
+
+	p_clock_rate = CLAMP(p_clock_rate, CLOCK_RATE_MIN, CLOCK_RATE_MAX);
+
+	BK_THREAD_SAFE_METHOD
+
+	BKTime tick_rate = BKTimeFromSeconds(&ctx->ctx, 1.0 / double(p_clock_rate));
+	const BKInt result = BKSetPtr(&ctx->ctx, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
+
+	ERR_FAIL_COND_MSG(result != BK_SUCCESS, vformat("Failed to set clock period: %s.", BKStatusGetName(result)));
+}
+
+int BlipKitServer::context_get_clock_rate(const RID &p_ctx) const {
+	Context *ctx = context_owner.get_or_null(p_ctx);
+	ERR_FAIL_NULL_V(ctx, 0);
+
+	return ctx->clock_rate;
 }
 
 int32_t BlipKitServer::context_generate(const RID &p_ctx, AudioFrame *r_buffer, int32_t p_frames) {
@@ -366,6 +390,8 @@ void BlipKitServer::free_rid(const RID &p_rid) {
 void BlipKitServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("context_create"), &BlipKitServer::context_create);
 	ClassDB::bind_method(D_METHOD("context_generate", "ctx", "out_buffer", "frames"), &BlipKitServer::context_generate_samples);
+	ClassDB::bind_method(D_METHOD("context_set_clock_rate", "ctx", "clock_rate"), &BlipKitServer::context_set_clock_rate);
+	ClassDB::bind_method(D_METHOD("context_get_clock_rate", "ctx"), &BlipKitServer::context_get_clock_rate);
 
 	ClassDB::bind_method(D_METHOD("track_create"), &BlipKitServer::track_create);
 	ClassDB::bind_method(D_METHOD("track_attach", "track", "ctx"), &BlipKitServer::track_attach);
@@ -391,6 +417,11 @@ void BlipKitServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("sample_create"), &BlipKitServer::sample_create);
 
 	ClassDB::bind_method(D_METHOD("free_rid", "rid"), &BlipKitServer::free_rid);
+
+	BIND_CONSTANT(CLOCK_RATE_MIN);
+	BIND_CONSTANT(CLOCK_RATE_MAX);
+	BIND_CONSTANT(CHANNEL_COUNT);
+	BIND_CONSTANT(SAMPLE_RATE);
 
 	// BIND_ENUM_CONSTANT(ENVELOPE_VOLUME);
 	// BIND_ENUM_CONSTANT(ENVELOPE_PANNING);
