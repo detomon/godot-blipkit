@@ -116,7 +116,7 @@ void BlipKitSample::set_frames(const PackedFloat32Array &p_frames, bool p_normal
 	const uint32_t frames_size = p_frames.size();
 	ERR_FAIL_COND(frames_size < 2);
 
-	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
+	p_amplitude = Math::clamp(p_amplitude, 0.0f, 1.0f);
 
 	const float *ptr = p_frames.ptr();
 	float scale = 1.0;
@@ -124,7 +124,7 @@ void BlipKitSample::set_frames(const PackedFloat32Array &p_frames, bool p_normal
 	if (p_normalize) {
 		float max_value = 0.0;
 		for (uint32_t i = 0; i < frames_size; i++) {
-			max_value = MAX(max_value, ABS(ptr[i]));
+			max_value = Math::max(max_value, Math::abs(ptr[i]));
 		}
 
 		scale = 0.0;
@@ -138,7 +138,7 @@ void BlipKitSample::set_frames(const PackedFloat32Array &p_frames, bool p_normal
 	frames.resize(frames_size);
 
 	for (uint32_t i = 0; i < frames_size; i++) {
-		const float value = CLAMP(ptr[i] * scale, -1.0, +1.0);
+		const float value = Math::clamp(ptr[i] * scale, -1.0f, +1.0f);
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
 
@@ -170,9 +170,9 @@ void BlipKitSample::set_sustain_offset(int p_sustain_offset) {
 	if (p_sustain_offset < 0 && frames.size() > 0) {
 		p_sustain_offset += frames.size() + 1;
 	}
-	p_sustain_offset = MAX(0, p_sustain_offset);
+	p_sustain_offset = Math::max(0, p_sustain_offset);
 	if (frames.size() > 0) {
-		p_sustain_offset = MIN(p_sustain_offset, frames.size());
+		p_sustain_offset = Math::min(p_sustain_offset, int(frames.size()));
 	}
 
 	sustain_offset = p_sustain_offset;
@@ -186,9 +186,9 @@ void BlipKitSample::set_sustain_end(int p_sustain_end) {
 	if (p_sustain_end < 0 && frames.size()) {
 		p_sustain_end += frames.size() + 1;
 	}
-	p_sustain_end = MAX(0, p_sustain_end);
+	p_sustain_end = Math::max(0, p_sustain_end);
 	if (frames.size() > 0) {
-		p_sustain_end = MIN(p_sustain_end, frames.size());
+		p_sustain_end = Math::min(p_sustain_end, int(frames.size()));
 	}
 
 	sustain_end = p_sustain_end;

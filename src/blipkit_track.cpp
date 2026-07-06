@@ -42,7 +42,7 @@ Ref<BlipKitTrack> BlipKitTrack::create_with_waveform(BlipKitTrack::Waveform p_wa
 void BlipKitTrack::set_master_volume(float p_master_volume) {
 	BK_THREAD_SAFE_METHOD
 
-	p_master_volume = CLAMP(p_master_volume, 0.0, 1.0);
+	p_master_volume = Math::clamp(p_master_volume, 0.0f, 1.0f);
 	const BKInt value = BKInt(p_master_volume * float(BK_MAX_VOLUME));
 
 	BKSetAttr(&track, BK_MASTER_VOLUME, value);
@@ -62,7 +62,7 @@ float BlipKitTrack::get_master_volume() const {
 void BlipKitTrack::set_volume(float p_volume) {
 	BK_THREAD_SAFE_METHOD
 
-	p_volume = CLAMP(p_volume, 0.0, 1.0);
+	p_volume = Math::clamp(p_volume, 0.0f, 1.0f);
 	const BKInt value = BKInt(p_volume * float(BK_MAX_VOLUME));
 
 	BKSetAttr(&track, BK_VOLUME, value);
@@ -80,7 +80,7 @@ float BlipKitTrack::get_volume() const {
 void BlipKitTrack::set_panning(float p_panning) {
 	BK_THREAD_SAFE_METHOD
 
-	p_panning = CLAMP(p_panning, -1.0, +1.0);
+	p_panning = Math::clamp(p_panning, -1.0f, +1.0f);
 	BKInt value = BKInt(p_panning * float(BK_MAX_VOLUME));
 
 	BKSetAttr(&track, BK_PANNING, value);
@@ -169,7 +169,7 @@ void BlipKitTrack::set_note(float p_note) {
 	BKInt value;
 
 	if (p_note >= 0.0) {
-		p_note = CLAMP(p_note, float(BK_MIN_NOTE), float(BK_MAX_NOTE));
+		p_note = Math::clamp(p_note, float(BK_MIN_NOTE), float(BK_MAX_NOTE));
 		value = BKInt(p_note * float(BK_FINT20_UNIT));
 	} else if (p_note <= -2.0) {
 		value = NOTE_MUTE;
@@ -199,7 +199,7 @@ float BlipKitTrack::get_note() const {
 void BlipKitTrack::set_pitch(float p_pitch) {
 	BK_THREAD_SAFE_METHOD
 
-	p_pitch = CLAMP(p_pitch, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+	p_pitch = Math::clamp(p_pitch, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 	BKInt value = BKInt(p_pitch * float(BK_FINT20_UNIT));
 
 	BKSetAttr(&track, BK_PITCH, value);
@@ -218,7 +218,7 @@ void BlipKitTrack::set_phase_wrap(int p_phase_wrap) {
 	BK_THREAD_SAFE_METHOD
 
 	if (p_phase_wrap > 0) {
-		p_phase_wrap = MAX(2, p_phase_wrap);
+		p_phase_wrap = Math::max(2, p_phase_wrap);
 	} else {
 		p_phase_wrap = 0;
 	}
@@ -283,8 +283,8 @@ int BlipKitTrack::get_portamento() const {
 void BlipKitTrack::set_tremolo(int p_ticks, float p_delta, int p_slide_ticks) {
 	BK_THREAD_SAFE_METHOD
 
-	p_delta = CLAMP(p_delta, 0.0, 1.0);
-	p_slide_ticks = MAX(p_slide_ticks, 0);
+	p_delta = Math::clamp(p_delta, 0.0f, 1.0f);
+	p_slide_ticks = Math::max(0, p_slide_ticks);
 	const BKInt delta = BKInt(p_delta * float(BK_MAX_VOLUME));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
@@ -312,8 +312,8 @@ Dictionary BlipKitTrack::get_tremolo() const {
 void BlipKitTrack::set_vibrato(int p_ticks, float p_delta, int p_slide_ticks) {
 	BK_THREAD_SAFE_METHOD
 
-	p_delta = CLAMP(p_delta, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
-	p_slide_ticks = MAX(p_slide_ticks, 0);
+	p_delta = Math::clamp(p_delta, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+	p_slide_ticks = Math::max(0, p_slide_ticks);
 	const BKInt delta = BKInt(p_delta * float(BK_FINT20_UNIT));
 	BKInt values[3] = { p_ticks, delta, p_slide_ticks };
 
@@ -341,7 +341,7 @@ Dictionary BlipKitTrack::get_vibrato() const {
 void BlipKitTrack::set_effect_divider(int p_effect_divider) {
 	BK_THREAD_SAFE_METHOD
 
-	p_effect_divider = MAX(0, p_effect_divider);
+	p_effect_divider = Math::max(0, p_effect_divider);
 	BKSetAttr(&track, BK_EFFECT_DIVIDER, p_effect_divider);
 }
 
@@ -358,12 +358,12 @@ void BlipKitTrack::set_arpeggio(const PackedFloat32Array &p_arpeggio) {
 	BK_THREAD_SAFE_METHOD
 
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { 0 };
-	const int count = MIN(p_arpeggio.size(), BK_MAX_ARPEGGIO);
+	const int count = Math::min(p_arpeggio.size(), int64_t(BK_MAX_ARPEGGIO));
 	const float *ptr = p_arpeggio.ptr();
 
 	value[0] = count;
 	for (uint32_t i = 0; i < count; i++) {
-		value[i + 1] = BKInt(CLAMP(ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
+		value[i + 1] = BKInt(Math::clamp(ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
 	}
 
 	arpeggio = p_arpeggio;
@@ -377,7 +377,7 @@ PackedFloat32Array BlipKitTrack::get_arpeggio() const {
 void BlipKitTrack::set_arpeggio_divider(int p_arpeggio_divider) {
 	BK_THREAD_SAFE_METHOD
 
-	p_arpeggio_divider = MAX(0, p_arpeggio_divider);
+	p_arpeggio_divider = Math::max(0, p_arpeggio_divider);
 	BKSetAttr(&track, BK_ARPEGGIO_DIVIDER, p_arpeggio_divider);
 }
 
@@ -409,7 +409,7 @@ Ref<BlipKitInstrument> BlipKitTrack::get_instrument() {
 void BlipKitTrack::set_instrument_divider(int p_instrument_divider) {
 	BK_THREAD_SAFE_METHOD
 
-	p_instrument_divider = MAX(0, p_instrument_divider);
+	p_instrument_divider = Math::max(0, p_instrument_divider);
 	BKSetAttr(&track, BK_INSTRUMENT_DIVIDER, p_instrument_divider);
 }
 
@@ -465,7 +465,7 @@ Ref<BlipKitSample> BlipKitTrack::get_sample() {
 }
 
 void BlipKitTrack::set_sample_pitch(float p_pitch) {
-	p_pitch = CLAMP(p_pitch, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+	p_pitch = Math::clamp(p_pitch, -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 	BKInt value = BKInt(p_pitch * float(BK_FINT20_UNIT));
 
 	BK_THREAD_SAFE_METHOD

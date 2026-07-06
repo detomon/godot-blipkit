@@ -94,7 +94,7 @@ void BlipKitServer::context_set_clock_rate(const RID &p_ctx, int p_clock_rate) {
 	Context *ctx = context_owner.get_or_null(p_ctx);
 	ERR_FAIL_NULL(ctx);
 
-	p_clock_rate = CLAMP(p_clock_rate, CLOCK_RATE_MIN, CLOCK_RATE_MAX);
+	p_clock_rate = Math::clamp(p_clock_rate, CLOCK_RATE_MIN, CLOCK_RATE_MAX);
 
 	BK_THREAD_SAFE_METHOD
 
@@ -136,7 +136,7 @@ int32_t BlipKitServer::context_generate(const RID &p_ctx, AudioFrame *r_buffer, 
 	constexpr float frame_scale = 1.0 / float(BK_FRAME_MAX);
 
 	while (out_count < p_frames) {
-		BKInt chunk_size = MIN(p_frames - out_count, CHUNK_SIZE);
+		BKInt chunk_size = Math::min(p_frames - out_count, CHUNK_SIZE);
 		// Generate frames; produces no errors.
 		chunk_size = BKContextGenerate(&ctx->ctx, chunk_buffer, chunk_size);
 		// Nothing more to generate.
@@ -203,12 +203,12 @@ void BlipKitServer::track_set_arpeggio(const RID &p_track, const PackedFloat32Ar
 
 	BK_THREAD_SAFE_METHOD
 
-	const int count = MIN(p_arpeggio.size(), BK_MAX_ARPEGGIO);
+	const int count = Math::min(p_arpeggio.size(), int64_t(BK_MAX_ARPEGGIO));
 	const float *ptr = p_arpeggio.ptr();
 
 	BKInt value[BK_MAX_ARPEGGIO + 1] = { count };
 	for (uint32_t i = 0; i < count; i++) {
-		value[i + 1] = BKInt(CLAMP(ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
+		value[i + 1] = BKInt(Math::clamp(ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE)) * float(BK_FINT20_UNIT));
 	}
 
 	track->arpeggio = p_arpeggio;
@@ -245,16 +245,16 @@ bool BlipKitServer::waveform_set_frames(const RID &p_waveform, const PackedFloat
 	ERR_FAIL_COND_V(frames_size < 2, false);
 	ERR_FAIL_COND_V(frames_size > BK_WAVE_MAX_LENGTH, false);
 
-	p_amplitude = CLAMP(p_amplitude, 0.0, 1.0);
+	p_amplitude = Math::clamp(p_amplitude, 0.0f, 1.0f);
 
 	const float *ptr = p_frames.ptr();
-	const uint32_t size = MIN(frames_size, BK_WAVE_MAX_LENGTH);
+	const uint32_t size = Math::min(frames_size, uint32_t(BK_WAVE_MAX_LENGTH));
 	float scale = 1.0;
 
 	if (p_normalize) {
 		float max_value = 0.0;
 		for (uint32_t i = 0; i < size; i++) {
-			max_value = MAX(max_value, ABS(ptr[i]));
+			max_value = Math::max(max_value, Math::abs(ptr[i]));
 		}
 
 		scale = 0.0;
@@ -269,7 +269,7 @@ bool BlipKitServer::waveform_set_frames(const RID &p_waveform, const PackedFloat
 	frames.resize(size);
 
 	for (uint32_t i = 0; i < size; i++) {
-		const float value = CLAMP(ptr[i] * scale, -1.0, +1.0);
+		const float value = Math::clamp(ptr[i] * scale, -1.0f, +1.0f);
 		frames[i] = BKFrame(value * float(BK_FRAME_MAX));
 	}
 

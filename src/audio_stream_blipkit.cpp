@@ -42,7 +42,7 @@ bool AudioStreamBlipKit::_is_monophonic() const {
 }
 
 void AudioStreamBlipKit::set_clock_rate(int p_clock_rate) {
-	clock_rate = CLAMP(p_clock_rate, CLOCK_RATE_MIN, CLOCK_RATE_MAX);
+	clock_rate = Math::clamp(p_clock_rate, CLOCK_RATE_MIN, CLOCK_RATE_MAX);
 
 	if (playback.is_valid()) {
 		playback->set_clock_rate(clock_rate);
@@ -116,7 +116,7 @@ bool AudioStreamBlipKitPlayback::initialize(int p_clock_rate) {
 void AudioStreamBlipKitPlayback::set_clock_rate(int p_clock_rate) {
 	BK_THREAD_SAFE_METHOD
 
-	clock_rate = CLAMP(p_clock_rate, AudioStreamBlipKit::CLOCK_RATE_MIN, AudioStreamBlipKit::CLOCK_RATE_MAX);
+	clock_rate = Math::clamp(p_clock_rate, AudioStreamBlipKit::CLOCK_RATE_MIN, AudioStreamBlipKit::CLOCK_RATE_MAX);
 
 	BKTime tick_rate = BKTimeFromSeconds(&context, 1.0 / double(p_clock_rate));
 	const BKInt result = BKSetPtr(&context, BK_CLOCK_PERIOD, &tick_rate, sizeof(tick_rate));
@@ -187,7 +187,7 @@ int32_t AudioStreamBlipKitPlayback::_mix_resampled(AudioFrame *p_buffer, int32_t
 	constexpr float frame_scale = 1.0 / float(BK_FRAME_MAX);
 
 	while (out_count < p_frames) {
-		BKInt chunk_size = MIN(p_frames - out_count, CHANNEL_SIZE);
+		BKInt chunk_size = Math::min(p_frames - out_count, CHANNEL_SIZE);
 
 		// Generate frames; produces no errors.
 		chunk_size = BKContextGenerate(&context, chunk_buffer, chunk_size);
@@ -215,6 +215,6 @@ int32_t AudioStreamBlipKitPlayback::_mix_resampled(AudioFrame *p_buffer, int32_t
 	return out_count;
 }
 
-double AudioStreamBlipKitPlayback::_get_stream_sampling_rate() const {
+float AudioStreamBlipKitPlayback::_get_stream_sampling_rate() const {
 	return double(SAMPLE_RATE);
 }

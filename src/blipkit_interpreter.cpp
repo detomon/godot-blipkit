@@ -59,7 +59,7 @@ uint32_t BlipKitInterpreter::exec_delay_step(uint32_t p_ticks) {
 		}
 
 		// Limit total delay to step ticks.
-		delay_register.ticks = MIN(delay_register.ticks, p_ticks);
+		delay_register.ticks = Math::min(delay_register.ticks, p_ticks);
 
 		const uint32_t ticks_rest = p_ticks - delay_register.ticks;
 		delay_register.ticks += ticks_rest;
@@ -84,7 +84,7 @@ uint32_t BlipKitInterpreter::exec_delay_shift() {
 	// Shift delay entry.
 	uint32_t ticks = delay_register.delays[delay_register.delay_index++];
 
-	ticks = MIN(ticks, delay_register.ticks);
+	ticks = Math::min(ticks, delay_register.ticks);
 	delay_register.ticks -= ticks;
 
 	return ticks;
@@ -132,7 +132,7 @@ Ref<BlipKitSample> BlipKitInterpreter::get_sample(int p_slot) const {
 }
 
 void BlipKitInterpreter::set_step_ticks(int p_step_ticks) {
-	step_ticks = CLAMP(p_step_ticks, 1, UINT16_MAX);
+	step_ticks = Math::clamp(p_step_ticks, 1, UINT16_MAX);
 }
 
 int BlipKitInterpreter::get_step_ticks() const {

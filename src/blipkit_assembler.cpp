@@ -186,7 +186,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				return ERR_INVALID_ARGUMENT;
 			}
 
-			const int32_t value = CLAMP(int32_t(p_arg1), 0, UINT16_MAX);
+			const int32_t value = Math::clamp(int32_t(p_arg1), 0, UINT16_MAX);
 
 			byte_code.put_u8(p_opcode);
 			byte_code.put_u16(value);
@@ -197,7 +197,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				return ERR_INVALID_ARGUMENT;
 			}
 
-			const int32_t value = CLAMP(int32_t(p_arg1), 0, UINT16_MAX);
+			const int32_t value = Math::clamp(int32_t(p_arg1), 0, UINT16_MAX);
 
 			if (value) [[likely]] {
 				byte_code.put_u8(p_opcode);
@@ -209,7 +209,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				return ERR_INVALID_ARGUMENT;
 			}
 
-			const int32_t ticks = CLAMP(int32_t(p_arg1), 1, UINT16_MAX);
+			const int32_t ticks = Math::clamp(int32_t(p_arg1), 1, UINT16_MAX);
 
 			byte_code.put_u8(p_opcode);
 			byte_code.put_u16(ticks);
@@ -220,9 +220,9 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				return ERR_INVALID_ARGUMENT;
 			}
 
-			const float ticks = CLAMP(float(p_arg1), 0, UINT16_MAX);
-			const float delta = CLAMP(float(p_arg2), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
-			const float slide_ticks = CLAMP(float(p_arg3), 0, UINT16_MAX);
+			const float ticks = Math::clamp(float(p_arg1), 0.0f, float(UINT16_MAX));
+			const float delta = Math::clamp(float(p_arg2), -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+			const float slide_ticks = Math::clamp(float(p_arg3), 0.0f, float(UINT16_MAX));
 
 			byte_code.put_u8(p_opcode);
 			byte_code.put_f16(ticks);
@@ -236,12 +236,12 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 
 			const PackedFloat32Array &values = p_arg1;
 			const float *values_ptr = values.ptr();
-			const uint32_t count = MIN(values.size(), BK_MAX_ARPEGGIO);
+			const uint32_t count = Math::min(values.size(), int64_t(BK_MAX_ARPEGGIO));
 
 			byte_code.put_u8(p_opcode);
 			byte_code.put_u8(count);
 			for (uint32_t i = 0; i < count; i++) {
-				const float delta = CLAMP(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
+				const float delta = Math::clamp(values_ptr[i], -float(BK_MAX_NOTE), +float(BK_MAX_NOTE));
 				byte_code.put_f16(delta);
 			}
 		} break;
@@ -282,7 +282,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				return ERR_INVALID_ARGUMENT;
 			}
 
-			const uint32_t ticks = CLAMP(int32_t(p_arg1), 0, UINT16_MAX);
+			const uint32_t ticks = Math::clamp(int32_t(p_arg1), 0, UINT16_MAX);
 
 			if (ticks) [[likely]] {
 				byte_code.put_u8(p_opcode);
@@ -295,7 +295,7 @@ BlipKitAssembler::Error BlipKitAssembler::put(Opcode p_opcode, const Variant &p_
 				return ERR_INVALID_ARGUMENT;
 			}
 
-			const float steps = CLAMP(float(p_arg1), 0, UINT16_MAX);
+			const float steps = Math::clamp(float(p_arg1), 0.0f, float(UINT16_MAX));
 
 			if (not Math::is_zero_approx(steps)) [[likely]] {
 				byte_code.put_u8(p_opcode);

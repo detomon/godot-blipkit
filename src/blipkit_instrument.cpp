@@ -69,8 +69,8 @@ void BlipKitInstrument::set_envelope(EnvelopeType p_type, const PackedFloat32Arr
 		p_sustain_offset += values_size + 1;
 	}
 
-	p_sustain_offset = CLAMP(p_sustain_offset, 0, values_size);
-	p_sustain_length = CLAMP(p_sustain_length, 0, values_size - p_sustain_offset);
+	p_sustain_offset = Math::clamp(p_sustain_offset, 0, int32_t(values_size));
+	p_sustain_length = Math::clamp(p_sustain_length, 0, int32_t(values_size - p_sustain_offset));
 
 	PackedInt32Array steps_copy;
 	steps_copy.resize(steps_size);

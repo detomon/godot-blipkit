@@ -57,7 +57,7 @@ void ByteStreamReader::set_bytes(const Vector<uint8_t> &p_bytes) {
 }
 
 uint32_t ByteStreamReader::get_bytes(uint8_t *r_bytes, uint32_t p_count) {
-	p_count = MIN(p_count, get_available_bytes());
+	p_count = Math::min(p_count, get_available_bytes());
 
 	const uint8_t *ptr = &bytes.ptr()[pointer];
 	memcpy(r_bytes, ptr, p_count);
@@ -108,8 +108,8 @@ void ByteStreamWriter::put_f32(float p_value) {
 
 uint32_t ByteStreamWriter::put_bytes(const Vector<uint8_t> &p_bytes, uint32_t p_from, uint32_t p_size) {
 	const uint32_t bytes_size = p_bytes.size();
-	p_from = MIN(p_from, bytes_size);
-	p_size = MIN(p_size, bytes_size - p_from);
+	p_from = Math::min(p_from, bytes_size);
+	p_size = Math::min(p_size, bytes_size - p_from);
 
 	const uint8_t *ptr = &p_bytes.ptr()[p_from];
 	put_bytes(ptr, p_size);
@@ -129,7 +129,7 @@ void ByteStreamWriter::put_bytes(const uint8_t *p_bytes, uint32_t p_count) {
 	memcpy(ptrw, p_bytes, p_count);
 
 	pointer += p_count;
-	count = MAX(count, pointer);
+	count = Math::max(count, pointer);
 }
 
 uint8_t ByteStreamWriter::get_u8() {
@@ -169,7 +169,7 @@ float ByteStreamWriter::get_f32() {
 }
 
 uint32_t ByteStreamWriter::get_bytes(uint8_t *r_bytes, uint32_t p_count) {
-	p_count = MIN(p_count, get_available_bytes());
+	p_count = Math::min(p_count, get_available_bytes());
 
 	const uint8_t *ptr = &bytes.ptr()[pointer];
 	memcpy(r_bytes, ptr, p_count);
@@ -187,7 +187,7 @@ Vector<uint8_t> ByteStreamWriter::get_bytes() const {
 }
 
 void ByteStreamWriter::reserve(uint32_t p_size) {
-	p_size = MAX(128, next_power_of_2(p_size));
+	p_size = Math::max(128u, next_power_of_2(p_size));
 
 	if (p_size > bytes.size()) {
 		bytes.resize(p_size);

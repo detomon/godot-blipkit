@@ -48,7 +48,7 @@ public:
 	_ALWAYS_INLINE_ uint32_t size() const { return count; };
 	_ALWAYS_INLINE_ uint32_t get_position() const { return pointer; }
 	_ALWAYS_INLINE_ uint32_t get_available_bytes() const { return count - pointer; }
-	_ALWAYS_INLINE_ void seek(uint32_t p_offset) { pointer = MIN(p_offset, size()); }
+	_ALWAYS_INLINE_ void seek(uint32_t p_offset) { pointer = Math::min(p_offset, size()); }
 
 	void set_bytes(const Vector<uint8_t> &p_bytes);
 
@@ -94,7 +94,7 @@ private:
 
 		uint8_t *ptrw = &bytes.ptr()[pointer];
 		pointer += byte_count;
-		count = MAX(count, pointer);
+		count = Math::max(count, pointer);
 
 		for (uint32_t i = 0; i < byte_count; i++) {
 			ptrw[i] = (value >> (i * 8)) & 0xFF;
@@ -126,7 +126,7 @@ public:
 	_ALWAYS_INLINE_ uint32_t size() const { return count; };
 	_ALWAYS_INLINE_ uint32_t get_position() const { return pointer; }
 	_ALWAYS_INLINE_ uint32_t get_available_bytes() const { return count - pointer; }
-	_ALWAYS_INLINE_ void seek(uint32_t p_offset) { pointer = MIN(p_offset, size()); }
+	_ALWAYS_INLINE_ void seek(uint32_t p_offset) { pointer = Math::min(p_offset, size()); }
 
 	_ALWAYS_INLINE_ const uint8_t *ptr() const { return bytes.ptr(); }
 	Vector<uint8_t> get_bytes() const;
