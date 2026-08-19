@@ -49,7 +49,7 @@ ResourceSaver.save(bytecode, "res://bytecode.blipc")
 ## Constants
 
 - `VERSION` = `0`
-	- The current supported byte code version.
+	- The currently supported byte code version.
 
 ## Method Descriptions
 
@@ -57,7 +57,7 @@ ResourceSaver.save(bytecode, "res://bytecode.blipc")
 
 Returns the index of a label with `name`.
 
-Returns `-1` if no label with [name] exists.
+Returns `-1` if no label with `name` exists.
 
 ### `PackedByteArray get_byte_array() const`
 

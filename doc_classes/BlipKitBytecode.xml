@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BlipKitBytecode" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+<class name="BlipKitBytecode" inherits="Resource" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
 		A [Resource] used to save byte code generated with [BlipKitAssembler].
 	</brief_description>
@@ -25,7 +25,7 @@
 			<param index="0" name="name" type="String" />
 			<description>
 				Returns the index of a label with [param name].
-				Returns [code]-1[/code] if no label with [name] exists.
+				Returns [code]-1[/code] if no label with [param name] exists.
 			</description>
 		</method>
 		<method name="get_byte_array" qualifiers="const">
@@ -104,7 +104,7 @@
 			The byte code version is not supported.
 		</constant>
 		<constant name="VERSION" value="0">
-			The current supported byte code version.
+			The currently supported byte code version.
 		</constant>
 	</constants>
 </class>
