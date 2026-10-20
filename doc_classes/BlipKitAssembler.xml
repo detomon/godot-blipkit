@@ -144,7 +144,7 @@
 			Sets [member BlipKitTrack.phase_wrap]. Expects an [int] argument.
 		</constant>
 		<constant name="OP_PORTAMENTO" value="12" enum="Opcode">
-			Sets [member BlipKitTrack.portamento]. Expects an [int] argument between [code]0[/code] and [code]65535[/code].
+			Sets [member BlipKitTrack.portamento]. Expects a [float] argument between [code]0.0[/code] and [code]65535.0[/code].
 		</constant>
 		<constant name="OP_VIBRATO" value="13" enum="Opcode">
 			Calls [method BlipKitTrack.set_vibrato]. Expects [code]ticks[/code] ([int] between [code]0[/code] and [code]65535[/code]), [code]delta[/code] ([float]) and [code]slide_ticks[/code] ([int] between [code]0[/code] and [code]65535[/code]).

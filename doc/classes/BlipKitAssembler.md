@@ -80,7 +80,7 @@ var bytes := assem.get_byte_code()
 - `OP_PHASE_WRAP` = `11`
 	- Sets `BlipKitTrack.phase_wrap`. Expects an `int` argument.
 - `OP_PORTAMENTO` = `12`
-	- Sets `BlipKitTrack.portamento`. Expects an `int` argument between `0` and `65535`.
+	- Sets `BlipKitTrack.portamento`. Expects a `float` argument between `0.0` and `65535.0`.
 - `OP_VIBRATO` = `13`
 	- Calls `BlipKitTrack.set_vibrato()`. Expects `ticks` (`int` between `0` and `65535`), `delta` (`float`) and `slide_ticks` (`int` between `0` and `65535`).
 - `OP_TREMOLO` = `14`
