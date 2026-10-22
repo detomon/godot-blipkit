@@ -62,95 +62,125 @@ var bytes := assem.get_byte_code()
 - `OP_ATTACK` = `2`
 	- Sets `BlipKitTrack.note`.
 
-**- Opcode argument #1:** `float`.
+**Opcode arguments:**
+
+**#1:** `float`.
 - `OP_RELEASE` = `3`
 	- Calls `BlipKitTrack.release()`.
 
-**- No opcode arguments.**
+**No opcode arguments.**
 - `OP_MUTE` = `4`
 	- Calls `BlipKitTrack.mute()`.
 
-**- No opcode arguments.**
+**No opcode arguments.**
 - `OP_VOLUME` = `5`
 	- Sets `BlipKitTrack.volume`.
 
-**- Opcode argument #1:** `float` between `0.0` and `1.0`.
+**Opcode arguments:**
+
+**#1:** `float` between `0.0` and `1.0`.
 - `OP_MASTER_VOLUME` = `6`
 	- Sets `BlipKitTrack.master_volume`.
 
-**- Opcode argument #1:** `float` between `0.0` and `1.0`.
+**Opcode arguments:**
+
+**#1:** `float` between `0.0` and `1.0`.
 - `OP_PANNING` = `7`
 	- Sets `BlipKitTrack.panning`.
 
-**- Opcode argument #1:** `float` between `-1.0` and `+1.0`.
+**Opcode arguments:**
+
+**#1:** `float` between `-1.0` and `+1.0`.
 - `OP_WAVEFORM` = `8`
 	- Sets `BlipKitTrack.waveform`.
 
-**- Opcode argument #1:** [`BlipKitTrack.Waveform`](#enum-blipkittrackwaveform).
+**Opcode arguments:**
+
+**#1:** [`BlipKitTrack.Waveform`](#enum-blipkittrackwaveform).
 - `OP_DUTY_CYCLE` = `9`
 	- Sets `BlipKitTrack.duty_cycle`.
 
-**- Opcode argument #1:** `int` between `0` and `15`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `15`.
 - `OP_PITCH` = `10`
 	- Sets `BlipKitTrack.pitch`.
 
-**- Opcode argument #1:** `float`.
+**Opcode arguments:**
+
+**#1:** `float`.
 - `OP_PHASE_WRAP` = `11`
 	- Sets `BlipKitTrack.phase_wrap`.
 
-**- Opcode argument #1:** `int`.
+**Opcode arguments:**
+
+**#1:** `int`.
 - `OP_PORTAMENTO` = `12`
 	- Sets `BlipKitTrack.portamento`.
 
-**- Opcode argument #1:** `float` between `0.0` and `65535.0`.
+**Opcode arguments:**
+
+**#1:** `float` between `0.0` and `65535.0`.
 - `OP_VIBRATO` = `13`
 	- Calls `BlipKitTrack.set_vibrato()`.
 
-**- Opcode argument #1:** `ticks` (`int` between `0` and `65535`).
+**Opcode arguments:**
 
-**- Opcode argument #2:** `delta` (`float`).
-
-**- Opcode argument #3:** `slide_ticks` (`int` between `0` and `65535`).
+**#1:** `ticks` (`int` between `0` and `65535`).[br]**#2:** `delta` (`float`).[br]**#3:** `slide_ticks` (`int` between `0` and `65535`).
 - `OP_TREMOLO` = `14`
 	- Calls `BlipKitTrack.set_tremolo()`.
 
-**- Opcode argument #1:** `ticks` (`int` between `0` and `65535`).
+**Opcode arguments:**
 
-**- Opcode argument #2:** `delta` (`float`).
-
-**- Opcode argument #3:** `slide_ticks` (`int` between `0` and `65535`).
+**#1:** `ticks` (`int` between `0` and `65535`).[br]**#2:** `delta` (`float`).[br]**#3:** `slide_ticks` (`int` between `0` and `65535`).
 - `OP_VOLUME_SLIDE` = `15`
 	- Sets `BlipKitTrack.volume_slide`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_PANNING_SLIDE` = `16`
 	- Sets `BlipKitTrack.panning_slide`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_EFFECT_DIV` = `17`
 	- Sets `BlipKitTrack.effect_divider`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_ARPEGGIO` = `18`
 	- Sets `BlipKitTrack.arpeggio`.
 
-**- Opcode argument #1:** [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html).
+**Opcode arguments:**
+
+**#1:** [`PackedFloat32Array`](https://docs.godotengine.org/en/stable/classes/class_packedfloat32array.html).
 - `OP_ARPEGGIO_DIV` = `19`
 	- Sets `BlipKitTrack.arpeggio_divider`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_TICK` = `20`
 	- Interrupts the execution for a number of *ticks*.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_STEP` = `21`
 	- Interrupts the execution for a number of *ticks* multiplied with `BlipKitInterpreter.step_ticks`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_STEP_TICKS` = `22`
 	- Sets `BlipKitInterpreter.step_ticks`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_DELAY_TICK` = `23`
 	- Delays the execution of the following instructions by the given number of *ticks*.
 
@@ -158,7 +188,9 @@ Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction
 
 **Note:** This instruction does not interrupt the execution.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_DELAY_STEP` = `24`
 	- Delays the execution of the following instructions by the given number of *steps* (can be a fraction).
 
@@ -166,27 +198,33 @@ Must be followed by a [`OP_STEP`](#op_step) or [`OP_TICK`](#op_tick) instruction
 
 **Note:** This instruction does not interrupt the execution.
 
-**- Opcode argument #1:** `float` between `0.0` and `65535.0`.
+**Opcode arguments:**
+
+**#1:** `float` between `0.0` and `65535.0`.
 - `OP_JUMP` = `25`
 	- Jumps to a named label.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string-public-bool--false).
 
-**- Opcode argument #1:** Label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html).
+**Opcode arguments:**
+
+**#1:** Label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html).
 - `OP_CALL` = `26`
 	- Jumps to a named label and returns back to the current position after encountering an [`OP_RETURN`](#op_return). Calls be nested but are limited to `BlipKitInterpreter.STACK_SIZE_MAX`.
 
 **Note:** The label is not required to be defined at this point and can also be set later with [`put_label()`](#int-put_labellabel-string-public-bool--false).
 
-**- Opcode argument #1:** Label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html).
+**Opcode arguments:**
+
+**#1:** Label name as [`String`](https://docs.godotengine.org/en/stable/classes/class_string.html).
 - `OP_RETURN` = `27`
 	- Returns from a call made with [`OP_CALL`](#op_call).
 
-**- No opcode arguments.**
+**No opcode arguments.**
 - `OP_RESET` = `28`
 	- Calls `BlipKitTrack.reset()`.
 
-**- No opcode arguments.**
+**No opcode arguments.**
 - `OP_INSTRUMENT` = `29`
 	- Sets `BlipKitTrack.instrument` from the given slot.
 
@@ -194,11 +232,15 @@ Which [`BlipKitInstrument`](BlipKitInstrument.md) is used is defined with `BlipK
 
 **Note:** An instrument cannot be unset. Keep a slot empty to be able to set an empty instrument (for example, `255`) if needed.
 
-**- Opcode argument #1:** Slot index as `int` between `0` and `255`.
+**Opcode arguments:**
+
+**#1:** Slot index as `int` between `0` and `255`.
 - `OP_INSTRUMENT_DIV` = `30`
 	- Sets `BlipKitTrack.instrument_divider`.
 
-**- Opcode argument #1:** `int` between `0` and `65535`.
+**Opcode arguments:**
+
+**#1:** `int` between `0` and `65535`.
 - `OP_CUSTOM_WAVEFORM` = `31`
 	- Sets `BlipKitTrack.custom_waveform` from the given slot.
 
@@ -206,7 +248,9 @@ Which [`BlipKitWaveform`](BlipKitWaveform.md) is used is defined with `BlipKitIn
 
 **Note:** If the custom waveform is set to an empty slot, the waveform is reset to `BlipKitTrack.WAVEFORM_SQUARE`.
 
-**- Opcode argument #1:** Slot index as `int` between `0` and `255`.
+**Opcode arguments:**
+
+**#1:** Slot index as `int` between `0` and `255`.
 - `OP_SAMPLE` = `32`
 	- Sets `BlipKitTrack.sample` from the given slot.
 
@@ -214,11 +258,15 @@ Which [`BlipKitSample`](BlipKitSample.md) is used is defined with `BlipKitInterp
 
 **Note:** If the sample is set to an empty slot, the waveform is reset to `BlipKitTrack.WAVEFORM_SQUARE`.
 
-**- Opcode argument #1:** Slot index as `int` between `0` and `255`.
+**Opcode arguments:**
+
+**#1:** Slot index as `int` between `0` and `255`.
 - `OP_SAMPLE_PITCH` = `33`
 	- Sets `BlipKitTrack.sample_pitch`.
 
-**- Opcode argument #1:** `float`.
+**Opcode arguments:**
+
+**#1:** `float`.
 
 ### enum `Error`
 
