@@ -203,7 +203,7 @@ Returns [`ERR_INVALID_STATE`](#err_invalid_state) if the byte code is already co
 
 ### `int put_byte_code(byte_code: BlipKitBytecode, public: bool = false)`
 
-Adds compiled [`BlipKitBytecode`](BlipKitBytecode.md) and returns [`OK`](#ok) on success. Public labels from `byte_code` are added to the existing labels.
+Appends compiled `byte_code` and returns [`OK`](#ok) on success. Public labels from `byte_code` are added to the existing labels.
 
 If `public` is `true`, public labels from `byte_code` are also made public.
 

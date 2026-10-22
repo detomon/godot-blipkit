@@ -92,7 +92,7 @@
 			<param index="0" name="byte_code" type="BlipKitBytecode" />
 			<param index="1" name="public" type="bool" default="false" />
 			<description>
-				Adds compiled [BlipKitBytecode] and returns [constant OK] on success. Public labels from [param byte_code] are added to the existing labels.
+				Appends compiled [param byte_code] and returns [constant OK] on success. Public labels from [param byte_code] are added to the existing labels.
 				If [param public] is [code]true[/code], public labels from [param byte_code] are also made public.
 				Returns [constant ERR_DUPLICATE_LABEL] if a label in [param byte_code] already exists.
 				Returns [constant ERR_INVALID_ARGUMENT] if [param byte_code] is not valid.
