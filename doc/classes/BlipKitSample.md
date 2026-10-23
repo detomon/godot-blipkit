@@ -9,7 +9,7 @@ Inherits: *Resource*
 ```gdscript
 # Load WAV from resource.
 var wav := preload("res://sample.wav")
-var sample := BlipKitSample.create_from_wav(wav)
+var sample := BlipKitSample.create_with_wav(wav)
 # Set sample to track.
 track.sample = sample
 # Play sample.
@@ -71,7 +71,7 @@ Creates a [`BlipKitSample`](BlipKitSample.md) from a [`AudioStreamWAV`](https://
 
 If `normalize` is `true`, frames values are normalized between negative and positive `amplitude`. `amplitude` is clamped between `0.0` and `1.0`.
 
-The sample rate of [`AudioStreamWAV`](https://docs.godotengine.org/en/stable/classes/class_audiostreamwav.html) is expected to be 44100 Hz, as the internal sample rate of [`AudioStreamBlipKit`](AudioStreamBlipKit.md) is fixed to this value. When playing the sample with `BlipKitTrack.NOTE_C_4`, it is played with it's original speed.
+The sample rate of [`AudioStreamWAV`](https://docs.godotengine.org/en/stable/classes/class_audiostreamwav.html) is expected to be 44100 Hz, as the internal sample rate of [`AudioStreamBlipKit`](AudioStreamBlipKit.md) is fixed to this value. When playing the sample with `BlipKitTrack.NOTE_C_4`, it is played with its original speed.
 
 Copies `AudioStreamWAV.loop_mode`, `AudioStreamWAV.loop_begin`, and `AudioStreamWAV.loop_end` into `repeat_mode`, `sustain_offset`, and `sustain_end`, respectively.
 

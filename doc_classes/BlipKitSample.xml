@@ -8,7 +8,7 @@
 		[gdscript]
 		# Load WAV from resource.
 		var wav := preload("res://sample.wav")
-		var sample := BlipKitSample.create_from_wav(wav)
+		var sample := BlipKitSample.create_with_wav(wav)
 		# Set sample to track.
 		track.sample = sample
 		# Play sample.
@@ -27,7 +27,7 @@
 			<description>
 				Creates a [BlipKitSample] from a [AudioStreamWAV]. Stereo channels are merged into a single mono channel.
 				If [param normalize] is [code]true[/code], frames values are normalized between negative and positive [param amplitude]. [param amplitude] is clamped between [code]0.0[/code] and [code]1.0[/code].
-				The sample rate of [AudioStreamWAV] is expected to be 44100 Hz, as the internal sample rate of [AudioStreamBlipKit] is fixed to this value. When playing the sample with [constant BlipKitTrack.NOTE_C_4], it is played with it's original speed.
+				The sample rate of [AudioStreamWAV] is expected to be 44100 Hz, as the internal sample rate of [AudioStreamBlipKit] is fixed to this value. When playing the sample with [constant BlipKitTrack.NOTE_C_4], it is played with its original speed.
 				Copies [member AudioStreamWAV.loop_mode], [member AudioStreamWAV.loop_begin], and [member AudioStreamWAV.loop_end] into [member repeat_mode], [member sustain_offset], and [member sustain_end], respectively.
 				[b]Note:[/b] Only supports the formats [constant AudioStreamWAV.FORMAT_8_BITS] and [constant AudioStreamWAV.FORMAT_16_BITS].
 			</description>

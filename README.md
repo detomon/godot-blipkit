@@ -32,7 +32,7 @@ or...
 
 ## Introduction
 
-The [BlipKitTrack](doc/classes/BlipKitTrack.md) class generates a single waveform. Multiple tracks can be attached to a [AudioStreamBlipKit](doc/classes/AudioStreamBlipKit.md), which then mixes the audio. As with every audio stream, it can be used with `AudioStreamPlayer`, `AudioStreamPlayer2D` or `AudioStreamPlayer3D` nodes.
+The [BlipKitTrack](doc/classes/BlipKitTrack.md) class generates a single waveform. Multiple tracks can be attached to an [AudioStreamBlipKit](doc/classes/AudioStreamBlipKit.md), which then mixes the audio. As with every audio stream, it can be used with `AudioStreamPlayer`, `AudioStreamPlayer2D` or `AudioStreamPlayer3D` nodes.
 
 Time is measured in *ticks*. Every *tick* allows properties of the waveform to be updated. The tick rate is `240` ticks per second.
 
@@ -101,10 +101,10 @@ func _ready() -> void:
 
 ## Byte code interpreter
 
-The byte code assembler allows to create instructions to play patterns.
+The byte code assembler allows you to create instructions to play patterns.
 
-- [BlipKitAssembler](doc/classes/BlipKitAssembler.md) generate byte code from instructions
-- [BlipKitInterpreter](doc/classes/BlipKitInterpreter.md) execute the byte code on a [BlipKitTrack](doc/classes/BlipKitTrack.md) to change its properties over time
+- [BlipKitAssembler](doc/classes/BlipKitAssembler.md) generates byte code from instructions
+- [BlipKitInterpreter](doc/classes/BlipKitInterpreter.md) executes the byte code on a [BlipKitTrack](doc/classes/BlipKitTrack.md) to change its properties over time
 
 ### Examples
 

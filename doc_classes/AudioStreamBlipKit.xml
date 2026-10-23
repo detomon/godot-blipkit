@@ -4,8 +4,8 @@
 		An audio stream used to attach and play audio generated from [BlipKitTrack]s.
 	</brief_description>
 	<description>
-		When the stream is playing, its internal master clock is ticking at a rate of 240 [i]ticks[/i] per second per default. Every [i]tick[/i] updates effects of attached [BlipKitTrack]s, and envelopes of [BlipKitInstrument]s. See also [method BlipKitTrack.add_divider].
-		The stream audio is always resampled to 44100 Hz.
+		When the stream is playing, its internal master clock is ticking at a rate of 240 [i]ticks[/i] per second by default. Every [i]tick[/i] updates effects of attached [BlipKitTrack]s, and envelopes of [BlipKitInstrument]s. See also [method BlipKitTrack.add_divider].
+		The audio stream is always resampled to 44100 Hz.
 		This resource reuses the same [AudioStreamBlipKitPlayback] instance between playbacks.
 		[b]Note:[/b] If an [AudioStreamBlipKit] resource is freed, all attached [BlipKitTrack]s are detached.
 	</description>
@@ -17,7 +17,7 @@
 			<return type="void" />
 			<param index="0" name="callback" type="Callable" />
 			<description>
-				Calls the callback synced to the audio thread. This can be used to ensure that multiple modifications are executed on the same time. (For example, ensuring that multiple [BlipKitTrack]s are attached at the same time with [method BlipKitTrack.attach].)
+				Calls the callback synced to the audio thread. This can be used to ensure that multiple modifications are executed at the same time. (For example, ensuring that multiple [BlipKitTrack]s are attached at the same time with [method BlipKitTrack.attach].)
 				For updating properties of individual [BlipKitTrack]s over time, consider using [method BlipKitTrack.add_divider].
 			</description>
 		</method>

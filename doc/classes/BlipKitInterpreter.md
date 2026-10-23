@@ -69,7 +69,7 @@ track.add_divider(1, func () -> int:
 - `SLOT_COUNT` = `256`
 	- The number of slots for instruments, waveforms and samples.
 - `STEP_TICKS_DEFAULT` = `24`
-	- Default value of number of ticks per step instruction.
+	- Default value for the number of *ticks* per step instruction.
 
 ## Property Descriptions
 
@@ -90,7 +90,7 @@ Returns a value greater than `0` indicating the number of *ticks* to wait before
 
 Returns `0` if no more instructions are available.
 
-Returns `-1` if an error occured. In this case, [`get_state()`](#int-get_state-const) returns the state and [`get_error_message()`](#string-get_error_message-const) returns the error message.
+Returns `-1` if an error occurred. In this case, [`get_state()`](#int-get_state-const) returns the state and [`get_error_message()`](#string-get_error_message-const) returns the error message.
 
 ### `String get_error_message() const`
 
@@ -126,7 +126,7 @@ Sets the byte code to interpret and resets all registers and errors.
 
 If `start_label` is not empty, starts executing byte code from the label's position. The label must be set `public` when adding it with `BlipKitAssembler.put_label()`.
 
-Returns `false` if the byte code is not valid or the label does not exist. The error message can be get with [`get_error_message()`](#string-get_error_message-const).
+Returns `false` if the byte code is not valid or the label does not exist. The error message can be retrieved with [`get_error_message()`](#string-get_error_message-const).
 
 ### `void reset(start_label: String = "")`
 

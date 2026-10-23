@@ -100,7 +100,7 @@ set_envelope(BlipKitInstrument.ENVELOPE_VOLUME,
 
 Sets the envelope with `type`. `values` defines the individual values for each phase.
 
-If `steps` is not empty, it has to have the same size as `values`. In this case, `values` are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in `steps` as number of *ticks*. Values in `steps` are allowed to be `0` to instantly change a value.
+If `steps` is not empty, it has to have the same size as `values`. In this case, `values` are linearly interpolated. The duration of each phase is defined by the value at the corresponding index in `steps` as the number of *ticks*. Values in `steps` are allowed to be `0` to instantly change a value.
 
 If `steps` is empty, `values` is used as a sequence and values are changed stepwise. In this case, the duration of each phase is defined by `BlipKitTrack.instrument_divider`.
 

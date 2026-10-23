@@ -34,7 +34,7 @@
 				Runs the interpreter and executes instructions on [param track] until a [constant BlipKitAssembler.OP_TICK] or [constant BlipKitAssembler.OP_STEP] instruction is encountered, or no more instructions are available.
 				Returns a value greater than [code]0[/code] indicating the number of [i]ticks[/i] to wait before [method advance] should be called again.
 				Returns [code]0[/code] if no more instructions are available.
-				Returns [code]-1[/code] if an error occured. In this case, [method get_state] returns the state and [method get_error_message] returns the error message.
+				Returns [code]-1[/code] if an error occurred. In this case, [method get_state] returns the state and [method get_error_message] returns the error message.
 			</description>
 		</method>
 		<method name="get_error_message" qualifiers="const">
@@ -81,7 +81,7 @@
 			<description>
 				Sets the byte code to interpret and resets all registers and errors.
 				If [param start_label] is not empty, starts executing byte code from the label's position. The label must be set [code]public[/code] when adding it with [method BlipKitAssembler.put_label].
-				Returns [code]false[/code] if the byte code is not valid or the label does not exist. The error message can be get with [method get_error_message].
+				Returns [code]false[/code] if the byte code is not valid or the label does not exist. The error message can be retrieved with [method get_error_message].
 			</description>
 		</method>
 		<method name="reset">
@@ -152,7 +152,7 @@
 			The number of slots for instruments, waveforms and samples.
 		</constant>
 		<constant name="STEP_TICKS_DEFAULT" value="24">
-			Default value of number of ticks per step instruction.
+			Default value for the number of [i]ticks[/i] per step instruction.
 		</constant>
 	</constants>
 </class>
