@@ -109,7 +109,7 @@ The byte code assembler allows to create instructions to play patterns.
 ### Examples
 
 - Play an iconic startup sound ([Power On! Assembler version](examples/power_on_assembler)).
-- Play on multiple tracks ([Bytecode](examples/bytecode)).
+- Play on multiple tracks ([Byte code](examples/bytecode)).
 
 ## Classes
 

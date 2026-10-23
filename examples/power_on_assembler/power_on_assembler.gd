@@ -23,23 +23,23 @@ func _ready() -> void:
 
 	# Play note on octave 5.
 	assem.put(BlipKitAssembler.OP_ATTACK, BlipKitTrack.NOTE_C_5)
-	# Wait for one step.
+	# Play for one step.
 	assem.put(BlipKitAssembler.OP_STEP, 1)
 	# Play note on octave 5.
 	assem.put(BlipKitAssembler.OP_ATTACK, BlipKitTrack.NOTE_C_6)
 	# Set volume slide effect to slide to new within 9 steps.
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 9)
-	# Slides volume to 0.0 within 9 steps.
+	# Slides volume to minimum within 9 steps.
 	assem.put(BlipKitAssembler.OP_VOLUME, 0.0)
-	# Wait for 9 steps.
+	# Play for 9 steps.
 	assem.put(BlipKitAssembler.OP_STEP, 9)
 	# Release note.
 	assem.put(BlipKitAssembler.OP_RELEASE)
 	# Disable volume slide effect.
 	assem.put(BlipKitAssembler.OP_VOLUME_SLIDE, 0)
-	# Set volume to 1.0.
+	# Set volume to maximum.
 	assem.put(BlipKitAssembler.OP_VOLUME, 1.0)
-	# Wait for 10 steps.
+	# Pause for 10 steps.
 	assem.put(BlipKitAssembler.OP_STEP, 10)
 
 	# Jump back to start label.
