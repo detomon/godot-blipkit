@@ -12,3 +12,11 @@
 
 - Update docs
 - Update icons
+
+## Unreleased
+
+These changes are not released yet.
+
+### Changed
+
+- Update docs
