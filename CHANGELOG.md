@@ -1,10 +1,12 @@
 # Changelog
 
-## v1.0.0 - 2025-05-09
+## Unreleased
 
-### Added
+These changes are not released yet.
 
-- First release
+### Changed
+
+- Update docs
 
 ## v1.0.1 - 2026-02-22
 
@@ -13,10 +15,8 @@
 - Update docs
 - Update icons
 
-## Unreleased
+## v1.0.0 - 2025-05-09
 
-These changes are not released yet.
+### Added
 
-### Changed
-
-- Update docs
+- First release
