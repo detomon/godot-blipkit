@@ -12,3 +12,11 @@
 
 - Update docs
 - Update icons
+
+## Unreleased
+
+These changes are not released yet.
+
+### Deprecated
+
+- `BlipKitSample.create_with_wav` is renamed to `BlipKitSample.create_from_wav`

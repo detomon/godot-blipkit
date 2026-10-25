@@ -23,6 +23,7 @@ track.note = BlipKitTrack.NOTE_C_4
 
 ## Methods
 
+- *BlipKitSample* [**`create_from_wav`**](#blipkitsample-create_from_wavwav-audiostreamwav-normalize-bool--false-amplitude-float--10-static)(wav: AudioStreamWAV, normalize: bool = false, amplitude: float = 1.0) static
 - *BlipKitSample* [**`create_with_wav`**](#blipkitsample-create_with_wavwav-audiostreamwav-normalize-bool--false-amplitude-float--10-static)(wav: AudioStreamWAV, normalize: bool = false, amplitude: float = 1.0) static
 - *PackedFloat32Array* [**`get_frames`**](#packedfloat32array-get_frames-const)() const
 - *bool* [**`is_valid`**](#bool-is_valid-const)() const
@@ -65,7 +66,7 @@ Sets the beginning of the sustain range in samples.
 
 ## Method Descriptions
 
-### `BlipKitSample create_with_wav(wav: AudioStreamWAV, normalize: bool = false, amplitude: float = 1.0) static`
+### `BlipKitSample create_from_wav(wav: AudioStreamWAV, normalize: bool = false, amplitude: float = 1.0) static`
 
 Creates a [`BlipKitSample`](BlipKitSample.md) from a [`AudioStreamWAV`](https://docs.godotengine.org/en/stable/classes/class_audiostreamwav.html). Stereo channels are merged into a single mono channel.
 
@@ -76,6 +77,9 @@ The sample rate of [`AudioStreamWAV`](https://docs.godotengine.org/en/stable/cla
 Copies `AudioStreamWAV.loop_mode`, `AudioStreamWAV.loop_begin`, and `AudioStreamWAV.loop_end` into `repeat_mode`, `sustain_offset`, and `sustain_end`, respectively.
 
 **Note:** Only supports the formats `AudioStreamWAV.FORMAT_8_BITS` and `AudioStreamWAV.FORMAT_16_BITS`.
+
+### `BlipKitSample create_with_wav(wav: AudioStreamWAV, normalize: bool = false, amplitude: float = 1.0) static`
+
 
 ### `PackedFloat32Array get_frames() const`
 

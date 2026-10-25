@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="BlipKitSample" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+<class name="BlipKitSample" inherits="Resource" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
 		Contains audio frames.
 	</brief_description>
@@ -19,7 +19,7 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="create_with_wav" qualifiers="static">
+		<method name="create_from_wav" qualifiers="static">
 			<return type="BlipKitSample" />
 			<param index="0" name="wav" type="AudioStreamWAV" />
 			<param index="1" name="normalize" type="bool" default="false" />
@@ -30,6 +30,14 @@
 				The sample rate of [AudioStreamWAV] is expected to be 44100 Hz, as the internal sample rate of [AudioStreamBlipKit] is fixed to this value. When playing the sample with [constant BlipKitTrack.NOTE_C_4], it is played with it's original speed.
 				Copies [member AudioStreamWAV.loop_mode], [member AudioStreamWAV.loop_begin], and [member AudioStreamWAV.loop_end] into [member repeat_mode], [member sustain_offset], and [member sustain_end], respectively.
 				[b]Note:[/b] Only supports the formats [constant AudioStreamWAV.FORMAT_8_BITS] and [constant AudioStreamWAV.FORMAT_16_BITS].
+			</description>
+		</method>
+		<method name="create_with_wav" qualifiers="static" deprecated="Use [method create_from_wav] instead.">
+			<return type="BlipKitSample" />
+			<param index="0" name="wav" type="AudioStreamWAV" />
+			<param index="1" name="normalize" type="bool" default="false" />
+			<param index="2" name="amplitude" type="float" default="1.0" />
+			<description>
 			</description>
 		</method>
 		<method name="get_frames" qualifiers="const">

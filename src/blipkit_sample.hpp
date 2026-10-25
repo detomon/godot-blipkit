@@ -34,7 +34,7 @@ public:
 	BlipKitSample();
 	~BlipKitSample();
 
-	static Ref<BlipKitSample> create_with_wav(const Ref<AudioStreamWAV> &p_wav, bool p_normalize = false, float p_amplitude = 1.0);
+	static Ref<BlipKitSample> create_from_wav(const Ref<AudioStreamWAV> &p_wav, bool p_normalize = false, float p_amplitude = 1.0);
 
 	_ALWAYS_INLINE_ BKData *get_data() { return &data; };
 	_ALWAYS_INLINE_ int size() const { return frames.size(); };

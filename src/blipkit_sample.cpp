@@ -18,7 +18,7 @@ BlipKitSample::~BlipKitSample() {
 	BKDispose(&data);
 }
 
-Ref<BlipKitSample> BlipKitSample::create_with_wav(const Ref<AudioStreamWAV> &p_wav, bool p_normalize, float p_amplitude) {
+Ref<BlipKitSample> BlipKitSample::create_from_wav(const Ref<AudioStreamWAV> &p_wav, bool p_normalize, float p_amplitude) {
 	ERR_FAIL_COND_V(not p_wav.is_valid(), nullptr);
 
 	const PackedByteArray &data = p_wav->get_data();
@@ -240,7 +240,8 @@ PackedByteArray BlipKitSample::get_frame_bytes() const {
 }
 
 void BlipKitSample::_bind_methods() {
-	ClassDB::bind_static_method("BlipKitSample", D_METHOD("create_with_wav", "wav", "normalize", "amplitude"), &BlipKitSample::create_with_wav, DEFVAL(false), DEFVAL(1.0));
+	ClassDB::bind_static_method("BlipKitSample", D_METHOD("create_from_wav", "wav", "normalize", "amplitude"), &BlipKitSample::create_from_wav, DEFVAL(false), DEFVAL(1.0));
+	ClassDB::bind_static_method("BlipKitSample", D_METHOD("create_with_wav", "wav", "normalize", "amplitude"), &BlipKitSample::create_from_wav, DEFVAL(false), DEFVAL(1.0));
 
 	ClassDB::bind_method(D_METHOD("size"), &BlipKitSample::size);
 	ClassDB::bind_method(D_METHOD("is_valid"), &BlipKitSample::is_valid);
